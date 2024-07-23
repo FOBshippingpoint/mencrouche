@@ -1,0 +1,118 @@
+{
+  "set_background_image": {
+    "message": "Set background image",
+    "description": "Command description for set background image."
+  },
+  "toggle_dark_mode": {
+    "message": "Toggle dark mode",
+    "description": "Command description for toggle dark mode."
+  },
+  "settings": {
+    "message": "Settings",
+    "description": "A link in popup page."
+  },
+  "doc_title_settings": {
+    "message": "Goocoucou - Settings",
+    "description": "Title of the extension's options page."
+  },
+  "shortcuts": {
+    "message": "Shortcuts",
+    "description": "A tab button name in options page."
+  },
+  "other_settings": {
+    "message": "Other settings",
+    "description": "A tab button name in options page."
+  },
+  "sokoban_style": {
+    "message": "Style of selected search result",
+    "description": "The legend of form."
+  },
+  "style_preview": {
+    "message": "Style preview",
+    "description": "Text of selected search result style preview."
+  },
+  "left_line_style": {
+    "message": "SearXNG style",
+    "description": "Text of selected search result style."
+  },
+  "dotted_rect_style": {
+    "message": "Dotted rectangle style",
+    "description": "Text of selected search result style."
+  },
+  "rgb_style": {
+    "message": "RGB Gaming",
+    "description": "Text of selected search result style."
+  },
+  "reset_all": {
+    "message": "Reset all settings to default, including shortcuts",
+    "description": "The description of reset all button in other settings."
+  },
+  "confirm_reset_all": {
+    "message": "Are you sure you want to reset all settings to default, including shortcuts?",
+    "description": "The message shown in the confirmation dialog."
+  },
+  "debug_checkbox": {
+    "message": "Enable debug mode",
+    "description": "The description of reset all button in other settings."
+  },
+  "how_to_use": {
+    "message": "How to use",
+    "description": "A tab button name in options page."
+  },
+  "how_to_use_content": {
+    "message": "Press shortcut keys to navigate through the result in the Google search page.",
+    "description": "The description of how to use."
+  },
+  "about": {
+    "message": "About",
+    "description": "A tab button name in options page."
+  },
+  "about_content": {
+    "message": "I love vim-like operations, but Google Search didn't have one, so wrote my own. Recently I've found that Google sucks when it comes to privacy, so I personally use other search engines that respect my privacy (e.g., SearXNG, DuckDuckGo, and StartPage). Some of them already have the shortcut features.",
+    "description": "The description of about."
+  },
+  "upward": {
+    "message": "Move to previous result",
+    "description": "The shortcut description for options page."
+  },
+  "downward": {
+    "message": "Move to next result",
+    "description": "The shortcut description for options page."
+  },
+  "open_in_current_tab": {
+    "message": "Open selected result in current tab",
+    "description": "The shortcut description for options page."
+  },
+  "open_in_new_tab_but_stay_on_current": {
+    "message": "Open selected result in new tab",
+    "description": "The shortcut description for options page."
+  },
+  "open_in_new_tab_and_focus": {
+    "message": "Open selected result in new tab and focus",
+    "description": "The shortcut description for options page."
+  },
+  "go_to_search_box": {
+    "message": "Go to search box",
+    "description": "The shortcut description for options page."
+  },
+  "go_to_search_box_and_select_text": {
+    "message": "Go to search box and select text",
+    "description": "The shortcut description for options page."
+  },
+  "focus_on_result_type_tabs": {
+    "message": "Focus on result type tabs",
+    "description": "The shortcut description for options page."
+  },
+  "reset_button": {
+    "message": "Reset",
+    "description": "Reset current shortcut to default."
+  },
+  "save_button": {
+    "message": "Save",
+    "description": "Save settings."
+  },
+  "error_while_saving": {
+    "message": "An error occurred while saving, check the console for more information.",
+    "description": "The alert message shown when error occurs while saving."
+  }
+}

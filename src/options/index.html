@@ -1,0 +1,214 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./index.css" />
+    <link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.2/new.min.css"
+    />
+    <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="shortcut icon" type="image/png" href="../assets/icon-16.png" />
+    <title data-i18n="doc_title_settings"></title>
+    <script type="module" src="index.ts"></script>
+  </head>
+
+  <body>
+    <main>
+      <div id="sec-shortcuts">
+        <form>
+          <fieldset>
+            <div>
+              <label for="upward" data-i18n="upward"></label>
+              <input type="text" id="upward" />
+              <button
+                type="button"
+                data-i18n="reset_button"
+                class="reset"
+              ></button>
+            </div>
+            <div>
+              <label for="downward" data-i18n="downward"></label>
+              <input type="text" id="downward" />
+              <button
+                type="button"
+                data-i18n="reset_button"
+                class="reset"
+              ></button>
+            </div>
+            <div>
+              <label
+                for="open_in_current_tab"
+                data-i18n="open_in_current_tab"
+              ></label>
+              <input type="text" id="open_in_current_tab" />
+              <button
+                type="button"
+                data-i18n="reset_button"
+                class="reset"
+              ></button>
+            </div>
+            <div>
+              <label
+                for="open_in_new_tab_but_stay_on_current"
+                data-i18n="open_in_new_tab_but_stay_on_current"
+              ></label>
+              <input type="text" id="open_in_new_tab_but_stay_on_current" />
+              <button
+                type="button"
+                data-i18n="reset_button"
+                class="reset"
+              ></button>
+            </div>
+            <div>
+              <label
+                for="open_in_new_tab_and_focus"
+                data-i18n="open_in_new_tab_and_focus"
+              ></label>
+              <input type="text" id="open_in_new_tab_and_focus" />
+              <button
+                type="button"
+                data-i18n="reset_button"
+                class="reset"
+              ></button>
+            </div>
+            <div>
+              <label
+                for="go_to_search_box"
+                data-i18n="go_to_search_box"
+              ></label>
+              <input type="text" id="go_to_search_box" />
+              <button
+                type="button"
+                data-i18n="reset_button"
+                class="reset"
+              ></button>
+            </div>
+            <div>
+              <label
+                for="go_to_search_box_and_select_text"
+                data-i18n="go_to_search_box_and_select_text"
+              ></label>
+              <input type="text" id="go_to_search_box_and_select_text" />
+              <button
+                type="button"
+                data-i18n="reset_button"
+                class="reset"
+              ></button>
+            </div>
+            <div>
+              <label
+                for="focus_on_result_type_tabs"
+                data-i18n="focus_on_result_type_tabs"
+              ></label>
+              <input type="text" id="focus_on_result_type_tabs" />
+              <button
+                type="button"
+                data-i18n="reset_button"
+                class="reset"
+              ></button>
+            </div>
+            <div>
+              <button type="submit" data-i18n="save_button"></button>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+
+      <div id="sec-other_settings" class="hidden">
+        <form>
+          <legend data-i18n="sokoban_style"></legend>
+          <label for="left_line_style">
+            <input
+              type="radio"
+              id="left_line_style"
+              name="sokoban_style"
+              value="left_line_style"
+            />
+            <span data-i18n="left_line_style"></span>
+          </label>
+          <div
+            data-i18n="style_preview"
+            class="sokoban-wrap focus-left_line_style"
+          ></div>
+          <div class="mt">
+            <label for="dotted_rect_style">
+              <input
+                type="radio"
+                id="dotted_rect_style"
+                name="sokoban_style"
+                value="dotted_rect_style"
+              />
+              <span data-i18n="dotted_rect_style"></span>
+            </label>
+            <div
+              data-i18n="style_preview"
+              class="sokoban-wrap focus-dotted_rect_style"
+            ></div>
+          </div>
+          <div>
+            <!-- https://www.csscodelab.com/html-css-border-animation-gradient-shadow/ -->
+            <label for="rgb_style">
+              <input
+                type="radio"
+                id="rgb_style"
+                name="sokoban_style"
+                value="rgb_style"
+              />
+              <span data-i18n="rgb_style"></span>
+            </label>
+            <div
+              data-i18n="style_preview"
+              class="sokoban-wrap focus-rgb_style"
+              style="margin: 20px 0px 30px 0px"
+            ></div>
+          </div>
+        </form>
+        <form>
+          <fieldset>
+            <button
+              id="reset_all"
+              data-i18n="reset_all"
+              class="button-error pure-button"
+            ></button>
+            <label for="debug_checkbox">
+              <input type="checkbox" id="debug_checkbox" />
+              <span data-i18n="debug_checkbox" class="ml"></span>
+            </label>
+          </fieldset>
+        </form>
+      </div>
+
+      <div id="sec-how_to_use" class="hidden">
+        <p data-i18n="how_to_use_content"></p>
+      </div>
+
+      <div id="sec-about" class="hidden">
+        <p data-i18n="about_content"></p>
+        <ul>
+          <li>
+            <a href="https://github.com/FOBshippingpoint/goocoucou-webext"
+              >GitHub</a
+            >
+          </li>
+          <li>
+            <a href="https://morikko.github.io/translate-web-extension/help"
+              >Translate</a
+            >
+          </li>
+          <li>
+            <a href="https://www.youtube.com/channel/UC-UzF0F_qnMhwy9oB-DyWsg"
+              >YouTube</a
+            >
+          </li>
+        </ul>
+        <p>
+          Made with ❤️ &amp; 科皓不要 by
+          <a href="https://github.com/FOBshippingpoint">CC Lan</a>
+        </p>
+      </div>
+    </main>
+  </body>
+</html>

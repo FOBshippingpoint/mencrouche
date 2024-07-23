@@ -1,0 +1,10 @@
+node_modules
+.vscode
+dist
+pnpm-lock.yaml
+.parcel-cache
+web-ext-artifacts
+parcel-bundle-reports
+src/manifest.json
+coverage
+.yarn

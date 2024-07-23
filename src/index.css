@@ -1,0 +1,359 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap");
+@import "https://unpkg.com/open-props";
+@import "https://unpkg.com/open-props/normalize.min.css";
+
+/* the following switch imports have selectors that enable the override of the system setting */
+@import "https://unpkg.com/open-props/theme.light.switch.min.css";
+@import "https://unpkg.com/open-props/theme.dark.switch.min.css";
+
+:root {
+  --page-background: unset;
+}
+
+body::before {
+  background: var(--page-background);
+  opacity: 0.4;
+  content: " ";
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  line-height: 1.5;
+  font-family: "IBM Plex Sans", sans-serif;
+  overflow-x: hidden;
+  display: grid;
+  grid-template-rows: var(--size-8) calc(100% - var(--size-8));
+  /* grid-template-columns: repeat(1, 1fr); */
+}
+
+h1 {
+  font-size: var(--font-size-6);
+}
+h2 {
+  font-size: var(--font-size-5);
+}
+h3 {
+  font-size: var(--font-size-4);
+}
+h4 {
+  font-size: var(--font-size-3);
+}
+h5 {
+  font-size: var(--font-size-2);
+}
+h6 {
+  font-size: var(--font-size-1);
+}
+
+nav {
+  padding-inline: var(--size-3);
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: var(--size-4);
+  justify-self: stretch;
+  border-bottom: var(--border-size-1) solid var(--surface-3);
+  box-shadow: var(--shadow-1);
+}
+
+form {
+  display: flex;
+  gap: var(--size-3);
+}
+
+form label {
+  display: flex;
+  place-items: center;
+  gap: var(--size-1);
+}
+
+.sticky {
+  position: absolute;
+  background-color: var(--surface-3);
+  color: var(--text-2);
+  cursor: default;
+  box-shadow: var(--shadow-2);
+  border-radius: var(--radius-conditional-2);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  /* min-width: var(--size-fluid-9); */
+  /* min-height: var(--size-fluid-9); */
+  /* max-width: var(--size-content-3); */
+  /* max-height: var(--size-content-3); */
+  width: var(--size-fluid-9);
+  height: var(--size-fluid-9);
+  min-width: var(--size-fluid-6);
+  min-height: var(--size-fluid-6);
+  border: var(--border-size-1) solid var(--surface-4);
+}
+.resizeHandle {
+  position: absolute;
+  background-color: transparent;
+}
+.resizeHandle.top {
+  top: var(--size-px-00);
+  left: var(--size-px-00);
+  right: var(--size-px-00);
+  height: var(--size-px-2);
+  cursor: n-resize;
+}
+.resizeHandle.right {
+  top: var(--size-px-00);
+  right: var(--size-px-00);
+  bottom: var(--size-px-00);
+  width: var(--size-px-2);
+  cursor: e-resize;
+}
+.resizeHandle.bottom {
+  bottom: var(--size-px-00);
+  left: var(--size-px-00);
+  right: var(--size-px-00);
+  height: var(--size-px-2);
+  cursor: s-resize;
+}
+.resizeHandle.left {
+  top: var(--size-px-00);
+  left: var(--size-px-00);
+  bottom: var(--size-px-00);
+  width: var(--size-px-2);
+  cursor: w-resize;
+}
+.resizeHandle.topLeft {
+  top: var(--size-px-00);
+  left: var(--size-px-00);
+  width: var(--size-px-2);
+  height: var(--size-px-2);
+  cursor: nw-resize;
+}
+.resizeHandle.topRight {
+  top: var(--size-px-00);
+  right: var(--size-px-00);
+  width: var(--size-px-2);
+  height: var(--size-px-2);
+  cursor: ne-resize;
+}
+.resizeHandle.bottomLeft {
+  bottom: var(--size-px-00);
+  left: var(--size-px-00);
+  width: var(--size-px-2);
+  height: var(--size-px-2);
+  cursor: sw-resize;
+}
+.resizeHandle.bottomRight {
+  bottom: var(--size-px-00);
+  right: var(--size-px-00);
+  width: var(--size-px-2);
+  height: var(--size-px-2);
+  cursor: se-resize;
+}
+
+.close {
+  animation: var(--animation-scale-down), var(--animation-fade-out);
+  animation-timing-function: var(--ease-elastic-in-out-4);
+}
+
+.stickyHeader {
+  background-color: var(--surface-4);
+  cursor: grab;
+  user-select: none;
+}
+
+/* TODO: inconsist naming */
+.controls {
+  float: right;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.controls button {
+  background-color: inherit;
+  color: var(--text-2);
+}
+.controls button:hover {
+  color: var(--text-1);
+}
+
+.stickyBody {
+  flex: 1;
+  padding: var(--size-2);
+  overflow: auto;
+}
+
+.stickyBody[contenteditable="true"] {
+  /* max-width: var(--size-fluid-9); */
+  /* max-height: var(--size-fluid-9); */
+}
+
+/* Placeholder */
+.stickyBody[contenteditable="true"]:empty:before {
+  content: attr(placeholder);
+  pointer-events: none;
+  display: block;
+}
+
+.stickyContainer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.stickyContainer.autoArrange {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.stickyContainer.autoArrange .sticky {
+  position: static;
+}
+
+main {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+#trashCan {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
+/* @commandPalette start */
+#commandPalette {
+  position: fixed;
+  top: var(--size-12);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  max-width: var(--size-content-3);
+  background-color: var(--surface-1);
+  border-radius: var(--radius-2);
+  box-shadow: var(--shadow-3);
+  padding: var(--size-3);
+  z-index: 999999;
+}
+.searchInputWrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.searchIcon {
+  position: absolute;
+  left: var(--size-2);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-2);
+}
+#searchInput {
+  width: 100%;
+  padding: var(--size-2) var(--size-2) var(--size-2) var(--size-8);
+  font-size: var(--font-size-3);
+  border: none;
+  border-radius: var(--radius-conditional-2);
+  background-color: var(--surface-3);
+  color: var(--text-1);
+}
+#resultsList {
+  list-style-type: none;
+  padding: 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+#resultsList:not(:empty) {
+  margin-top: var(--size-3);
+}
+#resultsList li {
+  padding: var(--size-2);
+  max-inline-size: unset; /* Reverts open-props normalize */
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#resultsList li:hover,
+#resultsList li[aria-selected="true"] {
+  background-color: var(--surface-3);
+}
+#resultsList kbd {
+  font-size: var(--font-size-0);
+  margin-right: var(--size-2);
+}
+/* @commandPalette end */
+
+/* @uploadDialog start */
+/* @uploadDialog end */
+
+/* @settings start */
+#preference {
+  width: 60%;
+  background-color: var(--surface-3);
+  box-shadow: var(--shadow-2);
+  padding: var(--size-5) var(--size-7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-7);
+}
+/* #preference section::after { */
+/*   content: ""; */
+/*   display: block; */
+/*   padding-top: var(--size-3); */
+/*   border-bottom: var(--border-size-1) solid var(--text-1); */
+/* } */
+#preference header {
+  padding-bottom: var(--size-3);
+}
+.backgroundPresetContainer {
+  display: grid;
+  grid-auto-flow: column;
+  gap: var(--size-2);
+  scroll-snap-type: x mandatory;
+  /* padding-inline: var(--gap); */
+  /* scroll-padding-inline: var(--size-8); */
+}
+.backgroundPresetContainer button {
+  padding: var(--size-5);
+}
+.dropzone {
+  border-width: var(--border-size-2);
+  border-style: dashed;
+  border-radius: var(--radius-conditional-3);
+  padding: var(--size-5);
+  flex: 1;
+  width: var(--size-content-2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--size-3);
+  cursor: pointer;
+}
+.dropzone[active] {
+  background-color: var(--surface-2);
+}
+.setToDefaultBtn {
+  border-radius: var(--radius-conditional-2);
+  height: var(--size-7);
+  padding-inline: var(--size-3);
+  margin-top: var(--size-3);
+  border: var(--border-size-2) solid var(--surface-4);
+}
+/* @settings end */

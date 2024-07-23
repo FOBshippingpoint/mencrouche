@@ -1,0 +1,52 @@
+{
+  "name": "Duatz",
+  "version": "0.0.1",
+  "description": "A highly customizable web extension for new tab. Bring your own content to build your web experience.",
+  "scripts": {
+    "dev": "zx scripts/dev.mjs",
+    "start": "parcel watch src/manifest.json --host localhost --config @parcel/config-webextension --no-cache",
+    "build": "parcel build src/manifest.json --config @parcel/config-webextension",
+    "start:firefox": "web-ext run --source-dir dist/webext-dev  --target=firefox-desktop",
+    "start:chromium": "web-ext run --source-dir dist/webext-dev --target=chromium",
+    "lint:dev": "web-ext lint --source-dir dist/webext-dev",
+    "lint:build": "web-ext lint --source-dir dist/webext-prod",
+    "pack:zip": "web-ext build --overwrite-dest --source-dir dist/webext-prod"
+  },
+  "author": "FOBshippingpoint",
+  "license": "MIT",
+  "type": "module",
+  "devDependencies": {
+    "@biomejs/biome": "1.8.3",
+    "@parcel/config-webextension": "^2.3.2",
+    "@parcel/core": "^2.3.2",
+    "@parcel/reporter-bundle-analyzer": "^2.7.0",
+    "@types/chrome": "^0.0.262",
+    "@types/firefox-webext-browser": "^120.0.2",
+    "@types/fs-extra": "^9.0.13",
+    "@types/markdown-it": "^14",
+    "@types/webextension-polyfill": "^0.8.2",
+    "@typescript-eslint/eslint-plugin": "^5.33.1",
+    "@typescript-eslint/parser": "^5.33.1",
+    "markdown-it": "^14.1.0",
+    "parcel": "^2.3.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^4.7.4",
+    "vite": "^5.3.4",
+    "web-ext": "^6.7.0",
+    "zx": "^7.2.3"
+  },
+  "targets": {
+    "webext-dev": {
+      "sourceMap": {
+        "inline": true,
+        "inlineSources": true
+      }
+    },
+    "webext-prod": {
+      "sourceMap": false
+    }
+  },
+  "dependencies": {
+    "asciidoctor": "^3.0.4"
+  }
+}

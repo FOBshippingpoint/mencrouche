@@ -1,0 +1,113 @@
+{
+  "extension_description": {
+    "message": "用快捷鍵瀏覽谷歌的搜尋結果",
+    "description": "Description of the extension."
+  },
+  "settings": {
+    "message": "設定",
+    "description": "A link in popup page."
+  },
+  "doc_title_settings": {
+    "message": "Goocoucou - 設定",
+    "description": "Title of the extension's options page."
+  },
+  "shortcuts": {
+    "message": "快捷鍵",
+    "description": "A tab button name in options page."
+  },
+  "other_settings": {
+    "message": "其他設定",
+    "description": "A tab button name in options page."
+  },
+  "sokoban_style": {
+    "message": "焦點樣式",
+    "description": "The legend of form."
+  },
+  "style_preview": {
+    "message": "樣式預覽",
+    "description": "Text of selected search result style preview."
+  },
+  "left_line_style": {
+    "message": "SearXNG 風格",
+    "description": "Text of selected search result style."
+  },
+  "dotted_rect_style": {
+    "message": "虛線",
+    "description": "Text of selected search result style."
+  }, "rgb_style": {
+    "message": "RGB 電競風",
+    "description": "Text of selected search result style."
+  },
+  "reset_all": {
+    "message": "重置所有設定，包含快捷鍵",
+    "description": "The description of reset all button in other settings."
+  },
+  "confirm_reset_all": {
+    "message": "確定要重置所有設定（包含快捷鍵）嗎？",
+    "description": "The message shown in the confirmation dialog."
+  },
+  "debug_checkbox": {
+    "message": "啟用偵錯模式（印於控制台）",
+    "description": "The description of reset all button in other settings."
+  },
+  "how_to_use": {
+    "message": "使用說明",
+    "description": "A tab button name in options page."
+  },
+  "how_to_use_content": {
+    "message": "在谷歌搜尋結果頁面按下快捷鍵。",
+    "description": "The description of how to use."
+  },
+  "about": {
+    "message": "關於",
+    "description": "A tab button name in options page."
+  },
+  "about_content": {
+    "message": "我熱愛 vim 的快捷鍵，然而谷歌搜尋本身沒有這個功能，因此我自己撰寫了這個擴充功能圓夢。不過我最近發現谷歌在隱私這塊很糟糕，所以我改用 SearXNG、DuckDuckGO、StartPage，結果 SearXNG 跟 DuckDuckGo 早就有類似的功能了。",
+    "description": "The description of about."
+  },
+  "upward": {
+    "message": "下一個搜尋結果",
+    "description": "The shortcut description for options page."
+  },
+  "downward": {
+    "message": "上一個搜尋結果",
+    "description": "The shortcut description for options page."
+  },
+  "open_in_current_tab": {
+    "message": "在當前分頁開啟",
+    "description": "The shortcut description for options page."
+  },
+  "open_in_new_tab_but_stay_on_current": {
+    "message": "在其他分頁開啟",
+    "description": "The shortcut description for options page."
+  },
+  "open_in_new_tab_and_focus": {
+    "message": "在其他分頁開啟並切換",
+    "description": "The shortcut description for options page."
+  },
+  "go_to_search_box": {
+    "message": "游標移至搜尋欄",
+    "description": "The shortcut description for options page."
+  },
+  "go_to_search_box_and_select_text": {
+    "message": "選取搜尋欄文字",
+    "description": "The shortcut description for options page."
+  },
+  "focus_on_result_type_tabs": {
+    "message": "選取結果類型欄",
+    "description": "The shortcut description for options page."
+  },
+  "reset_button": {
+    "message": "重置",
+    "description": "Reset current shortcut to default."
+  },
+  "save_button": {
+    "message": "儲存",
+    "description": "Save settings."
+  },
+  "error_while_saving": {
+    "message": "儲存時發生錯誤，查看控制台獲得更多訊息。",
+    "description": "The alert message shown when error occurs while saving."
+  }
+}

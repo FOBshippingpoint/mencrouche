@@ -1,0 +1,159 @@
+@keyframes borderAnimation {
+  0% {
+    background-position: 0 0, -20px 0, 100% -20px, 0 100%;
+  }
+  to {
+    background-position: 0-20px, 0 0, 100%0, -20px 100%;
+  }
+}
+@keyframes steam {
+  0%,
+  to {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 400%0;
+  }
+}
+.flag,
+.flag-dark {
+  position: absolute;
+  left: -35px;
+  color: #202124;
+  background-color: #f1f3f4;
+  border-radius: 3px;
+  padding: 0 5px;
+  font-size: 16px;
+  min-width: 15px;
+  text-align: center;
+  vertical-align: middle;
+}
+.flag-dark {
+  color: #bdc1c6;
+  background-color: #303134;
+}
+.sokoban-wrap {
+  position: relative;
+  padding: 10px;
+}
+.focus-left_line_style,
+.focus-left_line_style-dark {
+  border-left: 3px solid #1a73e8;
+  background-color: #f8f9fa;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+.focus-left_line_style-dark {
+  background-color: #303134;
+}
+.focus-dotted_rect_style,
+.focus-dotted_rect_style-dark {
+  background-image: repeating-linear-gradient(
+      0deg,
+      #333,
+      #333 10px,
+      transparent 10px,
+      transparent 20px,
+      #333 20px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      #333,
+      #333 10px,
+      transparent 10px,
+      transparent 20px,
+      #333 20px
+    ),
+    repeating-linear-gradient(
+      180deg,
+      #333,
+      #333 10px,
+      transparent 10px,
+      transparent 20px,
+      #333 20px
+    ),
+    repeating-linear-gradient(
+      270deg,
+      #333,
+      #333 10px,
+      transparent 10px,
+      transparent 20px,
+      #333 20px
+    );
+  background-size: 3px calc(100% + 20px), calc(100% + 20px) 3px,
+    3px calc(100% + 20px), calc(100% + 20px) 3px;
+  background-position: 0 0, 0 0, 100%0, 0 100%;
+  background-repeat: no-repeat;
+  animation: borderAnimation 1s infinite linear;
+}
+.focus-dotted_rect_style-dark {
+  background-image: repeating-linear-gradient(
+      0deg,
+      #e8eaed,
+      #e8eaed 10px,
+      transparent 10px,
+      transparent 20px,
+      #e8eaed 20px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      #e8eaed,
+      #e8eaed 10px,
+      transparent 10px,
+      transparent 20px,
+      #e8eaed 20px
+    ),
+    repeating-linear-gradient(
+      180deg,
+      #e8eaed,
+      #e8eaed 10px,
+      transparent 10px,
+      transparent 20px,
+      #e8eaed 20px
+    ),
+    repeating-linear-gradient(
+      270deg,
+      #e8eaed,
+      #e8eaed 10px,
+      transparent 10px,
+      transparent 20px,
+      #e8eaed 20px
+    );
+}
+.focus-rgb_style {
+  background-color: #f8f9fa;
+}
+.focus-rgb_style-dark {
+  background-color: #303134;
+}
+.focus-rgb_style-dark:after,
+.focus-rgb_style-dark:before,
+.focus-rgb_style:after,
+.focus-rgb_style:before {
+  content: "";
+  position: absolute;
+  left: -2px;
+  top: -2px;
+  background: linear-gradient(
+    45deg,
+    #fb0094,
+    #00f,
+    #0f0,
+    #ff0,
+    red,
+    #fb0094,
+    #00f,
+    #0f0,
+    #ff0,
+    red
+  );
+  background-size: 400%;
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  z-index: -1;
+  animation: steam 20s linear infinite;
+}
+.focus-rgb_style-dark:after,
+.focus-rgb_style:after {
+  filter: blur(10px);
+}
