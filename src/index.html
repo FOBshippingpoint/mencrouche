@@ -13,7 +13,52 @@
   </head>
   <body>
     <nav>
-      <label for="themeToggle" id="lightIcon"
+      <button id="refresh">refresh</button>
+      <label for="ghostToggle" id="ghostIcon" hidden="">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-box-select"
+        >
+          <path d="M5 3a2 2 0 0 0-2 2" />
+          <path d="M19 3a2 2 0 0 1 2 2" />
+          <path d="M21 19a2 2 0 0 1-2 2" />
+          <path d="M5 21a2 2 0 0 1-2-2" />
+          <path d="M9 3h1" />
+          <path d="M9 21h1" />
+          <path d="M14 3h1" />
+          <path d="M14 21h1" />
+          <path d="M3 9v1" />
+          <path d="M21 9v1" />
+          <path d="M3 14v1" />
+          <path d="M21 14v1" />
+        </svg>
+      </label>
+      <label for="ghostToggle" id="solidIcon" hidden="">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-square"
+        >
+          <rect width="18" height="18" x="3" y="3" rx="2" />
+        </svg>
+      </label>
+      <input id="ghostToggle" hidden="" type="checkbox" />
+      <label for="themeToggle" id="lightIcon" hidden=""
         ><svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -28,7 +73,7 @@
         >
           <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg
       ></label>
-      <label for="themeToggle" id="darkIcon"
+      <label for="themeToggle" id="darkIcon" hidden=""
         ><svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -74,66 +119,116 @@
             xmlns="http://www.w3.org/2000/svg"
             width="24"
             height="24"
-            viewBox="0 0 24 24"
+            viewbox="0 0 24 24"
             fill="none"
-            stroke="currentColor"
+            stroke="currentcolor"
             stroke-width="2"
             stroke-linecap="round"
             stroke-linejoin="round"
             class="searchIcon"
           >
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.3-4.3" />
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.3-4.3"></path>
           </svg>
-          <input type="text" id="searchInput" placeholder="Search..." />
+          <input
+            type="text"
+            id="searchInput"
+            data-i18n="command_palette_search_placeholder"
+            data-i18n-for-attr="placeholder"
+          />
         </div>
         <ul id="resultsList"></ul>
       </div>
-      <section id="preference" style="display:none">
+      <section id="settings" style="display: none">
+        <section id="langPref">
+          <header>
+            <h2 data-i18n="settings_language_section">Language</h2>
+          </header>
+          <select id="langDropdown"></select>
+        </section>
         <section id="backgroundPref">
           <header>
             <h2>Background</h2>
           </header>
-          <div class="dropzone">
-            <p>
-              Drag & drop an image here, paste from clipboard, or click to
-              select a file
-            </p>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="64"
-              height="64"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-image-up"
-            >
-              <path
-                d="M10.3 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10l-3.1-3.1a2 2 0 0 0-2.814.014L6 21"
+          <div class="formGroup">
+            <div class="dropzone">
+              <p data-i18n="dnd_image_instruction">
+                Drag & drop an image here, paste from clipboard, or click to
+                select a file
+              </p>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="64"
+                height="64"
+                viewbox="0 0 24 24"
+                fill="none"
+                stroke="currentcolor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-image-up"
+              >
+                <path
+                  d="M10.3 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10l-3.1-3.1a2 2 0 0 0-2.814.014L6 21"
+                ></path>
+                <path d="m14 19.5 3-3 3 3"></path>
+                <path d="M17 22v-5.5"></path>
+                <circle cx="9" cy="9" r="2"></circle>
+              </svg>
+              <input type="file" class="fileInput" accept="image/*" hidden="" />
+            </div>
+            <img src="" alt="" />
+            <!-- <div class="backgroundPresetContainer"> -->
+            <!--   <button style="background-image: var(--gradient-23)"></button> -->
+            <!--   <button style="background-image: var(--gradient-1)"></button> -->
+            <!--   <button style="background-image: var(--gradient-2)"></button> -->
+            <!-- </div> -->
+            <div>
+              <label for="backgroundImageUrlInput">Background image link</label>
+              <input
+                id="backgroundImageUrlInput"
+                data-i18n-for-attr="placeholder"
+                data-i18n="background_image_url_input_placeholder"
+                type="url"
               />
-              <path d="m14 19.5 3-3 3 3" />
-              <path d="M17 22v-5.5" />
-              <circle cx="9" cy="9" r="2" />
-            </svg>
-            <input type="file" class="fileInput" accept="image/*" hidden="" />
+            </div>
+            <button
+              id="setToDefaultBtn"
+              class="btn"
+              data-i18n="set_to_default_btn"
+            >
+              Set to default
+            </button>
           </div>
-          <!-- <div class="backgroundPresetContainer"> -->
-          <!--   <button style="background-image: var(--gradient-23)"></button> -->
-          <!--   <button style="background-image: var(--gradient-1)"></button> -->
-          <!--   <button style="background-image: var(--gradient-2)"></button> -->
-          <!-- </div> -->
-          <button class="setToDefaultBtn">Set to default</button>
         </section>
         <section id="shortcutsPref">
           <header>
-            <h2>Shortcuts</h2>
+            <h2 data-i18n="settings_shortcuts_section">Shortcuts</h2>
           </header>
-          <span>test</span>
         </section>
-      </section>
+        <div class="confirmBtnGroup">
+          <button
+            id="saveSettingsBtn"
+            data-i18n="save_settings_btn"
+            class="btn"
+          >
+            Save
+          </button>
+          <button
+            id="saveAndCloseSettingsBtn"
+            data-i18n="save_and_close_settings_btn"
+            class="btn"
+          >
+            Save and close
+          </button>
+          <button
+            id="cancelSettingsBtn"
+            data-i18n="cancel_settings_btn"
+            class="btn"
+          >
+            Cancel
+          </button>
+        </div>
       </section>
     </main>
   </body>

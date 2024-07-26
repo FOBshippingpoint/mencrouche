@@ -1,133 +1,232 @@
+import { dataset } from "./dataset";
 import { createKikey } from "./kikey";
+import type { KeyBinding } from "./kikey/parseBinding";
+import { toggleSettingsPage } from "./settings";
 import { $ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
-
-const commandPalette = $<HTMLDivElement>("#commandPalette")!;
-const searchInput = $<HTMLInputElement>("#searchInput")!;
-const resultsList = $<HTMLUListElement>("#resultsList")!;
 
 interface Command {
   key: string;
   name: string;
-  shortcut: string;
-  execute: Function;
+  keySequence: KeyBinding[];
+  execute: () => void;
 }
 
+type CommandKey = string;
+
 const commandMap: Record<string, Command> = {
-  setBackgroundImage: {
-    key: "setBackgroundImage",
-    name: "set_background_image",
-    shortcut: "Ctrl+O",
+  toggleSettings: {
+    key: "toggleSettings",
+    name: "toggle_settings",
+    keySequence: [
+      {
+        ctrlKey: true,
+        key: ",",
+      },
+    ],
     execute() {
-      console.log("set background");
+      toggleSettingsPage();
     },
   },
   toggleDarkMode: {
     key: "toggleDarkMode",
     name: "toggle_dark_mode",
+    keySequence: [
+      {
+        ctrlKey: true,
+        shiftKey: true,
+        key: "l",
+      },
+    ],
     execute() {
-
-    }
+      dataset.derivedSetItem("theme", (theme) =>
+        theme === "light" ? "dark" : "light",
+      );
+    },
   },
-} as const;
+  openYouTube: {
+    key: "openYouTube",
+    name: "open_youtube",
+    keySequence: [
+      {
+        ctrlKey: true,
+        key: "o",
+      },
+    ],
+    execute() {
+      window.open("https://youtube.com", "_blank")!.focus();
+    },
+  },
+  saveDocument: {
+    key: "saveDocument",
+    name: "save_document",
+    keySequence: [
+      {
+        ctrlKey: true,
+        altKey: true,
+        key: "d",
+      },
+    ],
+    execute() {
+      localStorage.setItem("body", document.body.innerHTML);
+    },
+  },
+  toggleTransparentWindow: {
+    key: "toggleTransparentWindow",
+    name: "toggle_transparent_window",
+    keySequence: [
+      {
+        altKey: true,
+        key: "g",
+      },
+    ],
+    execute() {
+      dataset.derivedSetItem<boolean>(
+        "isGhostMode",
+        (isGhostMode) => !isGhostMode,
+      );
+    },
+  },
+};
 
-type CommandKey = keyof typeof commandMap;
-let keyboardSelectedCommandKey: CommandKey | null;
+export function initCommandPalette() {
+  const commandPalette = $<HTMLDivElement>("#commandPalette")!;
+  const searchInput = $<HTMLInputElement>("#searchInput")!;
+  const resultsList = $<HTMLUListElement>("#resultsList")!;
 
-function openCommandPalette() {
-  updateResults();
-  commandPalette.hidden = false;
-  searchInput.focus();
-}
+  let keyboardSelectedCommandKey: CommandKey | null = null;
 
-function closeCommandPalette() {
-  searchInput.value = "";
-  commandPalette.hidden = true;
-}
+  const kikey = createKikey();
+  const searchKikey = createKikey(searchInput);
 
-function updateResults() {
-  // clear current selectedCommandKey
-  keyboardSelectedCommandKey = null;
-  resultsList.innerHTML = "";
-
-  const query = searchInput.value.toLowerCase();
-  let commands = Object.values(commandMap);
-  if (query !== "") {
-    // Filter command by query.
-    commands = commands.filter(({ name }) =>
-      name.toLowerCase().includes(query),
-    );
+  function openCommandPalette() {
+    updateResults();
+    commandPalette.hidden = false;
+    searchInput.focus();
   }
-  commands.forEach((command) => {
-    const li = document.createElement("li");
-    li.dataset.commandKey = command.key;
-    li.innerHTML = `
-      <span class="commandText">${n81i.t(command.name)}</span>
-      <kbd>${command.shortcut}</kbd>
-    `;
-    resultsList.append(li);
-    li.on("click", () => {
-      executeCommand(command.key);
-      closeCommandPalette();
+
+  function closeCommandPalette() {
+    searchInput.value = "";
+    commandPalette.hidden = true;
+  }
+
+  function toggleCommandPalette() {
+    commandPalette.hidden ? openCommandPalette() : closeCommandPalette();
+  }
+
+  function updateResults() {
+    keyboardSelectedCommandKey = null;
+    resultsList.innerHTML = "";
+
+    const query = searchInput.value.toLowerCase();
+    let commands = Object.values(commandMap);
+    if (query !== "") {
+      commands = commands.filter(({ name }) =>
+        name.toLowerCase().includes(query),
+      );
+    }
+    commands.forEach((command, i) => {
+      const li = document.createElement("li");
+      li.dataset.commandKey = command.key;
+      li.innerHTML = `
+        <span class="commandText">${n81i.t(command.name)}</span>
+        <kbd>${keySequenceToString(command.keySequence)}</kbd>
+      `;
+      // Select first command by default.
+      if (i === 0) {
+        li.setAttribute("aria-selected", "true");
+        keyboardSelectedCommandKey = command.key;
+      }
+      resultsList.append(li);
+      li.addEventListener("click", () => {
+        closeCommandPalette();
+        executeCommand(command.key);
+      });
     });
+  }
+
+  function selectCommand(direction: "up" | "down") {
+    const items = [...resultsList.children];
+    let idx = items.findIndex(
+      (item) => item.dataset.commandKey === keyboardSelectedCommandKey,
+    );
+    if (idx !== -1) {
+      items[idx].setAttribute("aria-selected", "false");
+    }
+
+    if (direction === "down") {
+      idx = (idx + 1) % items.length;
+    } else {
+      idx = (idx - 1 + items.length) % items.length;
+    }
+
+    const selectedItem = items[idx];
+    selectedItem?.setAttribute("aria-selected", "true");
+    keyboardSelectedCommandKey = selectedItem?.dataset.commandKey!;
+  }
+
+  function executeCommand(commandKey: CommandKey) {
+    commandMap[commandKey].execute();
+  }
+
+  function executeKeyboardSelectedCommand() {
+    if (keyboardSelectedCommandKey) {
+      executeCommand(keyboardSelectedCommandKey);
+    }
+  }
+
+  // Initialize key bindings
+  for (const command of Object.values(commandMap)) {
+    kikey.on(command.keySequence, command.execute);
+  }
+
+  kikey.on("C-.", toggleCommandPalette);
+  searchKikey.on("escape", closeCommandPalette);
+
+  searchKikey.on("arrowup", (e) => {
+    e.preventDefault();
+    selectCommand("up");
   });
+
+  searchKikey.on("arrowdown", (e) => {
+    e.preventDefault();
+    selectCommand("down");
+  });
+
+  searchKikey.on("enter", () => {
+    closeCommandPalette();
+    executeKeyboardSelectedCommand();
+  });
+
+  // Initialize event listeners
+  searchInput.addEventListener("input", updateResults);
 }
 
-function selectCommand(direction: "up" | "down") {
-  const items = [...resultsList.children];
-  let idx = items.findIndex(
-    (item) => item.dataset.commandKey === keyboardSelectedCommandKey,
-  );
-  console.log("current selected index: ", idx, items[idx]);
+function keyBindingToString(binding: KeyBinding, isMac = false): string {
+  const modifiers = [
+    { key: "ctrlKey", default: "Ctrl", mac: "⌘" },
+    { key: "shiftKey", default: "Shift", mac: "⇧" },
+    { key: "altKey", default: "Alt", mac: "⌥" },
+    { key: "metaKey", default: "Meta", mac: "⌃" },
+  ];
 
-  // Set the current item to not selected
-  if (idx !== -1) {
-    items[idx].setAttribute("aria-selected", "false");
-  }
+  const parts = modifiers
+    .filter((mod) => binding[mod.key as keyof KeyBinding])
+    .map((mod) => (isMac ? mod.mac : mod.default));
 
-  // Calculate the new index based on direction
-  if (direction === "down") {
-    idx = (idx + 1) % items.length;
-  } else {
-    console.log("up -1");
-    idx = (idx - 1 + items.length) % items.length;
-  }
+  let key = binding.key;
+  const arrowKeys: { [key: string]: string } = {
+    arrowup: "↑",
+    arrowdown: "↓",
+    arrowleft: "←",
+    arrowright: "→",
+  };
+  key = arrowKeys[key.toLowerCase()] ?? key;
 
-  // Set the new item to selected
-  const selectedItem = items[idx];
-  selectedItem?.setAttribute("aria-selected", "true");
+  parts.push(key.length === 1 ? key.toUpperCase() : key);
 
-  // Update the selectedCommandKey
-  keyboardSelectedCommandKey = selectedItem?.dataset.commandKey!;
+  return parts.join("+");
 }
-
-function executeCommand(commandKey: CommandKey) {
-  commandMap[commandKey].execute();
+function keySequenceToString(sequence: KeyBinding[]) {
+  return sequence.map((b) => keyBindingToString(b)).join(", ");
 }
-function executeKeyboardSelectedCommand() {
-  if (keyboardSelectedCommandKey) {
-    executeCommand(keyboardSelectedCommandKey);
-  }
-}
-
-const kikey = createKikey();
-// TODO: f1 is default help shortcut in chrome.
-kikey.on("f1", () => {
-  openCommandPalette();
-  kikey.once("escape", closeCommandPalette);
-});
-const searchKikey = createKikey(searchInput);
-searchKikey.on("arrowup", (e) => {
-  e.preventDefault();
-  selectCommand("up");
-});
-searchKikey.on("arrowdown", (e) => {
-  e.preventDefault();
-  selectCommand("down");
-});
-searchKikey.on("enter", () => {
-  executeKeyboardSelectedCommand();
-  closeCommandPalette();
-});
-
-searchInput.addEventListener("input", updateResults);

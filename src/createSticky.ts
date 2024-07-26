@@ -1,15 +1,171 @@
-import { $, $$$ } from "./utils/dollars";
+import { $, $$$, type Penny } from "./utils/dollars";
 
 let highestZIndex = 0;
 
-let mouseX = 0;
-let mouseY = 0;
+let pointerX = 0;
+let pointerY = 0;
+let stickyContainer: Penny<HTMLDivElement>;
 
-const stickyContainer = $(".stickyContainer")!;
-stickyContainer.addEventListener("pointermove", (e) => {
-  mouseX = e.clientX - stickyContainer!.getBoundingClientRect().left;
-  mouseY = e.clientY - stickyContainer!.getBoundingClientRect().top;
-});
+export function initStickyContainer() {
+  stickyContainer = $<HTMLDivElement>(".stickyContainer")!;
+  stickyContainer.addEventListener("pointermove", (e) => {
+    pointerX = e.clientX - stickyContainer!.getBoundingClientRect().left;
+    pointerY = e.clientY - stickyContainer!.getBoundingClientRect().top;
+  });
+}
+
+export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
+  const stickyHeader = sticky.$(".stickyHeader")!;
+
+  // Drag-and-drop variables
+  let isDragging = false;
+  let dragCurrentX: number;
+  let dragCurrentY: number;
+  let dragInitialX: number;
+  let dragInitialY: number;
+  let dragX = Number.parseInt(sticky.style.left, 10) || pointerX;
+  let dragY = Number.parseInt(sticky.style.top, 10) || pointerY;
+
+  stickyHeader.addEventListener("pointerdown", dragStart);
+
+  // Resize variables
+  const resizeHandles = sticky.$$<HTMLDivElement>(".resizeHandle");
+  let isResizing = false;
+  let resizeHandle: HTMLDivElement | null = null;
+  let resizeStartX: number;
+  let resizeStartY: number;
+  let resizeStartWidth: number;
+  let resizeStartHeight: number;
+  let resizeStartLeft: number;
+  let resizeStartTop: number;
+
+  resizeHandles.forEach((handle) => {
+    handle.addEventListener("pointerdown", initResize);
+  });
+
+  function dragStart(e: PointerEvent) {
+    dragInitialX = e.clientX - Number.parseInt(sticky.style.left, 10);
+    dragInitialY = e.clientY - Number.parseInt(sticky.style.top, 10);
+
+    if (e.target === stickyHeader) {
+      isDragging = true;
+      moveToTop(sticky);
+    }
+
+    document.addEventListener("pointermove", drag);
+    document.addEventListener("pointerup", dragEnd);
+  }
+
+  function drag(e: PointerEvent) {
+    if (isDragging && !isResizing) {
+      e.preventDefault();
+      dragCurrentX = e.clientX - dragInitialX;
+      dragCurrentY = e.clientY - dragInitialY;
+
+      // Extended boundaries
+      const maxX = stickyContainer.offsetWidth - 20;
+      const maxY = stickyContainer.offsetHeight - 20;
+      const minX = -sticky.offsetWidth + 20;
+      const minY = 0;
+
+      dragX = Math.min(Math.max(dragCurrentX, minX), maxX);
+      dragY = Math.min(Math.max(dragCurrentY, minY), maxY);
+
+      sticky.style.left = `${dragX}px`;
+      sticky.style.top = `${dragY}px`;
+    }
+  }
+
+  function dragEnd() {
+    dragInitialX = sticky.offsetLeft;
+    dragInitialY = sticky.offsetTop;
+    isDragging = false;
+
+    document.removeEventListener("pointermove", drag);
+    document.removeEventListener("pointerup", dragEnd);
+  }
+
+  function initResize(e: PointerEvent) {
+    isResizing = true;
+    resizeHandle = e.target as HTMLDivElement;
+    resizeStartX = e.clientX;
+    resizeStartY = e.clientY;
+    resizeStartWidth = Number.parseInt(getComputedStyle(sticky).width, 10);
+    resizeStartHeight = Number.parseInt(getComputedStyle(sticky).height, 10);
+    resizeStartLeft = sticky.offsetLeft;
+    resizeStartTop = sticky.offsetTop;
+    document.addEventListener("pointermove", resize);
+    document.addEventListener("pointerup", stopResize);
+    e.preventDefault();
+  }
+
+  function resize(e: PointerEvent) {
+    if (!isResizing) return;
+    const resizeDeltaX = e.clientX - resizeStartX;
+    const resizeDeltaY = e.clientY - resizeStartY;
+
+    if (
+      resizeHandle!.classList.contains("right") ||
+      resizeHandle!.classList.contains("bottomRight") ||
+      resizeHandle!.classList.contains("topRight")
+    ) {
+      sticky.style.width = `${resizeStartWidth + resizeDeltaX}px`;
+    }
+    if (
+      resizeHandle!.classList.contains("bottom") ||
+      resizeHandle!.classList.contains("bottomRight") ||
+      resizeHandle!.classList.contains("bottomLeft")
+    ) {
+      sticky.style.height = `${resizeStartHeight + resizeDeltaY}px`;
+    }
+    if (
+      resizeHandle!.classList.contains("left") ||
+      resizeHandle!.classList.contains("topLeft") ||
+      resizeHandle!.classList.contains("bottomLeft")
+    ) {
+      if (
+        Number.parseInt(getComputedStyle(sticky).minWidth, 10) <
+        resizeStartWidth - resizeDeltaX
+      ) {
+        sticky.style.width = `${resizeStartWidth - resizeDeltaX}px`;
+        sticky.style.left = `${resizeStartLeft + resizeDeltaX}px`;
+      }
+    }
+    if (
+      resizeHandle!.classList.contains("top") ||
+      resizeHandle!.classList.contains("topLeft") ||
+      resizeHandle!.classList.contains("topRight")
+    ) {
+      if (
+        Number.parseInt(getComputedStyle(sticky).minHeight, 10) <
+        resizeStartHeight - resizeDeltaY
+      ) {
+        sticky.style.height = `${resizeStartHeight - resizeDeltaY}px`;
+        sticky.style.top = `${resizeStartTop + resizeDeltaY}px`;
+      }
+    }
+  }
+
+  function stopResize() {
+    isResizing = false;
+    document.removeEventListener("pointermove", resize);
+    document.removeEventListener("pointerup", stopResize);
+  }
+
+  moveToTop(sticky);
+
+  function close() {
+    sticky.addEventListener("animationend", () => sticky.remove());
+    sticky.classList.add("close");
+  }
+
+  const closeBtn = sticky.$(".closeBtn");
+  if (closeBtn) {
+    closeBtn.addEventListener("click", close);
+  }
+
+  return sticky;
+}
 
 export function createSticky() {
   const sticky = $$$("div");
@@ -33,147 +189,10 @@ export function createSticky() {
   <div class="resizeHandle bottomLeft"></div>
   <div class="resizeHandle bottomRight"></div>
   `;
-  const stickyHeader = sticky.$(".stickyHeader")!;
-  sticky.style.left = `${mouseX - 10}px`;
-  sticky.style.top = `${mouseY - 10}px`;
+  sticky.style.left = `${Math.max(pointerX - 10, 0)}px`;
+  sticky.style.top = `${Math.max(pointerY - 10, 0)}px`;
 
-  let isDragging = false;
-  let currentX: number;
-  let currentY: number;
-  let initialX: number;
-  let initialY: number;
-  let x = mouseX;
-  let y = mouseY;
-
-  // TODO: may be further simplify by dollars.on and off
-  stickyHeader.addEventListener("pointerdown", dragStart);
-
-  const resizeHandles = sticky.$$<HTMLDivElement>(".resizeHandle");
-  let isResizing = false;
-  let handle: HTMLDivElement | null = null;
-  let startX: number,
-    startY: number,
-    startWidth: number,
-    startHeight: number,
-    startLeft: number,
-    startTop: number;
-
-  resizeHandles.forEach((handle) => {
-    handle.addEventListener("mousedown", initResize);
-  });
-
-  function dragStart(e: PointerEvent) {
-    initialX = e.clientX - parseInt(sticky.style.left, 10);
-    initialY = e.clientY - parseInt(sticky.style.top, 10);
-
-    if (e.target === stickyHeader) {
-      isDragging = true;
-      moveToTop(sticky);
-    }
-
-    document.addEventListener("pointermove", drag);
-    document.addEventListener("pointerup", dragEnd);
-  }
-
-  function drag(e: PointerEvent) {
-    if (isDragging && !isResizing) {
-      e.preventDefault();
-      currentX = e.clientX - initialX;
-      currentY = e.clientY - initialY;
-
-      // Extended boundaries
-      const maxX = stickyContainer.offsetWidth - 20; // TODO: Use constant.
-      const maxY = stickyContainer.offsetHeight - 20;
-      const minX = -sticky.offsetWidth + 20;
-      const minY = 0;
-
-      x = Math.min(Math.max(currentX, minX), maxX);
-      y = Math.min(Math.max(currentY, minY), maxY);
-
-      sticky.style.left = `${x}px`;
-      sticky.style.top = `${y}px`;
-    }
-  }
-
-  function dragEnd() {
-    initialX = sticky.offsetLeft;
-    initialY = sticky.offsetTop;
-    isDragging = false;
-
-    document.removeEventListener("pointermove", drag);
-    document.removeEventListener("pointerup", dragEnd);
-  }
-
-  function initResize(e: PointerEvent) {
-    isResizing = true;
-    handle = e.target;
-    startX = e.clientX;
-    startY = e.clientY;
-    startWidth = parseInt(getComputedStyle(sticky).width, 10);
-    startHeight = parseInt(getComputedStyle(sticky).height, 10);
-    startLeft = sticky.offsetLeft;
-    startTop = sticky.offsetTop;
-    document.addEventListener("mousemove", resize);
-    document.addEventListener("mouseup", stopResize);
-    e.preventDefault();
-  }
-
-  function resize(e: PointerEvent) {
-    if (!isResizing) return;
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-
-    if (
-      handle.classList.contains("right") ||
-      handle.classList.contains("bottomRight") ||
-      handle.classList.contains("topRight")
-    ) {
-      sticky.style.width = `${startWidth + dx}px`;
-    }
-    if (
-      handle.classList.contains("bottom") ||
-      handle.classList.contains("bottomRight") ||
-      handle.classList.contains("bottomLeft")
-    ) {
-      sticky.style.height = `${startHeight + dy}px`;
-    }
-    if (
-      handle.classList.contains("left") ||
-      handle.classList.contains("topLeft") ||
-      handle.classList.contains("bottomLeft")
-    ) {
-      if (parseInt(getComputedStyle(sticky).minWidth, 10) < startWidth - dx) {
-        sticky.style.width = `${startWidth - dx}px`;
-        sticky.style.left = `${startLeft + dx}px`;
-      }
-    }
-    if (
-      handle.classList.contains("top") ||
-      handle.classList.contains("topLeft") ||
-      handle.classList.contains("topRight")
-    ) {
-      if (parseInt(getComputedStyle(sticky).minHeight, 10) < startHeight - dy) {
-        sticky.style.height = `${startHeight - dy}px`;
-        sticky.style.top = `${startTop + dy}px`;
-      }
-    }
-  }
-
-  function stopResize() {
-    isResizing = false;
-    document.removeEventListener("mousemove", resize);
-    document.removeEventListener("mouseup", stopResize);
-  }
-
-  moveToTop(sticky);
-
-  function close() {
-    sticky.on("animationend", sticky.remove);
-    sticky.classList.add("close");
-  }
-  sticky.$(".closeBtn")!.on("click", close);
-
-  return Object.assign(sticky, { close });
+  return enableStickyFunctionality(sticky);
 }
 
 function moveToTop(el: HTMLElement) {
@@ -181,3 +200,5 @@ function moveToTop(el: HTMLElement) {
   el.style.zIndex = highestZIndex.toString();
   el.style.order = highestZIndex.toString();
 }
+
+initStickyContainer();

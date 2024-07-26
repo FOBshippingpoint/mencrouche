@@ -30,7 +30,10 @@ body {
 
 body {
   line-height: 1.5;
-  font-family: "IBM Plex Sans", sans-serif;
+  font-family: "IBM Plex Sans", "Punctuation SC", "Inter", ui-sans-serif,
+    system-ui, "PingFang SC", "Noto Sans CJK SC", "Noto Sans SC", "Heiti SC",
+    "Microsoft YaHei", "DengXian", sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   overflow-x: hidden;
   display: grid;
   grid-template-rows: var(--size-8) calc(100% - var(--size-8));
@@ -79,6 +82,12 @@ form label {
   gap: var(--size-1);
 }
 
+.sticky.ghost {
+  background-color: unset;
+  border: var(--border-size-1) solid transparent;
+  color: none;
+  box-shadow: none;
+}
 .sticky {
   position: absolute;
   background-color: var(--surface-3);
@@ -89,10 +98,6 @@ form label {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  /* min-width: var(--size-fluid-9); */
-  /* min-height: var(--size-fluid-9); */
-  /* max-width: var(--size-content-3); */
-  /* max-height: var(--size-content-3); */
   width: var(--size-fluid-9);
   height: var(--size-fluid-9);
   min-width: var(--size-fluid-6);
@@ -102,6 +107,9 @@ form label {
 .resizeHandle {
   position: absolute;
   background-color: transparent;
+}
+.ghost .resizeHandle {
+  pointer-events: none;
 }
 .resizeHandle.top {
   top: var(--size-px-00);
@@ -170,6 +178,10 @@ form label {
   cursor: grab;
   user-select: none;
 }
+.ghost .stickyHeader {
+  opacity: 0;
+  pointer-events: none;
+}
 
 /* TODO: inconsist naming */
 .controls {
@@ -193,16 +205,28 @@ form label {
   overflow: auto;
 }
 
-.stickyBody[contenteditable="true"] {
-  /* max-width: var(--size-fluid-9); */
-  /* max-height: var(--size-fluid-9); */
+.stickyBody:has(iframe) {
+  padding: 0;
 }
 
-/* Placeholder */
-.stickyBody[contenteditable="true"]:empty:before {
-  content: attr(placeholder);
-  pointer-events: none;
-  display: block;
+.stickyBody textarea {
+  border: none;
+  background-color: inherit;
+  color: inherit;
+  padding: 0;
+  border-radius: 0;
+  width: 100%;
+  height: calc(100% - 2px); /* idk why 100% cuz stickyBody overflow. */
+  overflow: auto;
+  box-shadow: none;
+  resize: none;
+}
+.ghost textarea::placeholder {
+  opacity: 0;
+}
+
+.stickyBody .preview {
+  height: 100%;
 }
 
 .stickyContainer {
@@ -238,13 +262,13 @@ main {
 /* @commandPalette start */
 #commandPalette {
   position: fixed;
-  top: var(--size-12);
+  top: 35%;
   left: 50%;
   transform: translateX(-50%);
-  width: 80%;
-  max-width: var(--size-content-3);
+  width: var(--size-content-3);
   background-color: var(--surface-1);
   border-radius: var(--radius-2);
+  border: var(--border-size-1) solid var(--surface-4);
   box-shadow: var(--shadow-3);
   padding: var(--size-3);
   z-index: 999999;
@@ -302,7 +326,7 @@ main {
 /* @uploadDialog end */
 
 /* @settings start */
-#preference {
+#settings {
   width: 60%;
   background-color: var(--surface-3);
   box-shadow: var(--shadow-2);
@@ -310,15 +334,22 @@ main {
   display: flex;
   flex-direction: column;
   gap: var(--size-7);
+  overflow: auto;
 }
-/* #preference section::after { */
+/* #settings section::after { */
 /*   content: ""; */
 /*   display: block; */
 /*   padding-top: var(--size-3); */
 /*   border-bottom: var(--border-size-1) solid var(--text-1); */
 /* } */
-#preference header {
+#settings header {
   padding-bottom: var(--size-3);
+}
+#langDropdown {
+  min-width: var(--size-fluid-8);
+}
+#backgroundPref img {
+  max-width: var(--size-content-2);
 }
 .backgroundPresetContainer {
   display: grid;
@@ -349,11 +380,20 @@ main {
 .dropzone[active] {
   background-color: var(--surface-2);
 }
-.setToDefaultBtn {
+.btn {
   border-radius: var(--radius-conditional-2);
   height: var(--size-7);
   padding-inline: var(--size-3);
-  margin-top: var(--size-3);
   border: var(--border-size-2) solid var(--surface-4);
+}
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--size-3);
+}
+.confirmBtnGroup {
+  display: flex;
+  gap: var(--size-3);
 }
 /* @settings end */

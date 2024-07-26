@@ -9,18 +9,18 @@
 /**
  * Represents an HTMLElement with added $ and $$ methods
  */
-type Penny<T extends HTMLElement> = T & {
-  $: typeof $;
-  $$: typeof $$;
+export type Penny<T extends HTMLElement> = T & {
+	$: typeof $;
+	$$: typeof $$;
 };
 
 /**
  * Represents an array of EnhancedHTMLElements with additional methods
  */
 interface PennyList<T extends HTMLElement = HTMLElement>
-  extends Array<Penny<T>> {
-  do: (func: (el: Penny<T>) => void) => void;
-  kill: () => void;
+	extends Array<Penny<T>> {
+	do: (func: (el: Penny<T>) => void) => void;
+	kill: () => void;
 }
 
 /**
@@ -28,16 +28,16 @@ interface PennyList<T extends HTMLElement = HTMLElement>
  * @param {HTMLElement} element
  */
 function wrap<T extends HTMLElement>(element: T): Penny<T> {
-  const penny = {
-    $: (selectors: string) => wrap(element.querySelector(selectors) as T),
-    $$: (selectors: string) =>
-      enhanceNodeList(
-        [...element.querySelectorAll(selectors)]
-          .filter((el): el is T => el instanceof HTMLElement)
-          .map(wrap),
-      ),
-  };
-  return Object.assign(element, penny);
+	const penny = {
+		$: (selectors: string) => wrap(element.querySelector(selectors) as T),
+		$$: (selectors: string) =>
+			enhanceNodeList(
+				[...element.querySelectorAll(selectors)]
+					.filter((el): el is T => el instanceof HTMLElement)
+					.map(wrap),
+			),
+	};
+	return Object.assign(element, penny);
 }
 
 /**
@@ -46,10 +46,10 @@ function wrap<T extends HTMLElement>(element: T): Penny<T> {
  * @returns {PennyList}
  */
 function enhanceNodeList<T extends HTMLElement>(arr: Penny<T>[]): PennyList<T> {
-  const enhancedArr = arr as PennyList<T>;
-  enhancedArr.do = (func: (el: Penny<T>) => void) => enhancedArr.forEach(func);
-  enhancedArr.kill = () => enhancedArr.forEach((el) => el.remove());
-  return enhancedArr;
+	const enhancedArr = arr as PennyList<T>;
+	enhancedArr.do = (func: (el: Penny<T>) => void) => enhancedArr.forEach(func);
+	enhancedArr.kill = () => enhancedArr.forEach((el) => el.remove());
+	return enhancedArr;
 }
 
 /**
@@ -59,13 +59,13 @@ function enhanceNodeList<T extends HTMLElement>(arr: Penny<T>[]): PennyList<T> {
  * @returns {Penny | null} The selected element or null if not found.
  */
 export function $<T extends HTMLElement = HTMLElement>(
-  selectors: string | T,
+	selectors: string | T,
 ): Penny<T> | null {
-  if (typeof selectors === "string") {
-    const element = document.querySelector<T>(selectors);
-    return element ? wrap(element) : null;
-  }
-  return wrap(selectors);
+	if (typeof selectors === "string") {
+		const element = document.querySelector<T>(selectors);
+		return element ? wrap(element) : null;
+	}
+	return wrap(selectors);
 }
 
 /**
@@ -75,13 +75,13 @@ export function $<T extends HTMLElement = HTMLElement>(
  * @returns {PennyList} An array of the selected elements with additional methods.
  */
 export function $$<T extends HTMLElement = HTMLElement>(
-  selectors: string,
+	selectors: string,
 ): PennyList<T> {
-  return enhanceNodeList(
-    [...document.querySelectorAll<T>(selectors)]
-      .filter((el): el is T => el instanceof HTMLElement)
-      .map(wrap),
-  );
+	return enhanceNodeList(
+		[...document.querySelectorAll<T>(selectors)]
+			.filter((el): el is T => el instanceof HTMLElement)
+			.map(wrap),
+	);
 }
 
 /**
@@ -94,18 +94,18 @@ export function $$<T extends HTMLElement = HTMLElement>(
  * @returns The created HTML element.
  */
 export function $$$<K extends keyof HTMLElementTagNameMap>(
-  tagName: K,
-  options?: ElementCreationOptions,
+	tagName: K,
+	options?: ElementCreationOptions,
 ): Penny<HTMLElementTagNameMap[K]> {
-  return wrap(document.createElement(tagName, options));
+	return wrap(document.createElement(tagName, options));
 }
 
 // Add type declarations for the prototype additions
 declare global {
-  interface EventTarget {
-    on: typeof EventTarget.prototype.addEventListener;
-    off: typeof EventTarget.prototype.removeEventListener;
-  }
+	interface EventTarget {
+		on: typeof EventTarget.prototype.addEventListener;
+		off: typeof EventTarget.prototype.removeEventListener;
+	}
 }
 
 EventTarget.prototype.on = EventTarget.prototype.addEventListener;

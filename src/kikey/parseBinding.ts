@@ -40,14 +40,14 @@ export function parseBinding(binding: string): KeyBinding {
 }
 
 /**
- * The key binding.
+ * The key binding represents in object.
  *
  * For example, `Ctrl + S` or `Alt + Shift + K`.
  */
 export interface KeyBinding {
-	ctrlKey: boolean;
-	shiftKey: boolean;
-	altKey: boolean;
-	metaKey: boolean;
+	ctrlKey?: boolean;
+	shiftKey?: boolean;
+	altKey?: boolean;
+	metaKey?: boolean;
 	key: string;
 }

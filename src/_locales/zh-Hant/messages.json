@@ -1,66 +1,54 @@
 {
 	"set_background_image": {
-		"message": "Set background image",
+		"message": "設定背景圖片",
 		"description": "Command description for set background image."
 	},
 	"toggle_dark_mode": {
-		"message": "Toggle dark mode",
+		"message": "切換深色/淺色模式",
 		"description": "Command description for toggle dark mode."
 	},
 	"open_youtube": {
-		"message": "Open YouTube",
+		"message": "開啟YouTube",
 		"description": "Command description for open YouTube."
 	},
 	"command_palette_search_placeholder": {
-		"message": "Search commands...",
+		"message": "搜尋指令...",
 		"description": "Placeholder of the command palette search bar."
 	},
 	"dnd_image_instruction": {
-		"message": "Drag & drop an image here, or click to select a file",
+		"message": "拖曳圖片或點擊來上傳檔案",
 		"description": "Drag and drop instruction for setting background image."
 	},
 	"set_to_default_btn": {
-		"message": "Set to default",
+		"message": "重設背景圖片",
 		"description": "Button for set background image to default."
 	},
 	"settings_shortcuts_section": {
-		"message": "Shortcuts",
+		"message": "快捷鍵",
 		"description": "Shortcuts section of the settings."
 	},
 	"sticky_textarea_start_typing_placeholder": {
-		"message": "Start typing...",
+		"message": "開始輸入...",
 		"description": "The textarea placholder for sticky note."
 	},
 	"save_document": {
-		"message": "Save document",
+		"message": "儲存文件",
 		"description": "Command description for saving documents."
 	},
 	"background_image_url_input_placeholder": {
-		"message": "Paste image file/link here",
+		"message": "貼上圖片/圖片連結",
 		"description": "Command description for saving documents."
 	},
 	"image_url_is_not_valid_alert": {
-		"message": "Image link is not valid. Please try another link.",
+		"message": "不支援此圖片連結",
 		"description": "Alert message for pasted image url not valid."
 	},
 	"toggle_settings": {
-		"message": "Toggle settings page",
+		"message": "開啟/關閉設定",
 		"description": "Command description for toggling settings page."
 	},
 	"settings_language_section": {
-		"message": "Language",
+		"message": "語言",
 		"description": "Language section of the settings."
-	},
-	"save_settings_btn": {
-		"message": "Save",
-		"description": "Save settings button."
-	},
-	"save_and_close_settings_btn": {
-		"message": "Save & close",
-		"description": "Save & close settings button."
-	},
-	"cancel_settings_btn": {
-		"message": "Cancel",
-		"description": "Canecel settings button."
 	}
 }

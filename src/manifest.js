@@ -6,9 +6,9 @@ export function getManifestString(version = 2) {
 		author: "FOBshippingpoint",
 		description: "__MSG_extension_description__",
 		homepage_url: "https://github.com/FOBshippingpoint/goocoucou-webext",
-    chrome_url_overrides: {
-      newtab: "index.html"
-    },
+		chrome_url_overrides: {
+			newtab: "index.html",
+		},
 		icons: {
 			16: "assets/icon-16.png",
 			64: "assets/icon-64.png",

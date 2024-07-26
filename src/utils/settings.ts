@@ -1,6 +1,6 @@
-import platform from "./platform";
 import { defaultSettings } from "../settings/defaultSettings";
-import { Settings } from "../types/index";
+import type { Settings } from "../types/index";
+import platform from "./platform";
 
 export function loadSettings(callback: (settings: Settings) => any) {
 	platform.storage.local.get({ settings: defaultSettings }).then(

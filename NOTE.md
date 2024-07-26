@@ -8,3 +8,9 @@
 - bug: window resize cuz sticky out of sight
 - reference-based shortcuts
 - chrome-dino
+
+## BUGS
+
+- [ ] sticky out of bound when resizing window.
+- [ ] The blob image cannot restore from localstorage.
+- [ ] 
