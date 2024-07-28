@@ -1,85 +1,46 @@
 import { dataset } from "./dataset";
 import { createKikey } from "./kikey";
-import type { KeyBinding } from "./kikey/parseBinding";
-import { toggleSettingsPage } from "./settings";
+import { shortcutManager, toggleSettingsPage } from "./settings";
 import { $ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
 
 interface Command {
-  key: string;
   name: string;
-  keySequence: KeyBinding[];
   execute: () => void;
 }
 
-type CommandKey = string;
+type CommandName = string;
 
+// TODO: Maybe we can use simple key = name, value = execute structure.
 const commandMap: Record<string, Command> = {
-  toggleSettings: {
-    key: "toggleSettings",
+  toggle_settings: {
     name: "toggle_settings",
-    keySequence: [
-      {
-        ctrlKey: true,
-        key: ",",
-      },
-    ],
     execute() {
       toggleSettingsPage();
     },
   },
-  toggleDarkMode: {
-    key: "toggleDarkMode",
+  toggle_dark_mode: {
     name: "toggle_dark_mode",
-    keySequence: [
-      {
-        ctrlKey: true,
-        shiftKey: true,
-        key: "l",
-      },
-    ],
     execute() {
       dataset.derivedSetItem("theme", (theme) =>
         theme === "light" ? "dark" : "light",
       );
     },
   },
-  openYouTube: {
-    key: "openYouTube",
+  open_youtube: {
     name: "open_youtube",
-    keySequence: [
-      {
-        ctrlKey: true,
-        key: "o",
-      },
-    ],
     execute() {
       window.open("https://youtube.com", "_blank")!.focus();
     },
   },
-  saveDocument: {
-    key: "saveDocument",
+  save_document: {
     name: "save_document",
-    keySequence: [
-      {
-        ctrlKey: true,
-        altKey: true,
-        key: "d",
-      },
-    ],
     execute() {
       localStorage.setItem("body", document.body.innerHTML);
     },
   },
-  toggleTransparentWindow: {
-    key: "toggleTransparentWindow",
-    name: "toggle_transparent_window",
-    keySequence: [
-      {
-        altKey: true,
-        key: "g",
-      },
-    ],
+  toggle_ghost_mode: {
+    name: "toggle_ghost_mode",
     execute() {
       dataset.derivedSetItem<boolean>(
         "isGhostMode",
@@ -94,9 +55,8 @@ export function initCommandPalette() {
   const searchInput = $<HTMLInputElement>("#searchInput")!;
   const resultsList = $<HTMLUListElement>("#resultsList")!;
 
-  let keyboardSelectedCommandKey: CommandKey | null = null;
+  let keyboardSelectedCommandName: CommandName | null = null;
 
-  const kikey = createKikey();
   const searchKikey = createKikey(searchInput);
 
   function openCommandPalette() {
@@ -115,7 +75,7 @@ export function initCommandPalette() {
   }
 
   function updateResults() {
-    keyboardSelectedCommandKey = null;
+    keyboardSelectedCommandName = null;
     resultsList.innerHTML = "";
 
     const query = searchInput.value.toLowerCase();
@@ -127,20 +87,21 @@ export function initCommandPalette() {
     }
     commands.forEach((command, i) => {
       const li = document.createElement("li");
-      li.dataset.commandKey = command.key;
+      li.dataset.commandName = command.name;
+      console.log(shortcutManager.getKeySequence(command.name));
       li.innerHTML = `
         <span class="commandText">${n81i.t(command.name)}</span>
-        <kbd>${keySequenceToString(command.keySequence)}</kbd>
+        <kbd>${shortcutManager.getKeySequence(command.name)}</kbd>
       `;
       // Select first command by default.
       if (i === 0) {
         li.setAttribute("aria-selected", "true");
-        keyboardSelectedCommandKey = command.key;
+        keyboardSelectedCommandName = command.name;
       }
       resultsList.append(li);
       li.addEventListener("click", () => {
         closeCommandPalette();
-        executeCommand(command.key);
+        executeCommand(command.name);
       });
     });
   }
@@ -148,7 +109,7 @@ export function initCommandPalette() {
   function selectCommand(direction: "up" | "down") {
     const items = [...resultsList.children];
     let idx = items.findIndex(
-      (item) => item.dataset.commandKey === keyboardSelectedCommandKey,
+      (item) => item.dataset.commandName === keyboardSelectedCommandName,
     );
     if (idx !== -1) {
       items[idx].setAttribute("aria-selected", "false");
@@ -162,37 +123,36 @@ export function initCommandPalette() {
 
     const selectedItem = items[idx];
     selectedItem?.setAttribute("aria-selected", "true");
-    keyboardSelectedCommandKey = selectedItem?.dataset.commandKey!;
+    keyboardSelectedCommandName = selectedItem?.dataset.commandName!;
   }
 
-  function executeCommand(commandKey: CommandKey) {
-    commandMap[commandKey].execute();
+  function executeCommand(commandName: CommandName) {
+    commandMap[commandName].execute();
   }
 
   function executeKeyboardSelectedCommand() {
-    if (keyboardSelectedCommandKey) {
-      executeCommand(keyboardSelectedCommandKey);
+    if (keyboardSelectedCommandName) {
+      executeCommand(keyboardSelectedCommandName);
     }
   }
 
   // Initialize key bindings
   for (const command of Object.values(commandMap)) {
-    kikey.on(command.keySequence, command.execute);
+    shortcutManager.on(command.name, command.execute);
   }
 
-  kikey.on("C-.", toggleCommandPalette);
+  shortcutManager.on("toggle_command_palette", toggleCommandPalette);
+
   searchKikey.on("escape", closeCommandPalette);
 
   searchKikey.on("arrowup", (e) => {
     e.preventDefault();
     selectCommand("up");
   });
-
   searchKikey.on("arrowdown", (e) => {
     e.preventDefault();
     selectCommand("down");
   });
-
   searchKikey.on("enter", () => {
     closeCommandPalette();
     executeKeyboardSelectedCommand();
@@ -200,33 +160,4 @@ export function initCommandPalette() {
 
   // Initialize event listeners
   searchInput.addEventListener("input", updateResults);
-}
-
-function keyBindingToString(binding: KeyBinding, isMac = false): string {
-  const modifiers = [
-    { key: "ctrlKey", default: "Ctrl", mac: "⌘" },
-    { key: "shiftKey", default: "Shift", mac: "⇧" },
-    { key: "altKey", default: "Alt", mac: "⌥" },
-    { key: "metaKey", default: "Meta", mac: "⌃" },
-  ];
-
-  const parts = modifiers
-    .filter((mod) => binding[mod.key as keyof KeyBinding])
-    .map((mod) => (isMac ? mod.mac : mod.default));
-
-  let key = binding.key;
-  const arrowKeys: { [key: string]: string } = {
-    arrowup: "↑",
-    arrowdown: "↓",
-    arrowleft: "←",
-    arrowright: "→",
-  };
-  key = arrowKeys[key.toLowerCase()] ?? key;
-
-  parts.push(key.length === 1 ? key.toUpperCase() : key);
-
-  return parts.join("+");
-}
-function keySequenceToString(sequence: KeyBinding[]) {
-  return sequence.map((b) => keyBindingToString(b)).join(", ");
 }

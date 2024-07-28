@@ -1,6 +1,8 @@
-import { $, $$$, type Penny } from "./utils/dollars";
+import { $, $$, $$$, type Penny } from "./utils/dollars";
 
 let highestZIndex = 0;
+/** An array for tracking the sticky order, from lowest -> topest */
+const stickies: Penny<HTMLDivElement>[] = [];
 
 let pointerX = 0;
 let pointerY = 0;
@@ -26,6 +28,14 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
   let dragX = Number.parseInt(sticky.style.left, 10) || pointerX;
   let dragY = Number.parseInt(sticky.style.top, 10) || pointerY;
 
+  sticky.on("pointerdown", () => {
+    moveToTop(sticky);
+    const idx = stickies.indexOf(sticky);
+    if (idx !== -1) {
+      stickies.splice(idx, 1);
+      stickies.push(sticky);
+    }
+  });
   stickyHeader.addEventListener("pointerdown", dragStart);
 
   // Resize variables
@@ -49,7 +59,6 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
 
     if (e.target === stickyHeader) {
       isDragging = true;
-      moveToTop(sticky);
     }
 
     document.addEventListener("pointermove", drag);
@@ -153,10 +162,18 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
   }
 
   moveToTop(sticky);
+  stickies.push(sticky);
 
   function close() {
-    sticky.addEventListener("animationend", () => sticky.remove());
+    sticky.addEventListener("animationend", sticky.remove);
     sticky.classList.add("close");
+
+    // Select previous sticky.
+    const idx = stickies.indexOf(sticky);
+    if (idx !== -1) {
+      stickies.splice(idx, 1);
+    }
+    stickies.at(-1)?.focus();
   }
 
   const closeBtn = sticky.$(".closeBtn");

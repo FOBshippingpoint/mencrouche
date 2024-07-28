@@ -1,4 +1,3 @@
-// import platform from "./platform";
 import { $$ } from "./dollars";
 
 export function translate() {
@@ -38,7 +37,10 @@ export const n81i = (() => {
 
   async function loadLanguage(locale: string) {
     if (!localeAndMessagesJson.has(locale)) {
-      const response = await fetch(`/_locales/${locale}/messages.json`);
+      // Warning: Muse use ./ to write path. If not, it will use
+      // http://localhost:5173/_locales/en/messages.json instead of 
+      // http://localhost:5173/duatz/en/messages.json
+      const response = await fetch(`./_locales/${locale}/messages.json`);
       const json = await response.json();
       localeAndMessagesJson.set(locale, json);
     }
@@ -67,15 +69,12 @@ export const n81i = (() => {
     },
     async switchLocale(locale: string) {
       _locale = locale;
-      console.log("loadlang", locale);
       await loadLanguage(locale);
-      console.log(localeAndMessagesJson);
       for (const [key, value] of Object.entries(
         localeAndMessagesJson.get(locale)!,
       )) {
         messageMap.set(`${locale}@${key}`, (value as Message).message);
       }
-      console.log(messageMap);
     },
     t(key: string) {
       if (!isInitialized) {

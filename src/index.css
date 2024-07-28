@@ -202,6 +202,9 @@ form label {
 .stickyBody {
   flex: 1;
   padding: var(--size-2);
+}
+
+.stickyBody:has(.preview:not([hidden])) {
   overflow: auto;
 }
 
@@ -216,7 +219,7 @@ form label {
   padding: 0;
   border-radius: 0;
   width: 100%;
-  height: calc(100% - 2px); /* idk why 100% cuz stickyBody overflow. */
+  height: 100%;
   overflow: auto;
   box-shadow: none;
   resize: none;
@@ -392,8 +395,16 @@ main {
   align-items: flex-start;
   gap: var(--size-3);
 }
-.confirmBtnGroup {
-  display: flex;
-  gap: var(--size-3);
+#shortcutList {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: var(--size-3) var(--size-4);
+  justify-content: start;
+}
+#shortcutList label {
+  text-align: right;
+}
+#shortcutList input {
+  font-family: var(--font-mono);
 }
 /* @settings end */

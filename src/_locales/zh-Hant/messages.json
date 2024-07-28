@@ -47,8 +47,44 @@
 		"message": "開啟/關閉設定",
 		"description": "Command description for toggling settings page."
 	},
+	"toggle_ghost_mode": {
+		"message": "開啟/關閉透明模式",
+		"description": "Command description for toggling ghost mode."
+	},
+	"toggle_command_palette": {
+		"message": "開啟/關閉指令窗格",
+		"description": "Command description for toggling command palette."
+	},
+  "new_sticky": {
+    "message": "新增便利貼",
+    "description": "Command description for adding new sticky."
+  },
+  "close_sticky": {
+    "message": "移除便利貼",
+    "description": "Command description for closing sticky."
+  },
+  "toggle_sticky_edit_mode": {
+    "message": "切換目前便利貼的編輯/檢視模式",
+    "description": "Command description for toggling current sticky edit/view mode."
+  },
+  "toggle_auto_arrange": {
+    "message": "切換便利貼的自動排序/自由模式",
+    "description": "Command description for toggling the arrange mode for stickies."
+  },
 	"settings_language_section": {
 		"message": "語言",
 		"description": "Language section of the settings."
+	},
+	"save_settings_btn": {
+		"message": "儲存",
+		"description": "Save settings button."
+	},
+	"save_and_close_settings_btn": {
+		"message": "儲存並離開",
+		"description": "Save & close settings button."
+	},
+	"cancel_settings_btn": {
+		"message": "離開而不儲存",
+		"description": "Canecel settings button."
 	}
 }

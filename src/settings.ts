@@ -1,4 +1,6 @@
 import { dataset } from "./dataset";
+import { createKikey, Kikey } from "./kikey/kikey";
+import { KeyBinding, parseBinding } from "./kikey/parseBinding";
 import { $, $$, $$$ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
 
@@ -171,7 +173,7 @@ function initBackground() {
 function initLanguage() {
   const langDropdown = $<HTMLSelectElement>("#langDropdown")!;
   langDropdown.innerHTML = "";
-  n81i.getAllLocales().forEach((locale) => {
+  for (const locale of n81i.getAllLocales()) {
     const option = $$$("option");
     option.value = locale;
     option.textContent =
@@ -180,12 +182,13 @@ function initLanguage() {
       }).of(locale) ?? locale;
 
     langDropdown.append(option);
-  });
+  }
 
   langDropdown.on("change", async () => {
-    console.log(langDropdown.value);
-    await n81i.switchLocale(langDropdown.value);
-    n81i.translatePage();
+    changesManager.add(async () => {
+      await n81i.switchLocale(langDropdown.value);
+      n81i.translatePage();
+    });
   });
 }
 
@@ -194,6 +197,7 @@ export function initSettings() {
   initLanguage();
   initGhostMode();
   initTheme();
+  initShortcuts();
 }
 
 function queryPrefersColorScheme() {
@@ -205,35 +209,36 @@ function queryPrefersColorScheme() {
 
 function initTheme() {
   const theme = dataset.getOrSetItem("theme", queryPrefersColorScheme());
-  $("#lightIcon")!.hidden = theme !== "dark";
-  $("#darkIcon")!.hidden = theme === "dark";
+  const themeToggle = $<HTMLInputElement>("#themeToggle")!;
+  change(theme);
+
   // true = light
   // false = dark
-  $<HTMLInputElement>("#themeToggle")!.checked = theme === "light";
-  document.firstElementChild?.setAttribute("data-theme", theme as string);
-  dataset.on<"light" | "dark">("theme", (_, theme) => {
+  function change(theme: "light" | "dark" | undefined) {
     $("#lightIcon")!.hidden = theme !== "dark";
     $("#darkIcon")!.hidden = theme === "dark";
+    themeToggle.checked = theme === "light";
     document.firstElementChild?.setAttribute("data-theme", theme as string);
-  });
-  $<HTMLInputElement>("#themeToggle")!.addEventListener("change", (e) => {
+  }
+
+  dataset.on<"light" | "dark">("theme", (_, theme) => change(theme));
+  themeToggle.addEventListener("change", (e) => {
     const value = (e.target as any).checked ? "light" : "dark";
     dataset.setItem("theme", value);
   });
 }
 
 function initGhostMode() {
+  const isGhostMode = dataset.getOrSetItem("isGhostMode", false);
   const ghostIcon = $("#ghostIcon")!;
   const solidIcon = $("#solidIcon")!;
   const ghostToggle = $<HTMLInputElement>("#ghostToggle")!;
-
-  const isGhostMode = dataset.getOrSetItem("isGhostMode", false);
-  ghostToggle.checked = isGhostMode;
   change(isGhostMode);
 
   function change(isGhostMode: boolean | undefined) {
     ghostIcon.hidden = !isGhostMode;
     solidIcon.hidden = !!isGhostMode;
+    ghostToggle.checked = !!isGhostMode; // To sync.
     $$(".sticky").do((s) =>
       isGhostMode ? s.classList.add("ghost") : s.classList.remove("ghost"),
     );
@@ -243,4 +248,114 @@ function initGhostMode() {
   ghostToggle.on("change", () =>
     dataset.setItem("isGhostMode", ghostToggle.checked),
   );
+}
+
+export const shortcutManager = (() => {
+  const actions = {
+    toggle_command_palette: "C-.",
+    toggle_settings: "C-,",
+    toggle_dark_mode: "C-S-l",
+    open_youtube: "C-o",
+    toggle_ghost_mode: "A-g",
+    save_document: "C-A-d",
+    new_sticky: "C-q",
+    toggle_auto_arrange: "A-r",
+    toggle_sticky_edit_mode: "A-w",
+    close_sticky: "A-x",
+  } as const;
+  type ActionName = keyof typeof actions;
+  type KikeyInfo = {
+    kikey: Kikey;
+    callback: () => void;
+  };
+
+  const registry: Record<ActionName, KikeyInfo[]> = {} as any;
+
+  return {
+    on(
+      actionName: ActionName,
+      callback: () => void,
+      el?: Document | HTMLElement,
+    ) {
+      const kikey = createKikey(el);
+      kikey.on(actions[actionName], callback);
+
+      if (registry[actionName]) {
+        registry[actionName].push({ kikey, callback });
+      } else {
+        registry[actionName] = [{ kikey, callback }];
+      }
+    },
+    once(
+      actionName: ActionName,
+      callback: () => void,
+      el?: Document | HTMLElement | undefined,
+    ) {
+      const kikey = createKikey(el);
+      kikey.once(actions[actionName], callback);
+
+      if (registry[actionName]) {
+        registry[actionName].push({ kikey, callback });
+      } else {
+        registry[actionName] = [{ kikey, callback }];
+      }
+    },
+    update(actionName: ActionName, newSequence: string | KeyBinding[]) {
+      for (const { kikey, callback } of registry[actionName] ?? []) {
+        kikey.updateSequence(newSequence, callback);
+      }
+    },
+    getKeySequence(actionName: ActionName) {
+      return keySequenceToString(
+        actions[actionName].split(" ").map(parseBinding),
+      );
+    },
+    getAllActions() {
+      return Object.entries(actions).map(([key, value]) => ({
+        actionName: key,
+        keySequence: keySequenceToString(value.split(" ").map(parseBinding)),
+      }));
+    },
+  };
+})();
+
+function initShortcuts() {
+  const shortcutList = $("#shortcutList")!;
+  let html = "";
+  for (const { actionName, keySequence } of shortcutManager.getAllActions()) {
+    html += `
+    <label for="${actionName}" data-i18n="${actionName}">${n81i.t(actionName)}</label>
+    <input type="text" id="${actionName}" value="${keySequence}" />
+  `;
+  }
+  shortcutList.innerHTML = html;
+}
+
+function keyBindingToString(binding: KeyBinding, isMac = false): string {
+  const modifiers = [
+    { key: "ctrlKey", default: "Ctrl", mac: "⌘" },
+    { key: "shiftKey", default: "Shift", mac: "⇧" },
+    { key: "altKey", default: "Alt", mac: "⌥" },
+    { key: "metaKey", default: "Meta", mac: "⌃" },
+  ];
+
+  const parts = modifiers
+    .filter((mod) => binding[mod.key as keyof KeyBinding])
+    .map((mod) => (isMac ? mod.mac : mod.default));
+
+  let key = binding.key;
+  const arrowKeys: { [key: string]: string } = {
+    arrowup: "↑",
+    arrowdown: "↓",
+    arrowleft: "←",
+    arrowright: "→",
+  };
+  key = arrowKeys[key.toLowerCase()] ?? key;
+
+  parts.push(key.length === 1 ? key.toUpperCase() : key);
+
+  return parts.join(" + ");
+}
+function keySequenceToString(sequence: KeyBinding[]) {
+  return sequence.map((b) => keyBindingToString(b)).join(", ");
 }

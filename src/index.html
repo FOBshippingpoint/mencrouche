@@ -8,6 +8,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title></title>
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="index.css" />
     <script type="module" src="index.ts"></script>
   </head>
@@ -205,6 +207,38 @@
           <header>
             <h2 data-i18n="settings_shortcuts_section">Shortcuts</h2>
           </header>
+          <div id="shortcutList">
+            <label for="newFile" class="shortcutName">New File:</label>
+            <input
+              type="text"
+              id="newFile"
+              class="shortcutInput"
+              value="Ctrl + N"
+            />
+            <label for="save" class="shortcutName">Save:</label>
+            <input
+              type="text"
+              id="save"
+              class="shortcutInput"
+              value="Ctrl + S"
+            />
+            <label for="copy" class="shortcutName">Copy:</label>
+            <input
+              type="text"
+              id="copy"
+              class="shortcutInput"
+              value="Ctrl + C"
+            />
+            <label for="paste" class="shortcutName">Paste:</label>
+            <input
+              type="text"
+              id="paste"
+              class="shortcutInput"
+              value="Ctrl + V"
+            />
+            <label for="find" class="shortcutName">Find:</label>
+            <input type="text" id="find" class="shortcutInput" value="Ctrl + F" />
+          </div>
         </section>
         <div class="confirmBtnGroup">
           <button

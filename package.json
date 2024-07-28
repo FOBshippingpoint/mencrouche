@@ -5,12 +5,15 @@
   "scripts": {
     "dev": "zx scripts/dev.mjs",
     "start": "parcel watch src/manifest.json --host localhost --config @parcel/config-webextension --no-cache",
+    "dev-site": "vite",
     "build": "parcel build src/manifest.json --config @parcel/config-webextension",
-    "start:firefox": "web-ext run --source-dir dist/webext-dev  --target=firefox-desktop",
-    "start:chromium": "web-ext run --source-dir dist/webext-dev --target=chromium",
-    "lint:dev": "web-ext lint --source-dir dist/webext-dev",
-    "lint:build": "web-ext lint --source-dir dist/webext-prod",
-    "pack:zip": "web-ext build --overwrite-dest --source-dir dist/webext-prod"
+    "build-site": "vite build && zx -e '$`cp -r ./src/_locales/ ./dist/site/`'",
+    "preview": "vite preview",
+    "start-firefox": "web-ext run --source-dir dist/webext-dev  --target=firefox-desktop",
+    "start-chromium": "web-ext run --source-dir dist/webext-dev --target=chromium",
+    "lint-dev": "web-ext lint --source-dir dist/webext-dev",
+    "lint-build": "web-ext lint --source-dir dist/webext-prod",
+    "pack-zip": "web-ext build --overwrite-dest --source-dir dist/webext-prod"
   },
   "author": "FOBshippingpoint",
   "license": "MIT",
