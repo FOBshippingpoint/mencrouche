@@ -74,20 +74,14 @@ nav {
 form {
   display: flex;
   gap: var(--size-3);
+
+  label {
+    display: flex;
+    place-items: center;
+    gap: var(--size-1);
+  }
 }
 
-form label {
-  display: flex;
-  place-items: center;
-  gap: var(--size-1);
-}
-
-.sticky.ghost {
-  background-color: unset;
-  border: var(--border-size-1) solid transparent;
-  color: none;
-  box-shadow: none;
-}
 .sticky {
   position: absolute;
   background-color: var(--surface-3);
@@ -103,72 +97,80 @@ form label {
   min-width: var(--size-fluid-6);
   min-height: var(--size-fluid-6);
   border: var(--border-size-1) solid var(--surface-4);
+
+  .ghost {
+    background-color: unset;
+    border: var(--border-size-1) solid transparent;
+    color: none;
+    box-shadow: none;
+  }
 }
 .resizeHandle {
   position: absolute;
   background-color: transparent;
+
+  .top {
+    top: var(--size-px-00);
+    left: var(--size-px-00);
+    right: var(--size-px-00);
+    height: var(--size-px-2);
+    cursor: n-resize;
+  }
+  .right {
+    top: var(--size-px-00);
+    right: var(--size-px-00);
+    bottom: var(--size-px-00);
+    width: var(--size-px-2);
+    cursor: e-resize;
+  }
+  .bottom {
+    bottom: var(--size-px-00);
+    left: var(--size-px-00);
+    right: var(--size-px-00);
+    height: var(--size-px-2);
+    cursor: s-resize;
+  }
+  .left {
+    top: var(--size-px-00);
+    left: var(--size-px-00);
+    bottom: var(--size-px-00);
+    width: var(--size-px-2);
+    cursor: w-resize;
+  }
+  .topLeft {
+    top: var(--size-px-00);
+    left: var(--size-px-00);
+    width: var(--size-px-2);
+    height: var(--size-px-2);
+    cursor: nw-resize;
+  }
+  .topRight {
+    top: var(--size-px-00);
+    right: var(--size-px-00);
+    width: var(--size-px-2);
+    height: var(--size-px-2);
+    cursor: ne-resize;
+  }
+  .bottomLeft {
+    bottom: var(--size-px-00);
+    left: var(--size-px-00);
+    width: var(--size-px-2);
+    height: var(--size-px-2);
+    cursor: sw-resize;
+  }
+  .bottomRight {
+    bottom: var(--size-px-00);
+    right: var(--size-px-00);
+    width: var(--size-px-2);
+    height: var(--size-px-2);
+    cursor: se-resize;
+  }
 }
 .ghost .resizeHandle {
   pointer-events: none;
 }
-.resizeHandle.top {
-  top: var(--size-px-00);
-  left: var(--size-px-00);
-  right: var(--size-px-00);
-  height: var(--size-px-2);
-  cursor: n-resize;
-}
-.resizeHandle.right {
-  top: var(--size-px-00);
-  right: var(--size-px-00);
-  bottom: var(--size-px-00);
-  width: var(--size-px-2);
-  cursor: e-resize;
-}
-.resizeHandle.bottom {
-  bottom: var(--size-px-00);
-  left: var(--size-px-00);
-  right: var(--size-px-00);
-  height: var(--size-px-2);
-  cursor: s-resize;
-}
-.resizeHandle.left {
-  top: var(--size-px-00);
-  left: var(--size-px-00);
-  bottom: var(--size-px-00);
-  width: var(--size-px-2);
-  cursor: w-resize;
-}
-.resizeHandle.topLeft {
-  top: var(--size-px-00);
-  left: var(--size-px-00);
-  width: var(--size-px-2);
-  height: var(--size-px-2);
-  cursor: nw-resize;
-}
-.resizeHandle.topRight {
-  top: var(--size-px-00);
-  right: var(--size-px-00);
-  width: var(--size-px-2);
-  height: var(--size-px-2);
-  cursor: ne-resize;
-}
-.resizeHandle.bottomLeft {
-  bottom: var(--size-px-00);
-  left: var(--size-px-00);
-  width: var(--size-px-2);
-  height: var(--size-px-2);
-  cursor: sw-resize;
-}
-.resizeHandle.bottomRight {
-  bottom: var(--size-px-00);
-  right: var(--size-px-00);
-  width: var(--size-px-2);
-  height: var(--size-px-2);
-  cursor: se-resize;
-}
 
-.close {
+.remove {
   animation: var(--animation-scale-down), var(--animation-fade-out);
   animation-timing-function: var(--ease-elastic-in-out-4);
 }
@@ -202,6 +204,10 @@ form label {
 .stickyBody {
   flex: 1;
   padding: var(--size-2);
+
+  .preview {
+    height: 100%;
+  }
 }
 
 .stickyBody:has(.preview:not([hidden])) {
@@ -224,12 +230,9 @@ form label {
   box-shadow: none;
   resize: none;
 }
+
 .ghost textarea::placeholder {
   opacity: 0;
-}
-
-.stickyBody .preview {
-  height: 100%;
 }
 
 .stickyContainer {
@@ -237,29 +240,23 @@ form label {
   width: 100%;
   height: 100%;
   overflow: hidden;
-}
 
-.stickyContainer.autoArrange {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  flex-wrap: wrap;
-}
+  .autoArrange {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
 
-.stickyContainer.autoArrange .sticky {
-  position: static;
+    .sticky {
+      position: static;
+    }
+  }
 }
 
 main {
   position: relative;
   display: flex;
   justify-content: center;
-}
-
-#trashCan {
-  position: absolute;
-  right: 0;
-  bottom: 0;
 }
 
 /* @commandPalette start */
@@ -303,25 +300,27 @@ main {
   padding: 0;
   max-height: 300px;
   overflow-y: auto;
+
+  li {
+    padding: var(--size-2);
+    max-inline-size: unset; /* Reverts open-props normalize */
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  li:hover,
+  li[aria-selected="true"] {
+    background-color: var(--surface-3);
+  }
+  kbd {
+    font-size: var(--font-size-0);
+    margin-right: var(--size-2);
+  }
 }
+
 #resultsList:not(:empty) {
   margin-top: var(--size-3);
-}
-#resultsList li {
-  padding: var(--size-2);
-  max-inline-size: unset; /* Reverts open-props normalize */
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-#resultsList li:hover,
-#resultsList li[aria-selected="true"] {
-  background-color: var(--surface-3);
-}
-#resultsList kbd {
-  font-size: var(--font-size-0);
-  margin-right: var(--size-2);
 }
 /* @commandPalette end */
 
@@ -338,6 +337,10 @@ main {
   flex-direction: column;
   gap: var(--size-7);
   overflow: auto;
+
+  header {
+    padding-bottom: var(--size-3);
+  }
 }
 /* #settings section::after { */
 /*   content: ""; */
@@ -345,9 +348,6 @@ main {
 /*   padding-top: var(--size-3); */
 /*   border-bottom: var(--border-size-1) solid var(--text-1); */
 /* } */
-#settings header {
-  padding-bottom: var(--size-3);
-}
 #langDropdown {
   min-width: var(--size-fluid-8);
 }
@@ -400,11 +400,12 @@ main {
   grid-template-columns: auto auto;
   gap: var(--size-3) var(--size-4);
   justify-content: start;
-}
-#shortcutList label {
-  text-align: right;
-}
-#shortcutList input {
-  font-family: var(--font-mono);
+
+  label {
+    text-align: right;
+  }
+  input {
+    font-family: var(--font-mono);
+  }
 }
 /* @settings end */

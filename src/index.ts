@@ -127,8 +127,8 @@ function bindStickyShortcuts(sticky: Penny<HTMLDivElement>) {
   });
 
   shortcutManager.once(
-    "close_sticky",
-    () => sticky.$(".closeBtn")!.click(),
+    "remove_sticky",
+    () => sticky.$(".removeBtn")!.click(),
     sticky,
   );
 }

@@ -1,7 +1,7 @@
 import { dataset } from "./dataset";
 import { createKikey } from "./kikey";
 import { shortcutManager, toggleSettingsPage } from "./settings";
-import { $ } from "./utils/dollars";
+import { $, $$ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
 
 interface Command {
@@ -46,6 +46,12 @@ const commandMap: Record<string, Command> = {
         "isGhostMode",
         (isGhostMode) => !isGhostMode,
       );
+    },
+  },
+  remove_all_stickies: {
+    name: "remove_all_stickies",
+    execute() {
+      $$<HTMLButtonElement>(".sticky .removeBtn")!.do((el) => el.click());
     },
   },
 };

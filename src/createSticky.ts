@@ -14,6 +14,14 @@ export function initStickyContainer() {
     pointerX = e.clientX - stickyContainer!.getBoundingClientRect().left;
     pointerY = e.clientY - stickyContainer!.getBoundingClientRect().top;
   });
+
+  // Find and set the highestZIndex when initialize from existing document.
+  for (const sticky of $$(".sticky")) {
+    const zIndex = parseInt(sticky.style.zIndex);
+    if (zIndex > highestZIndex) {
+      highestZIndex = zIndex;
+    }
+  }
 }
 
 export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
@@ -164,9 +172,9 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
   moveToTop(sticky);
   stickies.push(sticky);
 
-  function close() {
+  function remove() {
     sticky.addEventListener("animationend", sticky.remove);
-    sticky.classList.add("close");
+    sticky.classList.add("remove");
 
     // Select previous sticky.
     const idx = stickies.indexOf(sticky);
@@ -176,10 +184,7 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
     stickies.at(-1)?.focus();
   }
 
-  const closeBtn = sticky.$(".closeBtn");
-  if (closeBtn) {
-    closeBtn.addEventListener("click", close);
-  }
+  sticky.$(".removeBtn")!.on("click", remove);
 
   return sticky;
 }
@@ -191,7 +196,7 @@ export function createSticky() {
   sticky.innerHTML = `
   <div class="stickyHeader">
     <div class="controls">
-      <button class="closeBtn">
+      <button class="removeBtn">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
       </button>
     </div>

@@ -261,7 +261,8 @@ export const shortcutManager = (() => {
     new_sticky: "C-q",
     toggle_auto_arrange: "A-r",
     toggle_sticky_edit_mode: "A-w",
-    close_sticky: "A-x",
+    remove_sticky: "A-x",
+    remove_all_stickies: "C-A-x",
   } as const;
   type ActionName = keyof typeof actions;
   type KikeyInfo = {

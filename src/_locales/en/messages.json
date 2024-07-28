@@ -59,9 +59,13 @@
     "message": "New sticky",
     "description": "Command description for adding new sticky."
   },
-  "close_sticky": {
+  "remove_sticky": {
     "message": "Remove sticky",
-    "description": "Command description for closing sticky."
+    "description": "Command description for removing sticky."
+  },
+  "remove_all_stickies": {
+    "message": "Remove all stickies",
+    "description": "Command description for removing all stickies."
   },
   "toggle_sticky_edit_mode": {
     "message": "Toggle edit/view for current sticky",
