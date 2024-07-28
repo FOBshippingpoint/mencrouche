@@ -97,77 +97,83 @@ form {
   min-width: var(--size-fluid-6);
   min-height: var(--size-fluid-6);
   border: var(--border-size-1) solid var(--surface-4);
+}
+.ghost {
+  background-color: unset;
+  border: var(--border-size-1) solid transparent;
+  color: none;
+  box-shadow: none;
 
-  .ghost {
-    background-color: unset;
-    border: var(--border-size-1) solid transparent;
-    color: none;
-    box-shadow: none;
+  .resizeHandle {
+    pointer-events: none;
+  }
+  .stickyHeader {
+    opacity: 0;
+    pointer-events: none;
+  }
+  textarea::placeholder {
+    opacity: 0;
   }
 }
 .resizeHandle {
   position: absolute;
   background-color: transparent;
-
-  .top {
-    top: var(--size-px-00);
-    left: var(--size-px-00);
-    right: var(--size-px-00);
-    height: var(--size-px-2);
-    cursor: n-resize;
-  }
-  .right {
-    top: var(--size-px-00);
-    right: var(--size-px-00);
-    bottom: var(--size-px-00);
-    width: var(--size-px-2);
-    cursor: e-resize;
-  }
-  .bottom {
-    bottom: var(--size-px-00);
-    left: var(--size-px-00);
-    right: var(--size-px-00);
-    height: var(--size-px-2);
-    cursor: s-resize;
-  }
-  .left {
-    top: var(--size-px-00);
-    left: var(--size-px-00);
-    bottom: var(--size-px-00);
-    width: var(--size-px-2);
-    cursor: w-resize;
-  }
-  .topLeft {
-    top: var(--size-px-00);
-    left: var(--size-px-00);
-    width: var(--size-px-2);
-    height: var(--size-px-2);
-    cursor: nw-resize;
-  }
-  .topRight {
-    top: var(--size-px-00);
-    right: var(--size-px-00);
-    width: var(--size-px-2);
-    height: var(--size-px-2);
-    cursor: ne-resize;
-  }
-  .bottomLeft {
-    bottom: var(--size-px-00);
-    left: var(--size-px-00);
-    width: var(--size-px-2);
-    height: var(--size-px-2);
-    cursor: sw-resize;
-  }
-  .bottomRight {
-    bottom: var(--size-px-00);
-    right: var(--size-px-00);
-    width: var(--size-px-2);
-    height: var(--size-px-2);
-    cursor: se-resize;
-  }
 }
-.ghost .resizeHandle {
-  pointer-events: none;
+.resizeHandle.top {
+  top: var(--size-px-00);
+  left: var(--size-px-00);
+  right: var(--size-px-00);
+  height: var(--size-px-2);
+  cursor: n-resize;
+}
+.resizeHandle.right {
+  top: var(--size-px-00);
+  right: var(--size-px-00);
+  bottom: var(--size-px-00);
+  width: var(--size-px-2);
+  cursor: e-resize;
+}
+.resizeHandle.bottom {
+  bottom: var(--size-px-00);
+  left: var(--size-px-00);
+  right: var(--size-px-00);
+  height: var(--size-px-2);
+  cursor: s-resize;
+}
+.resizeHandle.left {
+  top: var(--size-px-00);
+  left: var(--size-px-00);
+  bottom: var(--size-px-00);
+  width: var(--size-px-2);
+  cursor: w-resize;
+}
+.resizeHandle.topLeft {
+  top: var(--size-px-00);
+  left: var(--size-px-00);
+  width: var(--size-px-2);
+  height: var(--size-px-2);
+  cursor: nw-resize;
+}
+.resizeHandle.topRight {
+  top: var(--size-px-00);
+  right: var(--size-px-00);
+  width: var(--size-px-2);
+  height: var(--size-px-2);
+  cursor: ne-resize;
+}
+.resizeHandle.bottomLeft {
+  bottom: var(--size-px-00);
+  left: var(--size-px-00);
+  width: var(--size-px-2);
+  height: var(--size-px-2);
+  cursor: sw-resize;
+}
+.resizeHandle.bottomRight {
+  bottom: var(--size-px-00);
+  right: var(--size-px-00);
+  width: var(--size-px-2);
+  height: var(--size-px-2);
+  cursor: se-resize;
 }
 
 .remove {
@@ -179,10 +185,6 @@ form {
   background-color: var(--surface-4);
   cursor: grab;
   user-select: none;
-}
-.ghost .stickyHeader {
-  opacity: 0;
-  pointer-events: none;
 }
 
 /* TODO: inconsist naming */
@@ -231,25 +233,20 @@ form {
   resize: none;
 }
 
-.ghost textarea::placeholder {
-  opacity: 0;
-}
-
 .stickyContainer {
   position: absolute;
   width: 100%;
   height: 100%;
   overflow: hidden;
+}
+.autoArrange {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
 
-  .autoArrange {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    flex-wrap: wrap;
-
-    .sticky {
-      position: static;
-    }
+  .sticky {
+    position: static;
   }
 }
 
@@ -318,7 +315,6 @@ main {
     margin-right: var(--size-2);
   }
 }
-
 #resultsList:not(:empty) {
   margin-top: var(--size-3);
 }

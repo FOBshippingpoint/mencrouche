@@ -10,6 +10,7 @@ import "./settings";
 import { initCommandPalette } from "./commandPalette";
 import { initSettings, shortcutManager } from "./settings";
 import { n81i } from "./utils/n81i";
+import { marked } from "marked";
 
 async function init() {
   await n81i.init({ locale: "en", availableLocales: ["en", "zh-Hant"] });
@@ -42,10 +43,6 @@ function restoreStickies() {
   });
 }
 
-const md = markdownit({
-  html: true,
-});
-
 function bindGlobalShortcuts() {
   shortcutManager.on("new_sticky", () => {
     const sticky = createSticky();
@@ -77,7 +74,7 @@ function bindStickyShortcuts(sticky: Penny<HTMLDivElement>) {
     () => {
       const preview = sticky.$(".preview")!;
       if (!textarea.disabled) {
-        const html = md.render(textarea.value);
+        const html = marked.parse(textarea.value) as string;
         const fragment = document.createRange().createContextualFragment(html);
         preview.replaceChildren(fragment);
         sticky.focus();
