@@ -1,4 +1,3 @@
-import markdownit from "markdown-it";
 import {
   createSticky,
   enableStickyFunctionality,
