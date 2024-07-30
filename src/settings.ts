@@ -4,12 +4,13 @@ import { KeyBinding, parseBinding } from "./kikey/parseBinding";
 import { $, $$, $$$ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
 
-const backgroundImagePreview = $<HTMLImageElement>("#backgroundPref img")!;
 const dropzone = $<HTMLDivElement>(".dropzone")!;
 const fileInput = $<HTMLInputElement>(".fileInput")!;
 const backgroundImageUrlInput = $<HTMLInputElement>(
   "#backgroundImageUrlInput",
 )!;
+const shortcutListItemTemplate = $<HTMLTemplateElement>("#shortcutListItem")!;
+const uiOpacityInput = $<HTMLInputElement>("#uiOpacityInput")!;
 const setToDefaultBtn = $<HTMLButtonElement>("#setToDefaultBtn")!;
 const saveBtn = $<HTMLButtonElement>("#saveSettingsBtn")!;
 const saveAndCloseBtn = $<HTMLButtonElement>("#saveAndCloseSettingsBtn")!;
@@ -50,25 +51,21 @@ backgroundImageUrlInput.addEventListener("paste", async (e) => {
   for (const clipboardItem of clipboardItems) {
     let blob;
     if (clipboardItem.type?.startsWith("image/")) {
-      // For files from `e.clipboardData.files`.
       blob = clipboardItem;
-      // Do something with the blob.
       handleBlob(blob);
     } else {
-      // For files from `navigator.clipboard.read()`.
       const imageTypes = clipboardItem.types?.filter((type) =>
         type.startsWith("image/"),
       );
       for (const imageType of imageTypes) {
         blob = await clipboardItem.getType(imageType);
-        // Do something with the blob.
         handleBlob(blob);
         return;
       }
-      const url = await navigator.clipboard.readText();
       try {
+        const url = await (await clipboardItem.getType("text/plain")).text();
         new URL(url);
-        backgroundImagePreview.src = url;
+        dropzone.style.background = `url(${url}) center center / cover no-repeat`;
         changesManager.add(() => setBackgroundImageByUrl(url));
       } catch (_) {
         alert(n81i.t("image_url_is_not_valid_alert"));
@@ -78,10 +75,10 @@ backgroundImageUrlInput.addEventListener("paste", async (e) => {
 });
 
 function handleBlob(blob: Blob | File) {
-  const dataUrl = URL.createObjectURL(blob);
-  backgroundImageUrlInput.value = dataUrl;
-  backgroundImagePreview.src = dataUrl;
-  changesManager.add(() => setBackgroundImageByUrl(dataUrl));
+  const url = URL.createObjectURL(blob);
+  backgroundImageUrlInput.value = url;
+  dropzone.style.background = `url(${url}) center center / cover no-repeat`;
+  changesManager.add(() => setBackgroundImageByUrl(url));
 }
 
 // Handle drag and drop events
@@ -125,16 +122,35 @@ fileInput.addEventListener("change", (e) => {
 });
 
 setToDefaultBtn.addEventListener("click", () => {
-  backgroundImagePreview.src = "";
+  dropzone.style.backgroundImage = "unset";
   unsetBackgroundImage();
 });
 
-function setBackgroundImageByUrl(url: string) {
-  document.documentElement.style.setProperty(
-    "--page-background",
-    `url(${url}) no-repeat center center fixed`,
-  );
-  dataset.setItem("backgroundImageUrl", url);
+uiOpacityInput.on("input", () => {
+  const uiOpacity = (uiOpacityInput.valueAsNumber / 100).toString();
+  uiOpacityInput.style.opacity = uiOpacity;
+  changesManager.add(() => {
+    document.documentElement.style.setProperty("--ui-opacity", uiOpacity);
+  });
+});
+
+async function setBackgroundImageByUrl(url: string) {
+  function set(url: string) {
+    document.documentElement.style.setProperty(
+      "--page-background",
+      `url(${url}) no-repeat center center fixed`,
+    );
+    dataset.setItem("backgroundImageUrl", url);
+  }
+  if (url.startsWith("blob")) {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const reader = new FileReader();
+    reader.addEventListener("load", (e) => set(e.target.result));
+    reader.readAsDataURL(blob);
+  } else {
+    set(url);
+  }
 }
 
 function unsetBackgroundImage() {
@@ -198,6 +214,7 @@ export function initSettings() {
   initGhostMode();
   initTheme();
   initShortcuts();
+  initOpacity();
 }
 
 function queryPrefersColorScheme() {
@@ -322,14 +339,30 @@ export const shortcutManager = (() => {
 
 function initShortcuts() {
   const shortcutList = $("#shortcutList")!;
-  let html = "";
+  // let html = "";
+  // for (const { actionName, keySequence } of shortcutManager.getAllActions()) {
+  //   html += `
+  //   <label for="${actionName}" data-i18n="${actionName}">${n81i.t(actionName)}</label>
+  //   <input type="text" id="${actionName}" value="${keySequence}" />
+  // `;
+  // }
+  // shortcutList.innerHTML = html;
+
+  const frag = document.createDocumentFragment();
   for (const { actionName, keySequence } of shortcutManager.getAllActions()) {
-    html += `
-    <label for="${actionName}" data-i18n="${actionName}">${n81i.t(actionName)}</label>
-    <input type="text" id="${actionName}" value="${keySequence}" />
-  `;
+    const label = $<HTMLLabelElement>(
+      (shortcutListItemTemplate.content.cloneNode(true) as any)
+        .firstElementChild,
+    )!;
+    const input = label.$<HTMLInputElement>("input")!;
+    label.htmlFor = actionName;
+    label.dataset.i18n = actionName;
+    input.id = actionName;
+    input.value = keySequence;
+    label.insertAdjacentText("afterbegin", n81i.t(actionName));
+    frag.appendChild(label);
   }
-  shortcutList.innerHTML = html;
+  shortcutList.appendChild(frag);
 }
 
 function keyBindingToString(binding: KeyBinding, isMac = false): string {
@@ -359,4 +392,14 @@ function keyBindingToString(binding: KeyBinding, isMac = false): string {
 }
 function keySequenceToString(sequence: KeyBinding[]) {
   return sequence.map((b) => keyBindingToString(b)).join(", ");
+}
+
+function initOpacity() {
+  const uiOpacity = dataset.getOrSetItem("uiOpacity", 1);
+  document.documentElement.style.setProperty(
+    "--ui-opacity",
+    uiOpacity.toString(),
+  );
+  uiOpacityInput.style.opacity = uiOpacity.toString();
+  uiOpacityInput.value = (uiOpacity * 100).toString();
 }

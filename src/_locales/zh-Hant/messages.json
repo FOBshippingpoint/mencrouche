@@ -79,6 +79,10 @@
 		"message": "語言",
 		"description": "Language section of the settings."
 	},
+	"settings_appearance_section": {
+		"message": "外觀",
+		"description": "Appearance section of the settings."
+	},
 	"save_settings_btn": {
 		"message": "儲存",
 		"description": "Save settings button."
@@ -88,7 +92,7 @@
 		"description": "Save & close settings button."
 	},
 	"cancel_settings_btn": {
-		"message": "離開而不儲存",
+		"message": "不儲存就離開",
 		"description": "Canecel settings button."
 	}
 }

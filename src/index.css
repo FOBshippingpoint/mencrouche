@@ -24,11 +24,13 @@ body::before {
 }
 
 html,
-body {
+body,
+main {
   height: 100%;
 }
 
-body {
+main {
+  opacity: var(--ui-opacity);
   line-height: 1.5;
   font-family: "IBM Plex Sans", "Punctuation SC", "Inter", ui-sans-serif,
     system-ui, "PingFang SC", "Noto Sans CJK SC", "Noto Sans SC", "Heiti SC",
@@ -250,7 +252,7 @@ form {
   }
 }
 
-main {
+.mainSection {
   position: relative;
   display: flex;
   justify-content: center;
@@ -292,7 +294,7 @@ main {
   background-color: var(--surface-3);
   color: var(--text-1);
 }
-#resultsList {
+#commandList {
   list-style-type: none;
   padding: 0;
   max-height: 300px;
@@ -315,7 +317,7 @@ main {
     margin-right: var(--size-2);
   }
 }
-#resultsList:not(:empty) {
+#commandList:not(:empty) {
   margin-top: var(--size-3);
 }
 /* @commandPalette end */
@@ -347,8 +349,24 @@ main {
 #langDropdown {
   min-width: var(--size-fluid-8);
 }
-#backgroundPref img {
-  max-width: var(--size-content-2);
+#appearancePref {
+  label {
+    display: grid;
+    gap: var(--size-1);
+  }
+  img {
+    max-width: var(--size-content-2);
+  }
+  h3 {
+    padding-bottom: var(--size-3);
+  }
+  #uiOpacityInput {
+    max-width: var(--size-fluid-8);
+  }
+  #uiOpacityInput::-webkit-slider-thumb,
+  #uiOpacityInput::-moz-range-thumb {
+    opacity: var(--ui-opacity);
+  }
 }
 .backgroundPresetContainer {
   display: grid;
@@ -366,6 +384,7 @@ main {
   border-style: dashed;
   border-radius: var(--radius-conditional-3);
   padding: var(--size-5);
+  aspect-ratio: var(--ratio-widescreen);
   flex: 1;
   width: var(--size-content-2);
   display: flex;
@@ -393,7 +412,6 @@ main {
 }
 #shortcutList {
   display: grid;
-  grid-template-columns: auto auto;
   gap: var(--size-3) var(--size-4);
   justify-content: start;
 
@@ -402,6 +420,7 @@ main {
   }
   input {
     font-family: var(--font-mono);
+    margin-left: var(--size-3);
   }
 }
 /* @settings end */

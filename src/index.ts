@@ -51,6 +51,7 @@ function bindGlobalShortcuts() {
     const preview = $$$("div");
     stickyBody.append(textarea, preview);
     textarea.placeholder = n81i.t("sticky_textarea_start_typing_placeholder");
+    textarea.on("input", () => (textarea.dataset.value = textarea.value));
     preview.hidden = true;
     preview.classList.add("preview");
 
@@ -69,18 +70,24 @@ function bindGlobalShortcuts() {
 function bindStickyShortcuts(sticky: Penny<HTMLDivElement>) {
   const textarea = sticky.$<HTMLTextAreaElement>("textarea")!;
 
+  let prevInput = "";
   shortcutManager.on(
     "toggle_sticky_edit_mode",
     () => {
       const preview = sticky.$(".preview")!;
-      if (!textarea.disabled) {
-        const html = marked.parse(textarea.value) as string;
-        const fragment = document.createRange().createContextualFragment(html);
-        preview.replaceChildren(fragment);
+      if (!textarea.disabled /* Change to view mode */) {
+        if (prevInput !== textarea.value) {
+          const html = marked.parse(textarea.value) as string;
+          const fragment = document
+            .createRange()
+            .createContextualFragment(html);
+          preview.replaceChildren(fragment);
+        }
         sticky.focus();
       }
       textarea.disabled = !textarea.disabled;
       textarea.hidden = !textarea.hidden;
+      prevInput = textarea.value;
       preview.hidden = !preview.hidden;
       textarea.focus();
     },

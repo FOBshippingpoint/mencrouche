@@ -59,14 +59,15 @@ const commandMap: Record<string, Command> = {
 export function initCommandPalette() {
   const commandPalette = $<HTMLDivElement>("#commandPalette")!;
   const searchInput = $<HTMLInputElement>("#searchInput")!;
-  const resultsList = $<HTMLUListElement>("#resultsList")!;
+  const commandList = $<HTMLUListElement>("#commandList")!;
+  const commandListItemTemplate = $<HTMLTemplateElement>("#commandListItem")!;
 
   let keyboardSelectedCommandName: CommandName | null = null;
 
   const searchKikey = createKikey(searchInput);
 
   function openCommandPalette() {
-    updateResults();
+    updateFilteredCommands();
     commandPalette.hidden = false;
     searchInput.focus();
   }
@@ -80,9 +81,9 @@ export function initCommandPalette() {
     commandPalette.hidden ? openCommandPalette() : closeCommandPalette();
   }
 
-  function updateResults() {
+  function updateFilteredCommands() {
     keyboardSelectedCommandName = null;
-    resultsList.innerHTML = "";
+    commandList.innerHTML = "";
 
     const query = searchInput.value.toLowerCase();
     let commands = Object.values(commandMap);
@@ -91,29 +92,31 @@ export function initCommandPalette() {
         name.toLowerCase().includes(query),
       );
     }
-    commands.forEach((command, i) => {
-      const li = document.createElement("li");
+
+    const frag = document.createDocumentFragment();
+    for (const command of commands) {
+      const li = $(
+        commandListItemTemplate.content.cloneNode(true).firstElementChild,
+      );
       li.dataset.commandName = command.name;
-      console.log(shortcutManager.getKeySequence(command.name));
-      li.innerHTML = `
-        <span class="commandText">${n81i.t(command.name)}</span>
-        <kbd>${shortcutManager.getKeySequence(command.name)}</kbd>
-      `;
-      // Select first command by default.
-      if (i === 0) {
-        li.setAttribute("aria-selected", "true");
-        keyboardSelectedCommandName = command.name;
-      }
-      resultsList.append(li);
-      li.addEventListener("click", () => {
+      li.$("span").textContent = n81i.t(command.name);
+      li.$("kbd").textContent = shortcutManager.getKeySequence(command.name);
+      li.on("click", () => {
         closeCommandPalette();
         executeCommand(command.name);
       });
-    });
+      frag.appendChild(li);
+    }
+
+    // Default select first command.
+    frag.firstElementChild!.setAttribute("aria-selected", "true");
+    keyboardSelectedCommandName = frag.firstElementChild!.dataset.commandName;
+
+    commandList.appendChild(frag);
   }
 
   function selectCommand(direction: "up" | "down") {
-    const items = [...resultsList.children];
+    const items = [...commandList.children];
     let idx = items.findIndex(
       (item) => item.dataset.commandName === keyboardSelectedCommandName,
     );
@@ -165,5 +168,5 @@ export function initCommandPalette() {
   });
 
   // Initialize event listeners
-  searchInput.addEventListener("input", updateResults);
+  searchInput.addEventListener("input", updateFilteredCommands);
 }

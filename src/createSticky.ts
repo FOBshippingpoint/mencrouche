@@ -1,12 +1,13 @@
-import { $, $$, $$$, type Penny } from "./utils/dollars";
+import { $, $$, Penny } from "./utils/dollars";
 
 let highestZIndex = 0;
 /** An array for tracking the sticky order, from lowest -> topest */
 const stickies: Penny<HTMLDivElement>[] = [];
 
-let pointerX = 0;
-let pointerY = 0;
 let stickyContainer: Penny<HTMLDivElement>;
+let stickyTemplate = $<HTMLTemplateElement>("#sticky")!;
+let pointerX: number;
+let pointerY: number;
 
 export function initStickyContainer() {
   stickyContainer = $<HTMLDivElement>(".stickyContainer")!;
@@ -14,6 +15,9 @@ export function initStickyContainer() {
     pointerX = e.clientX - stickyContainer!.getBoundingClientRect().left;
     pointerY = e.clientY - stickyContainer!.getBoundingClientRect().top;
   });
+
+  pointerX = stickyContainer.getBoundingClientRect().width / 2;
+  pointerY = stickyContainer.getBoundingClientRect().height / 2;
 
   // Find and set the highestZIndex when initialize from existing document.
   for (const sticky of $$(".sticky")) {
@@ -173,7 +177,7 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
   stickies.push(sticky);
 
   function remove() {
-    sticky.addEventListener("animationend", sticky.remove);
+    sticky.on("animationend", sticky.remove, { once: true });
     sticky.classList.add("remove");
 
     // Select previous sticky.
@@ -190,27 +194,9 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
 }
 
 export function createSticky() {
-  const sticky = $$$("div");
-  sticky.tabIndex = 0; // To let div trigger keyboard event.
-  sticky.classList.add("sticky");
-  sticky.innerHTML = `
-  <div class="stickyHeader">
-    <div class="controls">
-      <button class="removeBtn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-      </button>
-    </div>
-  </div>
-  <div class="stickyBody"></div>
-  <div class="resizeHandle top"></div>
-  <div class="resizeHandle right"></div>
-  <div class="resizeHandle bottom"></div>
-  <div class="resizeHandle left"></div>
-  <div class="resizeHandle topLeft"></div>
-  <div class="resizeHandle topRight"></div>
-  <div class="resizeHandle bottomLeft"></div>
-  <div class="resizeHandle bottomRight"></div>
-  `;
+  const sticky = $<HTMLDivElement>(
+    stickyTemplate.content.cloneNode(true).firstElementChild,
+  )!;
   sticky.style.left = `${Math.max(pointerX - 10, 0)}px`;
   sticky.style.top = `${Math.max(pointerY - 10, 0)}px`;
 

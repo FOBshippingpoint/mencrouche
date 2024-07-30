@@ -79,6 +79,10 @@
 		"message": "Language",
 		"description": "Language section of the settings."
 	},
+	"settings_appearance_section": {
+		"message": "Appearance",
+		"description": "Appearance section of the settings."
+	},
 	"save_settings_btn": {
 		"message": "Save",
 		"description": "Save settings button."
@@ -90,5 +94,17 @@
 	"cancel_settings_btn": {
 		"message": "Cancel",
 		"description": "Canecel settings button."
-	}
+	},
+  "background_image_link": {
+    "message": "Background image link",
+    "description": "Description for background image link input label."
+  },
+  "settings_appearance_background_section": {
+    "message": "Background",
+    "description": "Description for appearance.background section."
+  },
+  "ui_opacity": {
+    "message": "UI Opacity",
+    "description": "Description for UI opacity input label."
+  }
 }
