@@ -6,11 +6,9 @@
 - asciidoc
 - isolation
 - bug: window resize cuz sticky out of sight
-- reference-based shortcuts
-- chrome-dino
 
 ## BUGS
 
+- [x] The blob image cannot restore from localstorage.
 - [ ] sticky out of bound when resizing window.
-- [ ] The blob image cannot restore from localstorage.
-- [ ] 
+- [ ] create sticky on the bottom or right cuz the container size change.

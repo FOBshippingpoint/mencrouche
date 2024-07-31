@@ -1,6 +1,7 @@
 import {
   createSticky,
   enableStickyFunctionality,
+  getLatestSticky,
   initStickyContainer,
 } from "./createSticky";
 import { $, $$, $$$, Penny } from "./utils/dollars";
@@ -38,7 +39,7 @@ function restoreStickies() {
     const textarea = sticky.$<HTMLTextAreaElement>("textarea")!;
     textarea.value = textarea.dataset.value ?? "";
     textarea.on("input", () => (textarea.dataset.value = textarea.value));
-    bindStickyShortcuts(sticky);
+    handleTextAreaPaste(sticky);
   });
 }
 
@@ -46,6 +47,7 @@ function bindGlobalShortcuts() {
   shortcutManager.on("new_sticky", () => {
     const sticky = createSticky();
     const stickyBody = sticky.$(".stickyBody")!;
+    // TODO: maybe use template element for the consistency?
     const textarea = $$$("textarea");
     const preview = $$$("div");
     stickyBody.append(textarea, preview);
@@ -54,45 +56,50 @@ function bindGlobalShortcuts() {
     preview.hidden = true;
     preview.classList.add("preview");
 
-    bindStickyShortcuts(sticky);
+    handleTextAreaPaste(sticky);
+    (sticky as typeof sticky & { prevInput: string }).prevInput = "";
 
     $(".stickyContainer")?.append(sticky);
     // [].forEach.call($$("*"), function (a) { a.style.outline = "1px solid #" + (~~(Math.random() * (1 << 24))).toString(16); });
     textarea.focus();
   });
-
   shortcutManager.on("toggle_auto_arrange", () => {
     $(".stickyContainer")?.classList.toggle("autoArrange");
   });
+  shortcutManager.on("remove_sticky", () => [
+    getLatestSticky()?.$(".removeBtn")!.click(),
+  ]);
+  shortcutManager.on("maximize_sticky", () =>
+    getLatestSticky()?.$(".maximizeBtn")!.click(),
+  );
+  shortcutManager.on("toggle_sticky_edit_mode", () => {
+    const sticky = getLatestSticky() as ReturnType<typeof getLatestSticky> & {
+      prevInput: string;
+    };
+    if (!sticky) {
+      return;
+    }
+
+    const textarea = sticky.$<HTMLTextAreaElement>("textarea")!;
+    const preview = sticky.$<HTMLOutputElement>(".preview")!;
+    if (!textarea.disabled /* Change to view mode */) {
+      if (sticky.prevInput !== textarea.value) {
+        const html = marked.parse(textarea.value) as string;
+        const fragment = document.createRange().createContextualFragment(html);
+        preview.replaceChildren(fragment);
+      }
+      sticky.focus();
+    }
+    textarea.disabled = !textarea.disabled;
+    textarea.hidden = !textarea.hidden;
+    sticky.prevInput = textarea.value;
+    preview.hidden = !preview.hidden;
+    textarea.focus();
+  });
 }
 
-function bindStickyShortcuts(sticky: Penny<HTMLDivElement>) {
+function handleTextAreaPaste(sticky: Penny<HTMLDivElement>) {
   const textarea = sticky.$<HTMLTextAreaElement>("textarea")!;
-
-  let prevInput = "";
-  shortcutManager.on(
-    "toggle_sticky_edit_mode",
-    () => {
-      const preview = sticky.$(".preview")!;
-      if (!textarea.disabled /* Change to view mode */) {
-        if (prevInput !== textarea.value) {
-          const html = marked.parse(textarea.value) as string;
-          const fragment = document
-            .createRange()
-            .createContextualFragment(html);
-          preview.replaceChildren(fragment);
-        }
-        sticky.focus();
-      }
-      textarea.disabled = !textarea.disabled;
-      textarea.hidden = !textarea.hidden;
-      prevInput = textarea.value;
-      preview.hidden = !preview.hidden;
-      textarea.focus();
-    },
-    sticky,
-  );
-
   textarea.on("paste", async (e) => {
     let isPasteImage = false;
     const clipboardItems =
@@ -128,12 +135,6 @@ function bindStickyShortcuts(sticky: Penny<HTMLDivElement>) {
       textarea.dispatchEvent(new InputEvent("input")); // Programmatically trigger input event to notify content change.
     }
   });
-
-  shortcutManager.once(
-    "remove_sticky",
-    () => sticky.$(".removeBtn")!.click(),
-    sticky,
-  );
 }
 
 function createMarkdownImageDescription(url: string) {

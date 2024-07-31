@@ -84,6 +84,11 @@ form {
   }
 }
 
+#stickySizeDummy{
+  width: var(--size-fluid-9);
+  height: 0;
+}
+
 .sticky {
   position: absolute;
   background-color: var(--surface-3);
@@ -178,6 +183,14 @@ form {
   cursor: se-resize;
 }
 
+.maximized {
+  height: 100%;
+  width: 100%;
+  left: 0 !important;
+  top: 0 !important;
+  transition: all 0.1s var(--ease-out-5);
+}
+
 .remove {
   animation: var(--animation-scale-down), var(--animation-fade-out);
   animation-timing-function: var(--ease-elastic-in-out-4);
@@ -211,6 +224,7 @@ form {
 
   .preview {
     height: 100%;
+    padding-inline: var(--size-2);
   }
 }
 

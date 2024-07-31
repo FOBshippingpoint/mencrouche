@@ -3,11 +3,18 @@ import { $, $$, Penny } from "./utils/dollars";
 let highestZIndex = 0;
 /** An array for tracking the sticky order, from lowest -> topest */
 const stickies: Penny<HTMLDivElement>[] = [];
+const stickyTemplate = $<HTMLTemplateElement>("#sticky")!;
+// This element is for getting var(--size-fluid-9) in pixels. So that we can
+// set default sticky position to center if user didn't move their mouse yet.
+const stickySizeDummy = $<HTMLDivElement>("#stickySizeDummy")!;
 
 let stickyContainer: Penny<HTMLDivElement>;
-let stickyTemplate = $<HTMLTemplateElement>("#sticky")!;
 let pointerX: number;
 let pointerY: number;
+
+export function getLatestSticky() {
+  return stickies.at(-1);
+}
 
 export function initStickyContainer() {
   stickyContainer = $<HTMLDivElement>(".stickyContainer")!;
@@ -16,8 +23,14 @@ export function initStickyContainer() {
     pointerY = e.clientY - stickyContainer!.getBoundingClientRect().top;
   });
 
-  pointerX = stickyContainer.getBoundingClientRect().width / 2;
-  pointerY = stickyContainer.getBoundingClientRect().height / 2;
+  pointerX =
+    (stickyContainer.getBoundingClientRect().width -
+      stickySizeDummy.getBoundingClientRect().width) /
+    2;
+  pointerY =
+    (stickyContainer.getBoundingClientRect().height -
+      stickySizeDummy.getBoundingClientRect().width) /
+    2;
 
   // Find and set the highestZIndex when initialize from existing document.
   for (const sticky of $$(".sticky")) {
@@ -66,12 +79,17 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
   });
 
   function dragStart(e: PointerEvent) {
-    dragInitialX = e.clientX - Number.parseInt(sticky.style.left, 10);
-    dragInitialY = e.clientY - Number.parseInt(sticky.style.top, 10);
-
     if (e.target === stickyHeader) {
       isDragging = true;
+      if (sticky.classList.contains("maximized")) {
+        sticky.style.top = "0px";
+        sticky.style.left = `${e.clientX - stickySizeDummy.getBoundingClientRect().width / 2}px`;
+        sticky.classList.remove("maximized");
+      }
     }
+
+    dragInitialX = e.clientX - Number.parseInt(sticky.style.left, 10);
+    dragInitialY = e.clientY - Number.parseInt(sticky.style.top, 10);
 
     document.addEventListener("pointermove", drag);
     document.addEventListener("pointerup", dragEnd);
@@ -176,7 +194,7 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
   moveToTop(sticky);
   stickies.push(sticky);
 
-  function remove() {
+  sticky.$(".removeBtn")!.on("click", () => {
     sticky.on("animationend", sticky.remove, { once: true });
     sticky.classList.add("remove");
 
@@ -186,9 +204,11 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
       stickies.splice(idx, 1);
     }
     stickies.at(-1)?.focus();
-  }
+  });
 
-  sticky.$(".removeBtn")!.on("click", remove);
+  sticky
+    .$(".maximizeBtn")!
+    .on("click", () => sticky.classList.toggle("maximized"));
 
   return sticky;
 }
@@ -197,7 +217,7 @@ export function createSticky() {
   const sticky = $<HTMLDivElement>(
     stickyTemplate.content.cloneNode(true).firstElementChild,
   )!;
-  sticky.style.left = `${Math.max(pointerX - 10, 0)}px`;
+  sticky.style.left = `${Math.max(pointerX - stickySizeDummy.getBoundingClientRect().width / 2, 0)}px`;
   sticky.style.top = `${Math.max(pointerY - 10, 0)}px`;
 
   return enableStickyFunctionality(sticky);

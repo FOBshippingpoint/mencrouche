@@ -279,6 +279,7 @@ export const shortcutManager = (() => {
     toggle_auto_arrange: "A-r",
     toggle_sticky_edit_mode: "A-w",
     remove_sticky: "A-x",
+    maximize_sticky: "A-m",
     remove_all_stickies: "C-A-x",
   } as const;
   type ActionName = keyof typeof actions;
