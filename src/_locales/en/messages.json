@@ -68,7 +68,7 @@
     "description": "Command description for removing all stickies."
   },
   "toggle_sticky_edit_mode": {
-    "message": "Toggle edit/view for current sticky",
+    "message": "Toggle sticky edit/view",
     "description": "Command description for toggling edit/view for current sticky."
   },
   "toggle_auto_arrange": {
@@ -106,5 +106,17 @@
   "ui_opacity": {
     "message": "UI Opacity",
     "description": "Description for UI opacity input label."
+  },
+  "maximize_sticky": {
+    "message": "Maximize sticky",
+    "description": "Command description for maximizing sticky."
+  },
+  "pin_sticky": {
+    "message": "Pin sticky",
+    "description": "Command description for pinning sticky."
+  },
+  "duplicates_sticky": {
+    "message": "Duplicates sticky",
+    "description": "Command description for duplicating sticky."
   }
 }

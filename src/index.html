@@ -100,6 +100,23 @@
             <path d="m19.07 4.93-1.41 1.41"></path></svg
         ></label>
         <input id="themeToggle" hidden="" type="checkbox" />
+        <button id="newStickyBtn">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-plus"
+          >
+            <path d="M5 12h14" />
+            <path d="M12 5v14" />
+          </svg>
+        </button>
       </nav>
       <section class="mainSection">
         <div class="stickyContainer">
@@ -318,6 +335,10 @@
         </section>
       </section>
       <div id="stickySizeDummy"></div>
+      <div id="contextMenu" hidden=""></div>
+      <template id="menuItem">
+        <div class="menuItem"></div>
+      </template>
     </main>
   </body>
 </html>

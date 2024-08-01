@@ -84,7 +84,7 @@ form {
   }
 }
 
-#stickySizeDummy{
+#stickySizeDummy {
   width: var(--size-fluid-9);
   height: 0;
 }
@@ -438,3 +438,35 @@ form {
   }
 }
 /* @settings end */
+
+#contextMenu {
+  position: fixed;
+  background-color: var(--surface-1);
+  border: var(--border-size-1) solid var(--surface-3);
+  border-radius: var(--radius-conditional-2);
+  box-shadow: var(--shadow-2);
+  padding: var(--size-2);
+  z-index: 1000;
+
+  .menuItem {
+    font-size: var(--font-size-1);
+    cursor: pointer;
+    padding-inline: var(--size-2);
+  }
+  .menuItem:hover {
+    background-color: var(--surface-3);
+  }
+
+  hr {
+    margin-block: var(--size-1);
+    border: none;
+    border-top: var(--border-size-1) solid var(--surface-3);
+  }
+}
+
+#newStickyBtn {
+  padding: 0;
+}
+#newStickyBtn:hover {
+  background: unset;
+}
