@@ -83,7 +83,7 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
       isDragging = true;
       if (sticky.classList.contains("maximized")) {
         sticky.style.top = "0px";
-        sticky.style.left = `${e.clientX - stickySizeDummy.getBoundingClientRect().width / 2}px`;
+        sticky.style.left = `${e.clientX - parseInt(sticky.style.width, 10) / 2}px`;
         sticky.classList.remove("maximized");
       }
     }
