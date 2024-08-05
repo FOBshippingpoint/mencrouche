@@ -1,3 +1,5 @@
+const DOM_TARGET = document.querySelector(".stickyContainer")!;
+
 function cast(value: string): unknown {
   if (value === "true") return true;
   if (value === "false") return false;
@@ -34,7 +36,7 @@ export const dataset = {
     if (!(_el instanceof HTMLDataElement)) {
       _el = document.createElement("data");
       _el.id = key;
-      document.body.append(_el);
+      DOM_TARGET.append(_el);
     }
 
     const el = _el as HTMLDataElement;

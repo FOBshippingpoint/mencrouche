@@ -267,78 +267,8 @@ function initGhostMode() {
   );
 }
 
-export const shortcutManager = (() => {
-  const actions = {
-    toggle_command_palette: "C-.",
-    toggle_settings: "C-,",
-    toggle_dark_mode: "C-S-l",
-    open_youtube: "C-o",
-    toggle_ghost_mode: "A-g",
-    save_document: "C-A-d",
-    new_sticky: "C-q",
-    toggle_auto_arrange: "A-r",
-    toggle_sticky_edit_mode: "A-w",
-    remove_sticky: "A-x",
-    maximize_sticky: "A-m",
-    remove_all_stickies: "C-A-x",
-  } as const;
-  type ActionName = keyof typeof actions;
-  type KikeyInfo = {
-    kikey: Kikey;
-    callback: () => void;
-  };
-
-  const registry: Record<ActionName, KikeyInfo[]> = {} as any;
-
-  return {
-    on(
-      actionName: ActionName,
-      callback: () => void,
-      el?: Document | HTMLElement,
-    ) {
-      const kikey = createKikey(el);
-      kikey.on(actions[actionName], callback);
-
-      if (registry[actionName]) {
-        registry[actionName].push({ kikey, callback });
-      } else {
-        registry[actionName] = [{ kikey, callback }];
-      }
-    },
-    once(
-      actionName: ActionName,
-      callback: () => void,
-      el?: Document | HTMLElement | undefined,
-    ) {
-      const kikey = createKikey(el);
-      kikey.once(actions[actionName], callback);
-
-      if (registry[actionName]) {
-        registry[actionName].push({ kikey, callback });
-      } else {
-        registry[actionName] = [{ kikey, callback }];
-      }
-    },
-    update(actionName: ActionName, newSequence: string | KeyBinding[]) {
-      for (const { kikey, callback } of registry[actionName] ?? []) {
-        kikey.updateSequence(newSequence, callback);
-      }
-    },
-    getKeySequence(actionName: ActionName) {
-      return keySequenceToString(
-        actions[actionName].split(" ").map(parseBinding),
-      );
-    },
-    getAllActions() {
-      return Object.entries(actions).map(([key, value]) => ({
-        actionName: key,
-        keySequence: keySequenceToString(value.split(" ").map(parseBinding)),
-      }));
-    },
-  };
-})();
-
 function initShortcuts() {
+  const shortcutManager = initShortcutManager();
   const shortcutList = $("#shortcutList")!;
   // let html = "";
   // for (const { actionName, keySequence } of shortcutManager.getAllActions()) {
@@ -356,14 +286,53 @@ function initShortcuts() {
         .firstElementChild,
     )!;
     const input = label.$<HTMLInputElement>("input")!;
+    const recordBtn = label.$<HTMLInputElement>(".recordBtn")!;
+    const restoreBtn = label.$<HTMLInputElement>(".restoreBtn")!;
     label.htmlFor = actionName;
     label.dataset.i18n = actionName;
-    input.id = actionName;
+    input.dataset.actionName = actionName;
     input.value = keySequence;
     label.insertAdjacentText("afterbegin", n81i.t(actionName));
+    recordBtn.textContent = n81i.t("record_shortcut_btn");
+    restoreBtn.textContent = n81i.t("restore_btn");
     frag.appendChild(label);
   }
   shortcutList.appendChild(frag);
+
+  const recordingKikey = createKikey();
+  shortcutList.on("click", (e) => {
+    if (e.target.matches(".recordBtn")) {
+      const btn = e.target as HTMLButtonElement;
+      const input = btn.closest("label")!.querySelector("input")!;
+      const actionName = input.dataset.actionName;
+
+      if (btn.dataset.recording === "false") {
+        // Start
+        btn.textContent = n81i.t("stop_record_shortcut_btn");
+        recordingKikey.startRecord();
+        input.value = "...";
+      } else {
+        // Stop
+        btn.textContent = n81i.t("record_shortcut_btn");
+        const newSequence = recordingKikey.stopRecord();
+        if (newSequence) {
+          changesManager.add(() => {
+            shortcutManager.update(actionName, newSequence);
+          });
+          input.value = keySequenceToString(newSequence);
+        } else {
+          input.value = shortcutManager.getKeySequence(actionName);
+        }
+      }
+      btn.dataset.recording =
+        btn.dataset.recording === "false" ? "true" : "false";
+    } else if (e.target.matches(".restoreBtn")) {
+      const btn = e.target as HTMLButtonElement;
+      const input = btn.closest("label")!.querySelector("input")!;
+      changesManager.add(() => shortcutManager.restore(actionName));
+      input.value = shortcutManager.getDefaultKeySequence(actionName);
+    }
+  });
 }
 
 function keyBindingToString(binding: KeyBinding, isMac = false): string {
@@ -391,8 +360,15 @@ function keyBindingToString(binding: KeyBinding, isMac = false): string {
 
   return parts.join(" + ");
 }
-function keySequenceToString(sequence: KeyBinding[]) {
-  return sequence.map((b) => keyBindingToString(b)).join(", ");
+function keySequenceToString(sequence: string | KeyBinding[]) {
+  let s: KeyBinding[];
+  if (typeof sequence === "string") {
+    s = sequence.split(" ").map(parseBinding);
+  } else {
+    s = sequence;
+  }
+
+  return s.map((b) => keyBindingToString(b)).join(", ");
 }
 
 function initOpacity() {
@@ -403,4 +379,121 @@ function initOpacity() {
   );
   uiOpacityInput.style.opacity = uiOpacity.toString();
   uiOpacityInput.value = (uiOpacity * 100).toString();
+}
+
+let singleton;
+export function initShortcutManager() {
+  if (!singleton) {
+    type ActionName =
+      | "toggle_command_palette"
+      | "toggle_settings"
+      | "toggle_dark_mode"
+      | "toggle_global_ghost_mode"
+      | "open_youtube"
+      | "save_document"
+      | "new_sticky"
+      | "toggle_auto_arrange"
+      | "toggle_split_view"
+      | "toggle_ghost_mode"
+      | "toggle_sticky_edit_mode"
+      | "toggle_maximize_sticky"
+      | "remove_sticky"
+      | "remove_all_stickies";
+    type Action = {
+      default: string;
+      custom: string | null;
+    };
+
+    const actions: Record<ActionName, Action> = {
+      toggle_command_palette: { default: "C-.", custom: null },
+      toggle_settings: { default: "C-,", custom: null },
+      toggle_dark_mode: { default: "C-S-l", custom: null },
+      toggle_global_ghost_mode: { default: "C-A-g", custom: null },
+      open_youtube: { default: "C-o", custom: null },
+      save_document: { default: "C-A-d", custom: null },
+      new_sticky: { default: "C-q", custom: null },
+      toggle_auto_arrange: { default: "A-r", custom: null },
+      toggle_ghost_mode: { default: "A-g", custom: null },
+      toggle_split_view: { default: "A-c", custom: null },
+      toggle_sticky_edit_mode: { default: "A-w", custom: null },
+      toggle_maximize_sticky: { default: "A-m", custom: null },
+      remove_sticky: { default: "A-x", custom: null },
+      remove_all_stickies: { default: "C-A-x", custom: null },
+    };
+    for (const [actionName, value] of Object.entries(actions)) {
+      value.custom ||= dataset.getItem<string>(actionName);
+    }
+
+    type KikeyInfo = {
+      kikey: Kikey;
+      callback: () => void;
+    };
+
+    const registry: Record<ActionName, KikeyInfo[]> = {} as any;
+
+    function getCurrent(actionName: ActionName) {
+      return actions[actionName].custom ?? actions[actionName].default;
+    }
+
+    singleton = {
+      on(
+        actionName: ActionName,
+        callback: () => void,
+        el?: Document | HTMLElement,
+      ) {
+        const kikey = createKikey(el);
+        kikey.on(getCurrent(actionName), callback);
+
+        if (registry[actionName]) {
+          registry[actionName].push({ kikey, callback });
+        } else {
+          registry[actionName] = [{ kikey, callback }];
+        }
+      },
+      once(
+        actionName: ActionName,
+        callback: () => void,
+        el?: Document | HTMLElement | undefined,
+      ) {
+        const kikey = createKikey(el);
+        kikey.once(getCurrent(actionName), callback);
+
+        if (registry[actionName]) {
+          registry[actionName].push({ kikey, callback });
+        } else {
+          registry[actionName] = [{ kikey, callback }];
+        }
+      },
+      update(actionName: ActionName, newSequence: string | KeyBinding[]) {
+        for (const { kikey, callback } of registry[actionName] ?? []) {
+          kikey.updateSequence(newSequence, callback);
+          actions[actionName].custom = newSequence;
+          dataset.setItem(actionName, newSequence);
+        }
+      },
+      restore(actionName: ActionName) {
+        for (const { kikey, callback } of registry[actionName] ?? []) {
+          kikey.updateSequence(actions[actionName].default, callback);
+          actions[actionName].custom = null;
+          dataset.removeItem(actionName);
+        }
+      },
+      getKeySequence(actionName: ActionName) {
+        return keySequenceToString(getCurrent(actionName));
+      },
+      getDefaultKeySequence(actionName: ActionName) {
+        return keySequenceToString(actions[actionName].default);
+      },
+      getAllActions() {
+        return Object.entries(actions).map(([key, value]) => ({
+          actionName: key,
+          keySequence: keySequenceToString(
+            (value.custom ?? value.default).split(" ").map(parseBinding),
+          ),
+        }));
+      },
+    };
+  }
+
+  return singleton;
 }

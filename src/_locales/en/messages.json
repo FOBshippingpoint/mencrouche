@@ -51,16 +51,20 @@
 		"message": "Toggle ghost mode",
 		"description": "Command description for toggling ghost mode."
 	},
+	"toggle_global_ghost_mode": {
+		"message": "Toggle global ghost mode",
+		"description": "Command description for toggling global ghost mode."
+	},
 	"toggle_command_palette": {
 		"message": "Toggle command palette",
 		"description": "Command description for toggling command palette."
 	},
   "new_sticky": {
-    "message": "New sticky",
+    "message": "New",
     "description": "Command description for adding new sticky."
   },
   "remove_sticky": {
-    "message": "Remove sticky",
+    "message": "Remove",
     "description": "Command description for removing sticky."
   },
   "remove_all_stickies": {
@@ -68,7 +72,7 @@
     "description": "Command description for removing all stickies."
   },
   "toggle_sticky_edit_mode": {
-    "message": "Toggle sticky edit/view",
+    "message": "Toggle edit/view",
     "description": "Command description for toggling edit/view for current sticky."
   },
   "toggle_auto_arrange": {
@@ -95,6 +99,18 @@
 		"message": "Cancel",
 		"description": "Canecel settings button."
 	},
+	"record_shortcut_btn": {
+		"message": "Record",
+		"description": "Record shortcut button."
+	},
+  "stop_record_shortcut_btn": {
+    "message": "Stop",
+    "description": "Stop recording shortcut button."
+  },
+  "restore_btn": {
+    "message": "Restore",
+    "description": "Restore shortcut to default button."
+  },
   "background_image_link": {
     "message": "Background image link",
     "description": "Description for background image link input label."
@@ -107,16 +123,20 @@
     "message": "UI Opacity",
     "description": "Description for UI opacity input label."
   },
-  "maximize_sticky": {
-    "message": "Maximize sticky",
-    "description": "Command description for maximizing sticky."
+  "toggle_split_view": {
+    "message": "Toggle split view",
+    "description": "Command description for toggling maximiz/minize sticky."
+  },
+  "toggle_maximize_sticky": {
+    "message": "Toggle maximize/minimize",
+    "description": "Command description for toggling split view of sticky."
   },
   "pin_sticky": {
-    "message": "Pin sticky",
+    "message": "Pin",
     "description": "Command description for pinning sticky."
   },
   "duplicates_sticky": {
-    "message": "Duplicates sticky",
+    "message": "Duplicates",
     "description": "Command description for duplicating sticky."
   }
 }

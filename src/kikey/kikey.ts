@@ -131,7 +131,7 @@ export interface Kikey {
   /**
    * Stops recording keyboard events and returns the recorded key sequence.
    *
-   * @returns The recorded key sequence.
+   * @returns The recorded key sequence. If no key is pressed, it returns null.
    *
    * @example
    * ```typescript
@@ -141,7 +141,7 @@ export interface Kikey {
    * console.log(`Recorded sequence: ${sequence}`);
    * ```
    */
-  stopRecord(): string;
+  stopRecord(): string | null;
 }
 
 function parseSequence(sequence: string | KeyBinding[]): KeyBinding[] {
@@ -306,7 +306,7 @@ export function createKikey(targetElement?: HTMLElement | Document): Kikey {
       target.addEventListener("keydown", pushEvent as (e: Event) => void);
       target.addEventListener("keyup", pushEvent as (e: Event) => void);
     },
-    stopRecord(): string {
+    stopRecord(): string | null {
       // Clean up
       target.removeEventListener("keydown", pushEvent as (e: Event) => void);
       target.removeEventListener("keyup", pushEvent as (e: Event) => void);
@@ -345,7 +345,7 @@ export function createKikey(targetElement?: HTMLElement | Document): Kikey {
         fast++;
       }
       record = [];
-      return sequence.join(" ");
+      return sequence.length > 0 ? sequence.join(" ") : null;
     },
   };
 }

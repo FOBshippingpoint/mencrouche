@@ -1,9 +1,7 @@
-import { marked } from "marked";
-import { handleTextAreaPaste } from ".";
 import { createSticky, getLatestSticky } from "./createSticky";
 import { dataset } from "./dataset";
 import { createKikey } from "./kikey";
-import { shortcutManager, toggleSettingsPage } from "./settings";
+import { initShortcutManager, toggleSettingsPage } from "./settings";
 import { $, $$, $$$ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
 
@@ -47,17 +45,25 @@ const commandMap: Record<string, Command> = {
     name: "save_document",
     isMenuItem: false,
     execute() {
-      localStorage.setItem("body", document.body.innerHTML);
+      localStorage.setItem("doc", $(".stickyContainer")!.innerHTML);
     },
   },
-  toggle_ghost_mode: {
-    name: "toggle_ghost_mode",
+  toggle_global_ghost_mode: {
+    name: "toggle_global_ghost_mode",
     isMenuItem: false,
     execute() {
       dataset.derivedSetItem<boolean>(
         "isGhostMode",
         (isGhostMode) => !isGhostMode,
       );
+    },
+  },
+  toggle_ghost_mode: {
+    name: "toggle_ghost_mode",
+    isMenuItem: true,
+    execute() {
+      console.log("toggleGhost_mode");
+      getLatestSticky()?.classList.toggle("ghost");
     },
   },
   remove_all_stickies: {
@@ -72,21 +78,8 @@ const commandMap: Record<string, Command> = {
     isMenuItem: true,
     execute() {
       const sticky = createSticky();
-      const stickyBody = sticky.$(".stickyBody")!;
-      // TODO: maybe use template element for the consistency?
-      const textarea = $$$("textarea");
-      const preview = $$$("div");
-      stickyBody.append(textarea, preview);
-      textarea.placeholder = n81i.t("sticky_textarea_start_typing_placeholder");
-      textarea.on("input", () => (textarea.dataset.value = textarea.value));
-      preview.hidden = true;
-      preview.classList.add("preview");
-      handleTextAreaPaste(sticky);
-      (sticky as typeof sticky & { prevInput: string }).prevInput = "";
-
       $(".stickyContainer")?.append(sticky);
-      // [].forEach.call($$("*"), function (a) { a.style.outline = "1px solid #" + (~~(Math.random() * (1 << 24))).toString(16); });
-      textarea.focus();
+      sticky.$("textarea")?.focus();
     },
   },
   remove_sticky: {
@@ -103,46 +96,38 @@ const commandMap: Record<string, Command> = {
       $(".stickyContainer")?.classList.toggle("autoArrange");
     },
   },
-  maximize_sticky: {
-    name: "maximize_sticky",
+  toggle_split_view: {
+    name: "toggle_split_view",
     isMenuItem: true,
     execute() {
-      getLatestSticky()?.$(".maximizeBtn")!.click();
+      const sticky = getLatestSticky();
+      if (sticky) {
+        if (!sticky.classList.contains("editMode")) {
+          getLatestSticky()?.$(".editModeToggleLbl")!.click();
+        }
+        sticky.classList.toggle("splitView");
+        sticky.$("textarea")!.focus();
+      }
+    },
+  },
+  toggle_maximize_sticky: {
+    name: "toggle_maximize_sticky",
+    isMenuItem: true,
+    execute() {
+      getLatestSticky()?.$(".maximizeToggleLbl")!.click();
     },
   },
   toggle_sticky_edit_mode: {
     name: "toggle_sticky_edit_mode",
     isMenuItem: true,
     execute() {
-      const sticky = getLatestSticky() as ReturnType<typeof getLatestSticky> & {
-        prevInput: string;
-      };
-      if (!sticky) {
-        return;
-      }
-
-      const textarea = sticky.$<HTMLTextAreaElement>("textarea")!;
-      const preview = sticky.$<HTMLOutputElement>(".preview")!;
-      if (!textarea.disabled /* Change to view mode */) {
-        if (sticky.prevInput !== textarea.value) {
-          const html = marked.parse(textarea.value) as string;
-          const fragment = document
-            .createRange()
-            .createContextualFragment(html);
-          preview.replaceChildren(fragment);
-        }
-        sticky.focus();
-      }
-      textarea.disabled = !textarea.disabled;
-      textarea.hidden = !textarea.hidden;
-      sticky.prevInput = textarea.value;
-      preview.hidden = !preview.hidden;
-      textarea.focus();
+      getLatestSticky()?.$(".editModeToggleLbl")!.click();
     },
   },
 };
 
 export function initCommandPalette() {
+  const shortcutManager = initShortcutManager();
   const commandPalette = $<HTMLDivElement>("#commandPalette")!;
   const searchInput = $<HTMLInputElement>("#searchInput")!;
   const commandList = $<HTMLUListElement>("#commandList")!;
@@ -218,6 +203,7 @@ export function initCommandPalette() {
 
     const selectedItem = items[idx];
     selectedItem?.setAttribute("aria-selected", "true");
+    selectedItem?.scrollIntoView({ block: "nearest" });
     keyboardSelectedCommandName = selectedItem?.dataset.commandName!;
   }
 

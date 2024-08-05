@@ -7,6 +7,12 @@
 - isolation
 - bug: window resize cuz sticky out of sight
 
+## TODOs
+
+- [x] Maximize
+- [ ] Pin sticky
+- [ ] Toggle edit/view mode button on sticky controls.
+
 ## BUGS
 
 - [x] The blob image cannot restore from localstorage.

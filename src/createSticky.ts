@@ -1,4 +1,6 @@
+import { marked } from "marked";
 import { $, $$, Penny } from "./utils/dollars";
+import { n81i } from "./utils/n81i";
 
 let highestZIndex = 0;
 /** An array for tracking the sticky order, from lowest -> topest */
@@ -206,9 +208,54 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
     stickies.at(-1)?.focus();
   });
 
-  sticky
-    .$(".maximizeBtn")!
-    .on("click", () => sticky.classList.toggle("maximized"));
+  const textarea = sticky.$<HTMLTextAreaElement>("textarea")!;
+  const preview = sticky.$<HTMLDivElement>(".preview")!;
+  textarea.placeholder = n81i.t("sticky_textarea_start_typing_placeholder");
+  textarea.on("input", () => (textarea.dataset.value = textarea.value));
+  preview.classList.add("preview");
+  handleTextAreaPaste(sticky);
+  sticky.dataset.prevInput = "";
+
+  function updatePreview() {
+    const html = marked.parse(textarea.value) as string;
+    const fragment = document.createRange().createContextualFragment(html);
+    preview.replaceChildren(fragment);
+  }
+
+  const editModeToggleLbl = sticky.$<HTMLLabelElement>(".editModeToggleLbl")!;
+  editModeToggleLbl.on("change", () => {
+    editModeToggleLbl.$$("svg").do((el) => el.classList.toggle("none"));
+
+    if (sticky.classList.contains("editMode") /* Change to view mode */) {
+      if (sticky.dataset.prevInput !== textarea.value) {
+        updatePreview();
+      }
+      sticky.focus();
+    }
+    textarea.disabled = !textarea.disabled;
+    textarea.hidden = !textarea.hidden;
+    sticky.dataset.prevInput = textarea.value;
+    preview.hidden = !preview.hidden;
+    textarea.focus();
+
+    sticky.classList.toggle("editMode");
+  });
+
+  const maximizeToggleLbl = sticky.$<HTMLLabelElement>(".maximizeToggleLbl")!;
+  maximizeToggleLbl.on("change", () => {
+    maximizeToggleLbl.$$("svg").do((el) => el.classList.toggle("none"));
+    sticky.classList.toggle("maximized");
+  });
+
+  textarea.on("input", () => {
+    if (sticky.classList.contains("splitView")) {
+      updatePreview();
+      sticky.dataset.prevInput = textarea.value;
+    }
+  });
+
+  // colorful outline
+  // [].forEach.call($$("*"), function (a) { a.style.outline = "1px solid #" + (~~(Math.random() * (1 << 24))).toString(16); });
 
   return sticky;
 }
@@ -217,7 +264,7 @@ export function createSticky() {
   const sticky = $<HTMLDivElement>(
     stickyTemplate.content.cloneNode(true).firstElementChild,
   )!;
-  sticky.style.left = `${Math.max(pointerX - stickySizeDummy.getBoundingClientRect().width / 2, 0)}px`;
+  sticky.style.left = `${pointerX - stickySizeDummy.getBoundingClientRect().width / 2}px`;
   sticky.style.top = `${Math.max(pointerY - 10, 0)}px`;
 
   return enableStickyFunctionality(sticky);
@@ -227,6 +274,59 @@ function moveToTop(el: HTMLElement) {
   highestZIndex++;
   el.style.zIndex = highestZIndex.toString();
   el.style.order = highestZIndex.toString();
+}
+
+export function handleTextAreaPaste(sticky: Penny<HTMLDivElement>) {
+  const textarea = sticky.$<HTMLTextAreaElement>("textarea")!;
+  textarea.on("paste", async (e) => {
+    let isPasteImage = false;
+    const clipboardItems =
+      typeof navigator?.clipboard?.read === "function"
+        ? await navigator.clipboard.read()
+        : (e as any).clipboardData.files;
+
+    for (const clipboardItem of clipboardItems) {
+      let blob;
+      if (clipboardItem.type?.startsWith("image/")) {
+        blob = clipboardItem;
+        paste(
+          textarea,
+          createMarkdownImageDescription(URL.createObjectURL(blob)),
+        );
+        isPasteImage = true;
+      } else {
+        const imageTypes = clipboardItem.types?.filter((type) =>
+          type.startsWith("image/"),
+        );
+        for (const imageType of imageTypes) {
+          blob = await clipboardItem.getType(imageType);
+          paste(
+            textarea,
+            createMarkdownImageDescription(URL.createObjectURL(blob)),
+          );
+          isPasteImage = true;
+        }
+      }
+    }
+    if (isPasteImage) {
+      e.preventDefault();
+      textarea.dispatchEvent(new InputEvent("input")); // Programmatically trigger input event to notify content change.
+    }
+  });
+}
+
+function createMarkdownImageDescription(url: string) {
+  return `![](${url})`;
+}
+
+function paste(textarea: HTMLTextAreaElement, toPaste: string) {
+  const start = textarea.selectionStart;
+  const end = textarea.selectionEnd;
+  const text = textarea.value;
+  const before = text.substring(0, start);
+  const after = text.substring(end);
+  textarea.value = before + toPaste + after;
+  textarea.selectionStart = textarea.selectionEnd = start + toPaste.length;
 }
 
 initStickyContainer();

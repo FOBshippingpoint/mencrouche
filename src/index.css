@@ -189,6 +189,10 @@ form {
   left: 0 !important;
   top: 0 !important;
   transition: all 0.1s var(--ease-out-5);
+
+  .resizeHandle {
+    pointer-events: none;
+  }
 }
 
 .remove {
@@ -208,23 +212,49 @@ form {
   display: flex;
   justify-content: center;
   align-items: center;
-}
+  gap: var(--size-1);
+  padding-inline: var(--size-1);
 
-.controls button {
-  background-color: inherit;
-  color: var(--text-2);
-}
-.controls button:hover {
-  color: var(--text-1);
+  button,
+  label {
+    background: unset;
+    cursor: pointer;
+    color: var(--text-2);
+    padding: 0;
+  }
+  button:hover,
+  label:hover {
+    color: var(--text-1);
+  }
 }
 
 .stickyBody {
-  flex: 1;
+  flex-grow: 1;
   padding: var(--size-2);
 
   .preview {
     height: 100%;
     padding-inline: var(--size-2);
+  }
+}
+
+.editMode.splitView .stickyBody {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(1, 1fr);
+  overflow: auto;
+
+  .preview {
+    display: unset;
+  }
+  .preview:not(:has(iframe)) {
+    padding-inline: var(--size-4);
+  }
+  textarea {
+    border-right: var(--size-1) solid var(--surface-4);
+  }
+  textarea:focus {
+    outline: unset;
   }
 }
 
@@ -234,6 +264,9 @@ form {
 
 .stickyBody:has(iframe) {
   padding: 0;
+  .preview {
+    padding: 0;
+  }
 }
 
 .stickyBody textarea {
@@ -414,8 +447,9 @@ form {
 }
 .btn {
   border-radius: var(--radius-conditional-2);
-  height: var(--size-7);
-  padding-inline: var(--size-3);
+  display: inline-flex;
+  padding-block: var(--size-relative-1);
+  padding-inline: var(--size-relative-6);
   border: var(--border-size-2) solid var(--surface-4);
 }
 .formGroup {
@@ -435,6 +469,10 @@ form {
   input {
     font-family: var(--font-mono);
     margin-left: var(--size-3);
+  }
+  button {
+    width: var(--size-10);
+    justify-content: center;
   }
 }
 /* @settings end */
@@ -470,4 +508,10 @@ form {
 }
 #newStickyBtn:hover {
   background: unset;
+}
+
+/* HTML hidden attribute failed when the display has been set. So I add this
+ * class for the convenience. */
+.none {
+  display: none;
 }
