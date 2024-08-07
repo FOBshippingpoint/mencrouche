@@ -5,5 +5,5 @@ export default {
   build: {
     outDir: "../dist/site", // ./dist
   },
-  base: "/duatz/" // Required for GitHub Pages.
+  base: "/mencrouche/" // Required for GitHub Pages.
 } satisfies UserConfig;

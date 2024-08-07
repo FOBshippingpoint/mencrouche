@@ -1,4 +1,4 @@
-# Duatz - Your browser's new homepage.
+# Mencrouche - Your browser's new homepage.
 
 ![screenshot](https://i.imgur.com/SnR5gHO.png)
 

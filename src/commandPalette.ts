@@ -62,8 +62,7 @@ const commandMap: Record<string, Command> = {
     name: "toggle_ghost_mode",
     isMenuItem: true,
     execute() {
-      console.log("toggleGhost_mode");
-      getLatestSticky()?.classList.toggle("ghost");
+      getLatestSticky()?.toggleGhostMode();
     },
   },
   remove_all_stickies: {
@@ -86,7 +85,7 @@ const commandMap: Record<string, Command> = {
     name: "remove_sticky",
     isMenuItem: true,
     execute() {
-      getLatestSticky()?.$(".removeBtn")!.click();
+      getLatestSticky()?.removeSticky();
     },
   },
   toggle_auto_arrange: {
@@ -100,30 +99,30 @@ const commandMap: Record<string, Command> = {
     name: "toggle_split_view",
     isMenuItem: true,
     execute() {
-      const sticky = getLatestSticky();
-      if (sticky) {
-        if (!sticky.classList.contains("editMode")) {
-          getLatestSticky()?.$(".editModeToggleLbl")!.click();
-        }
-        sticky.classList.toggle("splitView");
-        sticky.$("textarea")!.focus();
-      }
+      getLatestSticky()?.toggleSplitView();
     },
   },
   toggle_maximize_sticky: {
     name: "toggle_maximize_sticky",
     isMenuItem: true,
     execute() {
-      getLatestSticky()?.$(".maximizeToggleLbl")!.click();
+      getLatestSticky()?.toggleMaximize();
     },
   },
   toggle_sticky_edit_mode: {
     name: "toggle_sticky_edit_mode",
     isMenuItem: true,
     execute() {
-      getLatestSticky()?.$(".editModeToggleLbl")!.click();
+      getLatestSticky()?.toggleEditMode();
     },
   },
+  toggle_sticky_pin_mode: {
+    name: "toggle_sticky_pin_mode",
+    isMenuItem: true,
+    execute() {
+      getLatestSticky()?.togglePin();
+    }
+  }
 };
 
 export function initCommandPalette() {

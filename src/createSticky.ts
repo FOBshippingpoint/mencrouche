@@ -2,6 +2,15 @@ import { marked } from "marked";
 import { $, $$, Penny } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
 
+type Sticky = Penny<HTMLDivElement> & {
+  removeSticky: () => void;
+  toggleEditMode: () => void;
+  toggleMaximize: () => void;
+  toggleSplitView: () => void;
+  toggleGhostMode: () => void;
+  togglePin: () => void;
+};
+
 let highestZIndex = 0;
 /** An array for tracking the sticky order, from lowest -> topest */
 const stickies: Penny<HTMLDivElement>[] = [];
@@ -14,7 +23,7 @@ let stickyContainer: Penny<HTMLDivElement>;
 let pointerX: number;
 let pointerY: number;
 
-export function getLatestSticky() {
+export function getLatestSticky(): Sticky | undefined {
   return stickies.at(-1);
 }
 
@@ -196,7 +205,13 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
   moveToTop(sticky);
   stickies.push(sticky);
 
-  sticky.$(".removeBtn")!.on("click", () => {
+  const textarea = sticky.$<HTMLTextAreaElement>("textarea")!;
+  const preview = sticky.$<HTMLDivElement>(".preview")!;
+  const removeBtn = sticky.$<HTMLButtonElement>(".removeBtn")!;
+  const editModeToggleLbl = sticky.$<HTMLLabelElement>(".editModeToggleLbl")!;
+  const maximizeToggleLbl = sticky.$<HTMLLabelElement>(".maximizeToggleLbl")!;
+
+  removeBtn.on("click", () => {
     sticky.on("animationend", sticky.remove, { once: true });
     sticky.classList.add("remove");
 
@@ -208,8 +223,6 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
     stickies.at(-1)?.focus();
   });
 
-  const textarea = sticky.$<HTMLTextAreaElement>("textarea")!;
-  const preview = sticky.$<HTMLDivElement>(".preview")!;
   textarea.placeholder = n81i.t("sticky_textarea_start_typing_placeholder");
   textarea.on("input", () => (textarea.dataset.value = textarea.value));
   preview.classList.add("preview");
@@ -222,7 +235,6 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
     preview.replaceChildren(fragment);
   }
 
-  const editModeToggleLbl = sticky.$<HTMLLabelElement>(".editModeToggleLbl")!;
   editModeToggleLbl.on("change", () => {
     editModeToggleLbl.$$("svg").do((el) => el.classList.toggle("none"));
 
@@ -241,7 +253,6 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
     sticky.classList.toggle("editMode");
   });
 
-  const maximizeToggleLbl = sticky.$<HTMLLabelElement>(".maximizeToggleLbl")!;
   maximizeToggleLbl.on("change", () => {
     maximizeToggleLbl.$$("svg").do((el) => el.classList.toggle("none"));
     sticky.classList.toggle("maximized");
@@ -257,7 +268,30 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
   // colorful outline
   // [].forEach.call($$("*"), function (a) { a.style.outline = "1px solid #" + (~~(Math.random() * (1 << 24))).toString(16); });
 
-  return sticky;
+  return Object.assign(sticky, {
+    removeSticky() {
+      removeBtn.click();
+    },
+    toggleMaximize() {
+      maximizeToggleLbl.click();
+    },
+    toggleEditMode() {
+      editModeToggleLbl.click();
+    },
+    toggleSplitView() {
+      if (!sticky.classList.contains("editMode")) {
+        getLatestSticky()?.$(".editModeToggleLbl")!.click();
+      }
+      sticky.classList.toggle("splitView");
+      sticky.$("textarea")!.focus();
+    },
+    toggleGhostMode() {
+      sticky.classList.toggle("ghost");
+    },
+    togglePin() {
+      sticky.classList.toggle("pin");
+    }
+  });
 }
 
 export function createSticky() {

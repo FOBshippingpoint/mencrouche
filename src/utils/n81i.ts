@@ -39,7 +39,7 @@ export const n81i = (() => {
     if (!localeAndMessagesJson.has(locale)) {
       // Warning: Muse use ./ to write path. If not, it will use
       // http://localhost:5173/_locales/en/messages.json instead of 
-      // http://localhost:5173/duatz/en/messages.json
+      // http://localhost:5173/mencrouche/en/messages.json
       const response = await fetch(`./_locales/${locale}/messages.json`);
       const json = await response.json();
       localeAndMessagesJson.set(locale, json);

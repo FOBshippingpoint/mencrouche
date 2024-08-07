@@ -127,59 +127,59 @@ form {
   background-color: transparent;
 }
 .resizeHandle.top {
-  top: var(--size-px-00);
-  left: var(--size-px-00);
-  right: var(--size-px-00);
-  height: var(--size-px-2);
+  top: var(--size-00);
+  left: var(--size-00);
+  right: var(--size-00);
+  height: var(--size-2);
   cursor: n-resize;
 }
 .resizeHandle.right {
-  top: var(--size-px-00);
-  right: var(--size-px-00);
-  bottom: var(--size-px-00);
-  width: var(--size-px-2);
+  top: var(--size-00);
+  right: var(--size-00);
+  bottom: var(--size-00);
+  width: var(--size-2);
   cursor: e-resize;
 }
 .resizeHandle.bottom {
-  bottom: var(--size-px-00);
-  left: var(--size-px-00);
-  right: var(--size-px-00);
-  height: var(--size-px-2);
+  bottom: var(--size-00);
+  left: var(--size-00);
+  right: var(--size-00);
+  height: var(--size-2);
   cursor: s-resize;
 }
 .resizeHandle.left {
-  top: var(--size-px-00);
-  left: var(--size-px-00);
-  bottom: var(--size-px-00);
-  width: var(--size-px-2);
+  top: var(--size-00);
+  left: var(--size-00);
+  bottom: var(--size-00);
+  width: var(--size-2);
   cursor: w-resize;
 }
 .resizeHandle.topLeft {
-  top: var(--size-px-00);
-  left: var(--size-px-00);
-  width: var(--size-px-2);
-  height: var(--size-px-2);
+  top: var(--size-00);
+  left: var(--size-00);
+  width: var(--size-2);
+  height: var(--size-2);
   cursor: nw-resize;
 }
 .resizeHandle.topRight {
-  top: var(--size-px-00);
-  right: var(--size-px-00);
-  width: var(--size-px-2);
-  height: var(--size-px-2);
+  top: var(--size-00);
+  right: var(--size-00);
+  width: var(--size-2);
+  height: var(--size-2);
   cursor: ne-resize;
 }
 .resizeHandle.bottomLeft {
-  bottom: var(--size-px-00);
-  left: var(--size-px-00);
-  width: var(--size-px-2);
-  height: var(--size-px-2);
+  bottom: var(--size-00);
+  left: var(--size-00);
+  width: var(--size-2);
+  height: var(--size-2);
   cursor: sw-resize;
 }
 .resizeHandle.bottomRight {
-  bottom: var(--size-px-00);
-  right: var(--size-px-00);
-  width: var(--size-px-2);
-  height: var(--size-px-2);
+  bottom: var(--size-00);
+  right: var(--size-00);
+  width: var(--size-2);
+  height: var(--size-2);
   cursor: se-resize;
 }
 
@@ -195,6 +195,13 @@ form {
   }
 }
 
+.pin {
+  .stickyHeader,
+  .resizeHandle {
+    pointer-events: none;
+  }
+}
+
 .remove {
   animation: var(--animation-scale-down), var(--animation-fade-out);
   animation-timing-function: var(--ease-elastic-in-out-4);
@@ -202,6 +209,7 @@ form {
 
 .stickyHeader {
   background-color: var(--surface-4);
+  padding-bottom: var(--border-size-1);
   cursor: grab;
   user-select: none;
 }

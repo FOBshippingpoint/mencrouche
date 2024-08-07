@@ -1,9 +1,6 @@
 const DOM_TARGET = document.querySelector(".stickyContainer")!;
 
 function cast(value: string): unknown {
-  if (value === "true") return true;
-  if (value === "false") return false;
-  if (value === "null") return null;
   if (value === "undefined") return undefined;
   if (!isNaN(Number(value))) return Number(value);
   try {

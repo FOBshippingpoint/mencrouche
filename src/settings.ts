@@ -131,6 +131,7 @@ uiOpacityInput.on("input", () => {
   uiOpacityInput.style.opacity = uiOpacity;
   changesManager.add(() => {
     document.documentElement.style.setProperty("--ui-opacity", uiOpacity);
+    dataset.setItem("uiOpacity", uiOpacity);
   });
 });
 
@@ -397,6 +398,7 @@ export function initShortcutManager() {
       | "toggle_ghost_mode"
       | "toggle_sticky_edit_mode"
       | "toggle_maximize_sticky"
+      | "toggle_sticky_pin_mode"
       | "remove_sticky"
       | "remove_all_stickies";
     type Action = {
@@ -417,6 +419,7 @@ export function initShortcutManager() {
       toggle_split_view: { default: "A-c", custom: null },
       toggle_sticky_edit_mode: { default: "A-w", custom: null },
       toggle_maximize_sticky: { default: "A-m", custom: null },
+      toggle_sticky_pin_mode: { default: "A-p", custom: null },
       remove_sticky: { default: "A-x", custom: null },
       remove_all_stickies: { default: "C-A-x", custom: null },
     };

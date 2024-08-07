@@ -11,10 +11,13 @@
 
 - [x] Maximize
 - [ ] Pin sticky
-- [ ] Toggle edit/view mode button on sticky controls.
+- [x] Toggle edit/view mode button on sticky controls.
+- [x] Split view
 
 ## BUGS
 
-- [x] The blob image cannot restore from localstorage.
+- [x] The background image cannot restore from localstorage.
+- [ ] The sticky blob image cannot restore from localstorage.
 - [ ] sticky out of bound when resizing window.
 - [ ] create sticky on the bottom or right cuz the container size change.
+- [ ] Context menu will not translate when language switched.
