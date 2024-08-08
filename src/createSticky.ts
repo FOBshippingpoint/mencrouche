@@ -3,7 +3,8 @@ import { $, $$, Penny } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
 
 type Sticky = Penny<HTMLDivElement> & {
-  removeSticky: () => void;
+  delete: () => void;
+  duplicate: () => void;
   toggleEditMode: () => void;
   toggleMaximize: () => void;
   toggleSplitView: () => void;
@@ -24,7 +25,7 @@ let pointerX: number;
 let pointerY: number;
 
 export function getLatestSticky(): Sticky | undefined {
-  return stickies.at(-1);
+  return stickies.at(-1) as Sticky;
 }
 
 export function initStickyContainer() {
@@ -94,13 +95,20 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
       isDragging = true;
       if (sticky.classList.contains("maximized")) {
         sticky.style.top = "0px";
-        sticky.style.left = `${e.clientX - parseInt(sticky.style.width, 10) / 2}px`;
+
+        let width: number;
+        if (sticky.style.width) {
+          width = parseInt(sticky.style.width, 10);
+        } else {
+          width = stickySizeDummy.getBoundingClientRect().width;
+        }
+        sticky.style.left = `${e.clientX - width / 2}px`;
         sticky.classList.remove("maximized");
       }
     }
 
-    dragInitialX = e.clientX - Number.parseInt(sticky.style.left, 10);
-    dragInitialY = e.clientY - Number.parseInt(sticky.style.top, 10);
+    dragInitialX = e.clientX - parseInt(sticky.style.left, 10);
+    dragInitialY = e.clientY - parseInt(sticky.style.top, 10);
 
     document.addEventListener("pointermove", drag);
     document.addEventListener("pointerup", dragEnd);
@@ -207,11 +215,11 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
 
   const textarea = sticky.$<HTMLTextAreaElement>("textarea")!;
   const preview = sticky.$<HTMLDivElement>(".preview")!;
-  const removeBtn = sticky.$<HTMLButtonElement>(".removeBtn")!;
+  const deleteBtn = sticky.$<HTMLButtonElement>(".deleteBtn")!;
   const editModeToggleLbl = sticky.$<HTMLLabelElement>(".editModeToggleLbl")!;
   const maximizeToggleLbl = sticky.$<HTMLLabelElement>(".maximizeToggleLbl")!;
 
-  removeBtn.on("click", () => {
+  deleteBtn.on("click", () => {
     sticky.on("animationend", sticky.remove, { once: true });
     sticky.classList.add("remove");
 
@@ -223,7 +231,7 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
     stickies.at(-1)?.focus();
   });
 
-  textarea.placeholder = n81i.t("sticky_textarea_start_typing_placeholder");
+  n81i.translateElement(textarea);
   textarea.on("input", () => (textarea.dataset.value = textarea.value));
   preview.classList.add("preview");
   handleTextAreaPaste(sticky);
@@ -269,8 +277,17 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
   // [].forEach.call($$("*"), function (a) { a.style.outline = "1px solid #" + (~~(Math.random() * (1 << 24))).toString(16); });
 
   return Object.assign(sticky, {
-    removeSticky() {
-      removeBtn.click();
+    delete() {
+      deleteBtn.click();
+    },
+    duplicate() {
+      const clone = $<HTMLDivElement>(sticky.cloneNode(true) as any);
+      const duplicated = enableStickyFunctionality(clone as any);
+      duplicated.style.left = `${parseInt(duplicated.style.left, 10) + 10}px`;
+      duplicated.style.top = `${parseInt(duplicated.style.top, 10) + 10}px`;
+      moveToTop(duplicated);
+      stickyContainer.appendChild(duplicated);
+      duplicated.focus();
     },
     toggleMaximize() {
       maximizeToggleLbl.click();
@@ -280,8 +297,9 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
     },
     toggleSplitView() {
       if (!sticky.classList.contains("editMode")) {
-        getLatestSticky()?.$(".editModeToggleLbl")!.click();
+        editModeToggleLbl.click();
       }
+      updatePreview();
       sticky.classList.toggle("splitView");
       sticky.$("textarea")!.focus();
     },
@@ -290,7 +308,10 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
     },
     togglePin() {
       sticky.classList.toggle("pin");
-    }
+      sticky
+        .$$("textarea,input,button")
+        .do((el) => (el.disabled = !el.disabled));
+    },
   });
 }
 

@@ -35,18 +35,17 @@ export const n81i = (() => {
   type Todo = () => void;
   const todos: Todo[] = [];
 
-  async function loadLanguage(locale: string) {
-    if (!localeAndMessagesJson.has(locale)) {
-      // Warning: Muse use ./ to write path. If not, it will use
-      // http://localhost:5173/_locales/en/messages.json instead of 
-      // http://localhost:5173/mencrouche/en/messages.json
-      const response = await fetch(`./_locales/${locale}/messages.json`);
-      const json = await response.json();
-      localeAndMessagesJson.set(locale, json);
-    }
-  }
-
   return {
+    async loadLanguage(locale: string) {
+      if (!localeAndMessagesJson.has(locale)) {
+        // Warning: Muse use ./ to write path. If not, it will use
+        // http://localhost:5173/_locales/en/messages.json instead of
+        // http://localhost:5173/mencrouche/en/messages.json
+        const response = await fetch(`./_locales/${locale}/messages.json`);
+        const json = await response.json();
+        localeAndMessagesJson.set(locale, json);
+      }
+    },
     async init(
       options: N81iInitOption = {
         locale: "en",
@@ -56,7 +55,7 @@ export const n81i = (() => {
       await this.switchLocale(options.locale);
       if (options.fallback) {
         _fallback = options.fallback;
-        await loadLanguage(_fallback);
+        await this.loadLanguage(_fallback);
       }
       if (options.availableLocales) {
         _availableLocales = options.availableLocales;
@@ -69,7 +68,7 @@ export const n81i = (() => {
     },
     async switchLocale(locale: string) {
       _locale = locale;
-      await loadLanguage(locale);
+      await this.loadLanguage(locale);
       for (const [key, value] of Object.entries(
         localeAndMessagesJson.get(locale)!,
       )) {
@@ -98,15 +97,21 @@ export const n81i = (() => {
         todos.push(() => onComplete(this.t(key)!));
       }
     },
-    translatePage() {
-      for (const el of document.querySelectorAll("[data-i18n]")) {
-        this.translateLater(el.dataset.i18n, (message) => {
-          if (el.dataset.i18nForAttr) {
-            el.setAttribute(el.dataset.i18nForAttr, message);
+    translateElement(element: HTMLElement) {
+      const { i18n, i18nFor } = element.dataset;
+      if (i18n) {
+        this.translateLater(i18n, (message) => {
+          if (i18nFor) {
+            element.setAttribute(i18nFor, message);
           } else {
-            el.textContent = message;
+            element.textContent = message;
           }
         });
+      }
+    },
+    translatePage() {
+      for (const el of document.querySelectorAll("[data-i18n]")) {
+        this.translateElement(el as HTMLElement);
       }
     },
     getAllLocales() {

@@ -1,16 +1,26 @@
 import { createSticky, getLatestSticky } from "./createSticky";
 import { dataset } from "./dataset";
+import { switchDocumentStatus } from "./documentStatus";
 import { createKikey } from "./kikey";
 import { initShortcutManager, toggleSettingsPage } from "./settings";
-import { $, $$, $$$ } from "./utils/dollars";
+import { $, $$ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
 
 const contextMenuItemTemplate = $<HTMLTemplateElement>("#menuItem")!;
 const contextMenu = $<HTMLDivElement>("#contextMenu")!;
+const menuItemIconsContainer = (
+  $<HTMLTemplateElement>("#menuItemIcons")!.content.cloneNode(true) as any
+).firstElementChild as HTMLDivElement;
+const documentStatus = $<HTMLDivElement>("#documentStatus")!;
+
+function getIcon(icon: string) {
+  return menuItemIconsContainer.querySelector(`.${icon}`);
+}
 
 interface Command {
   name: string;
   isMenuItem: boolean;
+  menuIconName?: string;
   execute: () => void;
 }
 
@@ -45,7 +55,9 @@ const commandMap: Record<string, Command> = {
     name: "save_document",
     isMenuItem: false,
     execute() {
+      switchDocumentStatus("saving");
       localStorage.setItem("doc", $(".stickyContainer")!.innerHTML);
+      switchDocumentStatus("saved");
     },
   },
   toggle_global_ghost_mode: {
@@ -58,34 +70,29 @@ const commandMap: Record<string, Command> = {
       );
     },
   },
-  toggle_ghost_mode: {
-    name: "toggle_ghost_mode",
-    isMenuItem: true,
-    execute() {
-      getLatestSticky()?.toggleGhostMode();
-    },
-  },
-  remove_all_stickies: {
-    name: "remove_all_stickies",
+  delete_all_stickies: {
+    name: "delete_all_stickies",
     isMenuItem: false,
     execute() {
-      $$<HTMLButtonElement>(".sticky .removeBtn")!.do((el) => el.click());
+      $$<HTMLButtonElement>(".sticky .deleteBtn")!.do((el) => el.click());
     },
   },
   new_sticky: {
     name: "new_sticky",
     isMenuItem: true,
+    menuIconName: "lucide-plus",
     execute() {
       const sticky = createSticky();
       $(".stickyContainer")?.append(sticky);
       sticky.$("textarea")?.focus();
     },
   },
-  remove_sticky: {
-    name: "remove_sticky",
+  delete_sticky: {
+    name: "delete_sticky",
     isMenuItem: true,
+    menuIconName: "lucide-trash",
     execute() {
-      getLatestSticky()?.removeSticky();
+      getLatestSticky()?.delete();
     },
   },
   toggle_auto_arrange: {
@@ -98,6 +105,7 @@ const commandMap: Record<string, Command> = {
   toggle_split_view: {
     name: "toggle_split_view",
     isMenuItem: true,
+    menuIconName: "lucide-columns-2",
     execute() {
       getLatestSticky()?.toggleSplitView();
     },
@@ -105,6 +113,7 @@ const commandMap: Record<string, Command> = {
   toggle_maximize_sticky: {
     name: "toggle_maximize_sticky",
     isMenuItem: true,
+    menuIconName: "lucide-maximize-2",
     execute() {
       getLatestSticky()?.toggleMaximize();
     },
@@ -112,6 +121,7 @@ const commandMap: Record<string, Command> = {
   toggle_sticky_edit_mode: {
     name: "toggle_sticky_edit_mode",
     isMenuItem: true,
+    menuIconName: "lucide-pencil",
     execute() {
       getLatestSticky()?.toggleEditMode();
     },
@@ -119,8 +129,24 @@ const commandMap: Record<string, Command> = {
   toggle_sticky_pin_mode: {
     name: "toggle_sticky_pin_mode",
     isMenuItem: true,
+    menuIconName: "lucide-pin",
     execute() {
       getLatestSticky()?.togglePin();
+    },
+  },
+  toggle_ghost_mode: {
+    name: "toggle_ghost_mode",
+    isMenuItem: true,
+    execute() {
+      getLatestSticky()?.toggleGhostMode();
+    },
+  },
+  duplicate_sticky: {
+    name: "duplicate_sticky",
+    isMenuItem: true,
+    menuIconName: "lucide-copy",
+    execute() {
+      getLatestSticky()?.duplicate();
     }
   }
 };
@@ -247,39 +273,34 @@ const menuItems = Object.values(commandMap).filter(
   ({ isMenuItem }) => isMenuItem,
 );
 for (const menuItem of menuItems) {
-  if (menuItem.name === "hr") {
-    frag.appendChild($$$("hr"));
-  } else {
-    const menuItemEl = $<HTMLDivElement>(
-      (contextMenuItemTemplate.content.cloneNode(true) as any)
-        .firstElementChild,
-    )!;
-    menuItemEl.dataset.menuName = menuItem.name;
-    n81i.translateLater(
-      menuItem.name,
-      (translated) => (menuItemEl.textContent = translated),
-    );
-    frag.appendChild(menuItemEl);
+  const menuBtn = $<HTMLDivElement>(
+    (contextMenuItemTemplate.content.cloneNode(true) as any).firstElementChild,
+  )!;
+  const span = menuBtn.$<HTMLSpanElement>("span")!;
+  span.dataset.i18n = menuItem.name;
+  const icon = getIcon(menuItem.menuIconName);
+  if (icon) {
+    menuBtn.insertAdjacentElement("beforeend", icon);
   }
+  n81i.translateElement(menuBtn.$<HTMLSpanElement>("span")!);
+  menuBtn.on("click", () => {
+    commandMap[menuItem.name].execute();
+    contextMenu.classList.add("none");
+  });
+  frag.appendChild(menuBtn);
 }
 contextMenu.replaceChildren(frag);
-contextMenu.on("click", (e) => {
-  if (e.target.matches(".menuItem")) {
-    commandMap[e.target.dataset.menuName].execute();
-    contextMenu.hidden = true;
-  }
-});
 
 document.addEventListener("contextmenu", (e) => {
   e.preventDefault();
   contextMenu.style.top = `${e.clientY}px`;
   contextMenu.style.left = `${e.clientX}px`;
-  contextMenu.hidden = false;
+  contextMenu.classList.remove("none");
 });
 
 document.addEventListener("click", (e) => {
   if (e.target.offsetParent != contextMenu) {
-    contextMenu.hidden = true;
+    contextMenu.classList.add("none");
   }
 });
 

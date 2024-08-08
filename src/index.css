@@ -61,16 +61,50 @@ h6 {
   font-size: var(--font-size-1);
 }
 
+#documentStatus {
+  background-color: unset;
+  margin-inline-end: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--size-3);
+
+  div {
+    border-radius: 50%;
+    transition: background-color 0.5s var(--ease-elastic-in-out-5);
+    width: var(--size-2);
+    height: var(--size-2);
+  }
+  span {
+    font-size: var(--font-size-0);
+    padding-inline: var(--size-2);
+    border-radius: var(--radius-3);
+    background-color: var(--surface-3);
+  }
+}
+#documentStatus.saved div {
+  background-color: var(--lime-5);
+}
+#documentStatus.saving div {
+  background-color: var(--yellow-5);
+}
+#documentStatus.unsave div {
+  background-color: var(--red-5);
+}
+
 nav {
   padding-inline: var(--size-3);
   display: flex;
   flex-wrap: wrap;
-  flex-direction: row-reverse;
   align-items: center;
   gap: var(--size-4);
   justify-self: stretch;
   border-bottom: var(--border-size-1) solid var(--surface-3);
   box-shadow: var(--shadow-1);
+
+  button {
+    padding: 0;
+    background: unset;
+  }
 }
 
 form {
@@ -91,7 +125,7 @@ form {
 
 .sticky {
   position: absolute;
-  background-color: var(--surface-3);
+  background-color: var(--surface-2);
   color: var(--text-2);
   cursor: default;
   box-shadow: var(--shadow-2);
@@ -200,6 +234,12 @@ form {
   .resizeHandle {
     pointer-events: none;
   }
+  .controls {
+    opacity: 0.5;
+  }
+}
+.pin:not(.ghost) {
+  outline: var(--border-size-3) solid var(--surface-4);
 }
 
 .remove {
@@ -208,7 +248,7 @@ form {
 }
 
 .stickyHeader {
-  background-color: var(--surface-4);
+  background-color: var(--surface-3);
   padding-bottom: var(--border-size-1);
   cursor: grab;
   user-select: none;
@@ -325,7 +365,7 @@ form {
   border: var(--border-size-1) solid var(--surface-4);
   box-shadow: var(--shadow-3);
   padding: var(--size-3);
-  z-index: 999999;
+  z-index: var(--layer-important);
 }
 .searchInputWrapper {
   position: relative;
@@ -487,20 +527,27 @@ form {
 
 #contextMenu {
   position: fixed;
+  display: flex;
+  flex-direction: column;
   background-color: var(--surface-1);
   border: var(--border-size-1) solid var(--surface-3);
   border-radius: var(--radius-conditional-2);
   box-shadow: var(--shadow-2);
-  padding: var(--size-2);
+  padding: var(--size-1);
   z-index: 1000;
 
   .menuItem {
-    font-size: var(--font-size-1);
-    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--size-3);
+    border-radius: var(--radius-conditional-1);
+    background: unset;
+    font-size: 0.9rem;
     padding-inline: var(--size-2);
   }
   .menuItem:hover {
-    background-color: var(--surface-3);
+    background-color: var(--surface-2);
   }
 
   hr {
@@ -508,6 +555,9 @@ form {
     border: none;
     border-top: var(--border-size-1) solid var(--surface-3);
   }
+}
+#contextMenu.none {
+  display: none;
 }
 
 #newStickyBtn {

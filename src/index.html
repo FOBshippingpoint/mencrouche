@@ -16,7 +16,83 @@
   <body>
     <main>
       <nav>
-        <button id="refresh">refresh</button>
+        <button id="documentStatus">
+          <div></div>
+          <span></span>
+        </button>
+        <button id="newStickyBtn">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-plus"
+          >
+            <path d="M5 12h14" />
+            <path d="M12 5v14" />
+          </svg>
+        </button>
+        <label for="themeToggle" id="darkIcon" hidden=""
+          ><svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewbox="0 0 24 24"
+            fill="none"
+            stroke="currentcolor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-sun"
+          >
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="m4.93 4.93 1.41 1.41"></path>
+            <path d="m17.66 17.66 1.41 1.41"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="m6.34 17.66-1.41 1.41"></path>
+            <path d="m19.07 4.93-1.41 1.41"></path></svg
+        ></label>
+        <input id="themeToggle" hidden="" type="checkbox" />
+        <input id="ghostToggle" hidden="" type="checkbox" />
+        <label for="themeToggle" id="lightIcon" hidden=""
+          ><svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewbox="0 0 24 24"
+            fill="none"
+            stroke="currentcolor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-moon"
+          >
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg
+        ></label>
+        <label for="ghostToggle" id="solidIcon" hidden="">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-square"
+          >
+            <rect width="18" height="18" x="3" y="3" rx="2" />
+          </svg>
+        </label>
         <label for="ghostToggle" id="ghostIcon" hidden="">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -44,7 +120,7 @@
             <path d="M21 14v1" />
           </svg>
         </label>
-        <label for="ghostToggle" id="solidIcon" hidden="">
+        <button id="settingsBtn">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -55,68 +131,15 @@
             stroke-width="2"
             stroke-linecap="round"
             stroke-linejoin="round"
-            class="lucide lucide-square"
+            class="lucide lucide-settings"
           >
-            <rect width="18" height="18" x="3" y="3" rx="2" />
-          </svg>
-        </label>
-        <input id="ghostToggle" hidden="" type="checkbox" />
-        <label for="themeToggle" id="lightIcon" hidden=""
-          ><svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewbox="0 0 24 24"
-            fill="none"
-            stroke="currentcolor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-moon"
-          >
-            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg
-        ></label>
-        <label for="themeToggle" id="darkIcon" hidden=""
-          ><svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewbox="0 0 24 24"
-            fill="none"
-            stroke="currentcolor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-sun"
-          >
-            <circle cx="12" cy="12" r="4"></circle>
-            <path d="M12 2v2"></path>
-            <path d="M12 20v2"></path>
-            <path d="m4.93 4.93 1.41 1.41"></path>
-            <path d="m17.66 17.66 1.41 1.41"></path>
-            <path d="M2 12h2"></path>
-            <path d="M20 12h2"></path>
-            <path d="m6.34 17.66-1.41 1.41"></path>
-            <path d="m19.07 4.93-1.41 1.41"></path></svg
-        ></label>
-        <input id="themeToggle" hidden="" type="checkbox" />
-        <button id="newStickyBtn">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-plus"
-          >
-            <path d="M5 12h14" />
-            <path d="M12 5v14" />
+            <path
+              d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
+            />
+            <circle cx="12" cy="12" r="3" />
           </svg>
         </button>
+        <button id="refresh">refresh</button>
       </nav>
       <section class="mainSection">
         <div class="stickyContainer">
@@ -213,7 +236,7 @@
                   </svg>
                   <input hidden="" type="checkbox" />
                 </label>
-                <button class="removeBtn">
+                <button class="deleteBtn">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -233,7 +256,10 @@
               </div>
             </div>
             <div class="stickyBody">
-              <textarea></textarea>
+              <textarea
+                data-i18n="sticky_textarea_start_typing_placeholder"
+                data-i18n-for="placeholder"
+              ></textarea>
               <div class="preview" hidden=""></div>
             </div>
             <div class="resizeHandle top"></div>
@@ -267,7 +293,7 @@
               type="text"
               id="searchInput"
               data-i18n="command_palette_search_placeholder"
-              data-i18n-for-attr="placeholder"
+              data-i18n-for="placeholder"
             />
           </div>
           <ul id="commandList"></ul>
@@ -346,7 +372,7 @@
                 >
                 <input
                   id="backgroundImageUrlInput"
-                  data-i18n-for-attr="placeholder"
+                  data-i18n-for="placeholder"
                   data-i18n="background_image_url_input_placeholder"
                   type="url"
                 />
@@ -367,6 +393,7 @@
             <div id="shortcutList"></div>
             <template id="shortcutListItem">
               <label>
+                <span></span>
                 <input type="text" disabled />
                 <button data-recording="false" class="btn recordBtn"></button>
                 <button class="btn restoreBtn"></button>
@@ -393,9 +420,124 @@
         </section>
       </section>
       <div id="stickySizeDummy"></div>
-      <div id="contextMenu" hidden=""></div>
+      <div id="contextMenu" class="none"></div>
       <template id="menuItem">
-        <div class="menuItem"></div>
+        <button class="menuItem">
+          <span></span>
+        </button>
+      </template>
+      <template id="menuItemIcons">
+        <div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-pin"
+          >
+            <path d="M12 17v5" />
+            <path
+              d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"
+            />
+          </svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-pencil"
+          >
+            <path
+              d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
+            />
+            <path d="m15 5 4 4" />
+          </svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-maximize-2"
+          >
+            <polyline points="15 3 21 3 21 9" />
+            <polyline points="9 21 3 21 3 15" />
+            <line x1="21" x2="14" y1="3" y2="10" />
+            <line x1="3" x2="10" y1="21" y2="14" /></svg
+          ><svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-columns-2"
+          >
+            <rect width="18" height="18" x="3" y="3" rx="2" />
+            <path d="M12 3v18" /></svg
+          ><svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-trash"
+          >
+            <path d="M3 6h18" />
+            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /></svg
+          ><svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-plus"
+          >
+            <path d="M5 12h14" />
+            <path d="M12 5v14" />
+          </svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-copy"
+          >
+            <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+            <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+          </svg>
+        </div>
       </template>
     </main>
   </body>

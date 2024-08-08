@@ -4,6 +4,7 @@ import { KeyBinding, parseBinding } from "./kikey/parseBinding";
 import { $, $$, $$$ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
 
+const settingsBtn = $<HTMLButtonElement>("#settingsBtn")!;
 const dropzone = $<HTMLDivElement>(".dropzone")!;
 const fileInput = $<HTMLInputElement>(".fileInput")!;
 const backgroundImageUrlInput = $<HTMLInputElement>(
@@ -15,6 +16,8 @@ const setToDefaultBtn = $<HTMLButtonElement>("#setToDefaultBtn")!;
 const saveBtn = $<HTMLButtonElement>("#saveSettingsBtn")!;
 const saveAndCloseBtn = $<HTMLButtonElement>("#saveAndCloseSettingsBtn")!;
 const cancelBtn = $<HTMLButtonElement>("#cancelSettingsBtn")!;
+
+settingsBtn.on("click", toggleSettingsPage);
 
 const changesManager = (() => {
   const todos: Function[] = [];
@@ -202,6 +205,9 @@ function initLanguage() {
   }
 
   langDropdown.on("change", async () => {
+    // Pre-loading when user select, instead of applying settings.
+    n81i.loadLanguage(langDropdown.value);
+
     changesManager.add(async () => {
       await n81i.switchLocale(langDropdown.value);
       n81i.translatePage();
@@ -271,14 +277,6 @@ function initGhostMode() {
 function initShortcuts() {
   const shortcutManager = initShortcutManager();
   const shortcutList = $("#shortcutList")!;
-  // let html = "";
-  // for (const { actionName, keySequence } of shortcutManager.getAllActions()) {
-  //   html += `
-  //   <label for="${actionName}" data-i18n="${actionName}">${n81i.t(actionName)}</label>
-  //   <input type="text" id="${actionName}" value="${keySequence}" />
-  // `;
-  // }
-  // shortcutList.innerHTML = html;
 
   const frag = document.createDocumentFragment();
   for (const { actionName, keySequence } of shortcutManager.getAllActions()) {
@@ -287,13 +285,14 @@ function initShortcuts() {
         .firstElementChild,
     )!;
     const input = label.$<HTMLInputElement>("input")!;
+    const span = label.$<HTMLInputElement>("span")!;
     const recordBtn = label.$<HTMLInputElement>(".recordBtn")!;
     const restoreBtn = label.$<HTMLInputElement>(".restoreBtn")!;
     label.htmlFor = actionName;
-    label.dataset.i18n = actionName;
-    input.dataset.actionName = actionName;
+    span.dataset.i18n = actionName;
+    n81i.translateElement(span);
     input.value = keySequence;
-    label.insertAdjacentText("afterbegin", n81i.t(actionName));
+    input.dataset.actionName = actionName;
     recordBtn.textContent = n81i.t("record_shortcut_btn");
     restoreBtn.textContent = n81i.t("restore_btn");
     frag.appendChild(label);
@@ -302,36 +301,36 @@ function initShortcuts() {
 
   const recordingKikey = createKikey();
   shortcutList.on("click", (e) => {
-    if (e.target.matches(".recordBtn")) {
+    if (e.target.matches("button")) {
       const btn = e.target as HTMLButtonElement;
       const input = btn.closest("label")!.querySelector("input")!;
       const actionName = input.dataset.actionName;
 
-      if (btn.dataset.recording === "false") {
-        // Start
-        btn.textContent = n81i.t("stop_record_shortcut_btn");
-        recordingKikey.startRecord();
-        input.value = "...";
-      } else {
-        // Stop
-        btn.textContent = n81i.t("record_shortcut_btn");
-        const newSequence = recordingKikey.stopRecord();
-        if (newSequence) {
-          changesManager.add(() => {
-            shortcutManager.update(actionName, newSequence);
-          });
-          input.value = keySequenceToString(newSequence);
+      if (e.target.matches(".recordBtn")) {
+        if (btn.dataset.recording === "false") {
+          // Start
+          btn.textContent = n81i.t("stop_record_shortcut_btn");
+          recordingKikey.startRecord();
+          input.value = "...";
         } else {
-          input.value = shortcutManager.getKeySequence(actionName);
+          // Stop
+          btn.textContent = n81i.t("record_shortcut_btn");
+          const newSequence = recordingKikey.stopRecord();
+          if (newSequence) {
+            changesManager.add(() => {
+              shortcutManager.update(actionName, newSequence);
+            });
+            input.value = keySequenceToString(newSequence);
+          } else {
+            input.value = shortcutManager.getKeySequence(actionName);
+          }
         }
+        btn.dataset.recording =
+          btn.dataset.recording === "false" ? "true" : "false";
+      } else if (e.target.matches(".restoreBtn")) {
+        changesManager.add(() => shortcutManager.restore(actionName));
+        input.value = shortcutManager.getDefaultKeySequence(actionName);
       }
-      btn.dataset.recording =
-        btn.dataset.recording === "false" ? "true" : "false";
-    } else if (e.target.matches(".restoreBtn")) {
-      const btn = e.target as HTMLButtonElement;
-      const input = btn.closest("label")!.querySelector("input")!;
-      changesManager.add(() => shortcutManager.restore(actionName));
-      input.value = shortcutManager.getDefaultKeySequence(actionName);
     }
   });
 }
@@ -393,14 +392,15 @@ export function initShortcutManager() {
       | "open_youtube"
       | "save_document"
       | "new_sticky"
+      | "duplicate_sticky"
       | "toggle_auto_arrange"
       | "toggle_split_view"
       | "toggle_ghost_mode"
       | "toggle_sticky_edit_mode"
       | "toggle_maximize_sticky"
       | "toggle_sticky_pin_mode"
-      | "remove_sticky"
-      | "remove_all_stickies";
+      | "delete_sticky"
+      | "delete_all_stickies";
     type Action = {
       default: string;
       custom: string | null;
@@ -412,16 +412,17 @@ export function initShortcutManager() {
       toggle_dark_mode: { default: "C-S-l", custom: null },
       toggle_global_ghost_mode: { default: "C-A-g", custom: null },
       open_youtube: { default: "C-o", custom: null },
-      save_document: { default: "C-A-d", custom: null },
+      save_document: { default: "C-s", custom: null },
       new_sticky: { default: "C-q", custom: null },
+      duplicate_sticky: { default: "C-d", custom: null },
       toggle_auto_arrange: { default: "A-r", custom: null },
       toggle_ghost_mode: { default: "A-g", custom: null },
       toggle_split_view: { default: "A-c", custom: null },
       toggle_sticky_edit_mode: { default: "A-w", custom: null },
       toggle_maximize_sticky: { default: "A-m", custom: null },
       toggle_sticky_pin_mode: { default: "A-p", custom: null },
-      remove_sticky: { default: "A-x", custom: null },
-      remove_all_stickies: { default: "C-A-x", custom: null },
+      delete_sticky: { default: "A-x", custom: null },
+      delete_all_stickies: { default: "C-A-x", custom: null },
     };
     for (const [actionName, value] of Object.entries(actions)) {
       value.custom ||= dataset.getItem<string>(actionName);
@@ -429,13 +430,38 @@ export function initShortcutManager() {
 
     type KikeyInfo = {
       kikey: Kikey;
-      callback: () => void;
+      callback: (e: KeyboardEvent) => void;
     };
 
     const registry: Record<ActionName, KikeyInfo[]> = {} as any;
+    const globalKikey = createKikey();
 
     function getCurrent(actionName: ActionName) {
       return actions[actionName].custom ?? actions[actionName].default;
+    }
+
+    function registerAction(
+      actionName: ActionName,
+      callback: () => void,
+      el?: Document | HTMLElement,
+      isOnce: boolean = false,
+    ) {
+      const kikey = el ? createKikey(el) : globalKikey;
+      const cb = (e: KeyboardEvent) => {
+        e.preventDefault();
+        callback();
+      };
+
+      if (isOnce) {
+        kikey.once(getCurrent(actionName), cb);
+      } else {
+        kikey.on(getCurrent(actionName), cb);
+      }
+
+      if (!registry[actionName]) {
+        registry[actionName] = [];
+      }
+      registry[actionName].push({ kikey, callback: cb });
     }
 
     singleton = {
@@ -444,28 +470,14 @@ export function initShortcutManager() {
         callback: () => void,
         el?: Document | HTMLElement,
       ) {
-        const kikey = createKikey(el);
-        kikey.on(getCurrent(actionName), callback);
-
-        if (registry[actionName]) {
-          registry[actionName].push({ kikey, callback });
-        } else {
-          registry[actionName] = [{ kikey, callback }];
-        }
+        registerAction(actionName, callback, el);
       },
       once(
         actionName: ActionName,
         callback: () => void,
-        el?: Document | HTMLElement | undefined,
+        el?: Document | HTMLElement,
       ) {
-        const kikey = createKikey(el);
-        kikey.once(getCurrent(actionName), callback);
-
-        if (registry[actionName]) {
-          registry[actionName].push({ kikey, callback });
-        } else {
-          registry[actionName] = [{ kikey, callback }];
-        }
+        registerAction(actionName, callback, el, true);
       },
       update(actionName: ActionName, newSequence: string | KeyBinding[]) {
         for (const { kikey, callback } of registry[actionName] ?? []) {

@@ -63,16 +63,16 @@
     "message": "New",
     "description": "Command description for adding new sticky."
   },
-  "remove_sticky": {
-    "message": "Remove",
-    "description": "Command description for removing sticky."
+  "delete_sticky": {
+    "message": "Delete",
+    "description": "Command description for deleting sticky."
   },
-  "remove_all_stickies": {
-    "message": "Remove all stickies",
-    "description": "Command description for removing all stickies."
+  "delete_all_stickies": {
+    "message": "Delete all stickies",
+    "description": "Command description for deleting all stickies."
   },
   "toggle_sticky_edit_mode": {
-    "message": "Toggle edit/view",
+    "message": "Toggle edit",
     "description": "Command description for toggling edit/view for current sticky."
   },
   "toggle_auto_arrange": {
@@ -128,15 +128,27 @@
     "description": "Command description for toggling maximiz/minize sticky."
   },
   "toggle_maximize_sticky": {
-    "message": "Toggle maximize/minimize",
+    "message": "Toggle maximize",
     "description": "Command description for toggling split view of sticky."
   },
-  "pin_sticky": {
-    "message": "Pin",
-    "description": "Command description for pinning sticky."
+  "toggle_sticky_pin_mode": {
+    "message": "Toggle pin",
+    "description": "Command description for toggling pin mode of sticky."
   },
-  "duplicates_sticky": {
-    "message": "Duplicates",
+  "duplicate_sticky": {
+    "message": "Duplicate",
     "description": "Command description for duplicating sticky."
+  },
+  "saved": {
+    "message": "Saved",
+    "description": "Document saved status."
+  },
+  "unsave": {
+    "message": "Unsave",
+    "description": "Document unsave status."
+  },
+  "saving": {
+    "message": "Saving",
+    "description": "Document saving status."
   }
 }

@@ -6,6 +6,7 @@ import { KeyBinding, parseBinding } from "./parseBinding";
  */
 interface KeyBindingRegistry {
   bindings: KeyBinding[];
+  callback: KikeyCallback;
   combo: number;
   onComboChange: (combo: number) => void;
 }
@@ -188,6 +189,18 @@ export function createKikey(targetElement?: HTMLElement | Document): Kikey {
   let prevMod = "";
   let isEnabled = true;
 
+  function toKeyBindings(sequence: string | KeyBinding[]) {
+    if (typeof sequence === "string") {
+      // split by whitespace and remove empty characters
+      return sequence
+        .split(" ")
+        .filter((v) => v !== "")
+        .map(parseBinding);
+    }
+
+    return sequence;
+  }
+
   function isModifierKey(key: string): boolean {
     // Like `["control", "shift", "alt", "meta"].includes(key.toLowerCase())` but better performance.
     return (
@@ -244,9 +257,7 @@ export function createKikey(targetElement?: HTMLElement | Document): Kikey {
   /** Event record */
   let record: KeyboardEvent[] = [];
   /** Event handler for key sequence recording. */
-  const pushEvent = (e: KeyboardEvent) => {
-    record.push(e);
-  };
+  const pushEvent = (e: KeyboardEvent) => record.push(e);
 
   return {
     on(
@@ -254,18 +265,9 @@ export function createKikey(targetElement?: HTMLElement | Document): Kikey {
       callback: KikeyCallback = () => {},
       onComboChange: (combo: number) => void = () => {},
     ): void {
-      // split by whitespace and remove empty characters
-      let bindings;
-      if (typeof sequence === "string") {
-        bindings = sequence
-          .split(" ")
-          .filter((v) => v !== "")
-          .map(parseBinding);
-      } else {
-        bindings = sequence;
-      }
       registry.set(callback, {
-        bindings,
+        bindings: toKeyBindings(sequence),
+        callback,
         combo: 0,
         onComboChange,
       });
@@ -278,11 +280,15 @@ export function createKikey(targetElement?: HTMLElement | Document): Kikey {
       callback: KikeyCallback = () => {},
       onComboChange: (combo: number) => void = () => {},
     ): void {
-      const cb: KikeyCallback = (e) => {
-        this.off(cb);
-        callback(e);
-      };
-      this.on(sequence, cb, onComboChange);
+      registry.set(callback, {
+        bindings: toKeyBindings(sequence),
+        callback: (e) => {
+          this.off(callback);
+          callback(e);
+        },
+        combo: 0,
+        onComboChange,
+      });
     },
     updateSequence(
       newSequence: string | KeyBinding[],
@@ -303,13 +309,13 @@ export function createKikey(targetElement?: HTMLElement | Document): Kikey {
       isEnabled = false;
     },
     startRecord(): void {
-      target.addEventListener("keydown", pushEvent as (e: Event) => void);
-      target.addEventListener("keyup", pushEvent as (e: Event) => void);
+      target.addEventListener("keydown", pushEvent as any);
+      target.addEventListener("keyup", pushEvent as any);
     },
     stopRecord(): string | null {
       // Clean up
-      target.removeEventListener("keydown", pushEvent as (e: Event) => void);
-      target.removeEventListener("keyup", pushEvent as (e: Event) => void);
+      target.removeEventListener("keydown", pushEvent as any);
+      target.removeEventListener("keyup", pushEvent as any);
 
       const sequence: string[] = [];
       let slow = 0;
