@@ -35,10 +35,7 @@ export function initStickyContainer() {
     pointerY = e.clientY - stickyContainer!.getBoundingClientRect().top;
   });
 
-  pointerX =
-    (stickyContainer.getBoundingClientRect().width -
-      stickySizeDummy.getBoundingClientRect().width) /
-    2;
+  pointerX = stickyContainer.getBoundingClientRect().width / 2;
   pointerY =
     (stickyContainer.getBoundingClientRect().height -
       stickySizeDummy.getBoundingClientRect().width) /

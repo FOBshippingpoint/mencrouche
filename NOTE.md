@@ -10,9 +10,11 @@
 ## TODOs
 
 - [x] Maximize
-- [ ] Pin sticky
+- [x] Pin sticky
 - [x] Toggle edit/view mode button on sticky controls.
 - [x] Split view
+- [ ] Redo/Undo
+- [ ] Blockly
 
 ## BUGS
 

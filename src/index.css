@@ -253,6 +253,10 @@ form {
   cursor: grab;
   user-select: none;
 }
+.stickyHeader,
+.resizeHandle {
+  touch-action: none;
+}
 
 /* TODO: inconsist naming */
 .controls {

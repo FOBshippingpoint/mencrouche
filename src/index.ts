@@ -32,10 +32,12 @@ async function init() {
   });
 
   switchDocumentStatus("saved");
-  stickyContainer.on("input", (e) => {
-    if (e.target.matches("textarea")) {
-      switchDocumentStatus("unsave");
-    }
+  new MutationObserver(() => {
+    switchDocumentStatus("unsave");
+  }).observe(stickyContainer, {
+    attributes: true,
+    childList: true,
+    subtree: true,
   });
 }
 
