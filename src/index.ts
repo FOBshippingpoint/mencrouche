@@ -8,11 +8,17 @@ import { dataset } from "./dataset";
 
 const stickyContainer = $<HTMLDivElement>(".stickyContainer")!;
 
+const AVAILABLE_LOCALES = ["en", "zh-Hant"];
 function getUserPreferredLanguage() {
   if (navigator.language === "zh-TW") {
     return "zh-Hant";
-  } else {
+  } else if (
+    /* If supports user language */
+    AVAILABLE_LOCALES.includes(navigator.language)
+  ) {
     return navigator.language;
+  } else {
+    return "en";
   }
 }
 
@@ -26,7 +32,10 @@ async function init() {
   }
 
   await n81i.init({
-    locale: dataset.getItem<string>("language", getUserPreferredLanguage()),
+    locale: dataset.getOrSetItem<string>(
+      "language",
+      getUserPreferredLanguage(),
+    ),
     availableLocales: ["en", "zh-Hant"],
   });
   n81i.translatePage();

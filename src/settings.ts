@@ -265,6 +265,7 @@ function initLanguage() {
   for (const locale of n81i.getAllLocales()) {
     const option = $$$("option");
     option.value = locale;
+    option.selected = dataset.getItem("language");
     option.textContent =
       new Intl.DisplayNames([locale], {
         type: "language",
