@@ -4,13 +4,19 @@ import { initCommandPalette, triggerCommand } from "./commandPalette";
 import { initSettings } from "./settings";
 import { n81i } from "./utils/n81i";
 import { switchDocumentStatus } from "./documentStatus";
+import { dataset } from "./dataset";
 
 const stickyContainer = $<HTMLDivElement>(".stickyContainer")!;
 
-async function init() {
-  await n81i.init({ locale: "en", availableLocales: ["en", "zh-Hant"] });
-  n81i.translatePage();
+function getUserPreferredLanguage() {
+  if (navigator.language === "zh-TW") {
+    return "zh-Hant";
+  } else {
+    return navigator.language;
+  }
+}
 
+async function init() {
   const stickyContainerHtml = localStorage.getItem("doc");
   if (stickyContainerHtml) {
     const fragment = document
@@ -18,14 +24,17 @@ async function init() {
       .createContextualFragment(stickyContainerHtml);
     stickyContainer.replaceChildren(fragment);
   }
+
+  await n81i.init({
+    locale: dataset.getItem<string>("language", getUserPreferredLanguage()),
+    availableLocales: ["en", "zh-Hant"],
+  });
+  n81i.translatePage();
+
   initStickyContainer();
   initCommandPalette();
   initSettings();
   restoreStickies();
-
-  $("#refresh")!.on("click", () => {
-    localStorage.clear();
-  });
 
   $("#newStickyBtn")!.on("click", () => {
     triggerCommand("new_sticky");
@@ -33,7 +42,7 @@ async function init() {
 
   switchDocumentStatus("saved");
   new MutationObserver(() => {
-    switchDocumentStatus("unsave");
+    switchDocumentStatus("unsaved");
   }).observe(stickyContainer, {
     attributes: true,
     childList: true,

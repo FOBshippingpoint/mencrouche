@@ -52,6 +52,11 @@ export function initStickyContainer() {
 
 export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
   const stickyHeader = sticky.$(".stickyHeader")!;
+  const textarea = sticky.$<HTMLTextAreaElement>("textarea")!;
+  const preview = sticky.$<HTMLDivElement>(".preview")!;
+  const deleteBtn = sticky.$<HTMLButtonElement>(".deleteBtn")!;
+  const editModeToggleLbl = sticky.$<HTMLLabelElement>(".editModeToggleLbl")!;
+  const maximizeToggleLbl = sticky.$<HTMLLabelElement>(".maximizeToggleLbl")!;
 
   // Drag-and-drop variables
   let isDragging = false;
@@ -100,7 +105,7 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
           width = stickySizeDummy.getBoundingClientRect().width;
         }
         sticky.style.left = `${e.clientX - width / 2}px`;
-        sticky.classList.remove("maximized");
+        maximizeToggleLbl.click();
       }
     }
 
@@ -210,12 +215,6 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
   moveToTop(sticky);
   stickies.push(sticky);
 
-  const textarea = sticky.$<HTMLTextAreaElement>("textarea")!;
-  const preview = sticky.$<HTMLDivElement>(".preview")!;
-  const deleteBtn = sticky.$<HTMLButtonElement>(".deleteBtn")!;
-  const editModeToggleLbl = sticky.$<HTMLLabelElement>(".editModeToggleLbl")!;
-  const maximizeToggleLbl = sticky.$<HTMLLabelElement>(".maximizeToggleLbl")!;
-
   deleteBtn.on("click", () => {
     sticky.on("animationend", sticky.remove, { once: true });
     sticky.classList.add("remove");
@@ -294,7 +293,7 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
     },
     toggleSplitView() {
       if (!sticky.classList.contains("editMode")) {
-        editModeToggleLbl.click();
+        this.toggleEditMode();
       }
       updatePreview();
       sticky.classList.toggle("splitView");

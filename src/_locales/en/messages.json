@@ -1,154 +1,170 @@
 {
-	"set_background_image": {
-		"message": "Set background image",
-		"description": "Command description for set background image."
-	},
-	"toggle_dark_mode": {
-		"message": "Toggle dark mode",
-		"description": "Command description for toggle dark mode."
-	},
-	"open_youtube": {
-		"message": "Open YouTube",
-		"description": "Command description for open YouTube."
-	},
-	"command_palette_search_placeholder": {
-		"message": "Search commands...",
-		"description": "Placeholder of the command palette search bar."
-	},
-	"dnd_image_instruction": {
-		"message": "Drag & drop an image here, or click to select a file",
-		"description": "Drag and drop instruction for setting background image."
-	},
-	"set_to_default_btn": {
-		"message": "Set to default",
-		"description": "Button for set background image to default."
-	},
-	"settings_shortcuts_section": {
-		"message": "Shortcuts",
-		"description": "Shortcuts section of the settings."
-	},
-	"sticky_textarea_start_typing_placeholder": {
-		"message": "Start typing...",
-		"description": "The textarea placholder for sticky note."
-	},
-	"save_document": {
-		"message": "Save document",
-		"description": "Command description for saving documents."
-	},
-	"background_image_url_input_placeholder": {
-		"message": "Paste image file/link here",
-		"description": "Command description for saving documents."
-	},
-	"image_url_is_not_valid_alert": {
-		"message": "Image link is not valid. Please try another link.",
-		"description": "Alert message for pasted image url not valid."
-	},
-	"toggle_settings": {
-		"message": "Toggle settings page",
-		"description": "Command description for toggling settings page."
-	},
-	"toggle_ghost_mode": {
-		"message": "Toggle ghost mode",
-		"description": "Command description for toggling ghost mode."
-	},
-	"toggle_global_ghost_mode": {
-		"message": "Toggle global ghost mode",
-		"description": "Command description for toggling global ghost mode."
-	},
-	"toggle_command_palette": {
-		"message": "Toggle command palette",
-		"description": "Command description for toggling command palette."
-	},
+  "set_background_image": {
+    "message": "Set background image",
+    "description": "Command description for setting the background image."
+  },
+  "toggle_dark_mode": {
+    "message": "Toggle dark mode",
+    "description": "Command description for toggling dark mode on/off."
+  },
+  "open_youtube": {
+    "message": "Open YouTube",
+    "description": "Command description for opening YouTube."
+  },
+  "command_palette_search_placeholder": {
+    "message": "Search commands...",
+    "description": "Placeholder text for the command palette search bar."
+  },
+  "dnd_image_instruction": {
+    "message": "Drag & drop an image here, or click to select a file",
+    "description": "Instructions for setting the background image via drag and drop."
+  },
+  "set_to_default_btn": {
+    "message": "Reset to default",
+    "description": "Button text for resetting the background image to default."
+  },
+  "settings_shortcuts_section": {
+    "message": "Shortcuts",
+    "description": "Title for the shortcuts section in settings."
+  },
+  "settings_storage_section": {
+    "message": "Storage",
+    "description": "Title for the shortcuts section in storage."
+  },
+  "sticky_textarea_start_typing_placeholder": {
+    "message": "Start typing...",
+    "description": "Placeholder text for the sticky note textarea."
+  },
+  "save_document": {
+    "message": "Save document",
+    "description": "Command description for saving documents."
+  },
+  "background_image_url_input_placeholder": {
+    "message": "Paste image URL here",
+    "description": "Placeholder text for the background image URL input."
+  },
+  "image_url_is_not_valid_alert": {
+    "message": "Invalid image URL. Please try another link.",
+    "description": "Alert message for an invalid image URL."
+  },
+  "toggle_settings": {
+    "message": "Toggle settings page",
+    "description": "Command description for toggling the settings page."
+  },
+  "toggle_ghost_mode": {
+    "message": "Toggle ghost mode",
+    "description": "Command description for toggling ghost mode."
+  },
+  "toggle_global_ghost_mode": {
+    "message": "Toggle global ghost mode",
+    "description": "Command description for toggling global ghost mode."
+  },
+  "toggle_command_palette": {
+    "message": "Toggle command palette",
+    "description": "Command description for toggling the command palette."
+  },
   "new_sticky": {
-    "message": "New",
-    "description": "Command description for adding new sticky."
+    "message": "New sticky note",
+    "description": "Command description for adding a new sticky note."
   },
   "delete_sticky": {
-    "message": "Delete",
-    "description": "Command description for deleting sticky."
+    "message": "Delete sticky note",
+    "description": "Command description for deleting a sticky note."
   },
   "delete_all_stickies": {
-    "message": "Delete all stickies",
-    "description": "Command description for deleting all stickies."
+    "message": "Delete all sticky notes",
+    "description": "Command description for deleting all sticky notes."
   },
   "toggle_sticky_edit_mode": {
-    "message": "Toggle edit",
-    "description": "Command description for toggling edit/view for current sticky."
+    "message": "Toggle edit mode",
+    "description": "Command description for toggling edit/view mode for the current sticky note."
   },
   "toggle_auto_arrange": {
     "message": "Toggle arrange/free mode",
-    "description": "Command description for toggling the arrange mode for stickies."
+    "description": "Command description for toggling between arrange and free mode for sticky notes."
   },
-	"settings_language_section": {
-		"message": "Language",
-		"description": "Language section of the settings."
-	},
-	"settings_appearance_section": {
-		"message": "Appearance",
-		"description": "Appearance section of the settings."
-	},
-	"save_settings_btn": {
-		"message": "Save",
-		"description": "Save settings button."
-	},
-	"save_and_close_settings_btn": {
-		"message": "Save & close",
-		"description": "Save & close settings button."
-	},
-	"cancel_settings_btn": {
-		"message": "Cancel",
-		"description": "Canecel settings button."
-	},
-	"record_shortcut_btn": {
-		"message": "Record",
-		"description": "Record shortcut button."
-	},
+  "settings_language_section": {
+    "message": "Language",
+    "description": "Title for the language section in settings."
+  },
+  "settings_appearance_section": {
+    "message": "Appearance",
+    "description": "Title for the appearance section in settings."
+  },
+  "delete_document_btn": {
+    "message": "Delete",
+    "description": "Text for the delete document button."
+  },
+  "export_document_btn": {
+    "message": "Export",
+    "description": "Text for the export document button."
+  },
+  "save_settings_btn": {
+    "message": "Save",
+    "description": "Text for the save settings button."
+  },
+  "save_and_close_settings_btn": {
+    "message": "Save & close",
+    "description": "Text for the save and close settings button."
+  },
+  "cancel_settings_btn": {
+    "message": "Cancel",
+    "description": "Text for the cancel settings button."
+  },
+  "record_shortcut_btn": {
+    "message": "Record",
+    "description": "Text for the record shortcut button."
+  },
   "stop_record_shortcut_btn": {
     "message": "Stop",
-    "description": "Stop recording shortcut button."
+    "description": "Text for the stop recording shortcut button."
   },
-  "restore_btn": {
-    "message": "Restore",
-    "description": "Restore shortcut to default button."
+  "reset_btn": {
+    "message": "Reset",
+    "description": "Text for the button to reset shortcut to default."
   },
   "background_image_link": {
-    "message": "Background image link",
-    "description": "Description for background image link input label."
+    "message": "Background image URL",
+    "description": "Label for the background image URL input."
   },
   "settings_appearance_background_section": {
     "message": "Background",
-    "description": "Description for appearance.background section."
+    "description": "Title for the background subsection in appearance settings."
   },
   "ui_opacity": {
     "message": "UI Opacity",
-    "description": "Description for UI opacity input label."
+    "description": "Label for the UI opacity input."
   },
   "toggle_split_view": {
     "message": "Toggle split view",
-    "description": "Command description for toggling maximiz/minize sticky."
+    "description": "Command description for toggling split view of sticky notes."
   },
   "toggle_maximize_sticky": {
     "message": "Toggle maximize",
-    "description": "Command description for toggling split view of sticky."
+    "description": "Command description for toggling maximize/minimize of a sticky note."
   },
   "toggle_sticky_pin_mode": {
     "message": "Toggle pin",
-    "description": "Command description for toggling pin mode of sticky."
+    "description": "Command description for toggling pin mode of a sticky note."
   },
   "duplicate_sticky": {
-    "message": "Duplicate",
-    "description": "Command description for duplicating sticky."
+    "message": "Duplicate sticky note",
+    "description": "Command description for duplicating a sticky note."
   },
   "saved": {
     "message": "Saved",
-    "description": "Document saved status."
+    "description": "Status message for a saved document."
   },
-  "unsave": {
-    "message": "Unsave",
-    "description": "Document unsave status."
+  "unsaved": {
+    "message": "Unsaved changes",
+    "description": "Status message for unsaved changes in a document."
   },
   "saving": {
-    "message": "Saving",
-    "description": "Document saving status."
+    "message": "Saving...",
+    "description": "Status message while saving a document."
+  },
+  "confirm_delete_document": {
+    "message": "Do you want to delete the document?",
+    "description": "Confirmation message while deleting document."
   }
 }

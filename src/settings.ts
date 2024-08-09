@@ -13,11 +13,80 @@ const backgroundImageUrlInput = $<HTMLInputElement>(
 const shortcutListItemTemplate = $<HTMLTemplateElement>("#shortcutListItem")!;
 const uiOpacityInput = $<HTMLInputElement>("#uiOpacityInput")!;
 const setToDefaultBtn = $<HTMLButtonElement>("#setToDefaultBtn")!;
+const deleteDocumentBtn = $<HTMLButtonElement>("#deleteDocumentBtn")!;
+const exportDocumentBtn = $<HTMLButtonElement>("#exportDocumentBtn")!;
 const saveBtn = $<HTMLButtonElement>("#saveSettingsBtn")!;
 const saveAndCloseBtn = $<HTMLButtonElement>("#saveAndCloseSettingsBtn")!;
 const cancelBtn = $<HTMLButtonElement>("#cancelSettingsBtn")!;
 
 settingsBtn.on("click", toggleSettingsPage);
+
+deleteDocumentBtn.on("click", () => {
+  if (confirm(n81i.t("confirm_delete_document"))) {
+    localStorage.clear();
+  }
+});
+exportDocumentBtn.on("click", () => {
+  // Copied from web.dev: https://web.dev/patterns/files/save-a-file#progressive_enhancement
+  async function saveFile(blob, suggestedName) {
+    // Feature detection. The API needs to be supported
+    // and the app not run in an iframe.
+    const supportsFileSystemAccess =
+      "showSaveFilePicker" in window &&
+      (() => {
+        try {
+          return window.self === window.top;
+        } catch {
+          return false;
+        }
+      })();
+    // If the File System Access API is supported…
+    if (supportsFileSystemAccess) {
+      try {
+        // Show the file save dialog.
+        const handle = await showSaveFilePicker({
+          suggestedName,
+        });
+        // Write the blob to the file.
+        const writable = await handle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+        return;
+      } catch (err) {
+        // Fail silently if the user has simply canceled the dialog.
+        if (err.name !== "AbortError") {
+          console.error(err.name, err.message);
+          return;
+        }
+      }
+    }
+    // Fallback if the File System Access API is not supported…
+    // Create the blob URL.
+    const blobURL = URL.createObjectURL(blob);
+    // Create the `<a download>` element and append it invisibly.
+    const a = document.createElement("a");
+    a.href = blobURL;
+    a.download = suggestedName;
+    a.style.display = "none";
+    document.body.append(a);
+    // Programmatically click the element.
+    a.click();
+    // Revoke the blob URL and remove the element.
+    setTimeout(() => {
+      URL.revokeObjectURL(blobURL);
+      a.remove();
+    }, 1000);
+  }
+
+  const doc = localStorage.getItem("doc");
+  if (doc) {
+    const blob = new Blob([doc], { type: "text/html" });
+    saveFile(
+      blob,
+      `mencrouche_${new Date().toISOString().substring(0, 10)}.html`,
+    );
+  }
+});
 
 const changesManager = (() => {
   const todos: Function[] = [];
@@ -211,6 +280,8 @@ function initLanguage() {
     changesManager.add(async () => {
       await n81i.switchLocale(langDropdown.value);
       n81i.translatePage();
+
+      dataset.setItem("language", langDropdown.value);
     });
   });
 }
@@ -287,14 +358,14 @@ function initShortcuts() {
     const input = label.$<HTMLInputElement>("input")!;
     const span = label.$<HTMLInputElement>("span")!;
     const recordBtn = label.$<HTMLInputElement>(".recordBtn")!;
-    const restoreBtn = label.$<HTMLInputElement>(".restoreBtn")!;
+    const resetBtn = label.$<HTMLInputElement>(".resetBtn")!;
     label.htmlFor = actionName;
     span.dataset.i18n = actionName;
     n81i.translateElement(span);
     input.value = keySequence;
     input.dataset.actionName = actionName;
     recordBtn.textContent = n81i.t("record_shortcut_btn");
-    restoreBtn.textContent = n81i.t("restore_btn");
+    resetBtn.textContent = n81i.t("reset_btn");
     frag.appendChild(label);
   }
   shortcutList.appendChild(frag);
@@ -327,7 +398,7 @@ function initShortcuts() {
         }
         btn.dataset.recording =
           btn.dataset.recording === "false" ? "true" : "false";
-      } else if (e.target.matches(".restoreBtn")) {
+      } else if (e.target.matches(".resetBtn")) {
         changesManager.add(() => shortcutManager.restore(actionName));
         input.value = shortcutManager.getDefaultKeySequence(actionName);
       }
@@ -417,7 +488,7 @@ export function initShortcutManager() {
       duplicate_sticky: { default: "C-d", custom: null },
       toggle_auto_arrange: { default: "A-r", custom: null },
       toggle_ghost_mode: { default: "A-g", custom: null },
-      toggle_split_view: { default: "A-c", custom: null },
+      toggle_split_view: { default: "A-v", custom: null },
       toggle_sticky_edit_mode: { default: "A-w", custom: null },
       toggle_maximize_sticky: { default: "A-m", custom: null },
       toggle_sticky_pin_mode: { default: "A-p", custom: null },

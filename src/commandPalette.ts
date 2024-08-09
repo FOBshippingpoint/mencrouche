@@ -11,7 +11,6 @@ const contextMenu = $<HTMLDivElement>("#contextMenu")!;
 const menuItemIconsContainer = (
   $<HTMLTemplateElement>("#menuItemIcons")!.content.cloneNode(true) as any
 ).firstElementChild as HTMLDivElement;
-const documentStatus = $<HTMLDivElement>("#documentStatus")!;
 
 function getIcon(icon: string) {
   return menuItemIconsContainer.querySelector(`.${icon}`);
@@ -137,6 +136,7 @@ const commandMap: Record<string, Command> = {
   toggle_ghost_mode: {
     name: "toggle_ghost_mode",
     isMenuItem: true,
+    menuIconName: "lucide-box-select",
     execute() {
       getLatestSticky()?.toggleGhostMode();
     },
@@ -147,8 +147,8 @@ const commandMap: Record<string, Command> = {
     menuIconName: "lucide-copy",
     execute() {
       getLatestSticky()?.duplicate();
-    }
-  }
+    },
+  },
 };
 
 export function initCommandPalette() {
@@ -294,7 +294,7 @@ contextMenu.replaceChildren(frag);
 document.addEventListener("contextmenu", (e) => {
   e.preventDefault();
   contextMenu.style.top = `${e.clientY}px`;
-  contextMenu.style.left = `${e.clientX}px`;
+  contextMenu.style.left = `${Math.min(e.clientX, document.body.getBoundingClientRect().width - 200)}px`;
   contextMenu.classList.remove("none");
 });
 

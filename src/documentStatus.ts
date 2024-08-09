@@ -2,7 +2,7 @@ import { triggerCommand } from "./commandPalette";
 import { $ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
 
-type DocumentStatus = "saved" | "unsave" | "saving";
+type DocumentStatus = "saved" | "unsaved" | "saving";
 
 const ds = $<HTMLButtonElement>("#documentStatus")!;
 const span = ds.$<HTMLSpanElement>("span")!;
@@ -14,9 +14,10 @@ ds.on("click", () => {
 export function switchDocumentStatus(status: DocumentStatus) {
   if (ds.className === status) return;
   ds.classList.remove("saved");
-  ds.classList.remove("unsave");
+  ds.classList.remove("unsaved");
   ds.classList.remove("saving");
   ds.classList.add(status);
 
-  span.textContent = n81i.t(status);
+  span.dataset.i18n = status;
+  n81i.translateElement(span);
 }

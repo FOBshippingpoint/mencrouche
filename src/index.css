@@ -66,7 +66,7 @@ h6 {
   margin-inline-end: auto;
   display: flex;
   align-items: center;
-  gap: var(--size-3);
+  gap: var(--size-2);
 
   div {
     border-radius: 50%;
@@ -87,7 +87,7 @@ h6 {
 #documentStatus.saving div {
   background-color: var(--yellow-5);
 }
-#documentStatus.unsave div {
+#documentStatus.unsaved div {
   background-color: var(--red-5);
 }
 
@@ -353,8 +353,6 @@ form {
 
 .mainSection {
   position: relative;
-  display: flex;
-  justify-content: center;
 }
 
 /* @commandPalette start */
@@ -401,6 +399,7 @@ form {
 
   li {
     padding: var(--size-2);
+    border-radius: var(--radius-conditional-1);
     max-inline-size: unset; /* Reverts open-props normalize */
     cursor: pointer;
     display: flex;
@@ -426,10 +425,8 @@ form {
 
 /* @settings start */
 #settings {
-  width: 60%;
-  background-color: var(--surface-3);
   box-shadow: var(--shadow-2);
-  padding: var(--size-5) var(--size-7);
+  padding: var(--size-fluid-1) var(--size-fluid-3);
   display: flex;
   flex-direction: column;
   gap: var(--size-7);
@@ -485,7 +482,6 @@ form {
   padding: var(--size-5);
   aspect-ratio: var(--ratio-widescreen);
   flex: 1;
-  width: var(--size-content-2);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -502,7 +498,12 @@ form {
   display: inline-flex;
   padding-block: var(--size-relative-1);
   padding-inline: var(--size-relative-6);
-  border: var(--border-size-2) solid var(--surface-4);
+  border: var(--surface-2) solid var(--size-relative-1);
+}
+.formGroupHorizontal {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--size-1);
 }
 .formGroup {
   display: flex;
@@ -513,18 +514,22 @@ form {
 #shortcutList {
   display: grid;
   gap: var(--size-3) var(--size-4);
-  justify-content: start;
 
   label {
-    text-align: right;
-  }
-  input {
-    font-family: var(--font-mono);
-    margin-left: var(--size-3);
-  }
-  button {
-    width: var(--size-10);
-    justify-content: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--size-1);
+    span {
+      width: 100%;
+    }
+    input {
+      font-family: var(--font-mono);
+    }
+    button {
+      width: var(--size-10);
+      justify-content: center;
+      align-items: center;
+    }
   }
 }
 /* @settings end */
@@ -538,7 +543,7 @@ form {
   border-radius: var(--radius-conditional-2);
   box-shadow: var(--shadow-2);
   padding: var(--size-1);
-  z-index: 1000;
+  z-index: var(--layer-important);
 
   .menuItem {
     display: flex;
@@ -575,5 +580,9 @@ form {
 /* HTML hidden attribute failed when the display has been set. So I add this
  * class for the convenience. */
 .none {
+  display: none;
+}
+
+data {
   display: none;
 }
