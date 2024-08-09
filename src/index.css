@@ -1,10 +1,16 @@
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap");
-@import "https://unpkg.com/open-props";
-@import "https://unpkg.com/open-props/normalize.min.css";
+/* @import "https://unpkg.com/open-props"; */
+/* @import "https://unpkg.com/open-props/normalize.min.css"; */
 
-/* the following switch imports have selectors that enable the override of the system setting */
-@import "https://unpkg.com/open-props/theme.light.switch.min.css";
-@import "https://unpkg.com/open-props/theme.dark.switch.min.css";
+/* the following switch imports have selectors that enable the override of the system setting */ 
+/* @import "https://unpkg.com/open-props/theme.light.switch.min.css"; */
+/* @import "https://unpkg.com/open-props/theme.dark.switch.min.css"; */
+@import "open-props/open-props.min.css";
+@import "open-props/normalize.min.css";
+
+/* the following switch imports have selectors that enable the override of the system setting */ 
+@import "open-props/theme.light.switch.min.css";
+@import "open-props/theme.dark.switch.min.css";
 
 :root {
   --page-background: unset;
@@ -12,6 +18,7 @@
 
 body::before {
   background: var(--page-background);
+  background-size: cover;
   opacity: 0.4;
   content: " ";
   display: block;
@@ -436,6 +443,9 @@ form {
     padding-bottom: var(--size-3);
   }
 }
+#settings.none {
+  display: none;
+}
 /* #settings section::after { */
 /*   content: ""; */
 /*   display: block; */
@@ -479,6 +489,7 @@ form {
   border-width: var(--border-size-2);
   border-style: dashed;
   border-radius: var(--radius-conditional-3);
+  background-size: cover;
   padding: var(--size-5);
   aspect-ratio: var(--ratio-widescreen);
   flex: 1;

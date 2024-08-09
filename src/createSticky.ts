@@ -1,15 +1,17 @@
 import { marked } from "marked";
 import { $, $$, Penny } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
+import { dataset } from "./dataset";
 
 type Sticky = Penny<HTMLDivElement> & {
   delete: () => void;
   duplicate: () => void;
-  toggleEditMode: () => void;
   toggleMaximize: () => void;
-  toggleSplitView: () => void;
   toggleGhostMode: () => void;
   togglePin: () => void;
+  custom: Record<string, unknown>;
+  addControlButton: (button: HTMLElement) => void;
+  replaceBody: (...nodes: (Node | string)[]) => void;
 };
 
 let highestZIndex = 0;
@@ -50,12 +52,11 @@ export function initStickyContainer() {
   }
 }
 
-export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
+export function enableStickyFunctionality(
+  sticky: Penny<HTMLDivElement>,
+): Sticky {
   const stickyHeader = sticky.$(".stickyHeader")!;
-  const textarea = sticky.$<HTMLTextAreaElement>("textarea")!;
-  const preview = sticky.$<HTMLDivElement>(".preview")!;
   const deleteBtn = sticky.$<HTMLButtonElement>(".deleteBtn")!;
-  const editModeToggleLbl = sticky.$<HTMLLabelElement>(".editModeToggleLbl")!;
   const maximizeToggleLbl = sticky.$<HTMLLabelElement>(".maximizeToggleLbl")!;
 
   // Drag-and-drop variables
@@ -64,17 +65,9 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
   let dragCurrentY: number;
   let dragInitialX: number;
   let dragInitialY: number;
-  let dragX = Number.parseInt(sticky.style.left, 10) || pointerX;
-  let dragY = Number.parseInt(sticky.style.top, 10) || pointerY;
+  let dragX = parseInt(sticky.style.left, 10) || pointerX;
+  let dragY = parseInt(sticky.style.top, 10) || pointerY;
 
-  sticky.on("pointerdown", () => {
-    moveToTop(sticky);
-    const idx = stickies.indexOf(sticky);
-    if (idx !== -1) {
-      stickies.splice(idx, 1);
-      stickies.push(sticky);
-    }
-  });
   stickyHeader.addEventListener("pointerdown", dragStart);
 
   // Resize variables
@@ -88,9 +81,9 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
   let resizeStartLeft: number;
   let resizeStartTop: number;
 
-  resizeHandles.forEach((handle) => {
-    handle.addEventListener("pointerdown", initResize);
-  });
+  for (const handle of resizeHandles) {
+    handle.addEventListener("pointerdown", resizeStart);
+  }
 
   function dragStart(e: PointerEvent) {
     if (e.target === stickyHeader) {
@@ -122,7 +115,6 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
       dragCurrentX = e.clientX - dragInitialX;
       dragCurrentY = e.clientY - dragInitialY;
 
-      // Extended boundaries
       const maxX = stickyContainer.offsetWidth - 20;
       const maxY = stickyContainer.offsetHeight - 20;
       const minX = -sticky.offsetWidth + 20;
@@ -145,18 +137,20 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
     document.removeEventListener("pointerup", dragEnd);
   }
 
-  function initResize(e: PointerEvent) {
+  function resizeStart(e: PointerEvent) {
+    e.preventDefault();
+
     isResizing = true;
     resizeHandle = e.target as HTMLDivElement;
     resizeStartX = e.clientX;
     resizeStartY = e.clientY;
-    resizeStartWidth = Number.parseInt(getComputedStyle(sticky).width, 10);
-    resizeStartHeight = Number.parseInt(getComputedStyle(sticky).height, 10);
+    resizeStartWidth = parseInt(getComputedStyle(sticky).width, 10);
+    resizeStartHeight = parseInt(getComputedStyle(sticky).height, 10);
     resizeStartLeft = sticky.offsetLeft;
     resizeStartTop = sticky.offsetTop;
+
     document.addEventListener("pointermove", resize);
-    document.addEventListener("pointerup", stopResize);
-    e.preventDefault();
+    document.addEventListener("pointerup", resizeEnd);
   }
 
   function resize(e: PointerEvent) {
@@ -184,7 +178,7 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
       resizeHandle!.classList.contains("bottomLeft")
     ) {
       if (
-        Number.parseInt(getComputedStyle(sticky).minWidth, 10) <
+        parseInt(getComputedStyle(sticky).minWidth, 10) <
         resizeStartWidth - resizeDeltaX
       ) {
         sticky.style.width = `${resizeStartWidth - resizeDeltaX}px`;
@@ -197,7 +191,7 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
       resizeHandle!.classList.contains("topRight")
     ) {
       if (
-        Number.parseInt(getComputedStyle(sticky).minHeight, 10) <
+        parseInt(getComputedStyle(sticky).minHeight, 10) <
         resizeStartHeight - resizeDeltaY
       ) {
         sticky.style.height = `${resizeStartHeight - resizeDeltaY}px`;
@@ -206,11 +200,21 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
     }
   }
 
-  function stopResize() {
+  function resizeEnd() {
     isResizing = false;
+
     document.removeEventListener("pointermove", resize);
-    document.removeEventListener("pointerup", stopResize);
+    document.removeEventListener("pointerup", resizeEnd);
   }
+
+  sticky.on("pointerdown", () => {
+    moveToTop(sticky);
+    const idx = stickies.indexOf(sticky);
+    if (idx !== -1) {
+      stickies.splice(idx, 1);
+      stickies.push(sticky);
+    }
+  });
 
   moveToTop(sticky);
   stickies.push(sticky);
@@ -227,46 +231,17 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
     stickies.at(-1)?.focus();
   });
 
-  n81i.translateElement(textarea);
-  textarea.on("input", () => (textarea.dataset.value = textarea.value));
-  preview.classList.add("preview");
-  handleTextAreaPaste(sticky);
   sticky.dataset.prevInput = "";
-
-  function updatePreview() {
-    const html = marked.parse(textarea.value) as string;
-    const fragment = document.createRange().createContextualFragment(html);
-    preview.replaceChildren(fragment);
-  }
-
-  editModeToggleLbl.on("change", () => {
-    editModeToggleLbl.$$("svg").do((el) => el.classList.toggle("none"));
-
-    if (sticky.classList.contains("editMode") /* Change to view mode */) {
-      if (sticky.dataset.prevInput !== textarea.value) {
-        updatePreview();
-      }
-      sticky.focus();
-    }
-    textarea.disabled = !textarea.disabled;
-    textarea.hidden = !textarea.hidden;
-    sticky.dataset.prevInput = textarea.value;
-    preview.hidden = !preview.hidden;
-    textarea.focus();
-
-    sticky.classList.toggle("editMode");
-  });
 
   maximizeToggleLbl.on("change", () => {
     maximizeToggleLbl.$$("svg").do((el) => el.classList.toggle("none"));
     sticky.classList.toggle("maximized");
-  });
 
-  textarea.on("input", () => {
-    if (sticky.classList.contains("splitView")) {
-      updatePreview();
-      sticky.dataset.prevInput = textarea.value;
-    }
+    sticky.dispatchEvent(
+      new CustomEvent(
+        sticky.classList.contains("maximized") ? "minimize" : "maximize",
+      ),
+    );
   });
 
   // colorful outline
@@ -288,17 +263,6 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
     toggleMaximize() {
       maximizeToggleLbl.click();
     },
-    toggleEditMode() {
-      editModeToggleLbl.click();
-    },
-    toggleSplitView() {
-      if (!sticky.classList.contains("editMode")) {
-        this.toggleEditMode();
-      }
-      updatePreview();
-      sticky.classList.toggle("splitView");
-      sticky.$("textarea")!.focus();
-    },
     toggleGhostMode() {
       sticky.classList.toggle("ghost");
     },
@@ -308,17 +272,90 @@ export function enableStickyFunctionality(sticky: Penny<HTMLDivElement>) {
         .$$("textarea,input,button")
         .do((el) => (el.disabled = !el.disabled));
     },
+    addControlButton(button: HTMLElement) {
+      sticky
+        .$<HTMLDivElement>(".controls")!
+        .insertAdjacentElement("afterbegin", button);
+    },
+    replaceBody(...nodes: (Node | string)[]) {
+      sticky.$(".stickyBody")!.replaceChildren(...nodes);
+    },
   });
 }
 
+type StandardSticky = Sticky & {};
+
+function toStandardSticky(sticky: Sticky) {
+  const node = $<HTMLTemplateElement>("#stickyTools")!.content.cloneNode(true);
+  const tools = $(node)!;
+
+  const editModeToggleLbl = tools.$<HTMLLabelElement>(".editModeToggleLbl")!;
+  const textarea = tools.$<HTMLTextAreaElement>("textarea")!;
+  const preview = tools.$<HTMLDivElement>(".preview")!;
+
+  function updatePreview() {
+    const html = marked.parse(textarea.value) as string;
+    const fragment = document.createRange().createContextualFragment(html);
+    preview.replaceChildren(fragment);
+  }
+
+  textarea.on("input", () => {
+    if (sticky.classList.contains("splitView")) {
+      updatePreview();
+      sticky.dataset.prevInput = textarea.value;
+    }
+  });
+  textarea.on("input", () => (textarea.dataset.value = textarea.value));
+  handleTextAreaPaste(textarea);
+  n81i.translateElement(textarea);
+  preview.classList.add("preview");
+
+  sticky.replaceBody(textarea, preview);
+  sticky.addControlButton(editModeToggleLbl);
+
+  editModeToggleLbl.on("change", () => {
+    editModeToggleLbl.$$("svg").do((el) => el.classList.toggle("none"));
+    if (sticky.classList.contains("editMode") /* Change to view mode */) {
+      if (sticky.dataset.prevInput !== textarea.value) {
+        updatePreview();
+      }
+      sticky.focus();
+    }
+    textarea.disabled = !textarea.disabled;
+    textarea.hidden = !textarea.hidden;
+    sticky.dataset.prevInput = textarea.value;
+    preview.hidden = !preview.hidden;
+    textarea.focus();
+
+    sticky.classList.toggle("editMode");
+  });
+
+  sticky.custom = {
+    toggleEditMode() {
+      editModeToggleLbl.click();
+    },
+    toggleSplitView() {
+      if (!sticky.classList.contains("editMode")) {
+        editModeToggleLbl.click();
+      }
+      updatePreview();
+      sticky.classList.toggle("splitView");
+      textarea.focus();
+    },
+  };
+}
+
 export function createSticky() {
-  const sticky = $<HTMLDivElement>(
+  let sticky = $<HTMLDivElement>(
     stickyTemplate.content.cloneNode(true).firstElementChild,
   )!;
   sticky.style.left = `${pointerX - stickySizeDummy.getBoundingClientRect().width / 2}px`;
   sticky.style.top = `${Math.max(pointerY - 10, 0)}px`;
 
-  return enableStickyFunctionality(sticky);
+  sticky = enableStickyFunctionality(sticky);
+  toStandardSticky(sticky);
+
+  return sticky;
 }
 
 function moveToTop(el: HTMLElement) {
@@ -327,10 +364,20 @@ function moveToTop(el: HTMLElement) {
   el.style.order = highestZIndex.toString();
 }
 
-export function handleTextAreaPaste(sticky: Penny<HTMLDivElement>) {
-  const textarea = sticky.$<HTMLTextAreaElement>("textarea")!;
+export function handleTextAreaPaste(textarea: HTMLTextAreaElement) {
   textarea.on("paste", async (e) => {
     let isPasteImage = false;
+
+    function convertBlobUrlAndPaste(blob: Blob) {
+      const blobUrl = URL.createObjectURL(blob);
+      dataset.getOrSetItem("urls", []);
+      dataset.derivedSetItem<string[]>("urls", (blobUrls) => {
+        return [...blobUrls, { blobUrl }];
+      });
+      paste(textarea, createMarkdownImageDescription(blobUrl));
+      isPasteImage = true;
+    }
+
     const clipboardItems =
       typeof navigator?.clipboard?.read === "function"
         ? await navigator.clipboard.read()
@@ -340,22 +387,14 @@ export function handleTextAreaPaste(sticky: Penny<HTMLDivElement>) {
       let blob;
       if (clipboardItem.type?.startsWith("image/")) {
         blob = clipboardItem;
-        paste(
-          textarea,
-          createMarkdownImageDescription(URL.createObjectURL(blob)),
-        );
-        isPasteImage = true;
+        convertBlobUrlAndPaste(blob);
       } else {
         const imageTypes = clipboardItem.types?.filter((type) =>
           type.startsWith("image/"),
         );
         for (const imageType of imageTypes) {
           blob = await clipboardItem.getType(imageType);
-          paste(
-            textarea,
-            createMarkdownImageDescription(URL.createObjectURL(blob)),
-          );
-          isPasteImage = true;
+          convertBlobUrlAndPaste(blob);
         }
       }
     }

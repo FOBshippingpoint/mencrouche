@@ -3,7 +3,9 @@ import { createKikey, Kikey } from "./kikey/kikey";
 import { KeyBinding, parseBinding } from "./kikey/parseBinding";
 import { $, $$, $$$ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
+import { toDataUrl } from "./utils/toDataUrl";
 
+const settings = $<HTMLElement>("#settings")!;
 const settingsBtn = $<HTMLButtonElement>("#settingsBtn")!;
 const dropzone = $<HTMLDivElement>(".dropzone")!;
 const fileInput = $<HTMLInputElement>(".fileInput")!;
@@ -28,7 +30,7 @@ deleteDocumentBtn.on("click", () => {
 });
 exportDocumentBtn.on("click", () => {
   // Copied from web.dev: https://web.dev/patterns/files/save-a-file#progressive_enhancement
-  async function saveFile(blob, suggestedName) {
+  async function saveFile(blob: Blob, suggestedName: string) {
     // Feature detection. The API needs to be supported
     // and the app not run in an iframe.
     const supportsFileSystemAccess =
@@ -62,10 +64,10 @@ exportDocumentBtn.on("click", () => {
     }
     // Fallback if the File System Access API is not supported…
     // Create the blob URL.
-    const blobURL = URL.createObjectURL(blob);
+    const blobUrl = URL.createObjectURL(blob);
     // Create the `<a download>` element and append it invisibly.
     const a = document.createElement("a");
-    a.href = blobURL;
+    a.href = blobUrl;
     a.download = suggestedName;
     a.style.display = "none";
     document.body.append(a);
@@ -73,7 +75,7 @@ exportDocumentBtn.on("click", () => {
     a.click();
     // Revoke the blob URL and remove the element.
     setTimeout(() => {
-      URL.revokeObjectURL(blobURL);
+      URL.revokeObjectURL(blobUrl);
       a.remove();
     }, 1000);
   }
@@ -215,15 +217,11 @@ async function setBackgroundImageByUrl(url: string) {
     );
     dataset.setItem("backgroundImageUrl", url);
   }
+  let dataUrl = url;
   if (url.startsWith("blob")) {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    const reader = new FileReader();
-    reader.addEventListener("load", (e) => set(e.target.result));
-    reader.readAsDataURL(blob);
-  } else {
-    set(url);
+    dataUrl = await toDataUrl(url);
   }
+  set(dataUrl);
 }
 
 function unsetBackgroundImage() {
@@ -232,21 +230,21 @@ function unsetBackgroundImage() {
 }
 
 function openSettingsPage() {
-  $("#settings")!.removeAttribute("style");
-  $(".stickyContainer")!.style.display = "none";
+  settings.classList.remove("none");
+  $(".stickyContainer")!.classList.add("none");
 }
 
 function closeSettingsPage() {
-  $("#settings")!.style.display = "none";
-  $(".stickyContainer")!.removeAttribute("style");
+  settings.classList.add("none");
+  $(".stickyContainer")!.classList.remove("none");
   changesManager.cancel();
 }
 
 export function toggleSettingsPage() {
-  if ($(".stickyContainer")!.style.display === "none") {
-    closeSettingsPage();
-  } else {
+  if (settings.classList.contains("none")) {
     openSettingsPage();
+  } else {
+    closeSettingsPage();
   }
 }
 
@@ -264,8 +262,10 @@ function initLanguage() {
   langDropdown.innerHTML = "";
   for (const locale of n81i.getAllLocales()) {
     const option = $$$("option");
+    if (dataset.getItem("language") === locale) {
+      option.selected = true;
+    }
     option.value = locale;
-    option.selected = dataset.getItem("language");
     option.textContent =
       new Intl.DisplayNames([locale], {
         type: "language",
@@ -279,10 +279,9 @@ function initLanguage() {
     n81i.loadLanguage(langDropdown.value);
 
     changesManager.add(async () => {
+      dataset.setItem("language", langDropdown.value);
       await n81i.switchLocale(langDropdown.value);
       n81i.translatePage();
-
-      dataset.setItem("language", langDropdown.value);
     });
   });
 }
@@ -490,7 +489,7 @@ export function initShortcutManager() {
       toggle_auto_arrange: { default: "A-r", custom: null },
       toggle_ghost_mode: { default: "A-g", custom: null },
       toggle_split_view: { default: "A-v", custom: null },
-      toggle_sticky_edit_mode: { default: "A-w", custom: null },
+      toggle_sticky_edit_mode: { default: "A-e", custom: null },
       toggle_maximize_sticky: { default: "A-m", custom: null },
       toggle_sticky_pin_mode: { default: "A-p", custom: null },
       delete_sticky: { default: "A-x", custom: null },

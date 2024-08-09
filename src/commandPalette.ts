@@ -5,6 +5,7 @@ import { createKikey } from "./kikey";
 import { initShortcutManager, toggleSettingsPage } from "./settings";
 import { $, $$ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
+import { toDataUrl } from "./utils/toDataUrl";
 
 const contextMenuItemTemplate = $<HTMLTemplateElement>("#menuItem")!;
 const contextMenu = $<HTMLDivElement>("#contextMenu")!;
@@ -13,7 +14,7 @@ const menuItemIconsContainer = (
 ).firstElementChild as HTMLDivElement;
 
 function getIcon(icon: string) {
-  return menuItemIconsContainer.querySelector(`.${icon}`);
+  return menuItemIconsContainer.getElementsByClassName(icon)[0];
 }
 
 interface Command {
@@ -53,9 +54,21 @@ const commandMap: Record<string, Command> = {
   save_document: {
     name: "save_document",
     isMenuItem: false,
-    execute() {
+    async execute() {
       switchDocumentStatus("saving");
-      localStorage.setItem("doc", $(".stickyContainer")!.innerHTML);
+      let html = $(".stickyContainer")!.innerHTML;
+
+      const urlMap = dataset.getItem("urls", []);
+      if (urlMap) {
+        const promises = urlMap.map(async ({ blobUrl }) => {
+          const dataUrl = await toDataUrl(blobUrl);
+          return { blobUrl, dataUrl };
+        });
+        const blobToDataUrlMappings = await Promise.all(promises);
+        dataset.setItem("urls", blobToDataUrlMappings);
+      }
+
+      localStorage.setItem("doc", html);
       switchDocumentStatus("saved");
     },
   },
@@ -73,6 +86,7 @@ const commandMap: Record<string, Command> = {
     name: "delete_all_stickies",
     isMenuItem: false,
     execute() {
+      // TODO: use the approach like getLatestSticky()
       $$<HTMLButtonElement>(".sticky .deleteBtn")!.do((el) => el.click());
     },
   },
@@ -106,7 +120,7 @@ const commandMap: Record<string, Command> = {
     isMenuItem: true,
     menuIconName: "lucide-columns-2",
     execute() {
-      getLatestSticky()?.toggleSplitView();
+      getLatestSticky()?.custom.toggleSplitView?.();
     },
   },
   toggle_maximize_sticky: {
@@ -122,7 +136,7 @@ const commandMap: Record<string, Command> = {
     isMenuItem: true,
     menuIconName: "lucide-pencil",
     execute() {
-      getLatestSticky()?.toggleEditMode();
+      getLatestSticky()?.custom.toggleEditMode?.();
     },
   },
   toggle_sticky_pin_mode: {
@@ -292,6 +306,8 @@ for (const menuItem of menuItems) {
 contextMenu.replaceChildren(frag);
 
 document.addEventListener("contextmenu", (e) => {
+  if (!$("#settings")!.classList.contains("none")) return;
+
   e.preventDefault();
   contextMenu.style.top = `${e.clientY}px`;
   contextMenu.style.left = `${Math.min(e.clientX, document.body.getBoundingClientRect().width - 200)}px`;

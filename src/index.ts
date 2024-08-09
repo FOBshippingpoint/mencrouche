@@ -9,6 +9,7 @@ import { dataset } from "./dataset";
 const stickyContainer = $<HTMLDivElement>(".stickyContainer")!;
 
 const AVAILABLE_LOCALES = ["en", "zh-Hant"];
+
 function getUserPreferredLanguage() {
   if (navigator.language === "zh-TW") {
     return "zh-Hant";
@@ -23,9 +24,27 @@ function getUserPreferredLanguage() {
 }
 
 async function init() {
-  const stickyContainerHtml = localStorage.getItem("doc");
+  let stickyContainerHtml = localStorage.getItem("doc");
   if (stickyContainerHtml) {
-    const fragment = document
+    let fragment = document
+      .createRange()
+      .createContextualFragment(stickyContainerHtml);
+    stickyContainer.replaceChildren(fragment);
+
+    const urls = dataset.getItem<{ blobUrl: string; dataUrl: string }[]>(
+      "urls",
+      [],
+    );
+    const promises = urls.map(async ({ blobUrl, dataUrl }) => {
+      const response = await fetch(dataUrl);
+      const blob = await response.blob();
+      return [blobUrl, URL.createObjectURL(blob)];
+    });
+    for (const [oldUrl, newUrl] of await Promise.all(promises)) {
+      stickyContainerHtml = stickyContainerHtml.replaceAll(oldUrl, newUrl);
+    }
+    dataset.removeItem("urls");
+    fragment = document
       .createRange()
       .createContextualFragment(stickyContainerHtml);
     stickyContainer.replaceChildren(fragment);
@@ -36,7 +55,7 @@ async function init() {
       "language",
       getUserPreferredLanguage(),
     ),
-    availableLocales: ["en", "zh-Hant"],
+    availableLocales: AVAILABLE_LOCALES,
   });
   n81i.translatePage();
 

@@ -14,11 +14,16 @@ export const dataset = {
   getItem<T>(key: string, defaultValue?: T): T | undefined {
     const el = document.getElementById(key);
     if (el instanceof HTMLDataElement) {
-      return cast(el.value) as T ?? defaultValue;
+      return (cast(el.value) as T) ?? defaultValue;
     } else {
       return defaultValue;
     }
   },
+  // getItemsByClass<T>(className: string): T[] {
+  //   [...document.getElementsByClassName(className)].map(
+  //     (el) =>
+  //   );
+  // },
   getOrSetItem<T>(key: string, defaultValue: T): T {
     const el = document.getElementById(key);
     if (el) {
