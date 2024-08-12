@@ -2,13 +2,13 @@
 /* @import "https://unpkg.com/open-props"; */
 /* @import "https://unpkg.com/open-props/normalize.min.css"; */
 
-/* the following switch imports have selectors that enable the override of the system setting */ 
+/* the following switch imports have selectors that enable the override of the system setting */
 /* @import "https://unpkg.com/open-props/theme.light.switch.min.css"; */
 /* @import "https://unpkg.com/open-props/theme.dark.switch.min.css"; */
 @import "open-props/open-props.min.css";
 @import "open-props/normalize.min.css";
 
-/* the following switch imports have selectors that enable the override of the system setting */ 
+/* the following switch imports have selectors that enable the override of the system setting */
 @import "open-props/theme.light.switch.min.css";
 @import "open-props/theme.dark.switch.min.css";
 
@@ -507,8 +507,16 @@ form {
 .btn {
   border-radius: var(--radius-conditional-2);
   display: inline-flex;
+  align-items: center;
   padding-block: var(--size-relative-1);
   padding-inline: var(--size-relative-6);
+  border: var(--surface-2) solid var(--size-relative-1);
+}
+.iconBtn {
+  border-radius: var(--radius-conditional-2);
+  display: inline-flex;
+  align-items: center;
+  aspect-ratio: var(--ratio-square);
   border: var(--surface-2) solid var(--size-relative-1);
 }
 .formGroupHorizontal {
@@ -596,4 +604,55 @@ form {
 
 data {
   display: none;
+}
+
+ul {
+  padding-inline-start: var(--size-7);
+}
+
+#bookmarkDialog {
+  padding: var(--size-6);
+  border-radius: var(--radius-conditional-3);
+  box-shadow: var(--shadow-3);
+
+  form {
+    flex-direction: column;
+  }
+  .formGroup {
+    align-items: flex-end;
+
+    label {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+  .buttonGroup {
+    display: flex;
+    justify-content: space-around;
+  }
+}
+.bookmarkPreview {
+  display: flex;
+  justify-content: space-between;
+
+  div {
+    display: flex;
+    gap: var(--size-1);
+  }
+}
+.bookmark .stickyBody {
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+}
+.ghost.bookmark .stickyBody button {
+  display: none;
+}
+.bookmark:not(.editMode) .stickyBody button {
+  display: none;
+}
+.addBookmarkBtn {
+  padding: var(--size-3);
+  gap: var(--size-2);
 }

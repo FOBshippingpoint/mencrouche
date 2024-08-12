@@ -328,7 +328,9 @@ function initGhostMode() {
   const ghostIcon = $("#ghostIcon")!;
   const solidIcon = $("#solidIcon")!;
   const ghostToggle = $<HTMLInputElement>("#ghostToggle")!;
-  change(isGhostMode);
+  ghostIcon.hidden = !isGhostMode;
+  solidIcon.hidden = !!isGhostMode;
+  ghostToggle.checked = !!isGhostMode;
 
   function change(isGhostMode: boolean | undefined) {
     ghostIcon.hidden = !isGhostMode;

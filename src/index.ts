@@ -19,6 +19,7 @@ import { dataset, saveDataset } from "./myDataset";
 import { toggleSettingsPage } from "./settings";
 import { standardSticky } from "./stickyPlugins/standard";
 import { toDataUrl } from "./utils/toDataUrl";
+import { bookmarkSticky } from "./stickyPlugins/bookmark";
 
 const stickyContainer = $<HTMLDivElement>(".stickyContainer")!;
 
@@ -102,6 +103,32 @@ const defaultCommands: Command[] = [
             sticky = createSticky("standard", { coord });
           } else {
             sticky = createSticky("standard");
+          }
+          coord = { left: sticky.style.left, top: sticky.style.top };
+          $<HTMLDivElement>(".stickyContainer")!.append(sticky);
+        },
+        undo() {
+          if (sticky) {
+            sticky.forceDelete();
+            sticky = null;
+          }
+        },
+      };
+    },
+  },
+  {
+    name: "new_bookmark_sticky",
+    isMenuItem: true,
+    makeUndoable() {
+      let sticky: Sticky | null = null;
+      let coord: { left: string; top: string } | null = null;
+
+      return {
+        execute() {
+          if (coord) {
+            sticky = createSticky("bookmark", { coord });
+          } else {
+            sticky = createSticky("bookmark");
           }
           coord = { left: sticky.style.left, top: sticky.style.top };
           $<HTMLDivElement>(".stickyContainer")!.append(sticky);
@@ -267,6 +294,7 @@ async function init() {
   }
 
   registerSticky(standardSticky);
+  registerSticky(bookmarkSticky);
   restoreStickies();
   initCommandPalette();
 }

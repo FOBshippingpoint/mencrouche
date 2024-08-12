@@ -1,8 +1,7 @@
 import { marked } from "marked";
-import { n81i } from "../utils/n81i";
 import { CustomSticky, Sticky, StickyPlugin } from "../sticky";
-import { $ } from "../utils/dollars";
 import { dataset } from "../myDataset";
+import { getWidgets } from "./getWidgets";
 
 declare module "../sticky" {
   interface StickyPluginRegistry {
@@ -15,20 +14,11 @@ interface StandardPlugin extends StickyPlugin {
   toggleEditMode: () => void;
 }
 
-export function enableStandardSticky(sticky: Sticky): Sticky {
-  let node: Sticky | DocumentFragment;
-  if (sticky.classList.contains("standard")) {
-    node = sticky;
-  } else {
-    node = $<HTMLTemplateElement>("#stickyTools")!.content.cloneNode(
-      true,
-    ) as DocumentFragment;
-  }
-  const tools = $<HTMLElement>(node as any)!;
-
-  const editModeToggleLbl = tools.$<HTMLLabelElement>(".editModeToggleLbl")!;
-  const textarea = tools.$<HTMLTextAreaElement>("textarea")!;
-  const preview = tools.$<HTMLDivElement>(".preview")!;
+export function enable(sticky: Sticky): Sticky {
+  const widgets = getWidgets(sticky, "standardStickyWidgets");
+  const editModeToggleLbl = widgets.$<HTMLLabelElement>(".editModeToggleLbl")!;
+  const textarea = widgets.$<HTMLTextAreaElement>("textarea")!;
+  const preview = widgets.$<HTMLDivElement>(".preview")!;
 
   function updatePreview() {
     const html = marked.parse(textarea.value) as string;
@@ -44,13 +34,12 @@ export function enableStandardSticky(sticky: Sticky): Sticky {
   });
   textarea.on("input", () => (textarea.dataset.value = textarea.value));
   handleTextAreaPaste(textarea);
-  n81i.translateElement(textarea);
   preview.classList.add("preview");
 
   sticky.replaceBody(textarea, preview);
   sticky.addControlWidget(editModeToggleLbl);
   sticky.on("duplicate", (e: any) => {
-    enableStandardSticky(e.detail);
+    enable(e.detail);
   });
 
   editModeToggleLbl.on("change", () => {
@@ -156,10 +145,10 @@ function paste(textarea: HTMLTextAreaElement, toPaste: string) {
 export const standardSticky: CustomSticky = {
   type: "standard",
   onNew(sticky: Sticky) {
-    enableStandardSticky(sticky);
+    enable(sticky);
   },
   onRestore(sticky: Sticky) {
-    enableStandardSticky(sticky);
+    enable(sticky);
   },
   onDelete(sticky: Sticky) {},
 };

@@ -2,6 +2,13 @@
 
 ![screenshot](https://i.imgur.com/SnR5gHO.png)
 
+## Getting Started
+
+```sh
+bun install
+bun dev-site
+```
+
 ## Authors
 
 - [@FOBshippingpoint](https://github.com/FOBshippingpoint)

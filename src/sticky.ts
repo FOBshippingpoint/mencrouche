@@ -1,4 +1,5 @@
 import { $, $$, Allowance } from "./utils/dollars";
+import { n81i } from "./utils/n81i";
 
 export type StickyPlugin = Record<string, any>;
 export interface StickyPluginRegistry {
@@ -291,13 +292,19 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
     },
     toggleGhostMode() {
       sticky.classList.toggle("ghost");
+      // How about global???
+      // if (sticky.classList.contains("ghost")) {
+      //   sticky.dispatchEvent(new CustomEvent("ghoston"));
+      // } else {
+      //   sticky.dispatchEvent(new CustomEvent("ghostoff"));
+      // }
     },
     togglePin() {
       sticky.classList.toggle("pin");
       if (sticky.classList.contains("pin")) {
-        sticky.dispatchEvent(new CustomEvent("unpin"));
-      } else {
         sticky.dispatchEvent(new CustomEvent("pin"));
+      } else {
+        sticky.dispatchEvent(new CustomEvent("unpin"));
       }
     },
     addControlWidget(element: HTMLElement) {
@@ -350,6 +357,7 @@ export function createSticky(type?: string, option: CreateStickyOption = {}) {
       );
     }
   }
+  n81i.translateElement(basicSticky);
 
   return basicSticky;
 }
@@ -386,6 +394,10 @@ function getRelatedCustomStickies(sticky: Allowance<HTMLDivElement> | Sticky) {
     }
   }
   return result;
+}
+
+export function getCustomStickyTypes() {
+  return [...customStickies.values()].map(({ type }) => type);
 }
 
 initStickyEnvironment();

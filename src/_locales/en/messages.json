@@ -166,5 +166,29 @@
   "confirm_delete_document": {
     "message": "Do you want to delete the document?",
     "description": "Confirmation message while deleting document."
+  },
+  "undo": {
+    "message": "Undo",
+    "description": "undo"
+  },
+  "redo": {
+    "message": "Redo",
+    "description": "redo"
+  },
+  "bookmark_link_label": {
+    "message": "Link",
+    "description": "Label text for the bookmark link input."
+  },
+  "bookmark_icon_label": {
+    "message": "Icon (svg or dataurl)",
+    "description": "Label text for the bookmark link input."
+  },
+  "submit_bookmark_btn": {
+    "message": "Submit",
+    "description": "Button text for submitting bookmark."
+  },
+  "add_bookmark_btn": {
+    "message": "Add Bookmark",
+    "description": "Button text for adding bookmark."
   }
 }

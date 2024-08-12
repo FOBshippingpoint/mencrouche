@@ -98,15 +98,18 @@ export const n81i = (() => {
       }
     },
     translateElement(element: HTMLElement) {
-      const { i18n, i18nFor } = element.dataset;
-      if (i18n) {
-        this.translateLater(i18n, (message) => {
-          if (i18nFor) {
-            element.setAttribute(i18nFor, message);
-          } else {
-            element.textContent = message;
-          }
-        });
+      const children = element.querySelectorAll("[data-i18n]");
+      for (const el of [...children, element]) {
+        const { i18n, i18nFor } = (el as any).dataset;
+        if (i18n) {
+          this.translateLater(i18n, (message) => {
+            if (i18nFor) {
+              el.setAttribute(i18nFor, message);
+            } else {
+              el.textContent = message;
+            }
+          });
+        }
       }
     },
     translatePage() {

@@ -166,7 +166,177 @@
             debug
           </div>
         </div>
-        <template id="stickyTools">
+        <template id="standardStickyWidgets">
+          <label class="editModeToggleLbl">
+            <svg
+              class="none"
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-pencil"
+            >
+              <path
+                d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
+              />
+              <path d="m15 5 4 4" />
+            </svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-sticky-note"
+            >
+              <path
+                d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"
+              />
+              <path d="M15 3v4a2 2 0 0 0 2 2h4" />
+            </svg>
+            <input hidden="" type="checkbox" />
+          </label>
+          <textarea
+            data-i18n="sticky_textarea_start_typing_placeholder"
+            data-i18n-for="placeholder"
+          ></textarea>
+          <div class="preview" hidden=""></div>
+        </template>
+        <template id="bookmarkStickyWidgets">
+          <label class="editModeToggleLbl">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-bookmark"
+            >
+              <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
+            </svg>
+            <svg
+              class="none"
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-settings"
+            >
+              <path
+                d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
+              />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            <input hidden="" type="checkbox" />
+          </label>
+          <div class="bookmarkPreview" hidden="">
+            <a href="#" target="_blank"></a>
+            <div>
+              <button class="editBtn iconBtn">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-pencil"
+                >
+                  <path
+                    d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
+                  />
+                  <path d="m15 5 4 4" />
+                </svg>
+              </button>
+              <button class="deleteBtn iconBtn">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-trash"
+                >
+                  <path d="M3 6h18" />
+                  <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                  <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <button class="addBookmarkBtn btn">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-bookmark-plus"
+            >
+              <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
+              <line x1="12" x2="12" y1="7" y2="13" />
+              <line x1="15" x2="9" y1="10" y2="10" />
+            </svg>
+            <span data-i18n="add_bookmark_btn"></span>
+          </button>
+          <dialog id="bookmarkDialog">
+            <form>
+              <div class="formGroup">
+                <label>
+                  <span data-i18n="bookmark_link_label"></span>
+                  <input type="url" name="link" required
+                /></label>
+                <label>
+                  <span data-i18n="bookmark_icon_label"></span>
+                  <input type="text" name="icon" required
+                /></label>
+                <input type="text" name="target" hidden="" />
+              </div>
+              <div class="buttonGroup">
+                <button
+                  class="btn"
+                  type="submit"
+                  data-i18n="submit_bookmark_btn"
+                ></button>
+                <button
+                  class="btn"
+                  type="button"
+                  data-i18n="cancel_submit_bookmark_btn"
+                ></button>
+              </div>
+            </form>
+          </dialog>
+        </template>
+        <template id="standardStickyWidgets">
           <label class="editModeToggleLbl">
             <svg
               class="none"

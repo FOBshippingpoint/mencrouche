@@ -166,5 +166,33 @@
   "confirm_delete_document": {
     "message": "確定要刪除文件嗎？",
     "description": "Confirmation message while deleting document."
+  },
+  "undo": {
+    "message": "復原",
+    "description": "undo"
+  },
+  "redo": {
+    "message": "重做",
+    "description": "redo"
+  },
+  "bookmark_link_label": {
+    "message": "連結",
+    "description": "Label text for the bookmark link input."
+  },
+  "bookmark_icon_label": {
+    "message": "圖示 (svg或dataurl)",
+    "description": "Label text for the bookmark link input."
+  },
+  "submit_bookmark_btn": {
+    "message": "確認",
+    "description": "Button text for submitting bookmark."
+  },
+  "cancel_submit_bookmark_btn": {
+    "message": "取消",
+    "description": "Button text for submitting bookmark."
+  },
+  "add_bookmark_btn": {
+    "message": "新增書籤",
+    "description": "Button text for adding bookmark."
   }
 }
