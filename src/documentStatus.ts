@@ -1,4 +1,4 @@
-import { triggerCommand } from "./commandPalette";
+import { triggerCommand } from "./commands";
 import { $ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
 

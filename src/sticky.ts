@@ -1,38 +1,48 @@
-import { marked } from "marked";
-import { $, $$, Penny } from "./utils/dollars";
-import { n81i } from "./utils/n81i";
-import { dataset } from "./dataset";
+import { $, $$, Allowance } from "./utils/dollars";
 
-type Sticky = Penny<HTMLDivElement> & {
+export type StickyPlugin = Record<string, any>;
+export interface StickyPluginRegistry {
+  [key: string]: any;
+}
+export type Sticky = Allowance<HTMLDivElement> & {
   delete: () => void;
-  duplicate: () => void;
+  forceDelete: () => void;
+  recover: () => void;
+  duplicate: () => Sticky;
   toggleMaximize: () => void;
   toggleGhostMode: () => void;
   togglePin: () => void;
-  custom: Record<string, unknown>;
-  addControlButton: (button: HTMLElement) => void;
+  addControlWidget: (element: HTMLElement) => void;
   replaceBody: (...nodes: (Node | string)[]) => void;
+  plugin: StickyPluginRegistry;
 };
 
 let highestZIndex = 0;
 /** An array for tracking the sticky order, from lowest -> topest */
-const stickies: Penny<HTMLDivElement>[] = [];
+const stickies: Sticky[] = [];
 const stickyTemplate = $<HTMLTemplateElement>("#sticky")!;
 // This element is for getting var(--size-fluid-9) in pixels. So that we can
-// set default sticky position to center if user didn't move their mouse yet.
+// set default sticky position to center if user hasn't move the cursor yet.
 const stickySizeDummy = $<HTMLDivElement>("#stickySizeDummy")!;
 
-let stickyContainer: Penny<HTMLDivElement>;
+let stickyContainer: Allowance<HTMLDivElement>;
+let stickyRecycleBin: Allowance<HTMLDivElement>;
 let pointerX: number;
 let pointerY: number;
 
 export function getLatestSticky(): Sticky | undefined {
-  return stickies.at(-1) as Sticky;
+  return stickies.at(-1);
 }
 
-export function initStickyContainer() {
+export function getAllStickies(): readonly Sticky[] {
+  return stickies;
+}
+
+export function initStickyEnvironment() {
   stickyContainer = $<HTMLDivElement>(".stickyContainer")!;
-  stickyContainer.addEventListener("pointermove", (e) => {
+  stickyRecycleBin = $<HTMLDivElement>(".stickyRecycleBin")!;
+
+  stickyContainer.on("pointermove", (e) => {
     pointerX = e.clientX - stickyContainer!.getBoundingClientRect().left;
     pointerY = e.clientY - stickyContainer!.getBoundingClientRect().top;
   });
@@ -44,6 +54,7 @@ export function initStickyContainer() {
     2;
 
   // Find and set the highestZIndex when initialize from existing document.
+  highestZIndex = 0;
   for (const sticky of $$(".sticky")) {
     const zIndex = parseInt(sticky.style.zIndex);
     if (zIndex > highestZIndex) {
@@ -52,9 +63,7 @@ export function initStickyContainer() {
   }
 }
 
-export function enableStickyFunctionality(
-  sticky: Penny<HTMLDivElement>,
-): Sticky {
+export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
   const stickyHeader = sticky.$(".stickyHeader")!;
   const deleteBtn = sticky.$<HTMLButtonElement>(".deleteBtn")!;
   const maximizeToggleLbl = sticky.$<HTMLLabelElement>(".maximizeToggleLbl")!;
@@ -68,7 +77,7 @@ export function enableStickyFunctionality(
   let dragX = parseInt(sticky.style.left, 10) || pointerX;
   let dragY = parseInt(sticky.style.top, 10) || pointerY;
 
-  stickyHeader.addEventListener("pointerdown", dragStart);
+  stickyHeader.on("pointerdown", dragStart);
 
   // Resize variables
   const resizeHandles = sticky.$$<HTMLDivElement>(".resizeHandle");
@@ -82,7 +91,7 @@ export function enableStickyFunctionality(
   let resizeStartTop: number;
 
   for (const handle of resizeHandles) {
-    handle.addEventListener("pointerdown", resizeStart);
+    handle.on("pointerdown", resizeStart);
   }
 
   function dragStart(e: PointerEvent) {
@@ -105,8 +114,8 @@ export function enableStickyFunctionality(
     dragInitialX = e.clientX - parseInt(sticky.style.left, 10);
     dragInitialY = e.clientY - parseInt(sticky.style.top, 10);
 
-    document.addEventListener("pointermove", drag);
-    document.addEventListener("pointerup", dragEnd);
+    document.on("pointermove", drag);
+    document.on("pointerup", dragEnd);
   }
 
   function drag(e: PointerEvent) {
@@ -149,8 +158,8 @@ export function enableStickyFunctionality(
     resizeStartLeft = sticky.offsetLeft;
     resizeStartTop = sticky.offsetTop;
 
-    document.addEventListener("pointermove", resize);
-    document.addEventListener("pointerup", resizeEnd);
+    document.on("pointermove", resize);
+    document.on("pointerup", resizeEnd);
   }
 
   function resize(e: PointerEvent) {
@@ -220,8 +229,15 @@ export function enableStickyFunctionality(
   stickies.push(sticky);
 
   deleteBtn.on("click", () => {
-    sticky.on("animationend", sticky.remove, { once: true });
-    sticky.classList.add("remove");
+    sticky.on(
+      "animationend",
+      () => {
+        sticky.remove();
+        stickyRecycleBin.append(sticky);
+      },
+      { once: true },
+    );
+    sticky.classList.add("deleted");
 
     // Select previous sticky.
     const idx = stickies.indexOf(sticky);
@@ -230,8 +246,6 @@ export function enableStickyFunctionality(
     }
     stickies.at(-1)?.focus();
   });
-
-  sticky.dataset.prevInput = "";
 
   maximizeToggleLbl.on("change", () => {
     maximizeToggleLbl.$$("svg").do((el) => el.classList.toggle("none"));
@@ -247,18 +261,30 @@ export function enableStickyFunctionality(
   // colorful outline
   // [].forEach.call($$("*"), function (a) { a.style.outline = "1px solid #" + (~~(Math.random() * (1 << 24))).toString(16); });
 
-  return Object.assign(sticky, {
+  const result = Object.assign(sticky, {
     delete() {
       deleteBtn.click();
     },
+    forceDelete() {
+      sticky.remove();
+    },
+    recover() {
+      if (sticky.classList.contains("deleted")) {
+        sticky.classList.remove("deleted");
+        stickyRecycleBin.removeChild(sticky);
+        stickyContainer.appendChild(sticky);
+      }
+    },
     duplicate() {
       const clone = $<HTMLDivElement>(sticky.cloneNode(true) as any);
-      const duplicated = enableStickyFunctionality(clone as any);
+      const duplicated = enableFunctionality(clone as any);
       duplicated.style.left = `${parseInt(duplicated.style.left, 10) + 10}px`;
       duplicated.style.top = `${parseInt(duplicated.style.top, 10) + 10}px`;
       moveToTop(duplicated);
       stickyContainer.appendChild(duplicated);
       duplicated.focus();
+
+      return duplicated;
     },
     toggleMaximize() {
       maximizeToggleLbl.click();
@@ -268,94 +294,64 @@ export function enableStickyFunctionality(
     },
     togglePin() {
       sticky.classList.toggle("pin");
-      sticky
-        .$$("textarea,input,button")
-        .do((el) => (el.disabled = !el.disabled));
+      if (sticky.classList.contains("pin")) {
+        sticky.dispatchEvent(new CustomEvent("unpin"));
+      } else {
+        sticky.dispatchEvent(new CustomEvent("pin"));
+      }
     },
-    addControlButton(button: HTMLElement) {
-      sticky
-        .$<HTMLDivElement>(".controls")!
-        .insertAdjacentElement("afterbegin", button);
+    addControlWidget(element: HTMLElement) {
+      sticky.$<HTMLDivElement>(".controls slot")!.replaceChildren(element);
     },
     replaceBody(...nodes: (Node | string)[]) {
       sticky.$(".stickyBody")!.replaceChildren(...nodes);
     },
+    plugin: {},
   });
-}
 
-type StandardSticky = Sticky & {};
-
-function toStandardSticky(sticky: Sticky) {
-  const node = $<HTMLTemplateElement>("#stickyTools")!.content.cloneNode(true);
-  const tools = $(node)!;
-
-  const editModeToggleLbl = tools.$<HTMLLabelElement>(".editModeToggleLbl")!;
-  const textarea = tools.$<HTMLTextAreaElement>("textarea")!;
-  const preview = tools.$<HTMLDivElement>(".preview")!;
-
-  function updatePreview() {
-    const html = marked.parse(textarea.value) as string;
-    const fragment = document.createRange().createContextualFragment(html);
-    preview.replaceChildren(fragment);
+  for (const custom of getRelatedCustomStickies(sticky)) {
+    custom.onRestore(result);
   }
 
-  textarea.on("input", () => {
-    if (sticky.classList.contains("splitView")) {
-      updatePreview();
-      sticky.dataset.prevInput = textarea.value;
-    }
-  });
-  textarea.on("input", () => (textarea.dataset.value = textarea.value));
-  handleTextAreaPaste(textarea);
-  n81i.translateElement(textarea);
-  preview.classList.add("preview");
+  return result;
+}
 
-  sticky.replaceBody(textarea, preview);
-  sticky.addControlButton(editModeToggleLbl);
+const customStickies = new Map<string, CustomSticky>();
 
-  editModeToggleLbl.on("change", () => {
-    editModeToggleLbl.$$("svg").do((el) => el.classList.toggle("none"));
-    if (sticky.classList.contains("editMode") /* Change to view mode */) {
-      if (sticky.dataset.prevInput !== textarea.value) {
-        updatePreview();
-      }
-      sticky.focus();
-    }
-    textarea.disabled = !textarea.disabled;
-    textarea.hidden = !textarea.hidden;
-    sticky.dataset.prevInput = textarea.value;
-    preview.hidden = !preview.hidden;
-    textarea.focus();
-
-    sticky.classList.toggle("editMode");
-  });
-
-  sticky.custom = {
-    toggleEditMode() {
-      editModeToggleLbl.click();
-    },
-    toggleSplitView() {
-      if (!sticky.classList.contains("editMode")) {
-        editModeToggleLbl.click();
-      }
-      updatePreview();
-      sticky.classList.toggle("splitView");
-      textarea.focus();
-    },
+interface CreateStickyOption {
+  coord?: {
+    left: string;
+    top: string;
   };
 }
 
-export function createSticky() {
-  let sticky = $<HTMLDivElement>(
-    stickyTemplate.content.cloneNode(true).firstElementChild,
+export function createSticky(type?: string, option: CreateStickyOption = {}) {
+  const sticky = $<HTMLDivElement>(
+    (stickyTemplate.content.cloneNode(true) as any).firstElementChild,
   )!;
-  sticky.style.left = `${pointerX - stickySizeDummy.getBoundingClientRect().width / 2}px`;
-  sticky.style.top = `${Math.max(pointerY - 10, 0)}px`;
 
-  sticky = enableStickyFunctionality(sticky);
-  toStandardSticky(sticky);
+  if (option.coord) {
+    sticky.style.left = option.coord.left;
+    sticky.style.top = option.coord.top;
+  } else {
+    sticky.style.left = `${pointerX - stickySizeDummy.getBoundingClientRect().width / 2}px`;
+    sticky.style.top = `${Math.max(pointerY - 10, 0)}px`;
+  }
 
-  return sticky;
+  const basicSticky = enableFunctionality(sticky);
+  if (type) {
+    const custom = customStickies.get(type);
+    if (custom) {
+      custom.onNew(basicSticky);
+      basicSticky.classList.add(type);
+    } else {
+      throw Error(
+        `Custom sticky type '${type}' not found. Please register sticky type first via 'registerSticky'.`,
+      );
+    }
+  }
+
+  return basicSticky;
 }
 
 function moveToTop(el: HTMLElement) {
@@ -364,59 +360,32 @@ function moveToTop(el: HTMLElement) {
   el.style.order = highestZIndex.toString();
 }
 
-export function handleTextAreaPaste(textarea: HTMLTextAreaElement) {
-  textarea.on("paste", async (e) => {
-    let isPasteImage = false;
-
-    function convertBlobUrlAndPaste(blob: Blob) {
-      const blobUrl = URL.createObjectURL(blob);
-      dataset.getOrSetItem("urls", []);
-      dataset.derivedSetItem<string[]>("urls", (blobUrls) => {
-        return [...blobUrls, { blobUrl }];
-      });
-      paste(textarea, createMarkdownImageDescription(blobUrl));
-      isPasteImage = true;
-    }
-
-    const clipboardItems =
-      typeof navigator?.clipboard?.read === "function"
-        ? await navigator.clipboard.read()
-        : (e as any).clipboardData.files;
-
-    for (const clipboardItem of clipboardItems) {
-      let blob;
-      if (clipboardItem.type?.startsWith("image/")) {
-        blob = clipboardItem;
-        convertBlobUrlAndPaste(blob);
-      } else {
-        const imageTypes = clipboardItem.types?.filter((type) =>
-          type.startsWith("image/"),
-        );
-        for (const imageType of imageTypes) {
-          blob = await clipboardItem.getType(imageType);
-          convertBlobUrlAndPaste(blob);
-        }
-      }
-    }
-    if (isPasteImage) {
-      e.preventDefault();
-      textarea.dispatchEvent(new InputEvent("input")); // Programmatically trigger input event to notify content change.
-    }
-  });
+export interface CustomSticky {
+  type: string;
+  onNew: (sticky: Sticky) => void;
+  onRestore: (sticky: Sticky) => void;
+  onDelete: (sticky: Sticky) => void;
 }
 
-function createMarkdownImageDescription(url: string) {
-  return `![](${url})`;
+export function registerSticky(customSticky: CustomSticky) {
+  if (customStickies.has(customSticky.type)) {
+    throw Error(
+      `Custom sticky '${customSticky.type}' already exists. Please try another name.`,
+    );
+  }
+
+  customStickies.set(customSticky.type, customSticky);
 }
 
-function paste(textarea: HTMLTextAreaElement, toPaste: string) {
-  const start = textarea.selectionStart;
-  const end = textarea.selectionEnd;
-  const text = textarea.value;
-  const before = text.substring(0, start);
-  const after = text.substring(end);
-  textarea.value = before + toPaste + after;
-  textarea.selectionStart = textarea.selectionEnd = start + toPaste.length;
+function getRelatedCustomStickies(sticky: Allowance<HTMLDivElement> | Sticky) {
+  const result = [];
+  for (const className of sticky.classList.values()) {
+    const custom = customStickies.get(className);
+    if (custom) {
+      result.push(custom);
+    }
+  }
+  return result;
 }
 
-initStickyContainer();
+initStickyEnvironment();

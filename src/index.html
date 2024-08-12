@@ -20,7 +20,7 @@
           <div></div>
           <span></span>
         </button>
-        <button id="newStickyBtn">
+        <button id="newStickyBtn" data-i18n-for="title" data-i18n="new_sticky">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -60,8 +60,6 @@
             <path d="m6.34 17.66-1.41 1.41"></path>
             <path d="m19.07 4.93-1.41 1.41"></path></svg
         ></label>
-        <input id="themeToggle" hidden="" type="checkbox" />
-        <input id="ghostToggle" hidden="" type="checkbox" />
         <label for="themeToggle" id="lightIcon" hidden=""
           ><svg
             xmlns="http://www.w3.org/2000/svg"
@@ -77,6 +75,13 @@
           >
             <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg
         ></label>
+        <input
+          id="themeToggle"
+          hidden=""
+          type="checkbox"
+          data-i18n-for="title"
+          data-i18n="toggle_dark_mode"
+        />
         <label for="ghostToggle" id="solidIcon" hidden="">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -120,7 +125,12 @@
             <path d="M21 14v1" />
           </svg>
         </label>
-        <button id="settingsBtn">
+        <input id="ghostToggle" hidden="" type="checkbox" />
+        <button
+          id="settingsBtn"
+          data-i18n-for="title"
+          data-i18n="toggle_settings"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -142,6 +152,7 @@
       </nav>
       <section class="mainSection">
         <div class="stickyContainer">
+          <div class="stickyRecycleBin" hidden=""></div>
           <div
             id="debug"
             style="
@@ -204,6 +215,7 @@
           <div class="sticky editMode" tabindex="0">
             <div class="stickyHeader">
               <div class="controls">
+                <slot></slot>
                 <label class="maximizeToggleLbl">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -583,5 +595,6 @@
         </div>
       </template>
     </main>
+    <slot id="dataset"></slot>
   </body>
 </html>

@@ -249,7 +249,7 @@ form {
   outline: var(--border-size-3) solid var(--surface-4);
 }
 
-.remove {
+.deleted {
   animation: var(--animation-scale-down), var(--animation-fade-out);
   animation-timing-function: var(--ease-elastic-in-out-4);
 }

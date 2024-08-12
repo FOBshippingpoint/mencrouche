@@ -28,7 +28,7 @@
     "description": "Title for the shortcuts section in settings."
   },
   "settings_storage_section": {
-    "message": "儲存空間",
+    "message": "檔案",
     "description": "Title for the storage section in settings."
   },
   "sticky_textarea_start_typing_placeholder": {
@@ -136,7 +136,7 @@
     "description": "Label for the UI opacity input."
   },
   "toggle_split_view": {
-    "message": "切換分割視圖",
+    "message": "切換雙欄",
     "description": "Command description for toggling split view of sticky notes."
   },
   "toggle_maximize_sticky": {

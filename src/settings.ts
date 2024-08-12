@@ -1,6 +1,6 @@
-import { dataset } from "./dataset";
 import { createKikey, Kikey } from "./kikey/kikey";
 import { KeyBinding, parseBinding } from "./kikey/parseBinding";
+import { dataset } from "./myDataset";
 import { $, $$, $$$ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
 import { toDataUrl } from "./utils/toDataUrl";
@@ -46,7 +46,7 @@ exportDocumentBtn.on("click", () => {
     if (supportsFileSystemAccess) {
       try {
         // Show the file save dialog.
-        const handle = await showSaveFilePicker({
+        const handle = await (window as any).showSaveFilePicker({
           suggestedName,
         });
         // Write the blob to the file.
@@ -54,7 +54,7 @@ exportDocumentBtn.on("click", () => {
         await writable.write(blob);
         await writable.close();
         return;
-      } catch (err) {
+      } catch (err: any) {
         // Fail silently if the user has simply canceled the dialog.
         if (err.name !== "AbortError") {
           console.error(err.name, err.message);
@@ -372,12 +372,12 @@ function initShortcuts() {
 
   const recordingKikey = createKikey();
   shortcutList.on("click", (e) => {
-    if (e.target.matches("button")) {
+    if ((e.target as HTMLElement).matches("button")) {
       const btn = e.target as HTMLButtonElement;
       const input = btn.closest("label")!.querySelector("input")!;
-      const actionName = input.dataset.actionName;
+      const actionName = input.dataset.actionName as ActionName;
 
-      if (e.target.matches(".recordBtn")) {
+      if ((e.target as HTMLElement).matches(".recordBtn")) {
         if (btn.dataset.recording === "false") {
           // Start
           btn.textContent = n81i.t("stop_record_shortcut_btn");
@@ -398,7 +398,7 @@ function initShortcuts() {
         }
         btn.dataset.recording =
           btn.dataset.recording === "false" ? "true" : "false";
-      } else if (e.target.matches(".resetBtn")) {
+      } else if ((e.target as HTMLElement).matches(".resetBtn")) {
         changesManager.add(() => shortcutManager.restore(actionName));
         input.value = shortcutManager.getDefaultKeySequence(actionName);
       }
@@ -452,31 +452,58 @@ function initOpacity() {
   uiOpacityInput.value = (uiOpacity * 100).toString();
 }
 
-let singleton;
+type ActionName =
+  | "toggle_command_palette"
+  | "toggle_settings"
+  | "toggle_dark_mode"
+  | "toggle_global_ghost_mode"
+  | "open_youtube"
+  | "save_document"
+  | "new_sticky"
+  | "duplicate_sticky"
+  | "toggle_auto_arrange"
+  | "toggle_split_view"
+  | "toggle_ghost_mode"
+  | "toggle_sticky_edit_mode"
+  | "toggle_maximize_sticky"
+  | "toggle_sticky_pin_mode"
+  | "delete_sticky"
+  | "delete_all_stickies"
+  | (string & {});
+type Action = {
+  default: string;
+  custom: string | null;
+};
+
+interface ShortcutRegisterOption {
+  el?: Document | HTMLElement;
+  shouldPreventDefault?: boolean;
+}
+
+interface ShortcutManager {
+  on(
+    actionName: ActionName,
+    callback: (e: KeyboardEvent) => void,
+    option?: ShortcutRegisterOption,
+  ): void;
+  once(
+    actionName: ActionName,
+    callback: (e: KeyboardEvent) => void,
+    option?: ShortcutRegisterOption,
+  ): void;
+  update(actionName: ActionName, newSequence: string | KeyBinding[]): void;
+  restore(actionName: ActionName): void;
+  getKeySequence(actionName: ActionName): string;
+  getDefaultKeySequence(actionName: ActionName): string;
+  getAllActions(): Array<{
+    actionName: string;
+    keySequence: string;
+  }>;
+}
+
+let singleton: ShortcutManager | undefined;
 export function initShortcutManager() {
   if (!singleton) {
-    type ActionName =
-      | "toggle_command_palette"
-      | "toggle_settings"
-      | "toggle_dark_mode"
-      | "toggle_global_ghost_mode"
-      | "open_youtube"
-      | "save_document"
-      | "new_sticky"
-      | "duplicate_sticky"
-      | "toggle_auto_arrange"
-      | "toggle_split_view"
-      | "toggle_ghost_mode"
-      | "toggle_sticky_edit_mode"
-      | "toggle_maximize_sticky"
-      | "toggle_sticky_pin_mode"
-      | "delete_sticky"
-      | "delete_all_stickies";
-    type Action = {
-      default: string;
-      custom: string | null;
-    };
-
     const actions: Record<ActionName, Action> = {
       toggle_command_palette: { default: "C-.", custom: null },
       toggle_settings: { default: "C-,", custom: null },
@@ -494,9 +521,11 @@ export function initShortcutManager() {
       toggle_sticky_pin_mode: { default: "A-p", custom: null },
       delete_sticky: { default: "A-x", custom: null },
       delete_all_stickies: { default: "C-A-x", custom: null },
+      undo: { default: "C-z", custom: null },
+      redo: { default: "C-y", custom: null },
     };
     for (const [actionName, value] of Object.entries(actions)) {
-      value.custom ||= dataset.getItem<string>(actionName);
+      value.custom ||= dataset.getItem<string>(actionName) as string;
     }
 
     type KikeyInfo = {
@@ -513,15 +542,19 @@ export function initShortcutManager() {
 
     function registerAction(
       actionName: ActionName,
-      callback: () => void,
-      el?: Document | HTMLElement,
+      callback: (e: KeyboardEvent) => void,
       isOnce: boolean = false,
+      option: ShortcutRegisterOption = {},
     ) {
-      const kikey = el ? createKikey(el) : globalKikey;
-      const cb = (e: KeyboardEvent) => {
-        e.preventDefault();
-        callback();
-      };
+      const kikey = option.el ? createKikey(option.el) : globalKikey;
+
+      let cb = callback;
+      if (option.shouldPreventDefault) {
+        cb = (e: KeyboardEvent) => {
+          e.preventDefault();
+          callback(e);
+        };
+      }
 
       if (isOnce) {
         kikey.once(getCurrent(actionName), cb);
@@ -538,19 +571,19 @@ export function initShortcutManager() {
     singleton = {
       on(
         actionName: ActionName,
-        callback: () => void,
-        el?: Document | HTMLElement,
+        callback: (e: KeyboardEvent) => void,
+        option: ShortcutRegisterOption = { shouldPreventDefault: true },
       ) {
-        registerAction(actionName, callback, el);
+        registerAction(actionName, callback, false, option);
       },
       once(
         actionName: ActionName,
-        callback: () => void,
-        el?: Document | HTMLElement,
+        callback: (e: KeyboardEvent) => void,
+        option: ShortcutRegisterOption = { shouldPreventDefault: true },
       ) {
-        registerAction(actionName, callback, el, true);
+        registerAction(actionName, callback, true, option);
       },
-      update(actionName: ActionName, newSequence: string | KeyBinding[]) {
+      update(actionName: ActionName, newSequence: string) {
         for (const { kikey, callback } of registry[actionName] ?? []) {
           kikey.updateSequence(newSequence, callback);
           actions[actionName].custom = newSequence;

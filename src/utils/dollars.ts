@@ -6,59 +6,62 @@
  * attaching event listeners.
  */
 
-/**
- * Represents an HTMLElement with added $ and $$ methods
- */
-export type Penny<T extends HTMLElement> = T & {
-  $: typeof $;
-  $$: typeof $$;
+export type Allowance<T extends HTMLElement> = T & {
+  $: <K extends HTMLElement>(selectors: string) => Allowance<K> | null;
+  $$: <K extends HTMLElement>(selectors: string) => AllowanceList<K>;
+};
+
+export type AllowanceList<T extends HTMLElement> = Allowance<T>[] & {
+  do: (func: (el: Allowance<T>) => void) => void;
+  kill: () => void;
 };
 
 /**
- * Represents an array of EnhancedHTMLElements with additional methods
- */
-interface PennyList<T extends HTMLElement = HTMLElement>
-  extends Array<Penny<T>> {
-  do: (func: (el: Penny<T>) => void) => void;
-  kill: () => void;
-}
-
-/**
  * Add $ and $$ for selecting element(s) in this element's scope.
- * @param {HTMLElement} element
+ * @param element - element to wrap.
  */
-function wrap<T extends HTMLElement>(element: T): Penny<T> {
-  const penny = {
-    $: (selectors: string) => wrap(element.querySelector(selectors) as T),
-    $$: (selectors: string) =>
-      enhanceNodeList(
-        ([...element.querySelectorAll(selectors)] as any).map(wrap),
-      ),
+function wrap<T extends HTMLElement>(element: T): Allowance<T> {
+  const dollars = {
+    $<K extends HTMLElement>(selectors: string) {
+      const el = element.querySelector<K>(selectors);
+      return el ? wrap<K>(el) : null;
+    },
+    $$<K extends HTMLElement>(selectors: string) {
+      return enhanceList<K>(
+        ([...element.querySelectorAll<K>(selectors)] as K[]).map(wrap),
+      );
+    },
   };
-  return Object.assign(element, penny);
+  return Object.assign(element, dollars);
 }
 
 /**
  * Enhances an array of EnhancedHTMLElements with additional methods
- * @param {Penny[]} arr
- * @returns {PennyList}
+ * @param arr
+ * @returns Enahanced list.
  */
-function enhanceNodeList<T extends HTMLElement>(arr: Penny<T>[]): PennyList<T> {
-  const enhancedArr = arr as PennyList<T>;
-  enhancedArr.do = (func: (el: Penny<T>) => void) => enhancedArr.forEach(func);
-  enhancedArr.kill = () => enhancedArr.forEach((el) => el.remove());
-  return enhancedArr;
+function enhanceList<T extends HTMLElement>(
+  arr: Allowance<T>[],
+): AllowanceList<T> {
+  return Object.assign(arr, {
+    do(func: (el: Allowance<T>) => void) {
+      arr.forEach(func);
+    },
+    kill() {
+      arr.forEach((el) => el.remove());
+    },
+  });
 }
 
 /**
  * Selects a single element from the DOM.
  *
- * @param {string | HTMLElement} selectors - Either a CSS selector string or an existing DOM element.
- * @returns {Penny | null} The selected element or null if not found.
+ * @param selectors - Either a CSS selector string or an existing DOM element.
+ * @returns The selected element or null if not found.
  */
-export function $<T extends HTMLElement = HTMLElement>(
+export function $<T extends HTMLElement>(
   selectors: string | T,
-): Penny<T> | null {
+): Allowance<T> | null {
   if (typeof selectors === "string") {
     const element = document.querySelector<T>(selectors);
     return element ? wrap(element) : null;
@@ -69,17 +72,11 @@ export function $<T extends HTMLElement = HTMLElement>(
 /**
  * Selects multiple elements from the DOM and returns them as an array.
  *
- * @param {string} selectors - Either a CSS selector string or an existing DOM element.
- * @returns {PennyList} An array of the selected elements with additional methods.
+ * @param selectors - Either a CSS selector string or an existing DOM element.
+ * @returns An array of the selected elements with additional methods.
  */
-export function $$<T extends HTMLElement = HTMLElement>(
-  selectors: string,
-): PennyList<T> {
-  return enhanceNodeList(
-    [...document.querySelectorAll<T>(selectors)]
-      .filter((el): el is T => el instanceof HTMLElement)
-      .map(wrap),
-  );
+export function $$<T extends HTMLElement>(selectors: string): AllowanceList<T> {
+  return enhanceList([...document.querySelectorAll<T>(selectors)].map(wrap));
 }
 
 /**
@@ -94,7 +91,7 @@ export function $$<T extends HTMLElement = HTMLElement>(
 export function $$$<K extends keyof HTMLElementTagNameMap>(
   tagName: K,
   options?: ElementCreationOptions,
-): Penny<HTMLElementTagNameMap[K]> {
+): Allowance<HTMLElementTagNameMap[K]> {
   return wrap(document.createElement(tagName, options));
 }
 
@@ -103,6 +100,14 @@ declare global {
   interface EventTarget {
     on: typeof EventTarget.prototype.addEventListener;
     off: typeof EventTarget.prototype.removeEventListener;
+  }
+  interface HTMLElement {
+    on: typeof HTMLElement.prototype.addEventListener;
+    off: typeof HTMLElement.prototype.removeEventListener;
+  }
+  interface Document {
+    on: typeof Document.prototype.addEventListener;
+    off: typeof Document.prototype.removeEventListener;
   }
 }
 
