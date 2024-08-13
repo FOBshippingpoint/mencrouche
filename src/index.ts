@@ -7,7 +7,7 @@ import {
 import { $, $$ } from "./utils/dollars";
 import {
   initCommandPalette,
-  triggerCommand,
+  executeCommand,
   registerCommand,
   Command,
 } from "./commands";
@@ -20,6 +20,7 @@ import { toggleSettingsPage } from "./settings";
 import { standardSticky } from "./stickyPlugins/standard";
 import { toDataUrl } from "./utils/toDataUrl";
 import { bookmarkSticky } from "./stickyPlugins/bookmark";
+import { addPublicApi } from "./publicApi";
 
 const stickyContainer = $<HTMLDivElement>(".stickyContainer")!;
 
@@ -32,6 +33,7 @@ const defaultCommands: Command[] = [
     execute() {
       toggleSettingsPage();
     },
+    defaultShortcut: "C-,",
   },
   {
     name: "toggle_dark_mode",
@@ -41,6 +43,7 @@ const defaultCommands: Command[] = [
         theme === "light" ? "dark" : "light",
       );
     },
+    defaultShortcut: "C-S-l",
   },
   {
     name: "open_youtube",
@@ -48,6 +51,7 @@ const defaultCommands: Command[] = [
     execute() {
       window.open("https://youtube.com", "_blank")!.focus();
     },
+    defaultShortcut: "C-o",
   },
   {
     name: "save_document",
@@ -70,6 +74,7 @@ const defaultCommands: Command[] = [
       saveDataset();
       switchDocumentStatus("saved");
     },
+    defaultShortcut: "C-s",
   },
   {
     name: "toggle_global_ghost_mode",
@@ -80,6 +85,7 @@ const defaultCommands: Command[] = [
         (isGhostMode) => !isGhostMode,
       );
     },
+    defaultShortcut: "C-A-g",
   },
   {
     name: "delete_all_stickies",
@@ -88,9 +94,10 @@ const defaultCommands: Command[] = [
       // TODO: use the approach like getLatestSticky()
       $$<HTMLButtonElement>(".sticky .deleteBtn")!.do((el) => el.click());
     },
+    defaultShortcut: "C-A-x",
   },
   {
-    name: "new_sticky",
+    name: "new_standard_sticky",
     isMenuItem: true,
     menuIconName: "lucide-plus",
     makeUndoable() {
@@ -115,6 +122,7 @@ const defaultCommands: Command[] = [
         },
       };
     },
+    defaultShortcut: "C-q",
   },
   {
     name: "new_bookmark_sticky",
@@ -157,6 +165,7 @@ const defaultCommands: Command[] = [
         },
       };
     },
+    defaultShortcut: "A-x",
   },
   {
     name: "toggle_auto_arrange",
@@ -164,6 +173,7 @@ const defaultCommands: Command[] = [
     execute() {
       $(".stickyContainer")?.classList.toggle("autoArrange");
     },
+    defaultShortcut: "A-r",
   },
   {
     name: "toggle_split_view",
@@ -172,6 +182,7 @@ const defaultCommands: Command[] = [
     execute() {
       getLatestSticky()?.plugin.standard?.toggleSplitView();
     },
+    defaultShortcut: "A-v",
   },
   {
     name: "toggle_maximize_sticky",
@@ -180,6 +191,7 @@ const defaultCommands: Command[] = [
     execute() {
       getLatestSticky()?.toggleMaximize();
     },
+    defaultShortcut: "A-m",
   },
   {
     name: "toggle_sticky_edit_mode",
@@ -188,6 +200,7 @@ const defaultCommands: Command[] = [
     execute() {
       getLatestSticky()?.plugin.standard?.toggleEditMode();
     },
+    defaultShortcut: "A-e",
   },
   {
     name: "toggle_sticky_pin_mode",
@@ -196,6 +209,7 @@ const defaultCommands: Command[] = [
     execute() {
       getLatestSticky()?.togglePin();
     },
+    defaultShortcut: "A-p",
   },
   {
     name: "toggle_ghost_mode",
@@ -204,6 +218,7 @@ const defaultCommands: Command[] = [
     execute() {
       getLatestSticky()?.toggleGhostMode();
     },
+    defaultShortcut: "A-g",
   },
   {
     name: "duplicate_sticky",
@@ -225,6 +240,7 @@ const defaultCommands: Command[] = [
         },
       };
     },
+    defaultShortcut: "C-d",
   },
 ];
 
@@ -276,7 +292,7 @@ async function init() {
   initSettings();
 
   $("#newStickyBtn")!.on("click", () => {
-    triggerCommand("new_sticky");
+    executeCommand("new_standard_sticky");
   });
 
   switchDocumentStatus("saved");
@@ -306,3 +322,4 @@ function restoreStickies() {
 }
 
 init();
+addPublicApi();

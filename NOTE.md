@@ -13,10 +13,11 @@
 - [x] Pin sticky
 - [x] Toggle edit/view mode button on sticky controls.
 - [x] Split view
-- [ ] Redo/Undo
+- [x] Redo/Undo
 - [ ] Blockly
 - [ ] Find a way to disable contextmenu when user pressing shift + right click. (works on ff by default)
 - [ ] Import document
+- [ ] Web extension version.
 
 ## Sticky Lifecycle
 

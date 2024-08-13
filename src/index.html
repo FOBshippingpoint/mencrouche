@@ -247,7 +247,7 @@
             </svg>
             <input hidden="" type="checkbox" />
           </label>
-          <div class="bookmarkPreview" hidden="">
+          <div class="bookmarkPreview" draggable="true">
             <a href="#" target="_blank"></a>
             <div>
               <button class="editBtn iconBtn">
@@ -289,25 +289,32 @@
               </button>
             </div>
           </div>
-          <button class="addBookmarkBtn btn">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="32"
-              height="32"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-bookmark-plus"
-            >
-              <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
-              <line x1="12" x2="12" y1="7" y2="13" />
-              <line x1="15" x2="9" y1="10" y2="10" />
-            </svg>
-            <span data-i18n="add_bookmark_btn"></span>
-          </button>
+          <div class="body">
+            <slot></slot>
+            <label class="">
+              <input type="checkbox" />
+              <span data-i18n="bookmark_layout_checkbox"></span>
+            </label>
+            <button class="addBookmarkBtn btn">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-bookmark-plus"
+              >
+                <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
+                <line x1="12" x2="12" y1="7" y2="13" />
+                <line x1="15" x2="9" y1="10" y2="10" />
+              </svg>
+              <span data-i18n="add_bookmark_btn"></span>
+            </button>
+          </div>
           <dialog id="bookmarkDialog">
             <form>
               <div class="formGroup">
@@ -317,7 +324,7 @@
                 /></label>
                 <label>
                   <span data-i18n="bookmark_icon_label"></span>
-                  <input type="text" name="icon" required
+                  <input type="text" name="icon"
                 /></label>
                 <input type="text" name="target" hidden="" />
               </div>
@@ -382,68 +389,70 @@
           <div class="preview" hidden=""></div>
         </template>
         <template id="sticky">
-          <div class="sticky editMode" tabindex="0">
-            <div class="stickyHeader">
-              <div class="controls">
-                <slot></slot>
-                <label class="maximizeToggleLbl">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-maximize-2"
-                  >
-                    <polyline points="15 3 21 3 21 9" />
-                    <polyline points="9 21 3 21 3 15" />
-                    <line x1="21" x2="14" y1="3" y2="10" />
-                    <line x1="3" x2="10" y1="21" y2="14" />
-                  </svg>
-                  <svg
-                    class="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-minimize-2"
-                  >
-                    <polyline points="4 14 10 14 10 20" />
-                    <polyline points="20 10 14 10 14 4" />
-                    <line x1="14" x2="21" y1="10" y2="3" />
-                    <line x1="3" x2="10" y1="21" y2="14" />
-                  </svg>
-                  <input hidden="" type="checkbox" />
-                </label>
-                <button class="deleteBtn">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-x"
-                  >
-                    <path d="M18 6 6 18" />
-                    <path d="m6 6 12 12" />
-                  </svg>
-                </button>
+          <div class="sticky" tabindex="0">
+            <div class="stickyShell">
+              <div class="stickyHeader">
+                <div class="controls">
+                  <slot></slot>
+                  <label class="maximizeToggleLbl">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-maximize-2"
+                    >
+                      <polyline points="15 3 21 3 21 9" />
+                      <polyline points="9 21 3 21 3 15" />
+                      <line x1="21" x2="14" y1="3" y2="10" />
+                      <line x1="3" x2="10" y1="21" y2="14" />
+                    </svg>
+                    <svg
+                      class="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-minimize-2"
+                    >
+                      <polyline points="4 14 10 14 10 20" />
+                      <polyline points="20 10 14 10 14 4" />
+                      <line x1="14" x2="21" y1="10" y2="3" />
+                      <line x1="3" x2="10" y1="21" y2="14" />
+                    </svg>
+                    <input hidden="" type="checkbox" />
+                  </label>
+                  <button class="deleteBtn">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-x"
+                    >
+                      <path d="M18 6 6 18" />
+                      <path d="m6 6 12 12" />
+                    </svg>
+                  </button>
+                </div>
               </div>
+              <div class="stickyBody"></div>
             </div>
-            <div class="stickyBody"></div>
             <div class="resizeHandle top"></div>
             <div class="resizeHandle right"></div>
             <div class="resizeHandle bottom"></div>

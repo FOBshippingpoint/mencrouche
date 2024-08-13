@@ -1,19 +1,19 @@
 import { $ } from "../utils/dollars";
 import { getCustomStickyTypes, Sticky } from "../sticky";
 
-export function getWidgets(sticky: Sticky, widgetTemplateName: string) {
+export function getWidgets(sticky: Sticky, widgetTemplateId: string) {
   for (const type of getCustomStickyTypes()) {
     if (sticky.classList.contains(type)) {
       return sticky;
     }
   }
 
-  return getTemplateWidgets(widgetTemplateName)!;
+  return getTemplateWidgets(widgetTemplateId)!;
 }
 
-export function getTemplateWidgets(widgetTemplateName: string) {
+export function getTemplateWidgets(widgetTemplateId: string) {
   return $<HTMLElement>(
-    $<HTMLTemplateElement>(`#${widgetTemplateName}`)!.content.cloneNode(
+    $<HTMLTemplateElement>(`#${widgetTemplateId}`)!.content.cloneNode(
       true,
     ) as any,
   )!;

@@ -30,6 +30,7 @@ let stickyContainer: Allowance<HTMLDivElement>;
 let stickyRecycleBin: Allowance<HTMLDivElement>;
 let pointerX: number;
 let pointerY: number;
+let mutationObserver: MutationObserver;
 
 export function getLatestSticky(): Sticky | undefined {
   return stickies.at(-1);
@@ -62,6 +63,12 @@ export function initStickyEnvironment() {
       highestZIndex = zIndex;
     }
   }
+
+  mutationObserver = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      mutation.target.dispatchEvent(new CustomEvent("classchange"));
+    }
+  });
 }
 
 export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
@@ -228,6 +235,7 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
 
   moveToTop(sticky);
   stickies.push(sticky);
+  mutationObserver.observe(sticky, { attributeFilter: ["class"] });
 
   deleteBtn.on("click", () => {
     sticky.on(
@@ -385,7 +393,7 @@ export function registerSticky(customSticky: CustomSticky) {
   customStickies.set(customSticky.type, customSticky);
 }
 
-function getRelatedCustomStickies(sticky: Allowance<HTMLDivElement> | Sticky) {
+export function getRelatedCustomStickies(sticky: Allowance<HTMLDivElement> | Sticky) {
   const result = [];
   for (const className of sticky.classList.values()) {
     const custom = customStickies.get(className);

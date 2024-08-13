@@ -63,9 +63,13 @@
     "message": "切換指令窗格",
     "description": "Command description for toggling the command palette."
   },
-  "new_sticky": {
+  "new_standard_sticky": {
     "message": "新增便利貼",
     "description": "Command description for adding a new sticky note."
+  },
+  "new_bookmark_sticky": {
+    "message": "新增書籤貼",
+    "description": "Command description for adding a new bookmark sticky."
   },
   "delete_sticky": {
     "message": "刪除便利貼",
@@ -193,6 +197,10 @@
   },
   "add_bookmark_btn": {
     "message": "新增書籤",
+    "description": "Button text for adding bookmark."
+  },
+  "bookmark_layout_checkbox": {
+    "message": "切換佈局",
     "description": "Button text for adding bookmark."
   }
 }

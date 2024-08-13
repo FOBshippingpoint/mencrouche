@@ -24,23 +24,23 @@ export interface Command {
   menuIconName?: string;
   execute?: () => void;
   makeUndoable?: () => Undoable;
+  defaultShortcut?: string;
 }
 
 const commands: Command[] = [];
 
-class History {
+// Cuz 'history' already exists in Web API.
+class Apocalypse {
   private arr: Undoable[] = [];
   private cur: number = -1;
 
   redo() {
-    console.log("redo");
     if (this.cur < this.arr.length - 1) {
       this.cur++;
       this.arr[this.cur].execute();
     }
   }
   undo() {
-    console.log("undo");
     if (this.cur >= 0) {
       this.arr[this.cur].undo();
       this.cur--;
@@ -57,7 +57,7 @@ class History {
     undoable.execute();
   }
 }
-const history: History = new History();
+export const apocalypse: Apocalypse = new Apocalypse();
 
 export function initCommandPalette() {
   const shortcutManager = initShortcutManager();
@@ -108,10 +108,14 @@ export function initCommandPalette() {
       );
       li.dataset.commandName = name;
       li.$("span").textContent = n81i.t(name);
-      li.$("kbd").textContent = shortcutManager.getKeySequence(name);
+      if (shortcutManager.has(name)) {
+        li.$("kbd").textContent = shortcutManager.getKeySequence(name);
+      } else {
+        li.$("kbd").remove();
+      }
       li.on("click", () => {
         closeCommandPalette();
-        triggerCommand(name);
+        executeCommand(name);
       });
       frag.appendChild(li);
     }
@@ -147,18 +151,22 @@ export function initCommandPalette() {
     keyboardSelectedCommandName = selectedItem?.dataset.commandName!;
   }
 
-  function triggerKeyboardSelectedCommand() {
+  function executeKeyboardSelectedCommand() {
     if (keyboardSelectedCommandName) {
-      triggerCommand(keyboardSelectedCommandName);
+      executeCommand(keyboardSelectedCommandName);
     }
   }
 
   // Initialize key bindings
   for (const command of commands) {
-    shortcutManager.on(command.name, () => triggerCommand(command.name));
+    if (command.defaultShortcut) {
+      shortcutManager.on(command.name, command.defaultShortcut, () =>
+        executeCommand(command.name),
+      );
+    }
   }
 
-  shortcutManager.on("toggle_command_palette", toggleCommandPalette);
+  shortcutManager.on("toggle_command_palette", "C-.", toggleCommandPalette);
   searchKikey.on("escape", closeCommandPalette);
   searchKikey.on("arrowup", (e) => {
     e.preventDefault();
@@ -170,7 +178,7 @@ export function initCommandPalette() {
   });
   searchKikey.on("enter", () => {
     closeCommandPalette();
-    triggerKeyboardSelectedCommand();
+    executeKeyboardSelectedCommand();
   });
 
   // Initialize event listeners
@@ -178,18 +186,20 @@ export function initCommandPalette() {
 
   shortcutManager.on(
     "undo",
+    "C-z",
     (e) => {
       if (!e.target.matches("input,textarea")) {
-        history.undo();
+        apocalypse.undo();
       }
     },
     { shouldPreventDefault: false },
   );
   shortcutManager.on(
     "redo",
+    "C-y",
     (e) => {
       if (!e.target.matches("input,textarea")) {
-        history.redo();
+        apocalypse.redo();
       }
     },
     {
@@ -214,7 +224,7 @@ function updateContextMenu() {
       }
       n81i.translateElement(menuBtn.$<HTMLSpanElement>("span")!);
       menuBtn.on("click", () => {
-        triggerCommand(command.name);
+        executeCommand(command.name);
         contextMenu.classList.add("none");
       });
       frag.appendChild(menuBtn);
@@ -227,9 +237,9 @@ document.on("contextmenu", (e) => {
   if (!$("#settings")!.classList.contains("none")) return;
 
   e.preventDefault();
-  contextMenu.style.top = `${e.clientY}px`;
-  contextMenu.style.left = `${Math.min(e.clientX, document.body.getBoundingClientRect().width - 200)}px`;
   contextMenu.classList.remove("none");
+  contextMenu.style.top = `${Math.min(e.clientY, document.body.getBoundingClientRect().height - contextMenu.getBoundingClientRect().height)}px`;
+  contextMenu.style.left = `${Math.min(e.clientX, document.body.getBoundingClientRect().width - contextMenu.getBoundingClientRect().width)}px`;
 });
 
 document.on("click", (e) => {
@@ -238,12 +248,12 @@ document.on("click", (e) => {
   }
 });
 
-export function triggerCommand(commandName: string) {
+export function executeCommand(commandName: string) {
   const command = commands.find(({ name }) => name === commandName);
   if (command) {
     if (command.makeUndoable) {
       // Undoable commands.
-      history.write(command.makeUndoable!());
+      apocalypse.write(command.makeUndoable!());
     } else {
       // Non-undoable commands.
       command.execute!();

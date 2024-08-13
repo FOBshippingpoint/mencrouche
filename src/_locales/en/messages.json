@@ -63,9 +63,13 @@
     "message": "Toggle command palette",
     "description": "Command description for toggling the command palette."
   },
-  "new_sticky": {
+  "new_standard_sticky": {
     "message": "New sticky note",
     "description": "Command description for adding a new sticky note."
+  },
+  "new_bookmark_sticky": {
+    "message": "New bookmark sticky",
+    "description": "Command description for adding a new bookmark sticky."
   },
   "delete_sticky": {
     "message": "Delete sticky note",

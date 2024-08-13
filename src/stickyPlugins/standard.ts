@@ -14,7 +14,7 @@ interface StandardPlugin extends StickyPlugin {
   toggleEditMode: () => void;
 }
 
-export function enable(sticky: Sticky): Sticky {
+export function enable(sticky: Sticky, isRestore: boolean): Sticky {
   const widgets = getWidgets(sticky, "standardStickyWidgets");
   const editModeToggleLbl = widgets.$<HTMLLabelElement>(".editModeToggleLbl")!;
   const textarea = widgets.$<HTMLTextAreaElement>("textarea")!;
@@ -39,12 +39,13 @@ export function enable(sticky: Sticky): Sticky {
   sticky.replaceBody(textarea, preview);
   sticky.addControlWidget(editModeToggleLbl);
   sticky.on("duplicate", (e: any) => {
-    enable(e.detail);
+    enable(e.detail, true);
   });
 
   editModeToggleLbl.on("change", () => {
     editModeToggleLbl.$$("svg").do((el) => el.classList.toggle("none"));
-    if (sticky.classList.contains("editMode") /* Change to view mode */) {
+    sticky.classList.toggle("editMode");
+    if (!sticky.classList.contains("editMode") /* Change to view mode */) {
       if (sticky.dataset.prevInput !== textarea.value) {
         updatePreview();
       }
@@ -55,8 +56,6 @@ export function enable(sticky: Sticky): Sticky {
     sticky.dataset.prevInput = textarea.value;
     preview.hidden = !preview.hidden;
     textarea.focus();
-
-    sticky.classList.toggle("editMode");
   });
 
   sticky.plugin.standard = {
@@ -74,15 +73,23 @@ export function enable(sticky: Sticky): Sticky {
   };
 
   sticky.classList.add("standard");
-  sticky.classList.add("restored");
+  if (!isRestore) {
+    // Default set to edit mode.
+    sticky.classList.add("editMode");
+  }
 
-  function toggleDisable() {
+  function toggleDisable(disable: boolean) {
     sticky
       .$$("textarea,input,button")
-      .do((el) => ((el as any).disabled = !(el as any).disabled));
+      .do((el) => ((el as any).disabled = disable));
   }
-  sticky.on("pin", toggleDisable);
-  sticky.on("unpin", toggleDisable);
+  sticky.on("classchange", () => {
+    if (sticky.classList.contains("pin")) {
+      toggleDisable(true);
+    } else {
+      toggleDisable(false);
+    }
+  });
 
   return sticky;
 }
@@ -145,10 +152,10 @@ function paste(textarea: HTMLTextAreaElement, toPaste: string) {
 export const standardSticky: CustomSticky = {
   type: "standard",
   onNew(sticky: Sticky) {
-    enable(sticky);
+    enable(sticky, false);
   },
   onRestore(sticky: Sticky) {
-    enable(sticky);
+    enable(sticky, true);
   },
   onDelete(sticky: Sticky) {},
 };

@@ -132,25 +132,32 @@ form {
 
 .sticky {
   position: absolute;
-  background-color: var(--surface-2);
-  color: var(--text-2);
   cursor: default;
-  box-shadow: var(--shadow-2);
-  border-radius: var(--radius-conditional-2);
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
   width: var(--size-fluid-9);
   height: var(--size-fluid-9);
   min-width: var(--size-fluid-6);
   min-height: var(--size-fluid-6);
+}
+.stickyShell {
+  background-color: var(--surface-2);
+  color: var(--text-2);
+  box-shadow: var(--shadow-2);
+  border-radius: var(--radius-conditional-2);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
   border: var(--border-size-1) solid var(--surface-4);
+  overflow: hidden;
 }
 .ghost {
-  background-color: unset;
-  border: var(--border-size-1) solid transparent;
-  color: none;
-  box-shadow: none;
+  .stickyShell {
+    background-color: unset;
+    border-color: transparent;
+    color: none;
+    box-shadow: none;
+  }
 
   .resizeHandle {
     pointer-events: none;
@@ -317,28 +324,28 @@ form {
   }
 }
 
-.stickyBody:has(.preview:not([hidden])) {
-  overflow: auto;
-}
-
-.stickyBody:has(iframe) {
-  padding: 0;
-  .preview {
-    padding: 0;
+.standard {
+  .stickyBody:has(.preview:not([hidden])) {
+    overflow: auto;
   }
-}
-
-.stickyBody textarea {
-  border: none;
-  background-color: inherit;
-  color: inherit;
-  padding: 0;
-  border-radius: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  box-shadow: none;
-  resize: none;
+  .stickyBody:has(iframe) {
+    padding: 0;
+    .preview {
+      padding: 0;
+    }
+  }
+  .stickyBody textarea {
+    border: none;
+    background-color: inherit;
+    color: inherit;
+    padding: 0;
+    border-radius: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    box-shadow: none;
+    resize: none;
+  }
 }
 
 .stickyContainer {
@@ -446,12 +453,6 @@ form {
 #settings.none {
   display: none;
 }
-/* #settings section::after { */
-/*   content: ""; */
-/*   display: block; */
-/*   padding-top: var(--size-3); */
-/*   border-bottom: var(--border-size-1) solid var(--text-1); */
-/* } */
 #langDropdown {
   min-width: var(--size-fluid-8);
 }
@@ -633,7 +634,10 @@ ul {
 }
 .bookmarkPreview {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
+  cursor: move;
 
   div {
     display: flex;
@@ -642,9 +646,26 @@ ul {
 }
 .bookmark .stickyBody {
   overflow: auto;
+}
+.bookmark .body {
   display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-3);
+
+  a,
+  a:visited {
+    color: var(--text-2);
+  }
+
+  .dragOver {
+    outline: var(--border-size-2) dotted var(--text-1);
+  }
+  [draggable] {
+    user-select: none;
+  }
+}
+.bookmark.editMode .body {
   flex-direction: column;
-  gap: var(--size-2);
 }
 .ghost.bookmark .stickyBody button {
   display: none;
@@ -655,4 +676,5 @@ ul {
 .addBookmarkBtn {
   padding: var(--size-3);
   gap: var(--size-2);
+  width: 100%;
 }

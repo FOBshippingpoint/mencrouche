@@ -377,7 +377,7 @@ function initShortcuts() {
     if ((e.target as HTMLElement).matches("button")) {
       const btn = e.target as HTMLButtonElement;
       const input = btn.closest("label")!.querySelector("input")!;
-      const actionName = input.dataset.actionName as ActionName;
+      const actionName = input.dataset.actionName!;
 
       if ((e.target as HTMLElement).matches(".recordBtn")) {
         if (btn.dataset.recording === "false") {
@@ -454,24 +454,6 @@ function initOpacity() {
   uiOpacityInput.value = (uiOpacity * 100).toString();
 }
 
-type ActionName =
-  | "toggle_command_palette"
-  | "toggle_settings"
-  | "toggle_dark_mode"
-  | "toggle_global_ghost_mode"
-  | "open_youtube"
-  | "save_document"
-  | "new_sticky"
-  | "duplicate_sticky"
-  | "toggle_auto_arrange"
-  | "toggle_split_view"
-  | "toggle_ghost_mode"
-  | "toggle_sticky_edit_mode"
-  | "toggle_maximize_sticky"
-  | "toggle_sticky_pin_mode"
-  | "delete_sticky"
-  | "delete_all_stickies"
-  | (string & {});
 type Action = {
   default: string;
   custom: string | null;
@@ -484,48 +466,32 @@ interface ShortcutRegisterOption {
 
 interface ShortcutManager {
   on(
-    actionName: ActionName,
+    actionName: string,
+    keySequence: string,
     callback: (e: KeyboardEvent) => void,
     option?: ShortcutRegisterOption,
   ): void;
   once(
-    actionName: ActionName,
+    actionName: string,
+    keySequence: string,
     callback: (e: KeyboardEvent) => void,
     option?: ShortcutRegisterOption,
   ): void;
-  update(actionName: ActionName, newSequence: string | KeyBinding[]): void;
-  restore(actionName: ActionName): void;
-  getKeySequence(actionName: ActionName): string;
-  getDefaultKeySequence(actionName: ActionName): string;
+  update(actionName: string, newSequence: string | KeyBinding[]): void;
+  restore(actionName: string): void;
+  getKeySequence(actionName: string): string;
+  getDefaultKeySequence(actionName: string): string;
   getAllActions(): Array<{
     actionName: string;
     keySequence: string;
   }>;
+  has(actionName: string): boolean;
 }
 
 let singleton: ShortcutManager | undefined;
 export function initShortcutManager() {
   if (!singleton) {
-    const actions: Record<ActionName, Action> = {
-      toggle_command_palette: { default: "C-.", custom: null },
-      toggle_settings: { default: "C-,", custom: null },
-      toggle_dark_mode: { default: "C-S-l", custom: null },
-      toggle_global_ghost_mode: { default: "C-A-g", custom: null },
-      open_youtube: { default: "C-o", custom: null },
-      save_document: { default: "C-s", custom: null },
-      new_sticky: { default: "C-q", custom: null },
-      duplicate_sticky: { default: "C-d", custom: null },
-      toggle_auto_arrange: { default: "A-r", custom: null },
-      toggle_ghost_mode: { default: "A-g", custom: null },
-      toggle_split_view: { default: "A-v", custom: null },
-      toggle_sticky_edit_mode: { default: "A-e", custom: null },
-      toggle_maximize_sticky: { default: "A-m", custom: null },
-      toggle_sticky_pin_mode: { default: "A-p", custom: null },
-      delete_sticky: { default: "A-x", custom: null },
-      delete_all_stickies: { default: "C-A-x", custom: null },
-      undo: { default: "C-z", custom: null },
-      redo: { default: "C-y", custom: null },
-    };
+    const actions = new Map<string, Action>();
     for (const [actionName, value] of Object.entries(actions)) {
       value.custom ||= dataset.getItem<string>(actionName) as string;
     }
@@ -535,19 +501,33 @@ export function initShortcutManager() {
       callback: (e: KeyboardEvent) => void;
     };
 
-    const registry: Record<ActionName, KikeyInfo[]> = {} as any;
+    const registry: Record<string, KikeyInfo[]> = {} as any;
     const globalKikey = createKikey();
 
-    function getCurrent(actionName: ActionName) {
-      return actions[actionName].custom ?? actions[actionName].default;
+    function getCurrent(actionName: string) {
+      if (!actions.has(actionName)) {
+        throw Error(
+          `Action name '${actionName}' not found. Maybe you want to register the action? You can try to call 'on' or 'once'.`,
+        );
+      }
+      return (
+        actions.get(actionName)!.custom ?? actions.get(actionName)!.default
+      );
     }
 
     function registerAction(
-      actionName: ActionName,
+      actionName: string,
+      keySequence: string,
       callback: (e: KeyboardEvent) => void,
       isOnce: boolean = false,
       option: ShortcutRegisterOption = {},
     ) {
+      if (actions.has(actionName)) {
+        throw Error(
+          `Action name '${actionName}' already exists. Please try another name. Or maybe you want to 'update' instead?`,
+        );
+      }
+      actions.set(actionName, { default: keySequence, custom: null });
       const kikey = option.el ? createKikey(option.el) : globalKikey;
 
       let cb = callback;
@@ -572,38 +552,40 @@ export function initShortcutManager() {
 
     singleton = {
       on(
-        actionName: ActionName,
+        actionName: string,
+        keySequence: string,
         callback: (e: KeyboardEvent) => void,
         option: ShortcutRegisterOption = { shouldPreventDefault: true },
       ) {
-        registerAction(actionName, callback, false, option);
+        registerAction(actionName, keySequence, callback, false, option);
       },
       once(
-        actionName: ActionName,
+        actionName: string,
+        keySequence: string,
         callback: (e: KeyboardEvent) => void,
         option: ShortcutRegisterOption = { shouldPreventDefault: true },
       ) {
-        registerAction(actionName, callback, true, option);
+        registerAction(actionName, keySequence, callback, true, option);
       },
-      update(actionName: ActionName, newSequence: string) {
+      update(actionName: string, newSequence: string) {
         for (const { kikey, callback } of registry[actionName] ?? []) {
           kikey.updateSequence(newSequence, callback);
-          actions[actionName].custom = newSequence;
+          actions.get(actionName)!.custom = newSequence;
           dataset.setItem(actionName, newSequence);
         }
       },
-      restore(actionName: ActionName) {
+      restore(actionName: string) {
         for (const { kikey, callback } of registry[actionName] ?? []) {
-          kikey.updateSequence(actions[actionName].default, callback);
-          actions[actionName].custom = null;
+          kikey.updateSequence(actions.get(actionName)!.default, callback);
+          actions.get(actionName)!.custom = null;
           dataset.removeItem(actionName);
         }
       },
-      getKeySequence(actionName: ActionName) {
+      getKeySequence(actionName: string) {
         return keySequenceToString(getCurrent(actionName));
       },
-      getDefaultKeySequence(actionName: ActionName) {
-        return keySequenceToString(actions[actionName].default);
+      getDefaultKeySequence(actionName: string) {
+        return keySequenceToString(actions.get(actionName)!.default);
       },
       getAllActions() {
         return Object.entries(actions).map(([key, value]) => ({
@@ -612,6 +594,9 @@ export function initShortcutManager() {
             (value.custom ?? value.default).split(" ").map(parseBinding),
           ),
         }));
+      },
+      has(actionName: string) {
+        return actions.has(actionName);
       },
     };
   }

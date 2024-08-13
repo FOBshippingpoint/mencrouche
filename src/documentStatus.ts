@@ -1,4 +1,4 @@
-import { triggerCommand } from "./commands";
+import { executeCommand } from "./commands";
 import { $ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
 
@@ -8,7 +8,7 @@ const ds = $<HTMLButtonElement>("#documentStatus")!;
 const span = ds.$<HTMLSpanElement>("span")!;
 
 ds.on("click", () => {
-  triggerCommand("save_document");
+  executeCommand("save_document");
 });
 
 export function switchDocumentStatus(status: DocumentStatus) {
