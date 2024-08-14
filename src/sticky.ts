@@ -393,7 +393,9 @@ export function registerSticky(customSticky: CustomSticky) {
   customStickies.set(customSticky.type, customSticky);
 }
 
-export function getRelatedCustomStickies(sticky: Allowance<HTMLDivElement> | Sticky) {
+export function getRelatedCustomStickies(
+  sticky: Allowance<HTMLDivElement> | Sticky,
+) {
   const result = [];
   for (const className of sticky.classList.values()) {
     const custom = customStickies.get(className);
@@ -409,3 +411,5 @@ export function getCustomStickyTypes() {
 }
 
 initStickyEnvironment();
+
+export { stickyContainer, stickyRecycleBin };

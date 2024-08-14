@@ -24,7 +24,7 @@ import { addPublicApi } from "./publicApi";
 
 const stickyContainer = $<HTMLDivElement>(".stickyContainer")!;
 
-const AVAILABLE_LOCALES = ["en", "zh-Hant"];
+const AVAILABLE_LOCALES = ["en", "zh_TW"];
 
 const defaultCommands: Command[] = [
   {
@@ -245,13 +245,14 @@ const defaultCommands: Command[] = [
 ];
 
 function getUserPreferredLanguage() {
-  if (navigator.language === "zh-TW") {
-    return "zh-Hant";
-  } else if (
+  // e.g. zh-TW => zh_TW to fit chrome webextension locales
+  // see also: https://developer.chrome.com/docs/extensions/reference/api/i18n
+  const lang = navigator.language.replaceAll("-", "_");
+  if (
     /* If supports user language */
-    AVAILABLE_LOCALES.includes(navigator.language)
+    AVAILABLE_LOCALES.includes(lang)
   ) {
-    return navigator.language;
+    return lang;
   } else {
     return "en";
   }

@@ -258,6 +258,9 @@ function initBackground() {
 }
 
 function initLanguage() {
+  function toBCP47LangTag(chromeLocale: string) {
+    return chromeLocale.replaceAll("_", "-");
+  }
   const langDropdown = $<HTMLSelectElement>("#langDropdown")!;
   langDropdown.innerHTML = "";
   for (const locale of n81i.getAllLocales()) {
@@ -266,10 +269,11 @@ function initLanguage() {
       option.selected = true;
     }
     option.value = locale;
+    const bcp47 = toBCP47LangTag(locale);
     option.textContent =
-      new Intl.DisplayNames([locale], {
+      new Intl.DisplayNames([bcp47], {
         type: "language",
-      }).of(locale) ?? locale;
+      }).of(bcp47) ?? locale;
 
     langDropdown.append(option);
   }
@@ -280,7 +284,7 @@ function initLanguage() {
 
     changesManager.add(async () => {
       dataset.setItem("language", langDropdown.value);
-      await n81i.switchLocale(langDropdown.value);
+      await n81i.changeLanguage(langDropdown.value);
       n81i.translatePage();
     });
   });
@@ -496,10 +500,10 @@ export function initShortcutManager() {
       value.custom ||= dataset.getItem<string>(actionName) as string;
     }
 
-    type KikeyInfo = {
+    interface KikeyInfo {
       kikey: Kikey;
       callback: (e: KeyboardEvent) => void;
-    };
+    }
 
     const registry: Record<string, KikeyInfo[]> = {} as any;
     const globalKikey = createKikey();

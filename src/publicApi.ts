@@ -16,7 +16,6 @@ declare global {
 }
 
 const mc = {
-  apocalypse,
   registerSticky,
   createSticky,
   getRelatedCustomStickies,

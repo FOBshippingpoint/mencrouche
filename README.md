@@ -106,6 +106,43 @@ In my opinion, the JQuery API is more intuitive than the native DOM API, but we 
 
 ## Internationalization API (n81i)
 
+Mencrouche has a built-in internationalization feature. Use `n81i` (the palindrome of the i18n ;) ) to translate content into different locales.
+
+### Basic Usage
+
+#### Adding Translations
+```javascript
+n81i.addTranslations({
+  ja: {
+    hello: {
+      message: "こんにちは",
+      description: "Greeting message for the nav bar.",
+    },
+  },
+  zh_TW: {
+    hello: {
+      message: "你好",
+      description: "Greeting message for the nav bar.",
+    },
+  },
+});
+
+n81i.changeLanguage("zh_TW");
+console.log(n81i.t("hello")); // prints "你好"
+```
+
+#### Translating HTML Elements
+
+Use the `data-i18n` attribute to specify a translation key. By default, it will replace the `textContent` of element. Add a `data-i18n-for` to inject translated message into a specific attribute.
+
+```javascript
+// <div data-i18n="author"></div>
+n81i.translateElement(div);
+
+// <input data-i18n="email" data-i18n-for="placeholder" />
+n81i.translateElement(input);
+```
+
 ## Authors
 
 - [@FOBshippingpoint](https://github.com/FOBshippingpoint)
