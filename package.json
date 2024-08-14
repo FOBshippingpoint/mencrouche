@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "A highly customizable web extension for new tab. Bring your own content to build your web experience.",
   "scripts": {
-    "dev": "zx scripts/dev.mjs",
+    "update-manifest": "zx scripts/dev.mjs",
     "start": "parcel watch src/manifest.json --host localhost --config @parcel/config-webextension --no-cache",
     "dev-site": "vite",
     "build": "parcel build src/manifest.json --config @parcel/config-webextension",

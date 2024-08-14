@@ -1,4 +1,8 @@
 {
+  "extension_description": {
+    "message": "New tab",
+    "description": "Description of the extension."
+  },
   "set_background_image": {
     "message": "Set background image",
     "description": "Command description for setting the background image."

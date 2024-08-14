@@ -5,12 +5,17 @@
 /* the following switch imports have selectors that enable the override of the system setting */
 /* @import "https://unpkg.com/open-props/theme.light.switch.min.css"; */
 /* @import "https://unpkg.com/open-props/theme.dark.switch.min.css"; */
-@import "open-props/index.css";
-@import "open-props/palette.css";
-@import "open-props/normalize.css";
-@import "open-props/buttons.css";
-@import "open-props/forms.css";
-@import "open-props/animations.css";
+
+/* 
+ * parcel need 'npm:' prefix to import css from node_modules. but vite don't.
+ * so we use cdn for now.
+ */
+@import "https://unpkg.com/open-props@beta.5/index.css";
+@import "https://unpkg.com/open-props@beta.5/palette.css";
+@import "https://unpkg.com/open-props@beta.5/normalize.css";
+@import "https://unpkg.com/open-props@beta.5/buttons.css";
+@import "https://unpkg.com/open-props@beta.5/forms.css";
+@import "https://unpkg.com/open-props@beta.5/animations.css";
 
 /* the following switch imports have selectors that enable the override of the system setting */
 /* @import "open-props/theme.light.switch.min.css"; */

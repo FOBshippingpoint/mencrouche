@@ -10,24 +10,23 @@ export function getManifestString(version = 2) {
 			newtab: "index.html",
 		},
 		icons: {
-			16: "assets/icon-16.png",
-			64: "assets/icon-64.png",
+			// 16: "assets/icon-16.png",
+			// 64: "assets/icon-64.png",
 		},
 		browser_action: {},
-		options_ui: {
-			page: "options/index.html",
-			open_in_tab: true,
-		},
-		background: {
-			scripts: ["background/index.ts"],
-		},
-		content_scripts: [
-			{
-				matches: ["*://www.google.com/*"],
-				js: ["contentScripts/index.ts"],
-				css: ["assets/style.css"],
-			},
-		],
+		// options_ui: {
+		// 	page: "options/index.html",
+		// 	open_in_tab: true,
+		// },
+		// background: {
+		// 	scripts: ["background/index.ts"],
+		// },
+		// content_scripts: [
+		// 	{
+		// 		js: ["contentScripts/index.ts"],
+		// 		css: ["index.css"],
+		// 	},
+		// ],
 		default_locale: "en",
 		permissions: ["activeTab", "storage"],
 	};
