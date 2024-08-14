@@ -157,15 +157,6 @@ export function initCommandPalette() {
     }
   }
 
-  // Initialize key bindings
-  for (const command of commands) {
-    if (command.defaultShortcut) {
-      shortcutManager.on(command.name, command.defaultShortcut, () =>
-        executeCommand(command.name),
-      );
-    }
-  }
-
   shortcutManager.on("toggle_command_palette", "C-.", toggleCommandPalette);
   searchKikey.on("escape", closeCommandPalette);
   searchKikey.on("arrowup", (e) => {
@@ -268,6 +259,11 @@ export function registerCommand(command: Command) {
     );
   }
 
-  commands.push(command);
+  if (command.defaultShortcut) {
+    initShortcutManager().on(command.name, command.defaultShortcut, () =>
+      executeCommand(command.name),
+    );
+  }
   updateContextMenu();
+  commands.push(command);
 }

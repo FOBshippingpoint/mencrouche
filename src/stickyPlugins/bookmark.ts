@@ -240,6 +240,7 @@ export function enable(sticky: Sticky): Sticky {
   };
 
   sticky.classList.add("bookmark");
+  sticky.classList.add("editMode");
 
   return sticky;
 }

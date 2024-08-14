@@ -259,7 +259,6 @@ function getUserPreferredLanguage() {
 }
 
 async function init() {
-  // TODO: seperate dataset and dom
   let stickyContainerHtml = localStorage.getItem("doc");
   if (stickyContainerHtml) {
     const urls =
@@ -289,9 +288,6 @@ async function init() {
   });
   n81i.translatePage();
 
-  initStickyEnvironment();
-  initSettings();
-
   $("#newStickyBtn")!.on("click", () => {
     executeCommand("new_standard_sticky");
   });
@@ -310,6 +306,8 @@ async function init() {
     registerCommand(command);
   }
 
+  initStickyEnvironment();
+  initSettings();
   registerSticky(standardSticky);
   registerSticky(bookmarkSticky);
   restoreStickies();

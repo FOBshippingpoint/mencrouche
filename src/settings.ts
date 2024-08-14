@@ -592,7 +592,7 @@ export function initShortcutManager() {
         return keySequenceToString(actions.get(actionName)!.default);
       },
       getAllActions() {
-        return Object.entries(actions).map(([key, value]) => ({
+        return [...actions.entries()].map(([key, value]) => ({
           actionName: key,
           keySequence: keySequenceToString(
             (value.custom ?? value.default).split(" ").map(parseBinding),

@@ -16,11 +16,16 @@
   <body>
     <main>
       <nav>
-        <button id="documentStatus">
+        <button id="documentStatus" class="pureBtn">
           <div></div>
           <span></span>
         </button>
-        <button id="newStickyBtn" data-i18n-for="title" data-i18n="new_sticky">
+        <button
+          id="newStickyBtn"
+          class="pureBtn"
+          data-i18n-for="title"
+          data-i18n="new_standard_sticky"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -128,6 +133,7 @@
         <input id="ghostToggle" hidden="" type="checkbox" />
         <button
           id="settingsBtn"
+          class="pureBtn"
           data-i18n-for="title"
           data-i18n="toggle_settings"
         >
@@ -269,7 +275,7 @@
                   <path d="m15 5 4 4" />
                 </svg>
               </button>
-              <button class="deleteBtn iconBtn">
+              <button class="deleteBtn">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -331,13 +337,13 @@
               <div class="buttonGroup">
                 <button
                   class="btn"
-                  type="submit"
-                  data-i18n="submit_bookmark_btn"
+                  type="button"
+                  data-i18n="cancel_submit_bookmark_btn"
                 ></button>
                 <button
                   class="btn"
-                  type="button"
-                  data-i18n="cancel_submit_bookmark_btn"
+                  type="submit"
+                  data-i18n="submit_bookmark_btn"
                 ></button>
               </div>
             </form>
@@ -432,7 +438,7 @@
                     </svg>
                     <input hidden="" type="checkbox" />
                   </label>
-                  <button class="deleteBtn">
+                  <button class="deleteBtn pureBtn">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"
@@ -552,11 +558,6 @@
                   hidden=""
                 />
               </div>
-              <!-- <div class="backgroundPresetContainer"> -->
-              <!--   <button style="background-image: var(--gradient-23)"></button> -->
-              <!--   <button style="background-image: var(--gradient-1)"></button> -->
-              <!--   <button style="background-image: var(--gradient-2)"></button> -->
-              <!-- </div> -->
               <label for="backgroundImageUrlInput"
                 ><span data-i18n="background_image_link"
                   >Background image link</span
@@ -587,7 +588,7 @@
                 <span></span>
                 <input type="text" disabled />
                 <button data-recording="false" class="btn recordBtn"></button>
-                <button class="btn resetBtn"></button>
+                <button type="reset" class="btn resetBtn"></button>
               </label>
             </template>
           </section>
@@ -608,7 +609,7 @@
               ></button>
             </div>
           </section>
-          <div class="confirmBtnGroup">
+          <div class="formGroupHorizontal">
             <button
               id="saveSettingsBtn"
               data-i18n="save_settings_btn"
@@ -630,7 +631,7 @@
       <div id="stickySizeDummy"></div>
       <div id="contextMenu" class="none"></div>
       <template id="menuItem">
-        <button class="menuItem">
+        <button class="menuItem pureBtn">
           <span></span>
         </button>
       </template>

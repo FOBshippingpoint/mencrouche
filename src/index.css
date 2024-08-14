@@ -5,15 +5,42 @@
 /* the following switch imports have selectors that enable the override of the system setting */
 /* @import "https://unpkg.com/open-props/theme.light.switch.min.css"; */
 /* @import "https://unpkg.com/open-props/theme.dark.switch.min.css"; */
-@import "open-props/open-props.min.css";
-@import "open-props/normalize.min.css";
+@import "open-props/index.css";
+@import "open-props/palette.css";
+@import "open-props/normalize.css";
+@import "open-props/buttons.css";
+@import "open-props/forms.css";
+@import "open-props/animations.css";
 
 /* the following switch imports have selectors that enable the override of the system setting */
-@import "open-props/theme.light.switch.min.css";
-@import "open-props/theme.dark.switch.min.css";
+/* @import "open-props/theme.light.switch.min.css"; */
+/* @import "open-props/theme.dark.switch.min.css"; */
 
 :root {
   --page-background: unset;
+}
+
+[data-theme="light"],
+.light {
+  --surface-1: white;
+  --surface-2: var(--color-1);
+  --surface-3: var(--color-3);
+  --surface-document: var(--color-4);
+  --well-1: var(--color-5);
+  --well-2: var(--color-6);
+  --text-1: var(--color-16);
+  --text-2: var(--color-12);
+}
+[data-theme="dark"],
+.dark {
+  --surface-1: var(--color-11);
+  --surface-2: var(--color-12);
+  --surface-3: var(--color-13);
+  --surface-document: var(--color-14);
+  --well-1: var(--color-15);
+  --well-2: var(--color-16);
+  --text-1: var(--color-1);
+  --text-2: var(--color-5);
 }
 
 body::before {
@@ -28,6 +55,10 @@ body::before {
   width: 100%;
   height: 100%;
   z-index: -1;
+}
+/* idk what is this in open-props. this cause the page larger then full height. */
+body::after {
+  display: none;
 }
 
 html,
@@ -69,7 +100,6 @@ h6 {
 }
 
 #documentStatus {
-  background-color: unset;
   margin-inline-end: auto;
   display: flex;
   align-items: center;
@@ -89,13 +119,13 @@ h6 {
   }
 }
 #documentStatus.saved div {
-  background-color: var(--lime-5);
+  background-color: rgb(148, 216, 45);
 }
 #documentStatus.saving div {
-  background-color: var(--yellow-5);
+  background-color: rgb(252, 196, 25);
 }
 #documentStatus.unsaved div {
-  background-color: var(--red-5);
+  background-color: rgb(255, 107, 107);
 }
 
 nav {
@@ -110,7 +140,9 @@ nav {
 
   button {
     padding: 0;
+    outline-color: unset;
     background: unset;
+    border: unset;
   }
 }
 
@@ -148,7 +180,7 @@ form {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  border: var(--border-size-1) solid var(--surface-4);
+  border: var(--border-size-1) solid var(--well-1);
   overflow: hidden;
 }
 .ghost {
@@ -166,7 +198,7 @@ form {
     opacity: 0;
     pointer-events: none;
   }
-  textarea::placeholder {
+  .standard textarea::placeholder {
     opacity: 0;
   }
 }
@@ -248,12 +280,12 @@ form {
   .resizeHandle {
     pointer-events: none;
   }
-  .controls {
+  .controls label {
     opacity: 0.5;
   }
 }
 .pin:not(.ghost) {
-  outline: var(--border-size-3) solid var(--surface-4);
+  outline: var(--border-size-3) solid var(--well-1);
 }
 
 .deleted {
@@ -304,7 +336,7 @@ form {
   }
 }
 
-.editMode.splitView .stickyBody {
+.standard.editMode.splitView .stickyBody {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(1, 1fr);
@@ -317,7 +349,12 @@ form {
     padding-inline: var(--size-4);
   }
   textarea {
-    border-right: var(--size-1) solid var(--surface-4);
+    border-right: var(--size-1) solid var(--well-1);
+    min-block-size: unset;
+    min-inline-size: unset;
+    max-inline-size: unset;
+    min-block-size: unset;
+    max-block-size: unset;
   }
   textarea:focus {
     outline: unset;
@@ -378,7 +415,7 @@ form {
   width: var(--size-content-3);
   background-color: var(--surface-1);
   border-radius: var(--radius-2);
-  border: var(--border-size-1) solid var(--surface-4);
+  border: var(--border-size-1) solid var(--well-1);
   box-shadow: var(--shadow-3);
   padding: var(--size-3);
   z-index: var(--layer-important);
@@ -483,9 +520,9 @@ form {
   /* padding-inline: var(--gap); */
   /* scroll-padding-inline: var(--size-8); */
 }
-.backgroundPresetContainer button {
-  padding: var(--size-5);
-}
+/* .backgroundPresetContainer button { */
+/*   padding: var(--size-5); */
+/* } */
 .dropzone {
   border-width: var(--border-size-2);
   border-style: dashed;
@@ -505,25 +542,25 @@ form {
 .dropzone[active] {
   background-color: var(--surface-2);
 }
-.btn {
-  border-radius: var(--radius-conditional-2);
-  display: inline-flex;
-  align-items: center;
-  padding-block: var(--size-relative-1);
-  padding-inline: var(--size-relative-6);
-  border: var(--surface-2) solid var(--size-relative-1);
-}
-.iconBtn {
-  border-radius: var(--radius-conditional-2);
-  display: inline-flex;
-  align-items: center;
-  aspect-ratio: var(--ratio-square);
-  border: var(--surface-2) solid var(--size-relative-1);
-}
+/* .btn { */
+/*   border-radius: var(--radius-conditional-2); */
+/*   display: inline-flex; */
+/*   align-items: center; */
+/*   padding-block: var(--size-relative-1); */
+/*   padding-inline: var(--size-relative-6); */
+/*   border: var(--surface-2) solid var(--size-relative-1); */
+/* } */
+/* .iconBtn { */
+/*   border-radius: var(--radius-conditional-2); */
+/*   display: inline-flex; */
+/*   align-items: center; */
+/*   aspect-ratio: var(--ratio-square); */
+/*   border: var(--surface-2) solid var(--size-relative-1); */
+/* } */
 .formGroupHorizontal {
   display: flex;
   align-items: flex-start;
-  gap: var(--size-1);
+  gap: var(--size-2);
 }
 .formGroup {
   display: flex;
@@ -538,17 +575,12 @@ form {
   label {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--size-1);
+    gap: var(--size-2);
     span {
       width: 100%;
     }
     input {
       font-family: var(--font-mono);
-    }
-    button {
-      width: var(--size-10);
-      justify-content: center;
-      align-items: center;
     }
   }
 }
@@ -562,10 +594,13 @@ form {
   border: var(--border-size-1) solid var(--surface-3);
   border-radius: var(--radius-conditional-2);
   box-shadow: var(--shadow-2);
-  padding: var(--size-1);
+  padding-block: var(--size-1);
   z-index: var(--layer-important);
 
   .menuItem {
+    box-shadow: unset;
+    block-size: unset;
+    border: none;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -574,6 +609,7 @@ form {
     background: unset;
     font-size: 0.9rem;
     padding-inline: var(--size-2);
+    padding-block: var(--size-1);
   }
   .menuItem:hover {
     background-color: var(--surface-2);
@@ -612,24 +648,26 @@ ul {
 }
 
 #bookmarkDialog {
-  padding: var(--size-6);
+  padding-block: var(--size-6);
+  padding-inline: var(--size-8);
   border-radius: var(--radius-conditional-3);
   box-shadow: var(--shadow-3);
 
   form {
     flex-direction: column;
+    gap: var(--size-5);
   }
   .formGroup {
-    align-items: flex-end;
-
+    align-items: stretch;
     label {
       flex-direction: column;
-      align-items: flex-start;
+      place-items: unset;
     }
   }
   .buttonGroup {
     display: flex;
-    justify-content: space-around;
+    gap: var(--size-2);
+    justify-content: flex-end;
   }
 }
 .bookmarkPreview {
@@ -673,8 +711,10 @@ ul {
 .bookmark:not(.editMode) .stickyBody button {
   display: none;
 }
-.addBookmarkBtn {
-  padding: var(--size-3);
-  gap: var(--size-2);
-  width: 100%;
+
+.pureBtn {
+  box-shadow: unset;
+  --_icon-size: unset;
+  border: unset;
+  font-weight: unset;
 }
