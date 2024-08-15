@@ -355,11 +355,6 @@ form {
   }
   textarea {
     border-right: var(--size-1) solid var(--well-1);
-    min-block-size: unset;
-    min-inline-size: unset;
-    max-inline-size: unset;
-    min-block-size: unset;
-    max-block-size: unset;
   }
   textarea:focus {
     outline: unset;
@@ -387,6 +382,13 @@ form {
     overflow: auto;
     box-shadow: none;
     resize: none;
+  }
+  textarea {
+    min-block-size: unset;
+    min-inline-size: unset;
+    max-inline-size: unset;
+    min-block-size: unset;
+    max-block-size: unset;
   }
 }
 
@@ -722,4 +724,8 @@ ul {
   --_icon-size: unset;
   border: unset;
   font-weight: unset;
+}
+
+hr {
+  margin-block: var(--size-fluid-1);
 }

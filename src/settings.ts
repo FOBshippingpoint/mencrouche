@@ -367,11 +367,11 @@ function initShortcuts() {
     const resetBtn = label.$<HTMLInputElement>(".resetBtn")!;
     label.htmlFor = actionName;
     span.dataset.i18n = actionName;
-    n81i.translateElement(span);
     input.value = keySequence;
     input.dataset.actionName = actionName;
-    recordBtn.textContent = n81i.t("record_shortcut_btn");
-    resetBtn.textContent = n81i.t("reset_btn");
+    recordBtn.dataset.i18n = "record_shortcut_btn";
+    resetBtn.dataset.i18n = "reset_btn";
+    n81i.translateElement(label);
     frag.appendChild(label);
   }
   shortcutList.appendChild(frag);

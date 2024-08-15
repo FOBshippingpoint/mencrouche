@@ -18,6 +18,7 @@
 - [ ] Find a way to disable contextmenu when user pressing shift + right click. (works on ff by default)
 - [ ] Import document
 - [ ] Web extension version.
+- [ ] Context menu with focus element.
 
 ## Sticky Lifecycle
 
