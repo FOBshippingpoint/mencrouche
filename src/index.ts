@@ -161,16 +161,8 @@ const defaultCommands: Command[] = [
     name: "delete_sticky",
     isMenuItem: true,
     menuIconName: "lucide-trash",
-    makeUndoable() {
-      const sticky = getLatestSticky();
-      return {
-        execute() {
-          sticky?.delete();
-        },
-        undo() {
-          sticky?.recover();
-        },
-      };
+    execute() {
+      getLatestSticky()?.delete();
     },
     defaultShortcut: "A-x",
   },

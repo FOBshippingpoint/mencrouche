@@ -2,6 +2,7 @@ import { marked } from "marked";
 import { CustomSticky, Sticky, StickyPlugin } from "../sticky";
 import { dataset } from "../myDataset";
 import { getWidgets } from "./getWidgets";
+import { apocalypse } from "../commands";
 
 declare module "../sticky" {
   interface StickyPluginRegistry {
@@ -157,5 +158,14 @@ export const standardSticky: CustomSticky = {
   onRestore(sticky: Sticky) {
     enable(sticky, true);
   },
-  onDelete(sticky: Sticky) {},
+  onDelete(sticky: Sticky) {
+    apocalypse.write({
+      execute() {
+        sticky.delete();
+      },
+      undo() {
+        sticky.recover();
+      },
+    });
+  },
 };

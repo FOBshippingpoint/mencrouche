@@ -3,6 +3,7 @@ import { getWidgets } from "./getWidgets";
 import { n81i } from "../utils/n81i";
 import { $, Allowance } from "../utils/dollars";
 import { formToObject } from "../utils/formToObject";
+import { apocalypse } from "../commands";
 
 declare module "../sticky" {
   interface StickyPluginRegistry {
@@ -115,7 +116,7 @@ function pauseVideo(iframe: HTMLIFrameElement) {
   );
 }
 
-// TODO: click edit button when playing video, if cancel, it should resume video. 
+// TODO: click edit button when playing video, if cancel, it should resume video.
 function playVideo(iframe: HTMLIFrameElement) {
   iframe.contentWindow?.postMessage(
     '{"event":"command","func":"playVideo","args":""}',
@@ -132,6 +133,14 @@ export const youtubeSticky: CustomSticky = {
     enable(sticky, true);
   },
   onDelete(sticky: Sticky) {
-    pauseVideo(sticky.$<HTMLIFrameElement>("iframe")!);
+    apocalypse.write({
+      execute() {
+        pauseVideo(sticky.$<HTMLIFrameElement>("iframe")!);
+        sticky.delete();
+      },
+      undo() {
+        sticky.recover();
+      },
+    });
   },
 };

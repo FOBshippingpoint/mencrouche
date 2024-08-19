@@ -8,16 +8,17 @@ let dock: Allowance<HTMLDivElement>;
 let slot: Allowance<HTMLSlotElement>;
 
 const dialog = $<HTMLDialogElement>("#bookmarkDialog")!;
-const appearanceDialog = $<HTMLDialogElement>("#bookmarkDockDialog")!;
+const appearanceDialog = $<HTMLDialogElement>("#dockAppearanceDialog")!;
 const preview = $(getTemplateWidgets("dockBookmark").firstElementChild as any);
 dialog.$(".gaPreview")!.appendChild(preview);
 
 const form = dialog.$<HTMLFormElement>("form")!;
 const appearanceForm = appearanceDialog.$<HTMLFormElement>("form")!;
-const hrefInput = form.$<HTMLInputElement>('[name="href"]')!;
+const hrefLikeInput = form.$<HTMLInputElement>('[name="hrefLike"]')!;
 // TODO: add custom icon
 const iconInput = form.$<HTMLInputElement>('[name="icon"]')!;
 const labelInput = form.$<HTMLInputElement>('[name="label"]')!;
+let prevDockAppearanceAttrs: DockPrefAttrs;
 
 dialog
   .$<HTMLFormElement>('[data-i18n="cancel_submit_btn"]')!
@@ -25,8 +26,7 @@ dialog
 appearanceDialog
   .$<HTMLFormElement>('[data-i18n="cancel_submit_btn"]')!
   .on("click", () => {
-    const attrs = { ...dock.dataset };
-    updateDock(attrs);
+    updateDock(prevDockAppearanceAttrs);
     appearanceDialog.close();
   });
 
@@ -38,7 +38,7 @@ form.on("input", () => {
     updateDockBookmark(
       {
         label: labelInput.value,
-        href: hrefInput.value,
+        hrefLike: hrefLikeInput.value,
       },
       preview,
     );
@@ -47,19 +47,31 @@ form.on("input", () => {
 
 form.on("submit", (e) => {
   e.preventDefault();
-  const attrs = {
-    ...formToObject(form),
-    src: getFaviconUrl(hrefInput.value),
-  } as any;
-  if (current) {
-    updateDockBookmark(attrs, current);
-  } else {
-    const anchor = createDockBookmark(attrs);
-    slot.appendChild(anchor);
-    // if (slot.hasChildNodes()) {
-    //   addBookmarkBtn.classList.add("none");
-    // }
-  }
+
+  const attrs = formToObject(form);
+  const backupAttrs = {
+    hrefLike: current?.href,
+    label: current?.$<HTMLParagraphElement>("p")!.textContent ?? "",
+  };
+  const ctxCurrent = current;
+  let newAnchor: Allowance<HTMLAnchorElement>;
+  apocalypse.write({
+    execute() {
+      if (ctxCurrent) {
+        updateDockBookmark(attrs, ctxCurrent);
+      } else {
+        newAnchor = createDockBookmark(attrs);
+        slot.appendChild(newAnchor);
+      }
+    },
+    undo() {
+      if (ctxCurrent) {
+        updateDockBookmark(backupAttrs, ctxCurrent);
+      } else {
+        newAnchor.remove();
+      }
+    },
+  });
   dialog.close();
 });
 
@@ -67,8 +79,8 @@ registerContextMenu("dockBookmark", [
   {
     name: "edit_bookmark_menu_item",
     execute(target) {
-      current = $<HTMLAnchorElement>(target)!;
-      hrefInput.value = current.href;
+      current = $<HTMLAnchorElement>(target as HTMLAnchorElement)!;
+      hrefLikeInput.value = current.href;
       labelInput.value =
         current.$<HTMLParagraphElement>("p")!.textContent ?? "";
       current
@@ -84,10 +96,10 @@ registerContextMenu("dockBookmark", [
     execute(target) {
       apocalypse.write({
         execute() {
-          target.classList.add("none");
+          (target as HTMLAnchorElement).classList.add("none");
         },
         undo() {
-          target.classList.remove("none");
+          (target as HTMLAnchorElement).classList.remove("none");
         },
       });
     },
@@ -95,13 +107,13 @@ registerContextMenu("dockBookmark", [
   {
     name: "open_bookmark_in_new_tab_menu_item",
     execute(target) {
-      window.open(target.href, "_blank");
+      window.open((target as HTMLAnchorElement).href, "_blank");
     },
   },
   {
     name: "open_bookmark_in_current_tab_menu_item",
     execute(target) {
-      window.open(target.href, "_self");
+      window.open((target as HTMLAnchorElement).href, "_self");
     },
   },
 ]);
@@ -116,6 +128,8 @@ registerContextMenu("dock", [
     name: "edit_dock_appearance_menu_item",
     execute() {
       const { position, showLabel, showAddBtn, iconSize } = dock.dataset;
+      prevDockAppearanceAttrs = { ...dock.dataset } as any;
+
       appearanceForm.$<HTMLInputElement>(`[value="${position}"]`)!.checked =
         true;
       appearanceForm.$<HTMLInputElement>('[name="showLabel"]')!.checked =
@@ -136,14 +150,14 @@ export function initDock() {
 
   addBookmarkBtn.on("click", () => {
     dialog.$$<HTMLInputElement>("input").do((el) => (el.value = ""));
-    updateDockBookmark({ href: "javascript:;" }, preview);
+    updateDockBookmark({ hrefLike: "javascript:;" }, preview);
     current = null;
     dialog.showModal();
   });
 }
 
 function updateDockBookmark(
-  { label, href, iconSize, target }: DockBookmarkAttrs,
+  { label, hrefLike, iconSize, target }: DockBookmarkAttrs,
   dockBookmark: Allowance<HTMLAnchorElement>,
 ) {
   const anchor = dockBookmark;
@@ -156,11 +170,13 @@ function updateDockBookmark(
     p.hidden = true;
   }
   p.textContent = label ?? p.textContent;
-  anchor.href = href ?? anchor.href;
+  if (hrefLike) {
+    anchor.href = toUrl(hrefLike).toString() ?? anchor.href;
+  }
   anchor.target = target ?? anchor.target;
   anchor.dataset.contextMenu = "dockBookmark";
-  if (href && href !== "javascript:;") {
-    img.src = getFaviconUrl(href, iconSize);
+  if (hrefLike && hrefLike !== "javascript:;") {
+    img.src = getFaviconUrl(hrefLike, iconSize);
   } else if (anchor.href !== "javascript:;") {
     img.src = getFaviconUrl(anchor.href, iconSize);
   }
@@ -170,7 +186,7 @@ function updateDockBookmark(
 
 interface DockBookmarkAttrs {
   label?: string;
-  href?: string;
+  hrefLike?: string;
   iconSize?: number;
   target?: "_self" | "_blank" | "_parent" | "_top";
 }
@@ -186,6 +202,14 @@ function createDockBookmark(attrs: DockBookmarkAttrs) {
 
 function getFaviconUrl(domainUrl: string, size?: number) {
   return `https://www.google.com/s2/favicons?sz=${size ?? parseInt(dock.dataset.iconSize!)}&domain_url=${domainUrl}`;
+}
+
+function toUrl(url: string, base = "https://example.com") {
+  try {
+    return new URL(url);
+  } catch {
+    return new URL(`//${url}`, base);
+  }
 }
 
 appearanceForm.on("input", () => {
@@ -224,4 +248,3 @@ function updateDock({
     el.$("p")!.hidden = !showLabel;
   });
 }
-

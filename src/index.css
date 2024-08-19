@@ -634,11 +634,11 @@ ul {
 
   form {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1fr;
     grid-template-areas:
-      "input preview"
-      "input preview"
-      "... button";
+      "input"
+      "preview"
+      "button";
     gap: var(--size-4);
 
     .gaInput {
@@ -656,15 +656,13 @@ ul {
     }
     .gaButtonGroup {
       grid-area: button;
-      button + button {
-        margin-inline-start: var(--size-3);
-      }
     }
     .gaPreview {
       grid-area: preview;
     }
   }
 }
+
 .bookmarkPreview {
   display: flex;
   flex-wrap: wrap;
@@ -778,7 +776,14 @@ hr {
   }
 }
 
-#bookmarkDockDialog {
+.dummyScreen {
+  aspect-ratio: var(--ratio-widescreen);
+  width: var(--size-11);
+  overflow: hidden;
+  margin-bottom: var(--size-2);
+  position: relative;
+}
+#dockAppearanceDialog {
   .radioGroup {
     grid-template-columns: 1fr 1fr;
     flex-wrap: wrap;
@@ -786,13 +791,6 @@ hr {
   }
   .radioOption {
     text-align: center;
-  }
-  .dummyScreen {
-    aspect-ratio: var(--ratio-widescreen);
-    width: var(--size-content-1);
-    overflow: hidden;
-    margin-bottom: var(--size-2);
-    position: relative;
   }
   .dummyDock {
     background-color: var(--surface-1);
@@ -822,7 +820,7 @@ hr {
   }
 }
 
-#bookmarkDockDialog::backdrop {
+#dockAppearanceDialog::backdrop {
   backdrop-filter: none;
 }
 .dock[data-position="bottom"] {
@@ -859,9 +857,35 @@ hr {
 }
 .gaButtonGroup {
   text-align: end;
+  button + button {
+    margin-inline-start: var(--size-2);
+  }
 }
 
 dialog {
-  padding-block: var(--size-6);
-  padding-inline: var(--size-8);
+  padding-block: var(--size-5);
+  padding-inline: var(--size-7);
+}
+
+/* For screen tthat is larger then 640px, stole from Tailwind CSS
+ * see also: https://tailwindcss.com/docs/responsive-design */
+@media (min-width: 640px) {
+  #bookmarkDialog {
+    form {
+      grid-template-columns: 2fr 1fr;
+      grid-template-areas:
+        "input preview"
+        "input preview"
+        "... button";
+    }
+  }
+
+  .dummyScreen {
+    width: var(--size-12);
+  }
+
+  dialog {
+    padding-block: var(--size-6);
+    padding-inline: var(--size-8);
+  }
 }

@@ -5,7 +5,7 @@ export type StickyPlugin = Record<string, any>;
 export interface StickyPluginRegistry {
   [key: string]: any;
 }
-export type Sticky = Allowance<HTMLDivElement> & {
+export interface Sticky extends Allowance<HTMLDivElement> {
   delete: () => void;
   forceDelete: () => void;
   recover: () => void;
@@ -16,7 +16,7 @@ export type Sticky = Allowance<HTMLDivElement> & {
   addControlWidget: (element: HTMLElement) => void;
   replaceBody: (...nodes: (Node | string)[]) => void;
   plugin: StickyPluginRegistry;
-};
+}
 
 let highestZIndex = 0;
 /** An array for tracking the sticky order, from lowest -> topest */
@@ -222,7 +222,7 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
     document.removeEventListener("pointerup", resizeEnd);
   }
 
-  const result = Object.assign(sticky, {
+  Object.assign(sticky, {
     delete() {
       deleteBtn.click();
     },
@@ -233,7 +233,7 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
       if (sticky.classList.contains("deleted")) {
         sticky.classList.remove("deleted");
         sticky.classList.remove("none");
-        stickyContainer.appendChild(sticky);
+        stickies.splice(parseInt(sticky.dataset.idx!), 0, extendedSticky);
       }
     },
     duplicate() {
@@ -252,12 +252,6 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
     },
     toggleGhostMode() {
       sticky.classList.toggle("ghost");
-      // How about global???
-      // if (sticky.classList.contains("ghost")) {
-      //   sticky.dispatchEvent(new CustomEvent("ghoston"));
-      // } else {
-      //   sticky.dispatchEvent(new CustomEvent("ghostoff"));
-      // }
     },
     togglePin() {
       sticky.classList.toggle("pin");
@@ -276,21 +270,18 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
     plugin: {},
   });
 
+  const extendedSticky = sticky as Sticky;
+
   sticky.on("pointerdown", () => {
     moveToTop(sticky);
-    const idx = stickies.indexOf(sticky);
+    const idx = stickies.indexOf(extendedSticky);
     if (idx !== -1) {
       stickies.splice(idx, 1);
-      stickies.push(sticky);
+      stickies.push(extendedSticky);
     }
   });
 
-  moveToTop(sticky);
-  stickies.push(sticky);
-  mutationObserver.observe(sticky, { attributeFilter: ["class"] });
-
   deleteBtn.on("click", () => {
-    console.log("click deletebtn")
     sticky.on(
       "animationend",
       () => {
@@ -300,15 +291,16 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
     );
     sticky.classList.add("deleted");
 
-    // Select previous sticky.
-    const idx = stickies.indexOf(sticky);
+    // Remove current and select previous sticky.
+    const idx = stickies.indexOf(extendedSticky);
     if (idx !== -1) {
       stickies.splice(idx, 1);
     }
     stickies.at(-1)?.focus();
+    sticky.dataset.idx = idx.toString();
 
     for (const custom of getRelatedCustomStickies(sticky)) {
-      custom.onDelete(result);
+      custom.onDelete(extendedSticky);
     }
   });
 
@@ -323,14 +315,18 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
     );
   });
 
+  moveToTop(sticky);
+  stickies.push(extendedSticky);
+  mutationObserver.observe(sticky, { attributeFilter: ["class"] });
+
   // colorful outline
   // [].forEach.call($$("*"), function (a) { a.style.outline = "1px solid #" + (~~(Math.random() * (1 << 24))).toString(16); });
 
   for (const custom of getRelatedCustomStickies(sticky)) {
-    custom.onRestore(result);
+    custom.onRestore(sticky as Sticky);
   }
 
-  return result;
+  return sticky as Sticky;
 }
 
 const customStickies = new Map<string, CustomSticky>();
