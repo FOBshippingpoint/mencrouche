@@ -286,5 +286,9 @@
   "cannot_found_youtube_video": {
     "message": "YouTube video link is invalid.",
     "description": "Invalid error message when we cannot found YouTube video ID in the given input."
-  }
+  },
+	"palette_hue": {
+		"message": "Hue",
+		"description": "Label for palette hue wheel in appearance settings."
+	}
 }

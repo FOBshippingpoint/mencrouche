@@ -14,11 +14,13 @@
 - [x] Toggle edit/view mode button on sticky controls.
 - [x] Split view
 - [x] Redo/Undo
+- [x] Find a way to disable contextmenu when user pressing shift + right click. (works on ff by default)
+- [x] Context menu with focus element.
+- [ ] Spotify sticky
+- [ ] Color theme
 - [ ] Blockly
-- [ ] Find a way to disable contextmenu when user pressing shift + right click. (works on ff by default)
 - [ ] Import document
 - [ ] Web extension version.
-- [ ] Context menu with focus element.
 
 ## Sticky Lifecycle
 

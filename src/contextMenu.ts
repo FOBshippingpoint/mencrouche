@@ -23,6 +23,7 @@ export function initContextMenu() {
   });
 
   document.on("contextmenu", (e) => {
+    if (e.shiftKey) return;
     if (!$("#settings")!.classList.contains("none")) return;
 
     const target = e.target.closest("[data-context-menu]");

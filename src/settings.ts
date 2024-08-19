@@ -14,12 +14,16 @@ const backgroundImageUrlInput = $<HTMLInputElement>(
 )!;
 const shortcutListItemTemplate = $<HTMLTemplateElement>("#shortcutListItem")!;
 const uiOpacityInput = $<HTMLInputElement>("#uiOpacityInput")!;
-const setToDefaultBtn = $<HTMLButtonElement>("#setToDefaultBtn")!;
+const setToDefaultBtn = $<HTMLButtonElement>(
+  "#setBackgroundImageToDefaultBtn",
+)!;
 const deleteDocumentBtn = $<HTMLButtonElement>("#deleteDocumentBtn")!;
 const exportDocumentBtn = $<HTMLButtonElement>("#exportDocumentBtn")!;
 const saveBtn = $<HTMLButtonElement>("#saveSettingsBtn")!;
 const saveAndCloseBtn = $<HTMLButtonElement>("#saveAndCloseSettingsBtn")!;
 const cancelBtn = $<HTMLButtonElement>("#cancelSettingsBtn")!;
+const hueWheel = $<HTMLDivElement>("#hueWheel")!;
+const resetPaletteHueBtn = $<HTMLDivElement>("#setPaletteHueToDefaultBtn")!;
 
 settingsBtn.on("click", toggleSettingsPage);
 
@@ -92,15 +96,21 @@ exportDocumentBtn.on("click", () => {
 
 const changesManager = (() => {
   const todos: Function[] = [];
+  const notTodos: Function[] = [];
 
   return {
-    add(func: () => void) {
+    addChange(func: () => void) {
       todos.push(func);
+    },
+    addRevert(func: () => void) {
+      notTodos.push(func);
     },
     save() {
       todos.forEach((f) => f());
+      notTodos.length = 0;
     },
     cancel() {
+      notTodos.forEach((f) => f());
       todos.length = 0;
     },
   };
@@ -140,7 +150,7 @@ backgroundImageUrlInput.addEventListener("paste", async (e) => {
         const url = await (await clipboardItem.getType("text/plain")).text();
         new URL(url);
         dropzone.style.background = `url(${url}) center center / cover no-repeat`;
-        changesManager.add(() => setBackgroundImageByUrl(url));
+        changesManager.addChange(() => setBackgroundImageByUrl(url));
       } catch (_) {
         alert(n81i.t("image_url_is_not_valid_alert"));
       }
@@ -152,7 +162,7 @@ function handleBlob(blob: Blob | File) {
   const url = URL.createObjectURL(blob);
   backgroundImageUrlInput.value = url;
   dropzone.style.background = `url(${url}) center center / cover no-repeat`;
-  changesManager.add(() => setBackgroundImageByUrl(url));
+  changesManager.addChange(() => setBackgroundImageByUrl(url));
 }
 
 // Handle drag and drop events
@@ -202,9 +212,8 @@ setToDefaultBtn.addEventListener("click", () => {
 
 uiOpacityInput.on("input", () => {
   const uiOpacity = (uiOpacityInput.valueAsNumber / 100).toString();
-  uiOpacityInput.style.opacity = uiOpacity;
-  changesManager.add(() => {
-    document.documentElement.style.setProperty("--ui-opacity", uiOpacity);
+  document.documentElement.style.setProperty("--ui-opacity", uiOpacity);
+  changesManager.addChange(() => {
     dataset.setItem("uiOpacity", uiOpacity);
   });
 });
@@ -232,6 +241,22 @@ function unsetBackgroundImage() {
 function openSettingsPage() {
   settings.classList.remove("none");
   $(".stickyContainer")!.classList.add("none");
+
+  const uiOpacity = dataset.getOrSetItem("uiOpacity", 1);
+  const paletteHue = dataset.getItem("paletteHue") as string;
+  changesManager.addRevert(() => {
+    document.documentElement.style.setProperty(
+      "--ui-opacity",
+      uiOpacity.toString(),
+    );
+    uiOpacityInput.style.opacity = uiOpacity.toString();
+    uiOpacityInput.value = (uiOpacity * 100).toString();
+    if (paletteHue) {
+      document.documentElement.style.setProperty("--palette-hue", paletteHue);
+    } else {
+      document.documentElement.style.removeProperty("--palette-hue");
+    }
+  });
 }
 
 function closeSettingsPage() {
@@ -282,7 +307,7 @@ function initLanguage() {
     // Pre-loading when user select, instead of applying settings.
     n81i.loadLanguage(langDropdown.value);
 
-    changesManager.add(async () => {
+    changesManager.addChange(async () => {
       dataset.setItem("language", langDropdown.value);
       await n81i.changeLanguage(langDropdown.value);
       n81i.translatePage();
@@ -296,7 +321,8 @@ export function initSettings() {
   initGhostMode();
   initTheme();
   initShortcuts();
-  initOpacity();
+  initUiOpacity();
+  initPaletteHue();
 }
 
 function queryPrefersColorScheme() {
@@ -394,7 +420,7 @@ function initShortcuts() {
           btn.textContent = n81i.t("record_shortcut_btn");
           const newSequence = recordingKikey.stopRecord();
           if (newSequence) {
-            changesManager.add(() => {
+            changesManager.addChange(() => {
               shortcutManager.update(actionName, newSequence);
             });
             input.value = keySequenceToString(newSequence);
@@ -405,7 +431,7 @@ function initShortcuts() {
         btn.dataset.recording =
           btn.dataset.recording === "false" ? "true" : "false";
       } else if ((e.target as HTMLElement).matches(".resetBtn")) {
-        changesManager.add(() => shortcutManager.restore(actionName));
+        changesManager.addChange(() => shortcutManager.restore(actionName));
         input.value = shortcutManager.getDefaultKeySequence(actionName);
       }
     }
@@ -448,7 +474,7 @@ function keySequenceToString(sequence: string | KeyBinding[]) {
   return s.map((b) => keyBindingToString(b)).join(", ");
 }
 
-function initOpacity() {
+function initUiOpacity() {
   const uiOpacity = dataset.getOrSetItem("uiOpacity", 1);
   document.documentElement.style.setProperty(
     "--ui-opacity",
@@ -606,4 +632,37 @@ export function initShortcutManager() {
   }
 
   return singleton;
+}
+
+hueWheel.on("mousedown", () => hueWheel.on("mousemove", adjustPaletteHue));
+hueWheel.on("mouseup", () => hueWheel.off("mousemove", adjustPaletteHue));
+resetPaletteHueBtn.on("click", () => {
+  document.documentElement.style.removeProperty("--palette-hue");
+  changesManager.addChange(() => {
+    document.documentElement.style.removeProperty("--palette-hue");
+  });
+});
+
+function adjustPaletteHue(e: MouseEvent) {
+  const rect = hueWheel.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+
+  const x = e.clientX - centerX;
+  const y = e.clientY - centerY;
+
+  const angle = Math.atan2(y, x) * (180 / Math.PI);
+  const paletteHue = Math.round(angle).toString();
+
+  document.documentElement.style.setProperty("--palette-hue", paletteHue);
+  changesManager.addChange(() => {
+    dataset.setItem("paletteHue", paletteHue);
+  });
+}
+
+function initPaletteHue() {
+  const paletteHue = dataset.getItem("paletteHue") as string;
+  if (paletteHue) {
+    document.documentElement.style.setProperty("--palette-hue", paletteHue);
+  }
 }

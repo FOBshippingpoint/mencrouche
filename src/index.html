@@ -417,13 +417,13 @@
         <section id="settings" class="none">
           <section id="langPref">
             <header>
-              <h2 data-i18n="settings_language_section">Language</h2>
+              <h2 data-i18n="settings_language_section"></h2>
             </header>
             <select id="langDropdown"></select>
           </section>
           <section id="appearancePref">
             <header>
-              <h2 data-i18n="settings_appearance_section">Appearance</h2>
+              <h2 data-i18n="settings_appearance_section"></h2>
             </header>
             <label for="uiOpacityInput">
               <span data-i18n="ui_opacity"></span>
@@ -436,15 +436,23 @@
                 max="100"
               />
             </label>
-            <h3 data-i18n="settings_appearance_background_section">
-              Background
-            </h3>
+            <label>
+              <span data-i18n="palette_hue"></span>
+              <div class="huePreview">
+                <button id="hueWheel" class="round pureBtn shadow"></button>
+                <div>A</div>
+                <div>a</div>
+                <div>𝛼</div>
+              </div>
+              <button
+                id="setPaletteHueToDefaultBtn"
+                data-i18n="set_to_default_btn"
+              ></button>
+            </label>
+            <h3 data-i18n="settings_appearance_background_section"></h3>
             <div class="formGroup">
               <div class="dropzone">
-                <p data-i18n="dnd_image_instruction">
-                  Drag & drop an image here, paste from clipboard, or click to
-                  select a file
-                </p>
+                <p data-i18n="dnd_image_instruction"></p>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="64"
@@ -471,10 +479,8 @@
                   hidden=""
                 />
               </div>
-              <label for="backgroundImageUrlInput"
-                ><span data-i18n="background_image_link"
-                  >Background image link</span
-                >
+              <label for="backgroundImageUrlInput">
+                <span data-i18n="background_image_link"></span>
                 <input
                   id="backgroundImageUrlInput"
                   data-i18n-for="placeholder"
@@ -483,12 +489,10 @@
                 />
               </label>
               <button
-                id="setToDefaultBtn"
+                id="setBackgroundImageToDefaultBtn"
                 class="btn"
                 data-i18n="set_to_default_btn"
-              >
-                Set to default
-              </button>
+              ></button>
             </div>
           </section>
           <section id="shortcutsPref">

@@ -286,5 +286,9 @@
 	"cannot_found_youtube_video": {
 		"message": "YouTube影片連結格式有誤",
 		"description": "Invalid error message when we cannot found YouTube video ID in the given input."
+	},
+	"palette_hue": {
+		"message": "色調",
+		"description": "Label for palette hue wheel in appearance settings."
 	}
 }
