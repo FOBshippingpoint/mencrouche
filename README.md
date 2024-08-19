@@ -1,6 +1,20 @@
-# Mencrouche - Your browser's new homepage.
+# <img width="64" height="64" src="https://raw.githubusercontent.com/FOBshippingpoint/mencrouche/main/img/icon_design.svg" /> [Mencrouche](https://fobshippingpoint.github.io/mencrouche/) 
 
-![screenshot](https://i.imgur.com/SnR5gHO.png)
+> Your browser's new homepage.
+
+- Embed YT, Spotify, or web pages.
+- Customizable bookmark dock.
+- Markdown notes.
+- Dark/Light mode support.
+- Rich shortcuts with sensible defaults.
+- Extensible API for power user.
+
+![screenshot](https://i.imgur.com/OMGVxTd.png)
+
+- Artwork: https://www.pixiv.net/artworks/55632215
+- Website: http://abehiroshi.la.coocan.jp/
+- Video: https://www.youtube.com/watch?v=dkSeImiW1fQ
+- Song: https://open.spotify.com/track/6woV8uWxn7rcLZxJKYruS1
 
 ## Getting Started
 
@@ -14,21 +28,9 @@
     bun dev-site
     ```
 
-## Architecture
+## Serialization Method
 
-Mencrouche is built using standard HTML, CSS, and vanilla JavaScript (Web API), without relying on any UI framework. While this approach might slightly reduce DX, it’s beneficial for those who are familiar with web standards. Additionally, you can write plugins using any framework.
-
-The program is designed with extensibility in mind. Mencrouche provides a robust API that allows users and developers to create custom plugins. The core component in Mencrouche is the "sticky," a draggable, scalable `div` element, similar to an application window. You can add HTML content to the sticky body or a control widget in the sticky header, as illustrated below:
-
-```text
-.sticky
-|_ .stickyHeader
-|_ .stickyBody
-```
-
-## Serialization Approach
-
-Mencrouche uses an HTML document to serialize data. While JSON is effective for serializing JavaScript objects, it’s less suited for UI elements. However, deserialization involves not just restoring static content but also re-establishing interactivity. For instance, deserializing an HTML button from a string won’t automatically restore its event listeners.
+While JSON is effective for serializing JavaScript objects, it’s less suited for UI elements. Thus, Mencrouche uses an HTML to serialize data. However, this approach requires re-establishing interactivity. For instance, deserializing an HTML button from a string won’t automatically restore its event listeners.
 
 ### Sticky Lifecycle
 
@@ -136,11 +138,71 @@ console.log(n81i.t("hello")); // prints "你好"
 Use the `data-i18n` attribute to specify a translation key. By default, it will replace the `textContent` of element. Add a `data-i18n-for` to inject translated message into a specific attribute.
 
 ```javascript
-// <div data-i18n="author"></div>
+// Before: <div data-i18n="author"></div>
+//  After: <div data-i18n="author">作者</div>
 n81i.translateElement(div);
 
-// <input data-i18n="email" data-i18n-for="placeholder" />
+// Before: <input data-i18n="email" data-i18n-for="placeholder" />
+//  After: <input data-i18n="email" data-i18n-for="placeholder" placeholder="電子郵件" />
 n81i.translateElement(input);
+```
+
+## Apocalypse (Undo/Redo API)
+
+The apocalypse API allowing users to revert or reapply changes. Users can trigger undo/redo actions via `Ctrl + Z` and `Ctrl + Y`.
+
+```javascript
+let bookmark;
+mc.apocalypse.write({
+  execute() { // <-- Execute immediately.
+    bookmark = createBookmark();
+  },
+  undo() {
+    bookmark.remove();
+  },
+});
+
+apocalypse.undo(); // Undo previous changes.
+apocalypse.redo(); // Redo changes.
+```
+
+## Context Menu API
+
+You can use `mc.registerContextMenu` to create custom context menus associated with specific DOM elements. By assigning a `data-context-menu` attribute to a target element, the target element will returns for `execute` function.
+
+```javascript
+// Assign the data-context-menu attribute for DOM element as context menu target.
+youtubeSticky.dataset.contextMenu = "youtube";
+mc.registerContextMenu("youtube", [
+  {
+    name: "pause_video",
+    icon: "lucide-youtube",
+    execute(target) {
+      // In this example, target === youtubeSticky.
+      // You may have multiple youtubeStickies. In that case, the target 
+      // indicates the sticky, from which the user triggers the context menu.
+
+      target.pauseVideo();
+    },
+  },
+]);
+```
+
+## Commands API
+
+Use `mc.registerCommand` to register custom commands within Mencrouche. The commands will show in command palette or context menu. You can also give shortcuts for the commands (see [KikeyJS Doc](https://fobshippingpoint.github.io/kikey/) for more information).
+
+```javascript
+mc.registerCommand({
+    name: "say_hi", // This string will be the key of `n81i`,
+                    // you should add translations for this key.
+    execute() {
+      alert("Hi");
+    },
+    defaultShortcut: "C-A-h", // Ctrl + Alt + H
+});
+
+mc.executeCommand("say_hi");
 ```
 
 ## Authors
