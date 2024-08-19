@@ -74,14 +74,7 @@ export function enable(sticky: Sticky): Sticky {
   const addBookmarkBtn = widgets.$<HTMLButtonElement>(".addBookmarkBtn")!;
   let currentPreview: Allowance<HTMLDivElement>;
 
-  let dialog = $<HTMLDialogElement>("#bookmarkDialog")!;
-  if (!dialog) {
-    dialog = getTemplateWidgets("bookmarkStickyWidgets").$<HTMLDialogElement>(
-      "dialog",
-    )!;
-    n81i.translateElement(dialog);
-    document.body.appendChild(dialog);
-  }
+  const dialog = $<HTMLDialogElement>("#bookmarkDialog")!;
   const form = dialog.$<HTMLFormElement>("form")!;
   const cancelSubmitBtn = dialog.$<HTMLFormElement>(
     '[data-i18n="cancel_submit_bookmark_btn"]',

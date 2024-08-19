@@ -16,6 +16,7 @@
 @import "https://unpkg.com/open-props@beta.5/buttons.css";
 @import "https://unpkg.com/open-props@beta.5/forms.css";
 @import "https://unpkg.com/open-props@beta.5/animations.css";
+@import "https://unpkg.com/open-props@beta.5/utilities.css";
 
 /* the following switch imports have selectors that enable the override of the system setting */
 /* @import "open-props/theme.light.switch.min.css"; */
@@ -148,17 +149,6 @@ nav {
     outline-color: unset;
     background: unset;
     border: unset;
-  }
-}
-
-form {
-  display: flex;
-  gap: var(--size-3);
-
-  label {
-    display: flex;
-    place-items: center;
-    gap: var(--size-1);
   }
 }
 
@@ -392,6 +382,10 @@ form {
   }
 }
 
+.youtube .stickyBody {
+  padding: 0;
+}
+
 .stickyContainer {
   position: absolute;
   width: 100%;
@@ -427,23 +421,9 @@ form {
   padding: var(--size-3);
   z-index: var(--layer-important);
 }
-.searchInputWrapper {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.searchIcon {
-  position: absolute;
-  left: var(--size-2);
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-2);
-}
 #searchInput {
   width: 100%;
-  padding: var(--size-2) var(--size-2) var(--size-2) var(--size-8);
-  font-size: var(--font-size-3);
+  padding: var(--size-1) var(--size-1) var(--size-1) var(--size-8);
   border: none;
   border-radius: var(--radius-conditional-2);
   background-color: var(--surface-3);
@@ -493,9 +473,6 @@ form {
   header {
     padding-bottom: var(--size-3);
   }
-}
-#settings.none {
-  display: none;
 }
 #langDropdown {
   min-width: var(--size-fluid-8);
@@ -593,7 +570,7 @@ form {
 }
 /* @settings end */
 
-#contextMenu {
+.contextMenu {
   position: fixed;
   display: flex;
   flex-direction: column;
@@ -628,9 +605,6 @@ form {
     border-top: var(--border-size-1) solid var(--surface-3);
   }
 }
-#contextMenu.none {
-  display: none;
-}
 
 #newStickyBtn {
   padding: 0;
@@ -643,7 +617,7 @@ form {
 /* HTML hidden attribute failed when the display has been set. So I add this
  * class for the convenience. */
 .none {
-  display: none;
+  display: none !important;
 }
 
 data {
@@ -655,26 +629,40 @@ ul {
 }
 
 #bookmarkDialog {
-  padding-block: var(--size-6);
-  padding-inline: var(--size-8);
   border-radius: var(--radius-conditional-3);
   box-shadow: var(--shadow-3);
 
   form {
-    flex-direction: column;
-    gap: var(--size-5);
-  }
-  .formGroup {
-    align-items: stretch;
-    label {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-areas:
+      "input preview"
+      "input preview"
+      "... button";
+    gap: var(--size-4);
+
+    .gaInput {
+      grid-area: input;
+      display: flex;
       flex-direction: column;
-      place-items: unset;
+      gap: var(--size-2);
+      align-items: stretch;
+
+      label {
+        display: flex;
+        gap: var(--size-1);
+        flex-direction: column;
+      }
     }
-  }
-  .buttonGroup {
-    display: flex;
-    gap: var(--size-2);
-    justify-content: flex-end;
+    .gaButtonGroup {
+      grid-area: button;
+      button + button {
+        margin-inline-start: var(--size-3);
+      }
+    }
+    .gaPreview {
+      grid-area: preview;
+    }
   }
 }
 .bookmarkPreview {
@@ -728,4 +716,152 @@ ul {
 
 hr {
   margin-block: var(--size-fluid-1);
+}
+
+.dock {
+  position: absolute;
+}
+
+.contextMenuBtn {
+  padding-block: 0;
+  padding-inline: var(--size-1);
+  position: absolute;
+  transform: translateY(-100%);
+  right: 0;
+}
+.contextMenuBtn:hover {
+  background-color: var(--surface-2);
+}
+
+.dockItem:hover {
+  background-color: var(--surface-2);
+  cursor: pointer;
+}
+.dockItem {
+  padding: var(--size-1);
+}
+#bookmarkDialog {
+  .dockItem {
+    background-color: var(--surface-1);
+    min-block-size: var(--size-10);
+  }
+  summary {
+    margin: 0;
+  }
+  details {
+    padding-inline: 0;
+
+    div {
+      padding-top: var(--size-3);
+    }
+  }
+}
+.dockBookmark {
+  color: var(--text-1);
+  text-decoration: none;
+  display: grid;
+
+  img {
+    justify-self: center;
+    align-self: center;
+  }
+
+  p {
+    align-self: end;
+    text-overflow: ellipsis;
+    overflow-wrap: break-word;
+    text-align: center;
+    max-width: var(--size-10);
+  }
+  p::before {
+    content: "\feff";
+  }
+}
+
+#bookmarkDockDialog {
+  .radioGroup {
+    grid-template-columns: 1fr 1fr;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  .radioOption {
+    text-align: center;
+  }
+  .dummyScreen {
+    aspect-ratio: var(--ratio-widescreen);
+    width: var(--size-content-1);
+    overflow: hidden;
+    margin-bottom: var(--size-2);
+    position: relative;
+  }
+  .dummyDock {
+    background-color: var(--surface-1);
+    position: absolute;
+  }
+  .dock-top,
+  .dock-bottom {
+    height: var(--size-3);
+    width: 100%;
+  }
+  .dock-left,
+  .dock-right {
+    width: var(--size-3);
+    height: 100%;
+  }
+  .dock-top {
+    top: 0;
+  }
+  .dock-bottom {
+    bottom: 0;
+  }
+  .dock-left {
+    left: 0;
+  }
+  .dock-right {
+    right: 0;
+  }
+}
+
+#bookmarkDockDialog::backdrop {
+  backdrop-filter: none;
+}
+.dock[data-position="bottom"] {
+  bottom: var(--size-3);
+  left: 50%;
+  transform: translateX(-50%);
+  flex-direction: row;
+}
+.dock[data-position="top"] {
+  top: var(--size-3);
+  left: 50%;
+  transform: translateX(-50%);
+  flex-direction: row;
+}
+.dock[data-position="left"] {
+  left: var(--size-3);
+  top: 50%;
+  transform: translateY(-50%);
+  flex-direction: column;
+}
+.dock[data-position="right"] {
+  right: var(--size-3);
+  top: 50%;
+  transform: translateY(-50%);
+  flex-direction: column;
+}
+
+#youtubeDialog {
+  label:not(:has([type="checkbox"])) {
+    display: flex;
+    gap: var(--size-1);
+    flex-direction: column;
+  }
+}
+.gaButtonGroup {
+  text-align: end;
+}
+
+dialog {
+  padding-block: var(--size-6);
+  padding-inline: var(--size-8);
 }

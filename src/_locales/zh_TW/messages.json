@@ -1,206 +1,290 @@
 {
-  "set_background_image": {
-    "message": "設定背景圖片",
-    "description": "Command description for setting the background image."
-  },
-  "toggle_dark_mode": {
-    "message": "切換深色/淺色模式",
-    "description": "Command description for toggling dark mode on/off."
-  },
-  "open_youtube": {
-    "message": "開啟YouTube",
-    "description": "Command description for opening YouTube."
-  },
-  "command_palette_search_placeholder": {
-    "message": "搜尋指令...",
-    "description": "Placeholder text for the command palette search bar."
-  },
-  "dnd_image_instruction": {
-    "message": "拖曳圖片或點擊來上傳檔案",
-    "description": "Instructions for setting the background image via drag and drop."
-  },
-  "set_to_default_btn": {
-    "message": "重設為預設值",
-    "description": "Button text for resetting the background image to default."
-  },
-  "settings_shortcuts_section": {
-    "message": "快捷鍵",
-    "description": "Title for the shortcuts section in settings."
-  },
-  "settings_storage_section": {
-    "message": "檔案",
-    "description": "Title for the storage section in settings."
-  },
-  "sticky_textarea_start_typing_placeholder": {
-    "message": "開始輸入...",
-    "description": "Placeholder text for the sticky note textarea."
-  },
-  "save_document": {
-    "message": "儲存文件",
-    "description": "Command description for saving documents."
-  },
-  "background_image_url_input_placeholder": {
-    "message": "貼上圖片連結",
-    "description": "Placeholder text for the background image URL input."
-  },
-  "image_url_is_not_valid_alert": {
-    "message": "無效的圖片連結。請嘗試其他連結。",
-    "description": "Alert message for an invalid image URL."
-  },
-  "toggle_settings": {
-    "message": "開啟/關閉設定頁面",
-    "description": "Command description for toggling the settings page."
-  },
-  "toggle_ghost_mode": {
-    "message": "切換透明模式",
-    "description": "Command description for toggling ghost mode."
-  },
-  "toggle_global_ghost_mode": {
-    "message": "切換全域透明模式",
-    "description": "Command description for toggling global ghost mode."
-  },
-  "toggle_command_palette": {
-    "message": "切換指令窗格",
-    "description": "Command description for toggling the command palette."
-  },
-  "new_standard_sticky": {
-    "message": "新增便利貼",
-    "description": "Command description for adding a new sticky note."
-  },
-  "new_bookmark_sticky": {
-    "message": "新增書籤貼",
-    "description": "Command description for adding a new bookmark sticky."
-  },
-  "delete_sticky": {
-    "message": "刪除便利貼",
-    "description": "Command description for deleting a sticky note."
-  },
-  "delete_all_stickies": {
-    "message": "刪除所有便利貼",
-    "description": "Command description for deleting all sticky notes."
-  },
-  "toggle_sticky_edit_mode": {
-    "message": "切換編輯模式",
-    "description": "Command description for toggling edit/view mode for the current sticky note."
-  },
-  "toggle_auto_arrange": {
-    "message": "切換整齊模式",
-    "description": "Command description for toggling between arrange and free mode for sticky notes."
-  },
-  "settings_language_section": {
-    "message": "語言",
-    "description": "Title for the language section in settings."
-  },
-  "settings_appearance_section": {
-    "message": "外觀",
-    "description": "Title for the appearance section in settings."
-  },
-  "delete_document_btn": {
-    "message": "刪除",
-    "description": "Text for the delete document button."
-  },
-  "export_document_btn": {
-    "message": "匯出",
-    "description": "Text for the export document button."
-  },
-  "save_settings_btn": {
-    "message": "儲存",
-    "description": "Text for the save settings button."
-  },
-  "save_and_close_settings_btn": {
-    "message": "儲存並關閉",
-    "description": "Text for the save and close settings button."
-  },
-  "cancel_settings_btn": {
-    "message": "取消",
-    "description": "Text for the cancel settings button."
-  },
-  "record_shortcut_btn": {
-    "message": "錄製",
-    "description": "Text for the record shortcut button."
-  },
-  "stop_record_shortcut_btn": {
-    "message": "停止",
-    "description": "Text for the stop recording shortcut button."
-  },
-  "reset_btn": {
-    "message": "重設",
-    "description": "Text for the button to reset shortcut to default."
-  },
-  "background_image_link": {
-    "message": "背景圖片連結",
-    "description": "Label for the background image URL input."
-  },
-  "settings_appearance_background_section": {
-    "message": "背景",
-    "description": "Title for the background subsection in appearance settings."
-  },
-  "ui_opacity": {
-    "message": "界面透明度",
-    "description": "Label for the UI opacity input."
-  },
-  "toggle_split_view": {
-    "message": "切換雙欄",
-    "description": "Command description for toggling split view of sticky notes."
-  },
-  "toggle_maximize_sticky": {
-    "message": "切換最大化",
-    "description": "Command description for toggling maximize/minimize of a sticky note."
-  },
-  "toggle_sticky_pin_mode": {
-    "message": "切換釘選",
-    "description": "Command description for toggling pin mode of a sticky note."
-  },
-  "duplicate_sticky": {
-    "message": "複製便利貼",
-    "description": "Command description for duplicating a sticky note."
-  },
-  "saved": {
-    "message": "已儲存",
-    "description": "Status message for a saved document."
-  },
-  "unsaved": {
-    "message": "未儲存的變更",
-    "description": "Status message for unsaved changes in a document."
-  },
-  "saving": {
-    "message": "儲存中...",
-    "description": "Status message while saving a document."
-  },
-  "confirm_delete_document": {
-    "message": "確定要刪除文件嗎？",
-    "description": "Confirmation message while deleting document."
-  },
-  "undo": {
-    "message": "復原",
-    "description": "undo"
-  },
-  "redo": {
-    "message": "重做",
-    "description": "redo"
-  },
-  "bookmark_link_label": {
-    "message": "連結",
-    "description": "Label text for the bookmark link input."
-  },
-  "bookmark_icon_label": {
-    "message": "圖示 (svg或dataurl)",
-    "description": "Label text for the bookmark link input."
-  },
-  "submit_bookmark_btn": {
-    "message": "確認",
-    "description": "Button text for submitting bookmark."
-  },
-  "cancel_submit_bookmark_btn": {
-    "message": "取消",
-    "description": "Button text for submitting bookmark."
-  },
-  "add_bookmark_btn": {
-    "message": "新增書籤",
-    "description": "Button text for adding bookmark."
-  },
-  "bookmark_layout_checkbox": {
-    "message": "切換佈局",
-    "description": "Button text for adding bookmark."
-  }
+	"add_bookmark_btn": {
+		"message": "新增書籤",
+		"description": "Button text for adding bookmark."
+	},
+	"background_image_link": {
+		"message": "背景圖片連結",
+		"description": "Label for the background image URL input."
+	},
+	"background_image_url_input_placeholder": {
+		"message": "貼上圖片連結",
+		"description": "Placeholder text for the background image URL input."
+	},
+	"bookmark_href_label": {
+		"message": "連結",
+		"description": "Label text for the bookmark link input."
+	},
+	"bookmark_icon_label": {
+		"message": "圖示 (svg或dataurl)",
+		"description": "Label text for the bookmark link input."
+	},
+	"bookmark_label_label": {
+		"message": "標題",
+		"description": "Label text for the bookmark label input."
+	},
+	"bookmark_layout_checkbox": {
+		"message": "切換佈局",
+		"description": "Button text for adding bookmark."
+	},
+	"bookmark_more_options": {
+		"message": "更多選項",
+		"description": "More options button for bookmark editing dialog."
+	},
+	"bookmark_target_label": {
+		"message": "開啟方式",
+		"description": "Label text for the bookmark anchor target."
+	},
+	"cancel_settings_btn": {
+		"message": "取消",
+		"description": "Text for the cancel settings button."
+	},
+	"cancel_submit_btn": {
+		"message": "取消",
+		"description": "Button text for submitting form."
+	},
+	"command_palette_search_placeholder": {
+		"message": "搜尋指令...",
+		"description": "Placeholder text for the command palette search bar."
+	},
+	"confirm_delete_document": {
+		"message": "確定要刪除文件嗎？",
+		"description": "Confirmation message while deleting document."
+	},
+	"delete_all_stickies": {
+		"message": "刪除所有便利貼",
+		"description": "Command description for deleting all sticky notes."
+	},
+	"delete_bookmark_menu_item": {
+		"message": "刪除",
+		"description": "Context menu item label text for deleting bookmark."
+	},
+	"delete_document_btn": {
+		"message": "刪除",
+		"description": "Text for the delete document button."
+	},
+	"delete_sticky": {
+		"message": "刪除便利貼",
+		"description": "Command description for deleting a sticky note."
+	},
+	"dnd_image_instruction": {
+		"message": "拖曳圖片或點擊來上傳檔案",
+		"description": "Instructions for setting the background image via drag and drop."
+	},
+	"duplicate_sticky": {
+		"message": "複製便利貼",
+		"description": "Command description for duplicating a sticky note."
+	},
+	"edit_bookmark_menu_item": {
+		"message": "編輯",
+		"description": "Context menu item label text for editing bookmark."
+	},
+	"export_document_btn": {
+		"message": "匯出",
+		"description": "Text for the export document button."
+	},
+	"extension_description": {
+		"message": "新分頁",
+		"description": "Description of the extension."
+	},
+	"image_url_is_not_valid_alert": {
+		"message": "無效的圖片連結。請嘗試其他連結。",
+		"description": "Alert message for an invalid image URL."
+	},
+	"new_bookmark_sticky": {
+		"message": "新增書籤貼",
+		"description": "Command description for adding a new bookmark sticky."
+	},
+	"new_standard_sticky": {
+		"message": "新增便利貼",
+		"description": "Command description for adding a new sticky note."
+	},
+	"new_youtube_sticky": {
+		"message": "新增YouTube便利貼",
+		"description": "Command description for adding a new youtube sticky note."
+	},
+	"open_bookmark_in_current_tab_menu_item": {
+		"message": "在此分頁開啟",
+		"description": "Context menu item label text for opening bookmark link in current tab."
+	},
+	"open_bookmark_in_new_tab_menu_item": {
+		"message": "用新分頁開啟",
+		"description": "Context menu item label text for opening bookmark link in a new tab."
+	},
+	"open_youtube": {
+		"message": "開啟YouTube",
+		"description": "Command description for opening YouTube."
+	},
+	"record_shortcut_btn": {
+		"message": "錄製",
+		"description": "Text for the record shortcut button."
+	},
+	"redo": {
+		"message": "重做",
+		"description": "redo"
+	},
+	"reset_btn": {
+		"message": "重設",
+		"description": "Text for the button to reset shortcut to default."
+	},
+	"save_and_close_settings_btn": {
+		"message": "儲存並關閉",
+		"description": "Text for the save and close settings button."
+	},
+	"save_document": {
+		"message": "儲存文件",
+		"description": "Command description for saving documents."
+	},
+	"save_settings_btn": {
+		"message": "儲存",
+		"description": "Text for the save settings button."
+	},
+	"saved": {
+		"message": "已儲存",
+		"description": "Status message for a saved document."
+	},
+	"saving": {
+		"message": "儲存中...",
+		"description": "Status message while saving a document."
+	},
+	"set_background_image": {
+		"message": "設定背景圖片",
+		"description": "Command description for setting the background image."
+	},
+	"set_to_default_btn": {
+		"message": "重設為預設值",
+		"description": "Button text for resetting the background image to default."
+	},
+	"settings_appearance_background_section": {
+		"message": "背景",
+		"description": "Title for the background subsection in appearance settings."
+	},
+	"settings_appearance_section": {
+		"message": "外觀",
+		"description": "Title for the appearance section in settings."
+	},
+	"settings_language_section": {
+		"message": "語言",
+		"description": "Title for the language section in settings."
+	},
+	"settings_shortcuts_section": {
+		"message": "快捷鍵",
+		"description": "Title for the shortcuts section in settings."
+	},
+	"settings_storage_section": {
+		"message": "檔案",
+		"description": "Title for the storage section in settings."
+	},
+	"sticky_textarea_start_typing_placeholder": {
+		"message": "開始輸入...",
+		"description": "Placeholder text for the sticky note textarea."
+	},
+	"stop_record_shortcut_btn": {
+		"message": "停止",
+		"description": "Text for the stop recording shortcut button."
+	},
+	"submit_btn": {
+		"message": "確認",
+		"description": "Button text for submitting form."
+	},
+	"toggle_auto_arrange": {
+		"message": "切換整齊模式",
+		"description": "Command description for toggling between arrange and free mode for sticky notes."
+	},
+	"toggle_command_palette": {
+		"message": "切換指令窗格",
+		"description": "Command description for toggling the command palette."
+	},
+	"toggle_dark_mode": {
+		"message": "切換深色/淺色模式",
+		"description": "Command description for toggling dark mode on/off."
+	},
+	"toggle_ghost_mode": {
+		"message": "切換透明模式",
+		"description": "Command description for toggling ghost mode."
+	},
+	"toggle_global_ghost_mode": {
+		"message": "切換全域透明模式",
+		"description": "Command description for toggling global ghost mode."
+	},
+	"toggle_maximize_sticky": {
+		"message": "切換最大化",
+		"description": "Command description for toggling maximize/minimize of a sticky note."
+	},
+	"toggle_settings": {
+		"message": "開啟/關閉設定頁面",
+		"description": "Command description for toggling the settings page."
+	},
+	"toggle_split_view": {
+		"message": "切換雙欄",
+		"description": "Command description for toggling split view of sticky notes."
+	},
+	"toggle_sticky_edit_mode": {
+		"message": "切換編輯模式",
+		"description": "Command description for toggling edit/view mode for the current sticky note."
+	},
+	"toggle_sticky_pin_mode": {
+		"message": "切換釘選",
+		"description": "Command description for toggling pin mode of a sticky note."
+	},
+	"ui_opacity": {
+		"message": "界面透明度",
+		"description": "Label for the UI opacity input."
+	},
+	"undo": {
+		"message": "復原",
+		"description": "undo"
+	},
+	"unsaved": {
+		"message": "未儲存的變更",
+		"description": "Status message for unsaved changes in a document."
+	},
+	"show_add_bookmark_btn_checkbox_label": {
+		"message": "顯示新增捷徑按鈕",
+		"description": "Checkbox label for showing/not showing add bookmark button."
+	},
+	"icon_size_input_label": {
+		"message": "圖示大小",
+		"description": "Label for adjusting bookmark icon size."
+	},
+	"show_label_checkbox_label": {
+		"message": "顯示捷徑標題",
+		"description": "Checkbox label for showing/not showing bookmark label."
+	},
+	"add_bookmark_menu_item": {
+		"message": "新增書籤",
+		"description": "Menu item label for adding bookmark."
+	},
+	"edit_dock_appearance_menu_item": {
+		"message": "設定外觀",
+		"description": "Menu item label for editing dock appearance."
+	},
+	"dock_position_right_radio_label": {
+		"message": "停駐於右側",
+		"description": "Radio label for dock position right."
+	},
+	"dock_position_bottom_radio_label": {
+		"message": "停駐於底端",
+		"description": "Radio label for dock position bottom."
+	},
+	"dock_position_top_radio_label": {
+		"message": "停駐於頂端",
+		"description": "Radio label for dock position top."
+	},
+	"dock_position_left_radio_label": {
+		"message": "停駐於左側",
+		"description": "Radio label for dock position left."
+	},
+	"youtube_link_input_label": {
+		"message": "YouTube影片連結",
+		"description": "Input label for YouTube video link."
+	},
+	"youtube_autoplay_checkbox_label": {
+		"message": "自動播放",
+		"description": "Checkbox label for autoplay YouTube video."
+	},
+	"cannot_found_youtube_video": {
+		"message": "YouTube影片連結格式有誤",
+		"description": "Invalid error message when we cannot found YouTube video ID in the given input."
+	}
 }

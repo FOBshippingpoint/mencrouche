@@ -10,6 +10,8 @@ import {
   executeCommand,
   registerCommand,
   Command,
+  commands,
+  apocalypse,
 } from "./commands";
 import { initSettings } from "./settings";
 import { n81i } from "./utils/n81i";
@@ -18,9 +20,12 @@ import { createSticky, getLatestSticky } from "./sticky";
 import { dataset, saveDataset } from "./myDataset";
 import { toggleSettingsPage } from "./settings";
 import { standardSticky } from "./stickyPlugins/standard";
+import { youtubeSticky } from "./stickyPlugins/youtube";
 import { toDataUrl } from "./utils/toDataUrl";
-import { bookmarkSticky } from "./stickyPlugins/bookmark";
 import { addPublicApi } from "./publicApi";
+import { initContextMenu, registerContextMenu } from "./contextMenu";
+import "./dock";
+import { initDock } from "./dock";
 
 const stickyContainer = $<HTMLDivElement>(".stickyContainer")!;
 
@@ -101,6 +106,7 @@ const defaultCommands: Command[] = [
     isMenuItem: true,
     menuIconName: "lucide-plus",
     makeUndoable() {
+      // TODO: merge new sticky makeUndoable
       let sticky: Sticky | null = null;
       let coord: { left: string; top: string } | null = null;
 
@@ -125,7 +131,7 @@ const defaultCommands: Command[] = [
     defaultShortcut: "C-q",
   },
   {
-    name: "new_bookmark_sticky",
+    name: "new_youtube_sticky",
     isMenuItem: true,
     makeUndoable() {
       let sticky: Sticky | null = null;
@@ -134,9 +140,9 @@ const defaultCommands: Command[] = [
       return {
         execute() {
           if (coord) {
-            sticky = createSticky("bookmark", { coord });
+            sticky = createSticky("youtube", { coord });
           } else {
-            sticky = createSticky("bookmark");
+            sticky = createSticky("youtube");
           }
           coord = { left: sticky.style.left, top: sticky.style.top };
           $<HTMLDivElement>(".stickyContainer")!.append(sticky);
@@ -149,6 +155,7 @@ const defaultCommands: Command[] = [
         },
       };
     },
+    defaultShortcut: "C-A-y",
   },
   {
     name: "delete_sticky",
@@ -276,6 +283,7 @@ async function init() {
     const fragment = document
       .createRange()
       .createContextualFragment(stickyContainerHtml);
+    $(fragment)!.$$(".deleted").kill();
     stickyContainer.replaceChildren(fragment);
   }
 
@@ -306,10 +314,32 @@ async function init() {
     registerCommand(command);
   }
 
+  const menuItems = [];
+  for (const command of defaultCommands) {
+    if (command.isMenuItem) {
+      const menuItem = {
+        name: command.name,
+        icon: command.menuIconName,
+        execute() {
+          if (command.execute) {
+            command.execute();
+          } else if (command.makeUndoable) {
+            apocalypse.write(command.makeUndoable());
+          }
+        },
+      };
+      menuItems.push(menuItem);
+    }
+  }
+  document.body.dataset.contextMenu = "main";
+  registerContextMenu("main", menuItems);
+
   initStickyEnvironment();
+  initContextMenu();
   initSettings();
+  initDock();
   registerSticky(standardSticky);
-  registerSticky(bookmarkSticky);
+  registerSticky(youtubeSticky);
   restoreStickies();
   initCommandPalette();
 }

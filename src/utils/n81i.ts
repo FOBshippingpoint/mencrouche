@@ -7,7 +7,7 @@ interface MessagesJson {
   [key: string]: Message;
 }
 
-interface N81iInitOption {
+interface N81iInitOptions {
   locale: string;
   availableLocales: string[];
   fallback?: string;
@@ -66,7 +66,7 @@ export const n81i = {
    * @returns The initialized i18n module.
    */
   async init(
-    options: N81iInitOption = {
+    options: N81iInitOptions = {
       locale: "en",
       availableLocales: ["en"],
     },
@@ -150,14 +150,14 @@ export const n81i = {
    * The attribute `data-i18n-for` can be used to specify which attribute to set the translation to.
    * @param element - The HTML element to translate.
    */
-  translateElement(element: HTMLElement) {
+  translateElement(element: HTMLElement | DocumentFragment) {
     const children = element.querySelectorAll("[data-i18n]");
     for (const el of [...children, element]) {
-      const { i18n, i18nFor } = (el as any).dataset;
+      const { i18n, i18nFor } = el.dataset ?? {};
       if (i18n) {
         this.translateLater(i18n, (message) => {
           if (i18nFor) {
-            el.setAttribute(i18nFor, message);
+            (el as any).setAttribute(i18nFor, message);
           } else {
             el.textContent = message;
           }

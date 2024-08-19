@@ -3,17 +3,7 @@ import { initShortcutManager } from "./settings";
 import { $ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
 
-const contextMenuItemTemplate = $<HTMLTemplateElement>("#menuItem")!;
-const contextMenu = $<HTMLDivElement>("#contextMenu")!;
-
-function getIcon(icon: string) {
-  const menuItemIconsContainer = (
-    $<HTMLTemplateElement>("#menuItemIcons")!.content.cloneNode(true) as any
-  ).firstElementChild as HTMLDivElement;
-  return menuItemIconsContainer.getElementsByClassName(icon)[0];
-}
-
-interface Undoable {
+export interface Undoable {
   execute: () => void;
   undo: () => void;
 }
@@ -27,7 +17,7 @@ export interface Command {
   defaultShortcut?: string;
 }
 
-const commands: Command[] = [];
+export const commands: Command[] = [];
 
 // Cuz 'history' already exists in Web API.
 class Apocalypse {
@@ -199,46 +189,6 @@ export function initCommandPalette() {
   );
 }
 
-function updateContextMenu() {
-  const frag = document.createDocumentFragment();
-  for (const command of commands) {
-    if (command.isMenuItem) {
-      const menuBtn = $<HTMLDivElement>(
-        (contextMenuItemTemplate.content.cloneNode(true) as any)
-          .firstElementChild,
-      )!;
-      const span = menuBtn.$<HTMLSpanElement>("span")!;
-      span.dataset.i18n = command.name;
-      if (command.menuIconName) {
-        const icon = getIcon(command.menuIconName);
-        menuBtn.insertAdjacentElement("beforeend", icon);
-      }
-      n81i.translateElement(menuBtn.$<HTMLSpanElement>("span")!);
-      menuBtn.on("click", () => {
-        executeCommand(command.name);
-        contextMenu.classList.add("none");
-      });
-      frag.appendChild(menuBtn);
-    }
-  }
-  contextMenu.replaceChildren(frag);
-}
-
-document.on("contextmenu", (e) => {
-  if (!$("#settings")!.classList.contains("none")) return;
-
-  e.preventDefault();
-  contextMenu.classList.remove("none");
-  contextMenu.style.top = `${Math.min(e.clientY, document.body.getBoundingClientRect().height - contextMenu.getBoundingClientRect().height)}px`;
-  contextMenu.style.left = `${Math.min(e.clientX, document.body.getBoundingClientRect().width - contextMenu.getBoundingClientRect().width)}px`;
-});
-
-document.on("click", (e) => {
-  if ((e as any).target.offsetParent != contextMenu) {
-    contextMenu.classList.add("none");
-  }
-});
-
 export function executeCommand(commandName: string) {
   const command = commands.find(({ name }) => name === commandName);
   if (command) {
@@ -264,6 +214,5 @@ export function registerCommand(command: Command) {
       executeCommand(command.name),
     );
   }
-  updateContextMenu();
   commands.push(command);
 }

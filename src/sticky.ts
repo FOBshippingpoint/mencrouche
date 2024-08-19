@@ -27,7 +27,6 @@ const stickyTemplate = $<HTMLTemplateElement>("#sticky")!;
 const stickySizeDummy = $<HTMLDivElement>("#stickySizeDummy")!;
 
 let stickyContainer: Allowance<HTMLDivElement>;
-let stickyRecycleBin: Allowance<HTMLDivElement>;
 let pointerX: number;
 let pointerY: number;
 let mutationObserver: MutationObserver;
@@ -42,7 +41,6 @@ export function getAllStickies(): readonly Sticky[] {
 
 export function initStickyEnvironment() {
   stickyContainer = $<HTMLDivElement>(".stickyContainer")!;
-  stickyRecycleBin = $<HTMLDivElement>(".stickyRecycleBin")!;
 
   stickyContainer.on("pointermove", (e) => {
     pointerX = e.clientX - stickyContainer!.getBoundingClientRect().left;
@@ -224,52 +222,6 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
     document.removeEventListener("pointerup", resizeEnd);
   }
 
-  sticky.on("pointerdown", () => {
-    moveToTop(sticky);
-    const idx = stickies.indexOf(sticky);
-    if (idx !== -1) {
-      stickies.splice(idx, 1);
-      stickies.push(sticky);
-    }
-  });
-
-  moveToTop(sticky);
-  stickies.push(sticky);
-  mutationObserver.observe(sticky, { attributeFilter: ["class"] });
-
-  deleteBtn.on("click", () => {
-    sticky.on(
-      "animationend",
-      () => {
-        sticky.remove();
-        stickyRecycleBin.append(sticky);
-      },
-      { once: true },
-    );
-    sticky.classList.add("deleted");
-
-    // Select previous sticky.
-    const idx = stickies.indexOf(sticky);
-    if (idx !== -1) {
-      stickies.splice(idx, 1);
-    }
-    stickies.at(-1)?.focus();
-  });
-
-  maximizeToggleLbl.on("change", () => {
-    maximizeToggleLbl.$$("svg").do((el) => el.classList.toggle("none"));
-    sticky.classList.toggle("maximized");
-
-    sticky.dispatchEvent(
-      new CustomEvent(
-        sticky.classList.contains("maximized") ? "minimize" : "maximize",
-      ),
-    );
-  });
-
-  // colorful outline
-  // [].forEach.call($$("*"), function (a) { a.style.outline = "1px solid #" + (~~(Math.random() * (1 << 24))).toString(16); });
-
   const result = Object.assign(sticky, {
     delete() {
       deleteBtn.click();
@@ -280,7 +232,7 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
     recover() {
       if (sticky.classList.contains("deleted")) {
         sticky.classList.remove("deleted");
-        stickyRecycleBin.removeChild(sticky);
+        sticky.classList.remove("none");
         stickyContainer.appendChild(sticky);
       }
     },
@@ -324,6 +276,56 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
     plugin: {},
   });
 
+  sticky.on("pointerdown", () => {
+    moveToTop(sticky);
+    const idx = stickies.indexOf(sticky);
+    if (idx !== -1) {
+      stickies.splice(idx, 1);
+      stickies.push(sticky);
+    }
+  });
+
+  moveToTop(sticky);
+  stickies.push(sticky);
+  mutationObserver.observe(sticky, { attributeFilter: ["class"] });
+
+  deleteBtn.on("click", () => {
+    console.log("click deletebtn")
+    sticky.on(
+      "animationend",
+      () => {
+        sticky.classList.add("none");
+      },
+      { once: true },
+    );
+    sticky.classList.add("deleted");
+
+    // Select previous sticky.
+    const idx = stickies.indexOf(sticky);
+    if (idx !== -1) {
+      stickies.splice(idx, 1);
+    }
+    stickies.at(-1)?.focus();
+
+    for (const custom of getRelatedCustomStickies(sticky)) {
+      custom.onDelete(result);
+    }
+  });
+
+  maximizeToggleLbl.on("change", () => {
+    maximizeToggleLbl.$$("svg").do((el) => el.classList.toggle("none"));
+    sticky.classList.toggle("maximized");
+
+    sticky.dispatchEvent(
+      new CustomEvent(
+        sticky.classList.contains("maximized") ? "minimize" : "maximize",
+      ),
+    );
+  });
+
+  // colorful outline
+  // [].forEach.call($$("*"), function (a) { a.style.outline = "1px solid #" + (~~(Math.random() * (1 << 24))).toString(16); });
+
   for (const custom of getRelatedCustomStickies(sticky)) {
     custom.onRestore(result);
   }
@@ -333,21 +335,21 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
 
 const customStickies = new Map<string, CustomSticky>();
 
-interface CreateStickyOption {
+interface CreateStickyOptions {
   coord?: {
     left: string;
     top: string;
   };
 }
 
-export function createSticky(type?: string, option: CreateStickyOption = {}) {
+export function createSticky(type?: string, options: CreateStickyOptions = {}) {
   const sticky = $<HTMLDivElement>(
     (stickyTemplate.content.cloneNode(true) as any).firstElementChild,
   )!;
 
-  if (option.coord) {
-    sticky.style.left = option.coord.left;
-    sticky.style.top = option.coord.top;
+  if (options.coord) {
+    sticky.style.left = options.coord.left;
+    sticky.style.top = options.coord.top;
   } else {
     sticky.style.left = `${pointerX - stickySizeDummy.getBoundingClientRect().width / 2}px`;
     sticky.style.top = `${Math.max(pointerY - 10, 0)}px`;
@@ -412,4 +414,4 @@ export function getCustomStickyTypes() {
 
 initStickyEnvironment();
 
-export { stickyContainer, stickyRecycleBin };
+export { stickyContainer };

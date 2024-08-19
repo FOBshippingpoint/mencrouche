@@ -41,7 +41,7 @@ The `mc` API provides a `registerSticky` method. Here’s a simple clock sticky 
 
 ```javascript
 let clearInterval;
-function startUpdating() {
+function startUpdating(span) {
   clearInterval = setInterval(() => {
     span.textContent = new Date().toLocaleString();
   }, 100);
@@ -49,17 +49,17 @@ function startUpdating() {
 mc.registerSticky({
   type: "clock", // <-- Sticky type
   onNew(sticky) { // <-- Called when the sticky is newly created
-    const span = $$$("span");
+    const span = $$$("span"); // Create span element
     span.classList.add("clock");
-    sticky.replaceBody(span); // <-- Inject span element into the sticky body
-    startUpdating();
+    sticky.replaceBody(span); // Inject span element into the sticky body
+    startUpdating(span);
   },
   onRestore(sticky) { // <-- Called when deserialized or restored from the recycle bin
-    const span = sticky.$(".clock"); // <-- JQuery-like selectors API
-    startUpdating();
+    const span = sticky.$(".clock"); // JQuery-like selectors API
+    startUpdating(span);
   },
   onDelete() { // <-- Called when the sticky is deleted
-    clearInterval(); // <-- Run clean-up scripts
+    clearInterval(); // Run clean-up scripts
   },
 });
 ```

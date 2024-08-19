@@ -1,31 +1,167 @@
 {
-  "extension_description": {
-    "message": "New tab",
-    "description": "Description of the extension."
+  "add_bookmark_btn": {
+    "message": "Add Bookmark",
+    "description": "Button text for adding bookmark."
   },
-  "set_background_image": {
-    "message": "Set background image",
-    "description": "Command description for setting the background image."
+  "background_image_link": {
+    "message": "Background image URL",
+    "description": "Label for the background image URL input."
   },
-  "toggle_dark_mode": {
-    "message": "Toggle dark mode",
-    "description": "Command description for toggling dark mode on/off."
+  "background_image_url_input_placeholder": {
+    "message": "Paste image URL here",
+    "description": "Placeholder text for the background image URL input."
   },
-  "open_youtube": {
-    "message": "Open YouTube",
-    "description": "Command description for opening YouTube."
+  "bookmark_href_label": {
+    "message": "Link",
+    "description": "Label text for the bookmark link input."
   },
+  "bookmark_icon_label": {
+    "message": "Icon (svg or dataurl)",
+    "description": "Label text for the bookmark link input."
+  },
+  "bookmark_label_label": {
+    "message": "Label",
+    "description": "Label text for the bookmark label input."
+  },
+	"bookmark_more_options": {
+		"message": "More Options",
+		"description": "More options button for bookmark editing dialog."
+	},
+	"bookmark_target_label": {
+		"message": "Opening Preference",
+		"description": "Label text for the bookmark anchor target."
+	},
+	"cancel_settings_btn": {
+    "message": "Cancel",
+    "description": "Text for the cancel settings button."
+  },
+	"cancel_submit_btn": {
+		"message": "Cancel",
+		"description": "Button text for submitting form."
+	},
   "command_palette_search_placeholder": {
     "message": "Search commands...",
     "description": "Placeholder text for the command palette search bar."
+  },
+  "confirm_delete_document": {
+    "message": "Do you want to delete the document?",
+    "description": "Confirmation message while deleting document."
+  },
+  "delete_all_stickies": {
+    "message": "Delete all sticky notes",
+    "description": "Command description for deleting all sticky notes."
+  },
+  "delete_bookmark_menu_item": {
+    "message": "Delete",
+    "description": "Context menu item label text for deleting bookmark."
+  },
+  "delete_document_btn": {
+    "message": "Delete",
+    "description": "Text for the delete document button."
+  },
+  "delete_sticky": {
+    "message": "Delete sticky note",
+    "description": "Command description for deleting a sticky note."
   },
   "dnd_image_instruction": {
     "message": "Drag & drop an image here, or click to select a file",
     "description": "Instructions for setting the background image via drag and drop."
   },
+  "duplicate_sticky": {
+    "message": "Duplicate sticky note",
+    "description": "Command description for duplicating a sticky note."
+  },
+  "edit_bookmark_menu_item": {
+    "message": "Edit",
+    "description": "Context menu item label text for editing bookmark."
+  },
+  "export_document_btn": {
+    "message": "Export",
+    "description": "Text for the export document button."
+  },
+  "extension_description": {
+    "message": "New tab",
+    "description": "Description of the extension."
+  },
+  "image_url_is_not_valid_alert": {
+    "message": "Invalid image URL. Please try another link.",
+    "description": "Alert message for an invalid image URL."
+  },
+  "new_bookmark_sticky": {
+    "message": "New bookmark sticky",
+    "description": "Command description for adding a new bookmark sticky."
+  },
+  "new_standard_sticky": {
+    "message": "New sticky note",
+    "description": "Command description for adding a new sticky note."
+  },
+  "new_youtube_sticky": {
+    "message": "New YouTube Sticky",
+    "description": "Command description for adding a new youtube sticky note."
+  },
+  "open_bookmark_in_current_tab_menu_item": {
+    "message": "Open in current tab",
+    "description": "Context menu item label text for opening bookmark link in current tab."
+  },
+  "open_bookmark_in_new_tab_menu_item": {
+    "message": "Open in new tab",
+    "description": "Context menu item label text for opening bookmark link in a new tab."
+  },
+  "open_youtube": {
+    "message": "Open YouTube",
+    "description": "Command description for opening YouTube."
+  },
+  "record_shortcut_btn": {
+    "message": "Record",
+    "description": "Text for the record shortcut button."
+  },
+  "redo": {
+    "message": "Redo",
+    "description": "redo"
+  },
+  "reset_btn": {
+    "message": "Reset",
+    "description": "Text for the button to reset shortcut to default."
+  },
+  "save_and_close_settings_btn": {
+    "message": "Save & close",
+    "description": "Text for the save and close settings button."
+  },
+  "save_document": {
+    "message": "Save document",
+    "description": "Command description for saving documents."
+  },
+  "save_settings_btn": {
+    "message": "Save",
+    "description": "Text for the save settings button."
+  },
+  "saved": {
+    "message": "Saved",
+    "description": "Status message for a saved document."
+  },
+  "saving": {
+    "message": "Saving...",
+    "description": "Status message while saving a document."
+  },
+  "set_background_image": {
+    "message": "Set background image",
+    "description": "Command description for setting the background image."
+  },
   "set_to_default_btn": {
     "message": "Reset to default",
     "description": "Button text for resetting the background image to default."
+  },
+  "settings_appearance_background_section": {
+    "message": "Background",
+    "description": "Title for the background subsection in appearance settings."
+  },
+  "settings_appearance_section": {
+    "message": "Appearance",
+    "description": "Title for the appearance section in settings."
+  },
+  "settings_language_section": {
+    "message": "Language",
+    "description": "Title for the language section in settings."
   },
   "settings_shortcuts_section": {
     "message": "Shortcuts",
@@ -39,21 +175,29 @@
     "message": "Start typing...",
     "description": "Placeholder text for the sticky note textarea."
   },
-  "save_document": {
-    "message": "Save document",
-    "description": "Command description for saving documents."
+  "stop_record_shortcut_btn": {
+    "message": "Stop",
+    "description": "Text for the stop recording shortcut button."
   },
-  "background_image_url_input_placeholder": {
-    "message": "Paste image URL here",
-    "description": "Placeholder text for the background image URL input."
+	"submit_btn": {
+		"message": "Confirm",
+		"description": "Button text for submitting form."
+	},
+  "submit_bookmark_btn": {
+    "message": "Submit",
+    "description": "Button text for submitting bookmark."
   },
-  "image_url_is_not_valid_alert": {
-    "message": "Invalid image URL. Please try another link.",
-    "description": "Alert message for an invalid image URL."
+  "toggle_auto_arrange": {
+    "message": "Toggle arrange/free mode",
+    "description": "Command description for toggling between arrange and free mode for sticky notes."
   },
-  "toggle_settings": {
-    "message": "Toggle settings page",
-    "description": "Command description for toggling the settings page."
+  "toggle_command_palette": {
+    "message": "Toggle command palette",
+    "description": "Command description for toggling the command palette."
+  },
+  "toggle_dark_mode": {
+    "message": "Toggle dark mode",
+    "description": "Command description for toggling dark mode on/off."
   },
   "toggle_ghost_mode": {
     "message": "Toggle ghost mode",
@@ -63,140 +207,84 @@
     "message": "Toggle global ghost mode",
     "description": "Command description for toggling global ghost mode."
   },
-  "toggle_command_palette": {
-    "message": "Toggle command palette",
-    "description": "Command description for toggling the command palette."
+  "toggle_maximize_sticky": {
+    "message": "Toggle maximize",
+    "description": "Command description for toggling maximize/minimize of a sticky note."
   },
-  "new_standard_sticky": {
-    "message": "New sticky note",
-    "description": "Command description for adding a new sticky note."
-  },
-  "new_bookmark_sticky": {
-    "message": "New bookmark sticky",
-    "description": "Command description for adding a new bookmark sticky."
-  },
-  "delete_sticky": {
-    "message": "Delete sticky note",
-    "description": "Command description for deleting a sticky note."
-  },
-  "delete_all_stickies": {
-    "message": "Delete all sticky notes",
-    "description": "Command description for deleting all sticky notes."
-  },
-  "toggle_sticky_edit_mode": {
-    "message": "Toggle edit mode",
-    "description": "Command description for toggling edit/view mode for the current sticky note."
-  },
-  "toggle_auto_arrange": {
-    "message": "Toggle arrange/free mode",
-    "description": "Command description for toggling between arrange and free mode for sticky notes."
-  },
-  "settings_language_section": {
-    "message": "Language",
-    "description": "Title for the language section in settings."
-  },
-  "settings_appearance_section": {
-    "message": "Appearance",
-    "description": "Title for the appearance section in settings."
-  },
-  "delete_document_btn": {
-    "message": "Delete",
-    "description": "Text for the delete document button."
-  },
-  "export_document_btn": {
-    "message": "Export",
-    "description": "Text for the export document button."
-  },
-  "save_settings_btn": {
-    "message": "Save",
-    "description": "Text for the save settings button."
-  },
-  "save_and_close_settings_btn": {
-    "message": "Save & close",
-    "description": "Text for the save and close settings button."
-  },
-  "cancel_settings_btn": {
-    "message": "Cancel",
-    "description": "Text for the cancel settings button."
-  },
-  "record_shortcut_btn": {
-    "message": "Record",
-    "description": "Text for the record shortcut button."
-  },
-  "stop_record_shortcut_btn": {
-    "message": "Stop",
-    "description": "Text for the stop recording shortcut button."
-  },
-  "reset_btn": {
-    "message": "Reset",
-    "description": "Text for the button to reset shortcut to default."
-  },
-  "background_image_link": {
-    "message": "Background image URL",
-    "description": "Label for the background image URL input."
-  },
-  "settings_appearance_background_section": {
-    "message": "Background",
-    "description": "Title for the background subsection in appearance settings."
-  },
-  "ui_opacity": {
-    "message": "UI Opacity",
-    "description": "Label for the UI opacity input."
+  "toggle_settings": {
+    "message": "Toggle settings page",
+    "description": "Command description for toggling the settings page."
   },
   "toggle_split_view": {
     "message": "Toggle split view",
     "description": "Command description for toggling split view of sticky notes."
   },
-  "toggle_maximize_sticky": {
-    "message": "Toggle maximize",
-    "description": "Command description for toggling maximize/minimize of a sticky note."
+  "toggle_sticky_edit_mode": {
+    "message": "Toggle edit mode",
+    "description": "Command description for toggling edit/view mode for the current sticky note."
   },
   "toggle_sticky_pin_mode": {
     "message": "Toggle pin",
     "description": "Command description for toggling pin mode of a sticky note."
   },
-  "duplicate_sticky": {
-    "message": "Duplicate sticky note",
-    "description": "Command description for duplicating a sticky note."
-  },
-  "saved": {
-    "message": "Saved",
-    "description": "Status message for a saved document."
-  },
-  "unsaved": {
-    "message": "Unsaved changes",
-    "description": "Status message for unsaved changes in a document."
-  },
-  "saving": {
-    "message": "Saving...",
-    "description": "Status message while saving a document."
-  },
-  "confirm_delete_document": {
-    "message": "Do you want to delete the document?",
-    "description": "Confirmation message while deleting document."
+  "ui_opacity": {
+    "message": "UI Opacity",
+    "description": "Label for the UI opacity input."
   },
   "undo": {
     "message": "Undo",
     "description": "undo"
   },
-  "redo": {
-    "message": "Redo",
-    "description": "redo"
+  "unsaved": {
+    "message": "Unsaved changes",
+    "description": "Status message for unsaved changes in a document."
   },
-  "bookmark_link_label": {
-    "message": "Link",
-    "description": "Label text for the bookmark link input."
+  "show_add_bookmark_btn_checkbox_label": {
+    "message": "Show Add Shortcut Button",
+    "description": "Checkbox label for showing or hiding the add bookmark button."
   },
-  "bookmark_icon_label": {
-    "message": "Icon (svg or dataurl)",
-    "description": "Label text for the bookmark link input."
+  "icon_size_input_label": {
+    "message": "Icon Size",
+    "description": "Label for adjusting the bookmark icon size."
   },
-  "submit_bookmark_btn": {
-    "message": "Submit",
-    "description": "Button text for submitting bookmark."
+  "show_label_checkbox_label": {
+    "message": "Show Shortcut Label",
+    "description": "Checkbox label for showing or hiding the bookmark label."
   },
-  "add_bookmark_btn": {
+  "add_bookmark_menu_item": {
     "message": "Add Bookmark",
-    "description": "Button text for adding bookmark."
+    "description": "Menu item label for adding a bookmark."
+  },
+  "edit_dock_appearance_menu_item": {
+    "message": "Edit Appearance",
+    "description": "Menu item label for editing dock appearance."
+  },
+  "dock_position_right_radio_label": {
+    "message": "Dock on Right",
+    "description": "Radio label for positioning the dock on the right side."
+  },
+  "dock_position_bottom_radio_label": {
+    "message": "Dock on Bottom",
+    "description": "Radio label for positioning the dock at the bottom."
+  },
+  "dock_position_top_radio_label": {
+    "message": "Dock on Top",
+    "description": "Radio label for positioning the dock at the top."
+  },
+  "dock_position_left_radio_label": {
+    "message": "Dock on Left",
+    "description": "Radio label for positioning the dock on the left side."
+  },
+  "youtube_link_input_label": {
+    "message": "YouTube Video Link",
+    "description": "Input label for YouTube video link."
+  },
+  "youtube_autoplay_checkbox_label": {
+    "message": "Automatically Play Video",
+    "description": "Checkbox label for autoplay YouTube video."
+  },
+  "cannot_found_youtube_video": {
+    "message": "YouTube video link is invalid.",
+    "description": "Invalid error message when we cannot found YouTube video ID in the given input."
   }
 }
