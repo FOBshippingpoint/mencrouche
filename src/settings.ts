@@ -634,8 +634,8 @@ export function initShortcutManager() {
   return singleton;
 }
 
-hueWheel.on("mousedown", () => hueWheel.on("mousemove", adjustPaletteHue));
-hueWheel.on("mouseup", () => hueWheel.off("mousemove", adjustPaletteHue));
+hueWheel.on("pointerdown", () => hueWheel.on("pointermove", adjustPaletteHue));
+hueWheel.on("pointerup", () => hueWheel.off("pointermove", adjustPaletteHue));
 resetPaletteHueBtn.on("click", () => {
   document.documentElement.style.removeProperty("--palette-hue");
   changesManager.addChange(() => {

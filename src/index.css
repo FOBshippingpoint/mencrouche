@@ -36,6 +36,11 @@
   --well-2: var(--color-6);
   --text-1: var(--color-16);
   --text-2: var(--color-12);
+
+  button {
+    --_ink-shadow: var(--_ink-shadow-light);
+    --_bg: var(--_bg-light);
+  }
 }
 [data-theme="dark"],
 .dark {
@@ -47,6 +52,20 @@
   --well-2: var(--color-16);
   --text-1: var(--color-1);
   --text-2: var(--color-5);
+
+  --link: oklch(90% 80% var(--palette-hue));
+  --link-visited: oklch(90% 80% calc(var(--palette-hue) * 1.2));
+
+  button {
+    --_ink-shadow: var(--_ink-shadow-dark);
+    --_bg: var(--_bg-dark);
+  }
+  button[type="submit"] {
+    --_bg: var(--surface-3);
+  }
+  dialog {
+    background-color: var(--surface-2);
+  }
 }
 
 body::before {
@@ -169,7 +188,7 @@ nav {
   background-color: var(--surface-2);
   color: var(--text-2);
   box-shadow: var(--shadow-2);
-  border-radius: var(--radius-conditional-2);
+  border-radius: var(--radius-2);
   width: 100%;
   height: 100%;
   display: flex;
@@ -385,6 +404,9 @@ nav {
 .youtube .stickyBody {
   padding: 0;
 }
+.ghost.youtube iframe {
+  border-radius: 12px;
+}
 
 .stickyContainer {
   position: absolute;
@@ -489,6 +511,7 @@ nav {
     padding-bottom: var(--size-3);
   }
   #hueWheel {
+    touch-action: none;
     background: conic-gradient(
       from 90deg,
       hsl(0, 100%, 50%),

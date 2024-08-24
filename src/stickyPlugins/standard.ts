@@ -1,8 +1,12 @@
 import { marked } from "marked";
-import { CustomSticky, Sticky, StickyPlugin } from "../sticky";
+import {
+  CustomSticky,
+  Sticky,
+  StickyPlugin,
+  StickyLifeCycleState,
+} from "../sticky";
 import { dataset } from "../myDataset";
 import { getWidgets } from "./getWidgets";
-import { apocalypse } from "../commands";
 
 declare module "../sticky" {
   interface StickyPluginRegistry {
@@ -13,86 +17,6 @@ declare module "../sticky" {
 interface StandardPlugin extends StickyPlugin {
   toggleSplitView: () => void;
   toggleEditMode: () => void;
-}
-
-export function enable(sticky: Sticky, isRestore: boolean): Sticky {
-  const widgets = getWidgets(sticky, "standardStickyWidgets");
-  const editModeToggleLbl = widgets.$<HTMLLabelElement>(".editModeToggleLbl")!;
-  const textarea = widgets.$<HTMLTextAreaElement>("textarea")!;
-  const preview = widgets.$<HTMLDivElement>(".preview")!;
-
-  function updatePreview() {
-    const html = marked.parse(textarea.value) as string;
-    const fragment = document.createRange().createContextualFragment(html);
-    preview.replaceChildren(fragment);
-  }
-
-  textarea.on("input", () => {
-    if (sticky.classList.contains("splitView")) {
-      updatePreview();
-      sticky.dataset.prevInput = textarea.value;
-    }
-  });
-  textarea.on("input", () => (textarea.dataset.value = textarea.value));
-  handleTextAreaPaste(textarea);
-  preview.classList.add("preview");
-
-  sticky.replaceBody(textarea, preview);
-  sticky.addControlWidget(editModeToggleLbl);
-  sticky.on("duplicate", (e: any) => {
-    enable(e.detail, true);
-  });
-
-  editModeToggleLbl.on("change", () => {
-    editModeToggleLbl.$$("svg").do((el) => el.classList.toggle("none"));
-    sticky.classList.toggle("editMode");
-    if (!sticky.classList.contains("editMode") /* Change to view mode */) {
-      if (sticky.dataset.prevInput !== textarea.value) {
-        updatePreview();
-      }
-      sticky.focus();
-    }
-    textarea.disabled = !textarea.disabled;
-    textarea.hidden = !textarea.hidden;
-    sticky.dataset.prevInput = textarea.value;
-    preview.hidden = !preview.hidden;
-    textarea.focus();
-  });
-
-  sticky.plugin.standard = {
-    toggleEditMode() {
-      editModeToggleLbl.click();
-    },
-    toggleSplitView() {
-      if (!sticky.classList.contains("editMode")) {
-        editModeToggleLbl.click();
-      }
-      updatePreview();
-      sticky.classList.toggle("splitView");
-      textarea.focus();
-    },
-  };
-
-  sticky.classList.add("standard");
-  if (!isRestore) {
-    // Default set to edit mode.
-    sticky.classList.add("editMode");
-  }
-
-  function toggleDisable(disable: boolean) {
-    sticky
-      .$$("textarea,input,button")
-      .do((el) => ((el as any).disabled = disable));
-  }
-  sticky.on("classchange", () => {
-    if (sticky.classList.contains("pin")) {
-      toggleDisable(true);
-    } else {
-      toggleDisable(false);
-    }
-  });
-
-  return sticky;
 }
 
 function handleTextAreaPaste(textarea: HTMLTextAreaElement) {
@@ -152,20 +76,91 @@ function paste(textarea: HTMLTextAreaElement, toPaste: string) {
 
 export const standardSticky: CustomSticky = {
   type: "standard",
-  onNew(sticky: Sticky) {
-    enable(sticky, false);
-  },
-  onRestore(sticky: Sticky) {
-    enable(sticky, true);
-  },
-  onDelete(sticky: Sticky) {
-    apocalypse.write({
-      execute() {
-        sticky.delete();
-      },
-      undo() {
-        sticky.recover();
-      },
-    });
+  on(sticky: Sticky, state: StickyLifeCycleState) {
+    if (state === "delete") {
+      return;
+    }
+
+    const widgets = getWidgets(sticky, "standardStickyWidgets");
+    const editModeToggleLbl =
+      widgets.$<HTMLLabelElement>(".editModeToggleLbl")!;
+    const textarea = widgets.$<HTMLTextAreaElement>("textarea")!;
+    const preview = widgets.$<HTMLDivElement>(".preview")!;
+
+    if (state === "save") {
+      sticky.dataset.prevInput = textarea.value;
+      return;
+    }
+
+    if (state === "create") {
+      sticky.replaceBody(textarea, preview);
+      sticky.addControlWidget(editModeToggleLbl);
+      // Default set to edit mode.
+      sticky.classList.add("editMode");
+    }
+
+    if (state === "restoreFromHtml") {
+      textarea.value = sticky.dataset.prevInput ?? "";
+    }
+
+    if (state === "create" || state === "restoreFromHtml") {
+      handleTextAreaPaste(textarea);
+
+      function updatePreview() {
+        const html = marked.parse(textarea.value) as string;
+        const fragment = document.createRange().createContextualFragment(html);
+        preview.replaceChildren(fragment);
+      }
+
+      textarea.on("input", () => {
+        if (sticky.classList.contains("splitView")) {
+          updatePreview();
+          sticky.dataset.prevInput = textarea.value;
+        }
+      });
+      textarea.on("input", () => (textarea.dataset.value = textarea.value));
+      editModeToggleLbl.on("change", () => {
+        editModeToggleLbl.$$("svg").do((el) => el.classList.toggle("none"));
+        sticky.classList.toggle("editMode");
+        if (!sticky.classList.contains("editMode") /* Change to view mode */) {
+          if (sticky.dataset.prevInput !== textarea.value) {
+            updatePreview();
+          }
+          sticky.focus();
+        }
+        textarea.disabled = !textarea.disabled;
+        textarea.hidden = !textarea.hidden;
+        sticky.dataset.prevInput = textarea.value;
+        preview.hidden = !preview.hidden;
+        textarea.focus();
+      });
+
+      function toggleDisable(disable: boolean) {
+        sticky
+          .$$("textarea,input,button")
+          .do((el) => ((el as any).disabled = disable));
+      }
+      sticky.on("classchange", () => {
+        if (sticky.classList.contains("pin")) {
+          toggleDisable(true);
+        } else {
+          toggleDisable(false);
+        }
+      });
+
+      sticky.plugin.standard = {
+        toggleEditMode() {
+          editModeToggleLbl.click();
+        },
+        toggleSplitView() {
+          if (!sticky.classList.contains("editMode")) {
+            editModeToggleLbl.click();
+          }
+          updatePreview();
+          sticky.classList.toggle("splitView");
+          textarea.focus();
+        },
+      };
+    }
   },
 };

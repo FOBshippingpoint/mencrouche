@@ -1,8 +1,11 @@
 import {
+  CreateStickyOptions,
   Sticky,
   enableFunctionality,
+  getRelatedCustomStickies,
   initStickyEnvironment,
   registerSticky,
+  stickyManager,
 } from "./sticky";
 import { $, $$ } from "./utils/dollars";
 import {
@@ -10,22 +13,43 @@ import {
   executeCommand,
   registerCommand,
   Command,
-  commands,
   apocalypse,
 } from "./commands";
 import { initSettings } from "./settings";
 import { n81i } from "./utils/n81i";
-import { switchDocumentStatus } from "./documentStatus";
-import { createSticky, getLatestSticky } from "./sticky";
-import { dataset, saveDataset } from "./myDataset";
+import { saveDocument, switchDocumentStatus } from "./documentStatus";
+import { createSticky } from "./sticky";
+import { dataset, } from "./myDataset";
 import { toggleSettingsPage } from "./settings";
 import { standardSticky } from "./stickyPlugins/standard";
 import { youtubeSticky } from "./stickyPlugins/youtube";
-import { toDataUrl } from "./utils/toDataUrl";
 import { addPublicApi } from "./publicApi";
 import { initContextMenu, registerContextMenu } from "./contextMenu";
 import "./dock";
 import { initDock } from "./dock";
+
+function newSticky(type: string) {
+  let sticky: Sticky | null = null;
+  let options: CreateStickyOptions | null = null;
+
+  if (options) {
+    sticky = createSticky(type, options);
+  } else {
+    sticky = createSticky(type);
+  }
+  options = {
+    coord: {
+      left: sticky.offsetLeft,
+      top: sticky.offsetTop,
+    },
+    size: {
+      width: sticky.offsetWidth,
+      height: sticky.offsetHeight,
+    },
+  };
+
+  return sticky;
+}
 
 const stickyContainer = $<HTMLDivElement>(".stickyContainer")!;
 
@@ -62,22 +86,7 @@ const defaultCommands: Command[] = [
     name: "save_document",
     isMenuItem: false,
     async execute() {
-      switchDocumentStatus("saving");
-      let html = $(".stickyContainer")!.innerHTML;
-
-      const urls = dataset.getItem("urls", []);
-      if (urls) {
-        const promises = urls.map(async ({ blobUrl }) => {
-          const dataUrl = await toDataUrl(blobUrl);
-          return { blobUrl, dataUrl };
-        });
-        const blobToDataUrlMappings = await Promise.all(promises);
-        dataset.setItem("urls", blobToDataUrlMappings);
-      }
-
-      localStorage.setItem("doc", html);
-      saveDataset();
-      switchDocumentStatus("saved");
+      saveDocument();
     },
     defaultShortcut: "C-s",
   },
@@ -96,8 +105,7 @@ const defaultCommands: Command[] = [
     name: "delete_all_stickies",
     isMenuItem: false,
     execute() {
-      // TODO: use the approach like getLatestSticky()
-      $$<HTMLButtonElement>(".sticky .deleteBtn")!.do((el) => el.click());
+      stickyManager.deleteAll();
     },
     defaultShortcut: "C-A-x",
   },
@@ -105,54 +113,19 @@ const defaultCommands: Command[] = [
     name: "new_standard_sticky",
     isMenuItem: true,
     menuIconName: "lucide-plus",
-    makeUndoable() {
-      // TODO: merge new sticky makeUndoable
-      let sticky: Sticky | null = null;
-      let coord: { left: string; top: string } | null = null;
-
-      return {
-        execute() {
-          if (coord) {
-            sticky = createSticky("standard", { coord });
-          } else {
-            sticky = createSticky("standard");
-          }
-          coord = { left: sticky.style.left, top: sticky.style.top };
-          $<HTMLDivElement>(".stickyContainer")!.append(sticky);
-        },
-        undo() {
-          if (sticky) {
-            sticky.forceDelete();
-            sticky = null;
-          }
-        },
-      };
+    execute() {
+      const sticky = newSticky("standard");
+      stickyManager.add(sticky);
     },
     defaultShortcut: "C-q",
   },
   {
     name: "new_youtube_sticky",
     isMenuItem: true,
-    makeUndoable() {
-      let sticky: Sticky | null = null;
-      let coord: { left: string; top: string } | null = null;
-
-      return {
-        execute() {
-          if (coord) {
-            sticky = createSticky("youtube", { coord });
-          } else {
-            sticky = createSticky("youtube");
-          }
-          coord = { left: sticky.style.left, top: sticky.style.top };
-          $<HTMLDivElement>(".stickyContainer")!.append(sticky);
-        },
-        undo() {
-          if (sticky) {
-            sticky.forceDelete();
-            sticky = null;
-          }
-        },
+    execute() {
+      const sticky = newSticky("youtube");
+      sticky.plugin.youtube.onSubmit = () => {
+        stickyManager.add(sticky);
       };
     },
     defaultShortcut: "C-A-y",
@@ -162,7 +135,7 @@ const defaultCommands: Command[] = [
     isMenuItem: true,
     menuIconName: "lucide-trash",
     execute() {
-      getLatestSticky()?.delete();
+      stickyManager.deleteLatest();
     },
     defaultShortcut: "A-x",
   },
@@ -179,7 +152,7 @@ const defaultCommands: Command[] = [
     isMenuItem: true,
     menuIconName: "lucide-columns-2",
     execute() {
-      getLatestSticky()?.plugin.standard?.toggleSplitView();
+      stickyManager.getLatestSticky()?.plugin.standard.toggleSplitView();
     },
     defaultShortcut: "A-v",
   },
@@ -188,7 +161,7 @@ const defaultCommands: Command[] = [
     isMenuItem: true,
     menuIconName: "lucide-maximize-2",
     execute() {
-      getLatestSticky()?.toggleMaximize();
+      stickyManager.getLatestSticky()?.toggleMaximize();
     },
     defaultShortcut: "A-m",
   },
@@ -197,7 +170,7 @@ const defaultCommands: Command[] = [
     isMenuItem: true,
     menuIconName: "lucide-pencil",
     execute() {
-      getLatestSticky()?.plugin.standard?.toggleEditMode();
+      stickyManager.getLatestSticky()?.plugin.standard.toggleEditMode();
     },
     defaultShortcut: "A-e",
   },
@@ -206,7 +179,7 @@ const defaultCommands: Command[] = [
     isMenuItem: true,
     menuIconName: "lucide-pin",
     execute() {
-      getLatestSticky()?.togglePin();
+      stickyManager.getLatestSticky()?.togglePin();
     },
     defaultShortcut: "A-p",
   },
@@ -215,7 +188,7 @@ const defaultCommands: Command[] = [
     isMenuItem: true,
     menuIconName: "lucide-box-select",
     execute() {
-      getLatestSticky()?.toggleGhostMode();
+      stickyManager.getLatestSticky()?.toggleGhostMode();
     },
     defaultShortcut: "A-g",
   },
@@ -223,21 +196,8 @@ const defaultCommands: Command[] = [
     name: "duplicate_sticky",
     isMenuItem: true,
     menuIconName: "lucide-copy",
-    makeUndoable() {
-      const sticky = getLatestSticky();
-      let duplicated: Sticky | null = null;
-
-      return {
-        execute() {
-          duplicated = sticky?.duplicate() ?? null;
-        },
-        undo() {
-          if (duplicated) {
-            duplicated?.forceDelete();
-            duplicated = null;
-          }
-        },
-      };
+    execute() {
+      stickyManager.duplicateLatest();
     },
     defaultShortcut: "C-d",
   },
@@ -332,15 +292,10 @@ async function init() {
   initDock();
   registerSticky(standardSticky);
   registerSticky(youtubeSticky);
-  restoreStickies();
+  stickyManager.restoreAllFromHtml();
   initCommandPalette();
 }
 
-function restoreStickies() {
-  $$<HTMLDivElement>(".sticky").forEach((sticky) => {
-    enableFunctionality(sticky);
-  });
-}
 
 init();
 addPublicApi();

@@ -28,6 +28,7 @@
     "@types/fs-extra": "^11.0.4",
     "@types/markdown-it": "^14.1.2",
     "@types/webextension-polyfill": "^0.10.7",
+    "@types/youtube": "^0.0.50",
     "@typescript-eslint/eslint-plugin": "^8.1.0",
     "@typescript-eslint/parser": "^8.1.0",
     "open-props": "2.0.0-beta.5",

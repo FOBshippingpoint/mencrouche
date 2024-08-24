@@ -20,7 +20,7 @@ export interface Command {
 export const commands: Command[] = [];
 
 // Cuz 'history' already exists in Web API.
-class Apocalypse {
+export class Apocalypse {
   private arr: Undoable[] = [];
   private cur: number = -1;
 
