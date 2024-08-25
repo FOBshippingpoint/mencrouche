@@ -99,6 +99,10 @@
     "message": "New YouTube Sticky",
     "description": "Command description for adding a new youtube sticky note."
   },
+  "new_spotify_sticky": {
+    "message": "New Spotify Sticky",
+    "description": "Command description for adding a new spotify sticky note."
+  },
   "open_bookmark_in_current_tab_menu_item": {
     "message": "Open in current tab",
     "description": "Context menu item label text for opening bookmark link in current tab."
@@ -283,12 +287,28 @@
     "message": "Automatically Play Video",
     "description": "Checkbox label for autoplay YouTube video."
   },
-  "cannot_found_youtube_video": {
-    "message": "YouTube video link is invalid.",
-    "description": "Invalid error message when we cannot found YouTube video ID in the given input."
-  },
+	"cannot_found_youtube_video": {
+		"message": "YouTube video link format is incorrect",
+		"description": "Error message displayed when the YouTube video ID cannot be found in the provided input."
+	},
 	"palette_hue": {
 		"message": "Hue",
-		"description": "Label for palette hue wheel in appearance settings."
+		"description": "Label for the palette hue wheel in appearance settings."
+	},
+	"spotify_link_input": {
+		"message": "Spotify Track Link",
+		"description": "Input label for the Spotify link."
+	},
+	"spotify_normal_height": {
+		"message": "Normal (352px)",
+		"description": "Normal height option for embedded Spotify media."
+	},
+	"spotify_compact_height": {
+		"message": "Compact (152px)",
+		"description": "Compact height option for embedded Spotify media."
+	},
+	"cannot_found_spotify_media": {
+		"message": "Spotify track not found",
+		"description": "Error message displayed when the Spotify media cannot be found in the provided input."
 	}
 }

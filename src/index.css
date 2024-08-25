@@ -401,7 +401,7 @@ nav {
   }
 }
 
-.youtube .stickyBody {
+.youtube,.spotify .stickyBody {
   padding: 0;
 }
 .ghost.youtube iframe {
@@ -925,6 +925,13 @@ hr {
 }
 
 #youtubeDialog {
+  label:not(:has([type="checkbox"])) {
+    display: flex;
+    gap: var(--size-1);
+    flex-direction: column;
+  }
+}
+#spotifyDialog {
   label:not(:has([type="checkbox"])) {
     display: flex;
     gap: var(--size-1);

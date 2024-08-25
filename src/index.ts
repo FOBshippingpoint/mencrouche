@@ -27,6 +27,7 @@ import { addPublicApi } from "./publicApi";
 import { initContextMenu, registerContextMenu } from "./contextMenu";
 import "./dock";
 import { initDock } from "./dock";
+import { spotifySticky } from "./stickyPlugins/spotify";
 
 function newSticky(type: string) {
   let sticky: Sticky | null = null;
@@ -129,6 +130,17 @@ const defaultCommands: Command[] = [
       };
     },
     defaultShortcut: "C-A-y",
+  },
+  {
+    name: "new_spotify_sticky",
+    isMenuItem: true,
+    execute() {
+      const sticky = newSticky("spotify");
+      sticky.plugin.spotify.onSubmit = () => {
+        stickyManager.add(sticky);
+      };
+    },
+    defaultShortcut: "C-A-s",
   },
   {
     name: "delete_sticky",
@@ -292,6 +304,7 @@ async function init() {
   initDock();
   registerSticky(standardSticky);
   registerSticky(youtubeSticky);
+  registerSticky(spotifySticky);
   stickyManager.restoreAllFromHtml();
   initCommandPalette();
 }

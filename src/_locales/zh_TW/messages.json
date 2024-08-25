@@ -103,6 +103,10 @@
 		"message": "新增YouTube便利貼",
 		"description": "Command description for adding a new youtube sticky note."
 	},
+  "new_spotify_sticky": {
+    "message": "新增Spotify便利貼",
+    "description": "Command description for adding a new spotify sticky note."
+  },
 	"open_bookmark_in_current_tab_menu_item": {
 		"message": "在此分頁開啟",
 		"description": "Context menu item label text for opening bookmark link in current tab."
@@ -285,10 +289,26 @@
 	},
 	"cannot_found_youtube_video": {
 		"message": "YouTube影片連結格式有誤",
-		"description": "Invalid error message when we cannot found YouTube video ID in the given input."
+		"description": "Error message displayed when the YouTube video ID cannot be found in the provided input."
 	},
 	"palette_hue": {
 		"message": "色調",
-		"description": "Label for palette hue wheel in appearance settings."
+		"description": "Label for the palette hue wheel in appearance settings."
+	},
+	"spotify_link_input": {
+		"message": "Spotify曲目連結",
+		"description": "Input label for the Spotify link."
+	},
+	"spotify_normal_height": {
+		"message": "普通 (352px)",
+		"description": "Normal height option for embedded Spotify media."
+	},
+	"spotify_compact_height": {
+		"message": "緊密 (152px)",
+		"description": "Compact height option for embedded Spotify media."
+	},
+	"cannot_found_spotify_media": {
+		"message": "找不到Spotify曲目",
+		"description": "Error message displayed when the Spotify media cannot be found in the provided input."
 	}
 }

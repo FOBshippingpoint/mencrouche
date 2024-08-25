@@ -416,7 +416,7 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
       }
     },
     addControlWidget(element: HTMLElement) {
-      sticky.$<HTMLDivElement>(".controls slot")!.replaceChildren(element);
+      sticky.$<HTMLDivElement>(".controls slot")!.appendChild(element);
     },
     replaceBody(...nodes: (Node | string)[]) {
       sticky.$(".stickyBody")!.replaceChildren(...nodes);

@@ -236,6 +236,64 @@
             allowfullscreen
           ></iframe>
         </template>
+        <template id="spotifyStickyWidgets">
+          <button class="ghostBtn pureBtn">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-box-select"
+            >
+              <path d="M5 3a2 2 0 0 0-2 2" />
+              <path d="M19 3a2 2 0 0 1 2 2" />
+              <path d="M21 19a2 2 0 0 1-2 2" />
+              <path d="M5 21a2 2 0 0 1-2-2" />
+              <path d="M9 3h1" />
+              <path d="M9 21h1" />
+              <path d="M14 3h1" />
+              <path d="M14 21h1" />
+              <path d="M3 9v1" />
+              <path d="M21 9v1" />
+              <path d="M3 14v1" />
+              <path d="M21 14v1" />
+            </svg>
+          </button>
+          <button class="editLinkBtn pureBtn">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-pencil"
+            >
+              <path
+                d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
+              />
+              <path d="m15 5 4 4" />
+            </svg>
+          </button>
+          <iframe
+            class="shadow"
+            style="border-radius: 12px"
+            width="100%"
+            height="352"
+            frameborder="0"
+            allowfullscreen=""
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy"
+          ></iframe>
+        </template>
         <template id="standardStickyWidgets">
           <label class="editModeToggleLbl">
             <svg
@@ -812,6 +870,30 @@
           <span data-i18n="youtube_autoplay_checkbox_label"></span>
         </label>
         <input name="videoId" type="hidden" />
+        <div class="gaButtonGroup">
+          <button
+            class="btn"
+            type="button"
+            data-i18n="cancel_submit_btn"
+          ></button>
+          <button class="btn" type="submit" data-i18n="submit_btn"></button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="spotifyDialog">
+      <form class="grid">
+        <label>
+          <span data-i18n="spotify_link_input"></span>
+          <input type="url" name="link" required />
+        </label>
+        <select name="height">
+          <option
+            selected
+            value="352px"
+            data-i18n="spotify_normal_height"
+          ></option>
+          <option value="152px" data-i18n="spotify_compact_height"></option>
+        </select>
         <div class="gaButtonGroup">
           <button
             class="btn"
