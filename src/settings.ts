@@ -14,7 +14,7 @@ const backgroundImageUrlInput = $<HTMLInputElement>(
 )!;
 const shortcutListItemTemplate = $<HTMLTemplateElement>("#shortcutListItem")!;
 const uiOpacityInput = $<HTMLInputElement>("#uiOpacityInput")!;
-const setToDefaultBtn = $<HTMLButtonElement>(
+const resetBackgroundImageBtn = $<HTMLButtonElement>(
   "#setBackgroundImageToDefaultBtn",
 )!;
 const deleteDocumentBtn = $<HTMLButtonElement>("#deleteDocumentBtn")!;
@@ -96,21 +96,17 @@ exportDocumentBtn.on("click", () => {
 
 const changesManager = (() => {
   const todos: Function[] = [];
-  const notTodos: Function[] = [];
 
   return {
     addChange(func: () => void) {
       todos.push(func);
     },
-    addRevert(func: () => void) {
-      notTodos.push(func);
-    },
+    onRevert() {},
     save() {
       todos.forEach((f) => f());
-      notTodos.length = 0;
     },
     cancel() {
-      notTodos.forEach((f) => f());
+      this.onRevert?.();
       todos.length = 0;
     },
   };
@@ -129,7 +125,7 @@ cancelBtn.on("click", () => {
 });
 
 // Copy from web.dev: https://web.dev/patterns/clipboard/paste-images#js
-backgroundImageUrlInput.addEventListener("paste", async (e) => {
+backgroundImageUrlInput.on("paste", async (e) => {
   const clipboardItems = await navigator.clipboard.read();
 
   for (const clipboardItem of clipboardItems) {
@@ -150,7 +146,7 @@ backgroundImageUrlInput.addEventListener("paste", async (e) => {
         const url = await (await clipboardItem.getType("text/plain")).text();
         new URL(url);
         dropzone.style.background = `url(${url}) center center / cover no-repeat`;
-        changesManager.addChange(() => setBackgroundImageByUrl(url));
+        setBackgroundImageByUrl(url);
       } catch (_) {
         alert(n81i.t("image_url_is_not_valid_alert"));
       }
@@ -160,21 +156,23 @@ backgroundImageUrlInput.addEventListener("paste", async (e) => {
 
 function handleBlob(blob: Blob | File) {
   const url = URL.createObjectURL(blob);
-  backgroundImageUrlInput.value = url;
+  if (!url.startsWith("blob")) {
+    backgroundImageUrlInput.value = url;
+  }
   dropzone.style.background = `url(${url}) center center / cover no-repeat`;
-  changesManager.addChange(() => setBackgroundImageByUrl(url));
+  setBackgroundImageByUrl(url);
 }
 
 // Handle drag and drop events
-dropzone.addEventListener("dragover", (event) => {
+dropzone.on("dragover", (event) => {
   event.preventDefault(); // Prevent default browser behavior (open file)
   dropzone.setAttribute("active", "");
 });
-dropzone.addEventListener("dragleave", () => {
+dropzone.on("dragleave", () => {
   dropzone.removeAttribute("active");
 });
 
-dropzone.addEventListener("drop", (e) => {
+dropzone.on("drop", (e) => {
   e.preventDefault();
   dropzone.removeAttribute("active");
   if (e.dataTransfer?.items) {
@@ -195,18 +193,19 @@ dropzone.addEventListener("drop", (e) => {
 });
 
 // Handle click on dropzone to open file selection dialog
-dropzone.addEventListener("click", () => {
+dropzone.on("click", () => {
   fileInput.click();
 });
 
 // Handle file selection from dialog
-fileInput.addEventListener("change", (e) => {
+fileInput.on("change", (e) => {
   const selectedFile = e.target.files[0];
   handleBlob(selectedFile);
 });
 
-setToDefaultBtn.addEventListener("click", () => {
+resetBackgroundImageBtn.on("click", () => {
   dropzone.style.backgroundImage = "unset";
+  backgroundImageUrlInput.value = "";
   unsetBackgroundImage();
 });
 
@@ -219,18 +218,14 @@ uiOpacityInput.on("input", () => {
 });
 
 async function setBackgroundImageByUrl(url: string) {
-  function set(url: string) {
-    document.documentElement.style.setProperty(
-      "--page-background",
-      `url(${url}) no-repeat center center fixed`,
-    );
-    dataset.setItem("backgroundImageUrl", url);
-  }
-  let dataUrl = url;
   if (url.startsWith("blob")) {
-    dataUrl = await toDataUrl(url);
+    url = await toDataUrl(url);
   }
-  set(dataUrl);
+  document.documentElement.style.setProperty(
+    "--page-background",
+    `url(${url}) no-repeat center center fixed`,
+  );
+  dataset.setItem("backgroundImageUrl", url);
 }
 
 function unsetBackgroundImage() {
@@ -244,7 +239,9 @@ function openSettingsPage() {
 
   const uiOpacity = dataset.getOrSetItem("uiOpacity", 1);
   const paletteHue = dataset.getItem("paletteHue") as string;
-  changesManager.addRevert(() => {
+  const backgroundImageUrl = dataset.getItem("backgroundImageUrl");
+  changesManager.onRevert = () => {
+    // Reset ui opacity
     document.documentElement.style.setProperty(
       "--ui-opacity",
       uiOpacity.toString(),
@@ -256,11 +253,20 @@ function openSettingsPage() {
     } else {
       document.documentElement.style.removeProperty("--palette-hue");
     }
-  });
+
+    // Reset background image
+    if (backgroundImageUrl) {
+      setBackgroundImageByUrl(backgroundImageUrl as string);
+    } else {
+      unsetBackgroundImage();
+    }
+  };
 }
 
 function closeSettingsPage() {
   settings.classList.add("none");
+  dropzone.style.backgroundImage = "unset";
+  backgroundImageUrlInput.value = "";
   $(".stickyContainer")!.classList.remove("none");
   changesManager.cancel();
 }
@@ -347,7 +353,7 @@ function initTheme() {
   }
 
   dataset.on<"light" | "dark">("theme", (_, theme) => change(theme));
-  themeToggle.addEventListener("change", (e) => {
+  themeToggle.on("change", (e) => {
     const value = (e.target as any).checked ? "light" : "dark";
     dataset.setItem("theme", value);
   });
