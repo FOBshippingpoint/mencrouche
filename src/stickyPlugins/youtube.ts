@@ -155,6 +155,7 @@ export const youtubeSticky: CustomSticky = {
         sticky.dataset.isPlaying =
           player?.getPlayerState() === YT.PlayerState.PLAYING ? "on" : "off";
         dialog.showModal();
+        linkInput.select();
       });
       sticky.plugin.youtube = {};
       iframe.id ||= crypto.randomUUID();
@@ -241,6 +242,7 @@ export const youtubeSticky: CustomSticky = {
         { once: true },
       );
       dialog.showModal();
+      linkInput.select();
     }
   },
 };
