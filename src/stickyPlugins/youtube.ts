@@ -133,8 +133,16 @@ export const youtubeSticky: CustomSticky = {
       linkInput.value = "";
       videoIdInput.value = "";
 
-      sticky.style.width = "26em";
-      sticky.style.height = "16em";
+      if (window.matchMedia("(min-width: 1536px)").matches) {
+        sticky.style.width = "54em";
+        sticky.style.height = "33em";
+      } else if (window.matchMedia("(min-width: 1024px)").matches) {
+        sticky.style.width = "45em";
+        sticky.style.height = "27em";
+      } else {
+        sticky.style.width = "23em";
+        sticky.style.height = "15em";
+      }
     }
 
     if (state === "create" || state === "restoreFromHtml") {
