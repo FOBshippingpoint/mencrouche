@@ -5,10 +5,9 @@
   "scripts": {
     "update-manifest": "zx scripts/dev.mjs",
     "start": "parcel watch src/manifest.json --host localhost --config @parcel/config-webextension --no-cache",
-    "dev-site": "vite",
+    "dev-site": "parcel ./src/index.html --dist-dir dist/site/ --public-url ./",
     "build": "parcel build src/manifest.json --config @parcel/config-webextension",
-    "build-site": "vite build && zx -e '$`cp -r ./src/_locales/ ./dist/site/`'",
-    "preview": "vite preview",
+    "build-site": "parcel build --target website",
     "start-firefox": "web-ext run --source-dir dist/webext-dev  --target=firefox-desktop",
     "start-chromium": "web-ext run --source-dir dist/webext-dev --target=chromium",
     "lint-dev": "web-ext lint --source-dir dist/webext-dev",
@@ -33,14 +32,19 @@
     "@typescript-eslint/parser": "^8.1.0",
     "open-props": "2.0.0-beta.5",
     "parcel": "^2.12.0",
+    "parcel-reporter-static-files-copy": "^1.5.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4",
-    "vite": "^5.4.1",
     "vitest": "^2.0.5",
     "web-ext": "^8.2.0",
     "zx": "^8.1.4"
   },
   "targets": {
+    "website": {
+      "source": "./src/index.html",
+      "publicUrl": "./",
+      "distDir": "./dist/site"
+    },
     "webext-dev": {
       "sourceMap": {
         "inline": true,
@@ -54,5 +58,9 @@
   "dependencies": {
     "asciidoctor": "^3.0.4",
     "marked": "^13.0.3"
+  },
+  "staticFiles": {
+    "staticPath": "./src/_locales/",
+    "distDir": "./dist/site/_locales"
   }
 }

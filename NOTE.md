@@ -17,10 +17,11 @@
 - [x] Find a way to disable contextmenu when user pressing shift + right click. (works on ff by default)
 - [x] Context menu with focus element.
 - [ ] Spotify sticky
-- [ ] Color theme
+- [x] Color theme
 - [ ] Blockly
 - [ ] Import document
 - [ ] Web extension version.
+- [ ] declarativeNetRequest -> unblock iframe
 
 ## Sticky Lifecycle
 
