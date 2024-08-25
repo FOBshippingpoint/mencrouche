@@ -1,3 +1,11 @@
+// The `url:` prefix is a custom prefix defined in .parcelrc.
+// see https://github.com/parcel-bundler/parcel/issues/1080#issuecomment-557240449
+// for more information
+import en from "url:../_locales/en/messages.json";
+import zh_TW from "url:../_locales/zh_TW/messages.json";
+
+const urls = { en, zh_TW };
+
 interface Message {
   message: string;
   description: string;
@@ -48,10 +56,7 @@ export const n81i = {
    */
   async loadLanguage(locale: string) {
     if (!localeAndMessagesJson.has(locale)) {
-      // Warning: must use ./ to write path. If not, it will use
-      // http://localhost:5173/_locales/en/messages.json instead of
-      // http://localhost:5173/mencrouche/en/messages.json
-      const response = await fetch(`./_locales/${locale}/messages.json`);
+      const response = await fetch((urls as any)[locale]);
       const json = await response.json();
       mergeMessagesJson(locale, json);
     }

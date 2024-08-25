@@ -18,6 +18,7 @@
 - [x] Context menu with focus element.
 - [ ] Spotify sticky
 - [x] Color theme
+- [ ] Drag bookmark dock item.
 - [ ] Blockly
 - [ ] Import document
 - [ ] Web extension version.
