@@ -1,6 +1,10 @@
-// The `url:` prefix is a custom prefix defined in .parcelrc.
+// The `url:` prefix is a custom prefix defined in `.parcelrc`.
+// Which aims to get the url of transformed resource, in raw format.
 // see https://github.com/parcel-bundler/parcel/issues/1080#issuecomment-557240449
 // for more information
+// TODO:
+// Currently, this approach increase bundle size, should find another way to
+// dynamic import the url based on the current parcel command (website or ext).
 import en from "url:../_locales/en/messages.json";
 import zh_TW from "url:../_locales/zh_TW/messages.json";
 
@@ -56,7 +60,11 @@ export const n81i = {
    */
   async loadLanguage(locale: string) {
     if (!localeAndMessagesJson.has(locale)) {
-      const response = await fetch((urls as any)[locale]);
+      let url: string = (urls as any)[locale];
+      if (window.browser) {
+        url = `./_locales/${locale}/messages.json`;
+      }
+      const response = await fetch(url);
       const json = await response.json();
       mergeMessagesJson(locale, json);
     }
