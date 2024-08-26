@@ -1,13 +1,11 @@
 import {
   CreateStickyOptions,
   Sticky,
-  enableFunctionality,
-  getRelatedCustomStickies,
   initStickyEnvironment,
   registerSticky,
   stickyManager,
 } from "./sticky";
-import { $, $$ } from "./utils/dollars";
+import { $ } from "./utils/dollars";
 import {
   initCommandPalette,
   executeCommand,
@@ -19,7 +17,7 @@ import { initSettings } from "./settings";
 import { n81i } from "./utils/n81i";
 import { saveDocument, switchDocumentStatus } from "./documentStatus";
 import { createSticky } from "./sticky";
-import { dataset, } from "./myDataset";
+import { dataset } from "./myDataset";
 import { toggleSettingsPage } from "./settings";
 import { standardSticky } from "./stickyPlugins/standard";
 import { youtubeSticky } from "./stickyPlugins/youtube";
@@ -155,7 +153,7 @@ const defaultCommands: Command[] = [
     name: "toggle_auto_arrange",
     isMenuItem: false,
     execute() {
-      $(".stickyContainer")?.classList.toggle("autoArrange");
+      stickyManager.arrange();
     },
     defaultShortcut: "A-r",
   },
@@ -308,7 +306,6 @@ async function init() {
   stickyManager.restoreAllFromHtml();
   initCommandPalette();
 }
-
 
 init();
 addPublicApi();

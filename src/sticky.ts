@@ -1,6 +1,7 @@
-import { Apocalypse, apocalypse, Undoable } from "./commands";
+import { Apocalypse, apocalypse } from "./commands";
 import { $, $$, Allowance } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
+import { BinPacker } from "./utils/packer";
 
 export type StickyPlugin = Record<string, any>;
 export interface StickyPluginRegistry {
@@ -189,6 +190,71 @@ class StickyManager {
     this.#highestZIndex++;
     sticky.style.zIndex = this.#highestZIndex.toString();
     sticky.style.order = this.#highestZIndex.toString();
+  }
+
+  arrange() {
+    const stickies = [...this.#stickies];
+    const GAP = 10;
+
+    apocalypse.write({
+      execute() {
+        const blocks = stickies.map((sticky) => {
+          // Backup original position for undo.
+          sticky.dataset.left = sticky.style.left;
+          sticky.dataset.top = sticky.style.top;
+
+          const block = {
+            x: sticky.getBoundingClientRect().x + GAP,
+            y: sticky.getBoundingClientRect().y + GAP,
+            w: sticky.getBoundingClientRect().width + GAP,
+            h: sticky.getBoundingClientRect().height + GAP,
+          };
+          return block;
+        });
+
+        const packer = new BinPacker(
+          stickyContainer.getBoundingClientRect().width - GAP * 2,
+          stickyContainer.getBoundingClientRect().height - GAP * 2,
+        );
+        const fittedBlocks = packer.fit(blocks);
+
+        for (let i = 0; i < fittedBlocks.length; i++) {
+          const sticky = stickies[i];
+          const fitted = fittedBlocks[i];
+          if (fitted) {
+            sticky.style.left = `${fitted.x + GAP}px`;
+            sticky.style.top = `${fitted.y + GAP}px`;
+          }
+
+          sticky.on(
+            "transitionend",
+            () => sticky.classList.remove("arranging"),
+            {
+              once: true,
+            },
+          );
+          sticky.classList.add("arranging");
+        }
+      },
+      undo() {
+        for (const sticky of stickies) {
+          sticky.style.left = sticky.dataset.left;
+          sticky.style.top = sticky.dataset.top;
+          delete sticky.dataset.left;
+          delete sticky.dataset.top;
+
+          sticky.classList.add("arranging");
+
+          sticky.on(
+            "transitionend",
+            () => sticky.classList.remove("arranging"),
+            {
+              once: true,
+            },
+          );
+        }
+      },
+    });
   }
 
   getLatestSticky() {

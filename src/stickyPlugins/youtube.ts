@@ -111,7 +111,6 @@ export const youtubeSticky: CustomSticky = {
   type: "youtube",
   on(sticky: Sticky, state: StickyLifeCycleState) {
     if (state === "save") {
-      console.log("save");
       onSave(sticky);
       return;
     }
@@ -155,6 +154,7 @@ export const youtubeSticky: CustomSticky = {
         sticky.dataset.isPlaying =
           player?.getPlayerState() === YT.PlayerState.PLAYING ? "on" : "off";
         dialog.showModal();
+        linkInput.focus();
         linkInput.select();
       });
       sticky.plugin.youtube = {};
@@ -242,7 +242,7 @@ export const youtubeSticky: CustomSticky = {
         { once: true },
       );
       dialog.showModal();
-      linkInput.select();
+      linkInput.focus();
     }
   },
 };

@@ -288,6 +288,9 @@ nav {
     pointer-events: none;
   }
 }
+.arranging {
+  transition: all 0.1s var(--ease-out-5);
+}
 
 .pin {
   .stickyHeader,
@@ -401,8 +404,11 @@ nav {
   }
 }
 
-.youtube,.spotify .stickyBody {
-  padding: 0;
+.youtube,
+.spotify {
+  .stickyBody {
+    padding: 0;
+  }
 }
 .ghost.youtube iframe {
   border-radius: 12px;

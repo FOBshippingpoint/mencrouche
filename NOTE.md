@@ -16,10 +16,12 @@
 - [x] Redo/Undo
 - [x] Find a way to disable contextmenu when user pressing shift + right click. (works on ff by default)
 - [x] Context menu with focus element.
-- [ ] Spotify sticky
+- [x] Spotify sticky
 - [x] Color theme
+- [ ] iframe sticky
 - [ ] Drag bookmark dock item.
 - [ ] Blockly
+- [ ] Remove flexbox-based autoArrange
 - [ ] Import document
 - [ ] Web extension version.
 - [ ] declarativeNetRequest -> unblock iframe
