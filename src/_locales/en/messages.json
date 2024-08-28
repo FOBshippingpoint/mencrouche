@@ -204,11 +204,11 @@
     "description": "Command description for toggling dark mode on/off."
   },
   "toggle_ghost_mode": {
-    "message": "Toggle ghost mode",
+    "message": "Toggle hidden border",
     "description": "Command description for toggling ghost mode."
   },
   "toggle_global_ghost_mode": {
-    "message": "Toggle global ghost mode",
+    "message": "Toggle global hidden border",
     "description": "Command description for toggling global ghost mode."
   },
   "toggle_maximize_sticky": {
@@ -348,11 +348,11 @@
 		"description": "Context menu option to unpin a sticky note."
 	},
 	"sticky_ghost_mode_on": {
-		"message": "Enable Ghost Mode",
+		"message": "Hide Border",
 		"description": "Context menu option to enable ghost mode on a sticky note."
 	},
 	"sticky_ghost_mode_off": {
-		"message": "Disable Ghost Mode",
+		"message": "Show Border",
 		"description": "Context menu option to disable ghost mode on a sticky note."
 	},
 	"unsaved_changes": {
