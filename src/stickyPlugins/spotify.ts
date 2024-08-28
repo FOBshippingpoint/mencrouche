@@ -32,17 +32,23 @@ cancelBtn.on("click", () => {
 });
 
 linkInput.on("input", () => {
-  const url = new URL(linkInput.value);
-  if (
-    url.host.endsWith("spotify.com") &&
-    (url.pathname.startsWith("/track") ||
-      url.pathname.startsWith("/album") ||
-      url.pathname.startsWith("/episode") ||
-      url.pathname.startsWith("/embed"))
-  ) {
-    linkInput.setCustomValidity(""); // empty = valid, we need to refresh the
-    // validity message to recover from previous invalid state.
-  } else {
+  let url: URL;
+  try {
+    url = new URL(linkInput.value);
+    if (
+      url.host.endsWith("spotify.com") &&
+      (url.pathname.startsWith("/track") ||
+        url.pathname.startsWith("/album") ||
+        url.pathname.startsWith("/episode") ||
+        url.pathname.startsWith("/embed"))
+    ) {
+      linkInput.setCustomValidity(""); // empty = valid, we need to refresh the
+      // validity message to recover from previous invalid state.
+    } else {
+      linkInput.setCustomValidity(n81i.t("cannot_found_spotify_media"));
+      linkInput.reportValidity();
+    }
+  } catch (_) {
     linkInput.setCustomValidity(n81i.t("cannot_found_spotify_media"));
     linkInput.reportValidity();
   }
@@ -66,6 +72,20 @@ form.on("submit", (e) => {
 
   current.dataset.link = link;
   current.dataset.height = height;
+
+  // Adjust height
+  current.style.height = `${parseInt(height, 10) + 28}px`;
+
+  // Adjust width
+  if (window.matchMedia("(min-width: 1536px)").matches) {
+    current.style.width = "600px";
+  } else if (window.matchMedia("(min-width: 1024px)").matches) {
+    current.style.width = "500px";
+  } else if (window.matchMedia("(min-width: 768px)").matches) {
+    current.style.width = "300px";
+  } else {
+    current.style.width = "100px";
+  }
 
   dialog.close();
 });
@@ -94,14 +114,6 @@ export const spotifySticky: CustomSticky = {
       sticky.replaceBody(iframe);
       current = sticky;
       linkInput.value = "";
-
-      if (window.matchMedia("(min-width: 1536px)").matches) {
-        sticky.style.width = "500px";
-      } else if (window.matchMedia("(min-width: 1024px)").matches) {
-        sticky.style.width = "300px";
-      } else {
-        sticky.style.width = "100px";
-      }
     }
 
     if (state === "create" || state === "restoreFromHtml") {
@@ -123,12 +135,11 @@ export const spotifySticky: CustomSticky = {
 
     if (state === "create") {
       // Remove sticky if user cancel.
-      let isSubmitted = false;
       const controller = new AbortController();
       form.on(
         "submit",
         () => {
-          isSubmitted = true;
+          controller.abort();
           sticky.plugin.spotify.onSubmit?.();
         },
         { signal: controller.signal },
@@ -136,7 +147,7 @@ export const spotifySticky: CustomSticky = {
       dialog.on(
         "close",
         () => {
-          if (!isSubmitted) {
+          if (!controller.signal.aborted) {
             sticky.forceDelete();
             controller.abort();
           }

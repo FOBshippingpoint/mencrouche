@@ -221,12 +221,11 @@ export const youtubeSticky: CustomSticky = {
 
     if (state === "create") {
       // Remove sticky if user cancel.
-      let isSubmitted = false;
       const controller = new AbortController();
       form.on(
         "submit",
         () => {
-          isSubmitted = true;
+          controller.abort();
           sticky.plugin.youtube.onSubmit?.();
         },
         { signal: controller.signal },
@@ -234,7 +233,7 @@ export const youtubeSticky: CustomSticky = {
       dialog.on(
         "close",
         () => {
-          if (!isSubmitted) {
+          if (!controller.signal.aborted) {
             sticky.forceDelete();
             controller.abort();
           }
