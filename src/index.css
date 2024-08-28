@@ -288,7 +288,7 @@ nav {
     pointer-events: none;
   }
 }
-.arranging {
+.arranging .sticky {
   transition: all 0.1s var(--ease-out-5);
 }
 
@@ -652,6 +652,14 @@ nav {
 }
 /* @settings end */
 
+.icon {
+  background-repeat: no-repeat;
+  background-image: var(--icon);
+  background-position: calc(100% - 0.5ch);
+  background-size: auto, 2.25ch;
+  min-block-size: 1lh;
+  min-inline-size: 1lh;
+}
 .contextMenu {
   position: fixed;
   display: flex;
@@ -664,20 +672,25 @@ nav {
   z-index: var(--layer-important);
 
   .menuItem {
+    position: relative;
     box-shadow: unset;
     block-size: unset;
     border: none;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: var(--size-3);
     border-radius: var(--radius-conditional-1);
     background: unset;
     font-size: 0.9rem;
+    white-space: nowrap;
     padding-inline: var(--size-2);
-    padding-block: var(--size-1);
+    padding-block-start: var(--size-1);
+    padding-block-end: calc(
+      var(--size-1) + 0.052em
+    ); /* 0.052em is the myth value from https://tonsky.me/blog/centering/ */
   }
-  .menuItem:hover {
+  .menuItem:hover,
+  .menuItem[data-sub-item-active="on"] {
     background-color: var(--surface-2);
   }
 
@@ -686,6 +699,26 @@ nav {
     border: none;
     border-top: var(--border-size-1) solid var(--surface-3);
   }
+}
+
+[data-sub-item-active="on"] > .subItem {
+  display: flex;
+}
+[data-sub-item-active="off"] > .subItem {
+  display: none;
+}
+.subItem {
+  position: absolute;
+  left: calc(100% - var(--size-1));
+  top: calc((var(--size-1) + var(--border-size-1)) * -1);
+}
+.expandLeft {
+  left: unset;
+  right: calc(100% - var(--size-1));
+}
+.expandTop {
+  top: unset;
+  bottom: calc((var(--size-1) + var(--border-size-1)) * -1);
 }
 
 #newStickyBtn {
@@ -800,6 +833,9 @@ hr {
 
 .dock {
   position: absolute;
+}
+.alwaysOnTop {
+  z-index: var(--layer-important);
 }
 
 .contextMenuBtn {
@@ -954,6 +990,80 @@ hr {
 dialog {
   padding-block: var(--size-5);
   padding-inline: var(--size-7);
+}
+
+#generalDialog {
+  .dialogButtonGroup {
+    margin-inline-start: var(--size-9);
+    text-align: end;
+    button + button {
+      margin-inline-start: var(--size-2);
+    }
+  }
+}
+
+/* 
+ * The [data-tooltip] classes contains a modified version of the hint.css
+ * library originally authored by  Kushagra Gour.
+ *
+ * Credits: https://github.com/chinchang/hint.css
+ * */
+[data-tooltip]:before,
+[data-tooltip]:after {
+  position: absolute;
+  transform: translate3d(0, 0, 0);
+  visibility: hidden;
+  opacity: 0;
+  z-index: 1000000;
+  pointer-events: none;
+}
+[data-tooltip]:hover:before,
+[data-tooltip]:hover:after {
+  visibility: visible;
+  opacity: 1;
+}
+[data-tooltip]:hover:before,
+[data-tooltip]:before {
+  content: "";
+  position: absolute;
+  background: transparent;
+  border: 6px solid transparent;
+  background-color: var(--well-1);
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%);
+}
+[data-tooltip]:after {
+  content: attr(data-tooltip);
+  border-radius: var(--border-size-3);
+  background-color: var(--well-1);
+  color: var(--text-1);
+  padding: 8px 10px;
+  font-size: 1rem;
+  line-height: 1rem;
+  white-space: nowrap;
+}
+[data-tooltip] {
+  --rotation: -135deg;
+  position: relative;
+  display: inline-block;
+}
+[data-tooltip]:before {
+  margin-left: -5.5px;
+  margin-bottom: -6px;
+  transform: rotate(var(--rotation));
+}
+[data-tooltip]:after {
+  margin-bottom: calc(-1 * (1rem + 16px) / 2);
+}
+[data-tooltip]:before,
+[data-tooltip]:after {
+  left: 100%;
+  bottom: 50%;
+}
+[data-tooltip]:hover:before {
+  transform: translateX(8px) rotate(var(--rotation));
+}
+[data-tooltip]:hover:after {
+  transform: translateX(8px);
 }
 
 /* For screen tthat is larger then 640px, stole from Tailwind CSS

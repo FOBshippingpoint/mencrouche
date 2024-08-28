@@ -78,6 +78,7 @@ form.on("submit", (e) => {
 registerContextMenu("dockBookmark", [
   {
     name: "edit_bookmark_menu_item",
+    icon: "lucide-pencil",
     execute(target) {
       current = $<HTMLAnchorElement>(target as HTMLAnchorElement)!;
       hrefLikeInput.value = current.href;
@@ -93,6 +94,7 @@ registerContextMenu("dockBookmark", [
   },
   {
     name: "delete_bookmark_menu_item",
+    icon: "lucide-trash",
     execute(target) {
       apocalypse.write({
         execute() {
@@ -106,12 +108,14 @@ registerContextMenu("dockBookmark", [
   },
   {
     name: "open_bookmark_in_new_tab_menu_item",
+    icon: "lucide-external-link",
     execute(target) {
       window.open((target as HTMLAnchorElement).href, "_blank");
     },
   },
   {
     name: "open_bookmark_in_current_tab_menu_item",
+    icon: "lucide-link-2",
     execute(target) {
       window.open((target as HTMLAnchorElement).href, "_self");
     },
@@ -120,18 +124,23 @@ registerContextMenu("dockBookmark", [
 registerContextMenu("dock", [
   {
     name: "add_bookmark_menu_item",
+    icon: "lucide-plus",
     execute() {
       addBookmarkBtn.click();
     },
   },
   {
     name: "edit_dock_appearance_menu_item",
+    icon: "lucide-sparkles",
     execute() {
-      const { position, showLabel, showAddBtn, iconSize } = dock.dataset;
+      const { position, alwaysOnTop, showLabel, showAddBtn, iconSize } =
+        dock.dataset;
       prevDockAppearanceAttrs = { ...dock.dataset } as any;
 
       appearanceForm.$<HTMLInputElement>(`[value="${position}"]`)!.checked =
         true;
+      appearanceForm.$<HTMLInputElement>('[name="alwaysOnTop"]')!.checked =
+        !!alwaysOnTop;
       appearanceForm.$<HTMLInputElement>('[name="showLabel"]')!.checked =
         !!showLabel;
       appearanceForm.$<HTMLInputElement>('[name="showAddBtn"]')!.checked =
@@ -221,6 +230,7 @@ appearanceForm.on("submit", (e) => {
   appearanceDialog.close();
   const attrs = formToObject(appearanceForm);
   dock.dataset.iconSize = attrs.iconSize;
+  dock.dataset.alwaysOnTop = attrs.alwaysOnTop ?? "";
   dock.dataset.showAddBtn = attrs.showAddBtn ?? "";
   dock.dataset.showLabel = attrs.showLabel ?? "";
   dock.dataset.position = attrs.position;
@@ -229,6 +239,7 @@ appearanceForm.on("submit", (e) => {
 
 interface DockPrefAttrs {
   iconSize: number;
+  alwaysOnTop?: "on";
   showAddBtn?: "on";
   showLabel?: "on";
   position: "top" | "bottom" | "left" | "right";
@@ -236,12 +247,14 @@ interface DockPrefAttrs {
 
 function updateDock({
   iconSize,
+  alwaysOnTop,
   showAddBtn,
   showLabel,
   position,
 }: DockPrefAttrs) {
   dock.dataset.position = position;
   addBookmarkBtn.classList.toggle("none", !showAddBtn);
+  dock.classList.toggle("alwaysOnTop", !!alwaysOnTop);
 
   dock.$$<HTMLAnchorElement>(".dockBookmark").do((el) => {
     updateDockBookmark({ iconSize }, el);

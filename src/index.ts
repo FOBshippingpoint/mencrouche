@@ -11,7 +11,6 @@ import {
   executeCommand,
   registerCommand,
   Command,
-  apocalypse,
 } from "./commands";
 import { initSettings } from "./settings";
 import { n81i } from "./utils/n81i";
@@ -19,13 +18,13 @@ import { saveDocument, switchDocumentStatus } from "./documentStatus";
 import { createSticky } from "./sticky";
 import { dataset } from "./myDataset";
 import { toggleSettingsPage } from "./settings";
-import { standardSticky } from "./stickyPlugins/standard";
 import { youtubeSticky } from "./stickyPlugins/youtube";
 import { addPublicApi } from "./publicApi";
 import { initContextMenu, registerContextMenu } from "./contextMenu";
 import "./dock";
 import { initDock } from "./dock";
 import { spotifySticky } from "./stickyPlugins/spotify";
+import { initStandardSticky } from "./stickyPlugins/standard";
 
 function newSticky(type: string) {
   let sticky: Sticky | null = null;
@@ -57,7 +56,6 @@ const AVAILABLE_LOCALES = ["en", "zh_TW"];
 const defaultCommands: Command[] = [
   {
     name: "toggle_settings",
-    isMenuItem: false,
     execute() {
       toggleSettingsPage();
     },
@@ -65,7 +63,6 @@ const defaultCommands: Command[] = [
   },
   {
     name: "toggle_dark_mode",
-    isMenuItem: false,
     execute() {
       dataset.derivedSetItem("theme", (theme) =>
         theme === "light" ? "dark" : "light",
@@ -75,7 +72,6 @@ const defaultCommands: Command[] = [
   },
   {
     name: "open_youtube",
-    isMenuItem: false,
     execute() {
       window.open("https://youtube.com", "_blank")!.focus();
     },
@@ -83,15 +79,14 @@ const defaultCommands: Command[] = [
   },
   {
     name: "save_document",
-    isMenuItem: false,
     async execute() {
+      stickyManager.saveAll();
       saveDocument();
     },
     defaultShortcut: "C-s",
   },
   {
     name: "toggle_global_ghost_mode",
-    isMenuItem: false,
     execute() {
       dataset.derivedSetItem<boolean>(
         "isGhostMode",
@@ -102,7 +97,6 @@ const defaultCommands: Command[] = [
   },
   {
     name: "delete_all_stickies",
-    isMenuItem: false,
     execute() {
       stickyManager.deleteAll();
     },
@@ -110,8 +104,6 @@ const defaultCommands: Command[] = [
   },
   {
     name: "new_standard_sticky",
-    isMenuItem: true,
-    menuIconName: "lucide-plus",
     execute() {
       const sticky = newSticky("standard");
       stickyManager.add(sticky);
@@ -120,7 +112,6 @@ const defaultCommands: Command[] = [
   },
   {
     name: "new_youtube_sticky",
-    isMenuItem: true,
     execute() {
       const sticky = newSticky("youtube");
       sticky.plugin.youtube.onSubmit = () => {
@@ -131,7 +122,6 @@ const defaultCommands: Command[] = [
   },
   {
     name: "new_spotify_sticky",
-    isMenuItem: true,
     execute() {
       const sticky = newSticky("spotify");
       sticky.plugin.spotify.onSubmit = () => {
@@ -142,8 +132,6 @@ const defaultCommands: Command[] = [
   },
   {
     name: "delete_sticky",
-    isMenuItem: true,
-    menuIconName: "lucide-trash",
     execute() {
       stickyManager.deleteLatest();
     },
@@ -151,7 +139,6 @@ const defaultCommands: Command[] = [
   },
   {
     name: "toggle_auto_arrange",
-    isMenuItem: false,
     execute() {
       stickyManager.arrange();
     },
@@ -159,8 +146,6 @@ const defaultCommands: Command[] = [
   },
   {
     name: "toggle_split_view",
-    isMenuItem: true,
-    menuIconName: "lucide-columns-2",
     execute() {
       stickyManager.getLatestSticky()?.plugin.standard.toggleSplitView();
     },
@@ -168,8 +153,6 @@ const defaultCommands: Command[] = [
   },
   {
     name: "toggle_maximize_sticky",
-    isMenuItem: true,
-    menuIconName: "lucide-maximize-2",
     execute() {
       stickyManager.getLatestSticky()?.toggleMaximize();
     },
@@ -177,8 +160,6 @@ const defaultCommands: Command[] = [
   },
   {
     name: "toggle_sticky_edit_mode",
-    isMenuItem: true,
-    menuIconName: "lucide-pencil",
     execute() {
       stickyManager.getLatestSticky()?.plugin.standard.toggleEditMode();
     },
@@ -186,8 +167,6 @@ const defaultCommands: Command[] = [
   },
   {
     name: "toggle_sticky_pin_mode",
-    isMenuItem: true,
-    menuIconName: "lucide-pin",
     execute() {
       stickyManager.getLatestSticky()?.togglePin();
     },
@@ -195,8 +174,6 @@ const defaultCommands: Command[] = [
   },
   {
     name: "toggle_ghost_mode",
-    isMenuItem: true,
-    menuIconName: "lucide-box-select",
     execute() {
       stickyManager.getLatestSticky()?.toggleGhostMode();
     },
@@ -204,8 +181,6 @@ const defaultCommands: Command[] = [
   },
   {
     name: "duplicate_sticky",
-    isMenuItem: true,
-    menuIconName: "lucide-copy",
     execute() {
       stickyManager.duplicateLatest();
     },
@@ -214,8 +189,8 @@ const defaultCommands: Command[] = [
 ];
 
 function getUserPreferredLanguage() {
-  // e.g. zh-TW => zh_TW to fit chrome webextension locales
-  // see also: https://developer.chrome.com/docs/extensions/reference/api/i18n
+  // e.g. zh-TW => zh_TW to fit chrome webextension locales.
+  // See also: https://developer.chrome.com/docs/extensions/reference/api/i18n
   const lang = navigator.language.replaceAll("-", "_");
   if (
     /* If supports user language */
@@ -228,6 +203,9 @@ function getUserPreferredLanguage() {
 }
 
 async function init() {
+  const ds = $<HTMLButtonElement>("#documentStatus")!;
+  ds.on("click", () => executeCommand("save_document"));
+
   let stickyContainerHtml = localStorage.getItem("doc");
   if (stickyContainerHtml) {
     const urls =
@@ -276,31 +254,42 @@ async function init() {
     registerCommand(command);
   }
 
-  const menuItems = [];
-  for (const command of defaultCommands) {
-    if (command.isMenuItem) {
-      const menuItem = {
-        name: command.name,
-        icon: command.menuIconName,
-        execute() {
-          if (command.execute) {
-            command.execute();
-          } else if (command.makeUndoable) {
-            apocalypse.write(command.makeUndoable());
-          }
+  const menuItems = [
+    {
+      name: "new_standard_sticky",
+      icon: "lucide-plus",
+      execute() {
+        executeCommand("new_standard_sticky");
+      },
+    },
+    {
+      name: "new_other_sticky_group",
+      subItems: [
+        {
+          name: "new_youtube_sticky",
+          icon: "lucide-youtube",
+          execute() {
+            executeCommand("new_youtube_sticky");
+          },
         },
-      };
-      menuItems.push(menuItem);
-    }
-  }
-  document.body.dataset.contextMenu = "main";
+        {
+          name: "new_spotify_sticky",
+          icon: "mdi:spotify",
+          execute() {
+            executeCommand("new_spotify_sticky");
+          },
+        },
+      ],
+    },
+  ];
+  $(".stickyContainer")!.dataset.contextMenu = "main";
   registerContextMenu("main", menuItems);
 
   initStickyEnvironment();
   initContextMenu();
   initSettings();
   initDock();
-  registerSticky(standardSticky);
+  initStandardSticky();
   registerSticky(youtubeSticky);
   registerSticky(spotifySticky);
   stickyManager.restoreAllFromHtml();

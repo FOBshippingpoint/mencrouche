@@ -4,9 +4,11 @@ import {
   Sticky,
   StickyPlugin,
   StickyLifeCycleState,
+  registerSticky,
 } from "../sticky";
 import { dataset } from "../myDataset";
 import { getWidgets } from "./getWidgets";
+import { registerContextMenu } from "../contextMenu";
 
 declare module "../sticky" {
   interface StickyPluginRegistry {
@@ -74,7 +76,7 @@ function paste(textarea: HTMLTextAreaElement, toPaste: string) {
   textarea.selectionStart = textarea.selectionEnd = start + toPaste.length;
 }
 
-export const standardSticky: CustomSticky = {
+const standardSticky: CustomSticky = {
   type: "standard",
   on(sticky: Sticky, state: StickyLifeCycleState) {
     if (state === "delete") {
@@ -93,10 +95,15 @@ export const standardSticky: CustomSticky = {
     }
 
     if (state === "create") {
+      sticky.dataset.contextMenu = "standard basic";
       sticky.replaceBody(textarea, preview);
+      console.log(widgets);
       sticky.addControlWidget(editModeToggleLbl);
       // Default set to edit mode.
       sticky.classList.add("editMode");
+
+      // Idk why we need setTimeout to let focus work...
+      setTimeout(() => textarea.focus(), 0);
     }
 
     if (state === "restoreFromHtml") {
@@ -132,7 +139,9 @@ export const standardSticky: CustomSticky = {
         textarea.hidden = !textarea.hidden;
         sticky.dataset.prevInput = textarea.value;
         preview.hidden = !preview.hidden;
-        textarea.focus();
+
+        // Idk why we need setTimeout to let focus work...
+        setTimeout(() => textarea.focus(), 0);
       });
 
       function toggleDisable(disable: boolean) {
@@ -164,3 +173,33 @@ export const standardSticky: CustomSticky = {
     }
   },
 };
+const standardStickyMenuItems = [
+  (sticky: Sticky) => ({
+    name:
+      "standard_sticky_edit_mode_" +
+      (sticky.classList.contains("editMode") ? "off" : "on"),
+    icon: sticky.classList.contains("editMode")
+      ? "lucide-sticky-note"
+      : "lucide-pencil",
+    execute() {
+      sticky.plugin.standard.toggleEditMode();
+    },
+  }),
+  (sticky: Sticky) => ({
+    name:
+      "standard_sticky_split_view_" +
+      (sticky.classList.contains("splitView") ? "off" : "on"),
+    icon: sticky.classList.contains("splitView")
+      ? "lucide-square-equal"
+      : "lucide-columns-2",
+    execute() {
+      sticky.plugin.standard.toggleSplitView();
+    },
+  }),
+  "hr",
+];
+
+export function initStandardSticky() {
+  registerSticky(standardSticky);
+  registerContextMenu("standard", standardStickyMenuItems);
+}

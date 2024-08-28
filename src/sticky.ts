@@ -1,4 +1,5 @@
 import { Apocalypse, apocalypse } from "./commands";
+import { registerContextMenu } from "./contextMenu";
 import { $, $$, Allowance } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
 import { BinPacker } from "./utils/packer";
@@ -49,6 +50,52 @@ export function initStickyEnvironment() {
       mutation.target.dispatchEvent(new CustomEvent("classchange"));
     }
   });
+
+  registerContextMenu("basic", [
+    (sticky: Sticky) => ({
+      name: "delete_sticky",
+      icon: "lucide-trash",
+      execute() {
+        sticky.delete();
+      },
+    }),
+    (sticky: Sticky) => ({
+      name: "duplicate_sticky",
+      icon: "lucide-copy",
+      execute() {
+        sticky.duplicate();
+      },
+    }),
+    (sticky: Sticky) => ({
+      name:
+        (sticky.classList.contains("maximized") ? "minimize" : "maximize") +
+        "_sticky",
+      icon: sticky.classList.contains("maximized")
+        ? "lucide-minimize-2"
+        : "lucide-maximize-2",
+      execute() {
+        sticky.toggleMaximize();
+      },
+    }),
+    (sticky: Sticky) => ({
+      name: (sticky.classList.contains("pin") ? "unpin" : "pin") + "_sticky",
+      icon: sticky.classList.contains("pin") ? "lucide-pin-off" : "lucide-pin",
+      execute() {
+        sticky.togglePin();
+      },
+    }),
+    (sticky: Sticky) => ({
+      name:
+        "sticky_ghost_mode_" +
+        (sticky.classList.contains("ghost") ? "off" : "on"),
+      icon: sticky.classList.contains("ghost")
+        ? "lucide-square"
+        : "lucide-box-select",
+      execute() {
+        sticky.toggleGhostMode();
+      },
+    }),
+  ]);
 }
 
 class StickyManager {
@@ -174,7 +221,7 @@ class StickyManager {
         duplicated.focus();
       },
       undo: () => {
-        this.#deleteSticky(sticky);
+        this.#deleteSticky(duplicated);
       },
     });
   }
@@ -193,7 +240,13 @@ class StickyManager {
   }
 
   arrange() {
-    const stickies = [...this.#stickies];
+    const stickies: Sticky[] = [];
+    for (const sticky of this.#stickies) {
+      if (!sticky.classList.contains("pin")) {
+        stickies.push(sticky);
+      }
+    }
+
     const GAP = 10;
 
     apocalypse.write({
@@ -218,6 +271,13 @@ class StickyManager {
         );
         const fittedBlocks = packer.fit(blocks);
 
+        stickyContainer.on(
+          "transitionend",
+          () => stickyContainer.classList.remove("arranging"),
+          {
+            once: true,
+          },
+        );
         for (let i = 0; i < fittedBlocks.length; i++) {
           const sticky = stickies[i];
           const fitted = fittedBlocks[i];
@@ -225,34 +285,24 @@ class StickyManager {
             sticky.style.left = `${fitted.x + GAP}px`;
             sticky.style.top = `${fitted.y + GAP}px`;
           }
-
-          sticky.on(
-            "transitionend",
-            () => sticky.classList.remove("arranging"),
-            {
-              once: true,
-            },
-          );
-          sticky.classList.add("arranging");
         }
+        stickyContainer.classList.add("arranging");
       },
       undo() {
+        stickyContainer.on(
+          "transitionend",
+          () => stickyContainer.classList.remove("arranging"),
+          {
+            once: true,
+          },
+        );
         for (const sticky of stickies) {
           sticky.style.left = sticky.dataset.left;
           sticky.style.top = sticky.dataset.top;
           delete sticky.dataset.left;
           delete sticky.dataset.top;
-
-          sticky.classList.add("arranging");
-
-          sticky.on(
-            "transitionend",
-            () => sticky.classList.remove("arranging"),
-            {
-              once: true,
-            },
-          );
         }
+        stickyContainer.classList.add("arranging");
       },
     });
   }
@@ -324,7 +374,7 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
   }
 
   function dragStart(e: PointerEvent) {
-    if (e.target === stickyHeader) {
+    if (e.button !== 2 && e.target === stickyHeader) {
       isDragging = true;
       if (sticky.classList.contains("maximized")) {
         sticky.style.top = "0px";
@@ -490,8 +540,10 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
     plugin: {},
   });
 
-  sticky.on("pointerdown", () => {
-    stickyManager.moveToTop(extendedSticky);
+  sticky.on("pointerdown", (e) => {
+    if (e.button !== 2 /* Not right-click */) {
+      stickyManager.moveToTop(extendedSticky);
+    }
   });
 
   deleteBtn.on("click", () => {
@@ -541,6 +593,7 @@ export function createSticky(type?: string, options: CreateStickyOptions = {}) {
   }
 
   const basicSticky = enableFunctionality(sticky);
+  basicSticky.dataset.contextMenu = "basic";
   if (type) {
     const custom = customStickies.get(type);
     if (custom) {

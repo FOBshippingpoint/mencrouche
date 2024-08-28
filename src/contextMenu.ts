@@ -1,3 +1,4 @@
+import { dataset } from "./myDataset";
 import { getTemplateWidgets } from "./stickyPlugins/getWidgets";
 import { $, $$$ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
@@ -5,14 +6,7 @@ import { n81i } from "./utils/n81i";
 const contextMenu = $<HTMLDivElement>("#contextMenu")!;
 const registry = new Map();
 
-function getIcon(icon: string) {
-  const menuItemIconsContainer = (
-    $<HTMLTemplateElement>("#menuItemIcons")!.content.cloneNode(true) as any
-  ).firstElementChild as HTMLDivElement;
-  return menuItemIconsContainer.getElementsByClassName(icon)[0];
-}
-
-function iOS() {
+function isIos() {
   return (
     [
       "iPad Simulator",
@@ -34,15 +28,29 @@ export function initContextMenu() {
     // if (commandName) {
     // 	executeCommand(commandName);
     // }
+    if (e.target.closest("[data-sub-item-active]")) {
+      return;
+    }
     contextMenu.classList.add("none");
   });
 
   function showContextMenu(e: MouseEvent | CustomEvent) {
     $("#debug").textContent = $("#debug")?.textContent + "context menu";
-    const target = e.target.closest("[data-context-menu]");
-    const key = target?.dataset.contextMenu;
-    const menuItems = registry.get(key);
-    contextMenu.replaceChildren(buildMenuItems(menuItems, target));
+    const target = (e.target as HTMLElement).closest("[data-context-menu]") as
+      | HTMLElement
+      | undefined;
+
+    if (!target) {
+      return;
+    }
+
+    const keys = target.dataset.contextMenu.split(" ");
+    const frag = document.createDocumentFragment();
+    for (const key of keys ?? []) {
+      const menuItems = registry.get(key);
+      frag.appendChild(buildMenuItems(menuItems, target));
+    }
+    contextMenu.replaceChildren(frag);
 
     e.preventDefault();
     contextMenu.classList.remove("none");
@@ -57,8 +65,11 @@ export function initContextMenu() {
       y = e.detail.originalEvent.clientY;
     }
 
-    contextMenu.style.top = `${Math.min(y, document.body.getBoundingClientRect().height - contextMenu.getBoundingClientRect().height)}px`;
-    contextMenu.style.left = `${Math.min(x, document.body.getBoundingClientRect().width - contextMenu.getBoundingClientRect().width)}px`;
+    const docRect = document.body.getBoundingClientRect();
+    const menuRect = contextMenu.getBoundingClientRect();
+
+    contextMenu.style.top = `${Math.min(y, docRect.height - menuRect.height)}px`;
+    contextMenu.style.left = `${Math.min(x, docRect.width - menuRect.width)}px`;
   }
 
   document.on("contextmenu", (e) => {
@@ -69,14 +80,14 @@ export function initContextMenu() {
     showContextMenu(e);
   });
 
-  if (iOS()) {
+  if (isIos()) {
     document.on("longpress", (e) => {
       showContextMenu(e);
     });
   }
 
   document.on("click", (e) => {
-    if ((e as any).target.offsetParent != contextMenu) {
+    if (!(e as any).target.closest(".contextMenu")) {
       contextMenu.classList.add("none");
     }
   });
@@ -110,26 +121,39 @@ export function initContextMenu() {
   document.on("pointerleave", endLongPress);
 }
 
-type MenuItemBuilder = () => MenuItemDefinition | null | "hr";
+type MenuItemBuilder = (
+  eventTarget: EventTarget,
+) => MenuItemDefinition | null | "hr";
 type MenuItem = MenuItemDefinition | MenuItemBuilder | "hr";
 
-interface MenuItemDefinition {
+export interface MenuItemDefinition {
   name: string;
   icon?: string;
-  execute: (eventTarget: EventTarget) => void;
+  execute?: (eventTarget: EventTarget) => void;
   subItems?: MenuItem[];
 }
 
+/**
+ * Register a context menu (right-click menu) for element with
+ * data-contextmenu="{name}" attribute.
+ *
+ * ```typescript
+ *
+ * ```
+ */
 export function registerContextMenu(name: string, menuItems: MenuItem[]) {
   registry.set(name, menuItems);
 }
 
+registerContextMenu("youtube", [{ name: "pause_video" }]);
+
 function buildMenuItems(menuItems: MenuItem[], eventTarget: EventTarget) {
+  const theme = dataset.getItem("theme") as "light" | "dark";
   const frag = document.createDocumentFragment();
   for (const item of menuItems) {
     let menuItem: MenuItem | null = item;
     if (typeof item === "function") {
-      menuItem = item();
+      menuItem = item(eventTarget);
       if (!menuItem) {
         continue;
       }
@@ -142,15 +166,55 @@ function buildMenuItems(menuItems: MenuItem[], eventTarget: EventTarget) {
       const template = getTemplateWidgets("menuItem");
       const btn = template.$<HTMLButtonElement>("button")!;
       const span = template.$<HTMLSpanElement>("span")!;
-
       span.dataset.i18n = menuItemDef.name;
-      if (menuItemDef.icon) {
-        const icon = getIcon(menuItemDef.icon);
-        btn.insertAdjacentElement("beforeend", icon);
+
+      const icon =
+        (menuItemDef.subItems ? "lucide-chevron-right" : null) ??
+        menuItemDef.icon;
+      if (icon) {
+        const iconEl = $$$("i");
+        iconEl.classList.add("icon");
+        iconEl.style.setProperty(
+          "--icon",
+          `url("https://api.iconify.design/${icon}.svg?color=${theme === "dark" ? "%23ffffff" : "%23000000"}")`,
+        );
+        btn.insertAdjacentElement("beforeend", iconEl);
       }
 
-      btn.on("click", () => menuItemDef.execute(eventTarget), { once: true });
       frag.appendChild(btn);
+      if (menuItemDef.subItems) {
+        const subItem = $$$("div");
+        subItem.classList.add("subItem", "contextMenu");
+        subItem.appendChild(buildMenuItems(menuItemDef.subItems, eventTarget));
+        btn.insertAdjacentElement("beforeend", subItem);
+        btn.dataset.subItemActive = "off";
+
+        function showSubItems() {
+          contextMenu.$$('[data-sub-item-active="on"]').do((el) => {
+            if (!el.contains(subItem)) {
+              el.dataset.subItemActive = "off";
+            }
+          });
+          btn.dataset.subItemActive = "on";
+          if (
+            document.body.getBoundingClientRect().right <
+            subItem.getBoundingClientRect().right
+          ) {
+            subItem.classList.add("expandLeft");
+          }
+          if (
+            document.body.getBoundingClientRect().bottom <
+            subItem.getBoundingClientRect().bottom
+          ) {
+            subItem.classList.add("expandTop");
+          }
+        }
+
+        btn.on("mouseenter", showSubItems);
+        // btn.on("click", showSubItems);
+      } else if (menuItemDef.execute) {
+        btn.on("click", () => menuItemDef.execute(eventTarget), { once: true });
+      }
     }
   }
   n81i.translateElement(frag);

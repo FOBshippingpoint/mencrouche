@@ -1,9 +1,32 @@
+import { serializeDocument } from "./documentStatus";
+import { createDialog } from "./generalDialog";
 import { createKikey, Kikey } from "./kikey/kikey";
 import { KeyBinding, parseBinding } from "./kikey/parseBinding";
 import { dataset } from "./myDataset";
 import { $, $$, $$$ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
 import { toDataUrl } from "./utils/toDataUrl";
+
+const changesManager = (() => {
+  const todos: Function[] = [];
+  return {
+    isDirty: false,
+    addChange(func: () => void) {
+      todos.push(func);
+      this.isDirty = true;
+    },
+    onRevert() {},
+    save() {
+      todos.forEach((f) => f());
+      this.isDirty = false;
+    },
+    cancel() {
+      this.onRevert?.();
+      todos.length = 0;
+      this.isDirty = false;
+    },
+  };
+})();
 
 const settings = $<HTMLElement>("#settings")!;
 const settingsBtn = $<HTMLButtonElement>("#settingsBtn")!;
@@ -24,15 +47,42 @@ const saveAndCloseBtn = $<HTMLButtonElement>("#saveAndCloseSettingsBtn")!;
 const cancelBtn = $<HTMLButtonElement>("#cancelSettingsBtn")!;
 const hueWheel = $<HTMLDivElement>("#hueWheel")!;
 const resetPaletteHueBtn = $<HTMLDivElement>("#setPaletteHueToDefaultBtn")!;
+const dialog = createDialog({
+  title: "unsaved_changes",
+  message: "unsaved_changes_message",
+  buttons: [
+    {
+      "data-i18n": "cancel_submit_btn",
+      onClick() {
+        dialog.close();
+      },
+    },
+    {
+      "data-i18n": "leave_settings_page",
+      onClick() {
+        changesManager.cancel();
+        closeSettingsPage();
+        dialog.close();
+      },
+      type: "reset",
+    },
+  ],
+});
 
-settingsBtn.on("click", toggleSettingsPage);
+settingsBtn.on("click", () => {
+  if (changesManager.isDirty) {
+    dialog.open();
+  } else {
+    toggleSettingsPage();
+  }
+});
 
 deleteDocumentBtn.on("click", () => {
   if (confirm(n81i.t("confirm_delete_document"))) {
     localStorage.clear();
   }
 });
-exportDocumentBtn.on("click", () => {
+exportDocumentBtn.on("click", async () => {
   // Copied from web.dev: https://web.dev/patterns/files/save-a-file#progressive_enhancement
   async function saveFile(blob: Blob, suggestedName: string) {
     // Feature detection. The API needs to be supported
@@ -84,7 +134,7 @@ exportDocumentBtn.on("click", () => {
     }, 1000);
   }
 
-  const doc = localStorage.getItem("doc");
+  const doc = await serializeDocument();
   if (doc) {
     const blob = new Blob([doc], { type: "text/html" });
     saveFile(
@@ -94,24 +144,6 @@ exportDocumentBtn.on("click", () => {
   }
 });
 
-const changesManager = (() => {
-  const todos: Function[] = [];
-
-  return {
-    addChange(func: () => void) {
-      todos.push(func);
-    },
-    onRevert() {},
-    save() {
-      todos.forEach((f) => f());
-    },
-    cancel() {
-      this.onRevert?.();
-      todos.length = 0;
-    },
-  };
-})();
-
 saveBtn.on("click", () => {
   changesManager.save();
 });
@@ -120,7 +152,7 @@ saveAndCloseBtn.on("click", () => {
   closeSettingsPage();
 });
 cancelBtn.on("click", () => {
-  changesManager.cancel;
+  changesManager.cancel();
   closeSettingsPage();
 });
 
@@ -147,6 +179,7 @@ backgroundImageUrlInput.on("paste", async (e) => {
         new URL(url);
         dropzone.style.background = `url(${url}) center center / cover no-repeat`;
         setBackgroundImageByUrl(url);
+        changesManager.isDirty = true;
       } catch (_) {
         alert(n81i.t("image_url_is_not_valid_alert"));
       }
@@ -161,6 +194,7 @@ function handleBlob(blob: Blob | File) {
   }
   dropzone.style.background = `url(${url}) center center / cover no-repeat`;
   setBackgroundImageByUrl(url);
+  changesManager.isDirty = true;
 }
 
 // Handle drag and drop events
@@ -209,12 +243,11 @@ resetBackgroundImageBtn.on("click", () => {
   unsetBackgroundImage();
 });
 
+// TODO: somehow laggy? maybe we need throttle?
 uiOpacityInput.on("input", () => {
   const uiOpacity = (uiOpacityInput.valueAsNumber / 100).toString();
   document.documentElement.style.setProperty("--ui-opacity", uiOpacity);
-  changesManager.addChange(() => {
-    dataset.setItem("uiOpacity", uiOpacity);
-  });
+  changesManager.isDirty = true;
 });
 
 async function setBackgroundImageByUrl(url: string) {
@@ -248,6 +281,8 @@ function openSettingsPage() {
     );
     uiOpacityInput.style.opacity = uiOpacity.toString();
     uiOpacityInput.value = (uiOpacity * 100).toString();
+
+    // Reset palette hue
     if (paletteHue) {
       document.documentElement.style.setProperty("--palette-hue", paletteHue);
     } else {
@@ -268,13 +303,13 @@ function closeSettingsPage() {
   dropzone.style.backgroundImage = "unset";
   backgroundImageUrlInput.value = "";
   $(".stickyContainer")!.classList.remove("none");
-  changesManager.cancel();
 }
 
 export function toggleSettingsPage() {
   if (settings.classList.contains("none")) {
     openSettingsPage();
   } else {
+    changesManager.cancel();
     closeSettingsPage();
   }
 }
@@ -324,7 +359,6 @@ function initLanguage() {
 export function initSettings() {
   initBackground();
   initLanguage();
-  initGhostMode();
   initTheme();
   initShortcuts();
   initUiOpacity();
@@ -332,8 +366,7 @@ export function initSettings() {
 }
 
 function queryPrefersColorScheme() {
-  return window.matchMedia &&
-    window.matchMedia("(prefers-color-scheme: dark)").matches
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
     ? "dark"
     : "light";
 }
@@ -349,7 +382,7 @@ function initTheme() {
     $("#lightIcon")!.hidden = theme !== "dark";
     $("#darkIcon")!.hidden = theme === "dark";
     themeToggle.checked = theme === "light";
-    document.firstElementChild?.setAttribute("data-theme", theme as string);
+    document.documentElement.setAttribute("data-theme", theme as string);
   }
 
   dataset.on<"light" | "dark">("theme", (_, theme) => change(theme));
@@ -357,30 +390,6 @@ function initTheme() {
     const value = (e.target as any).checked ? "light" : "dark";
     dataset.setItem("theme", value);
   });
-}
-
-function initGhostMode() {
-  const isGhostMode = dataset.getOrSetItem("isGhostMode", false);
-  const ghostIcon = $("#ghostIcon")!;
-  const solidIcon = $("#solidIcon")!;
-  const ghostToggle = $<HTMLInputElement>("#ghostToggle")!;
-  ghostIcon.hidden = !isGhostMode;
-  solidIcon.hidden = !!isGhostMode;
-  ghostToggle.checked = !!isGhostMode;
-
-  function change(isGhostMode: boolean | undefined) {
-    ghostIcon.hidden = !isGhostMode;
-    solidIcon.hidden = !!isGhostMode;
-    ghostToggle.checked = !!isGhostMode; // To sync.
-    $$(".sticky").do((s) =>
-      isGhostMode ? s.classList.add("ghost") : s.classList.remove("ghost"),
-    );
-  }
-
-  dataset.on<boolean>("isGhostMode", (_, isGhostMode) => change(isGhostMode));
-  ghostToggle.on("change", () =>
-    dataset.setItem("isGhostMode", ghostToggle.checked),
-  );
 }
 
 function initShortcuts() {
@@ -644,9 +653,6 @@ hueWheel.on("pointerdown", () => hueWheel.on("pointermove", adjustPaletteHue));
 hueWheel.on("pointerup", () => hueWheel.off("pointermove", adjustPaletteHue));
 resetPaletteHueBtn.on("click", () => {
   document.documentElement.style.removeProperty("--palette-hue");
-  changesManager.addChange(() => {
-    document.documentElement.style.removeProperty("--palette-hue");
-  });
 });
 
 function adjustPaletteHue(e: MouseEvent) {
@@ -661,9 +667,8 @@ function adjustPaletteHue(e: MouseEvent) {
   const paletteHue = Math.round(angle).toString();
 
   document.documentElement.style.setProperty("--palette-hue", paletteHue);
-  changesManager.addChange(() => {
-    dataset.setItem("paletteHue", paletteHue);
-  });
+  dataset.setItem("paletteHue", paletteHue);
+  changesManager.isDirty = true;
 }
 
 function initPaletteHue() {

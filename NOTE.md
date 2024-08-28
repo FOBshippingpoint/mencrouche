@@ -1,12 +1,3 @@
-- sync
-- discover the api difference between web and extension
-- store image (image board)
-- import/export data (html as data?)
-- set background image
-- asciidoc
-- isolation
-- bug: window resize cuz sticky out of sight
-
 ## TODOs
 
 - [x] Maximize
@@ -18,13 +9,17 @@
 - [x] Context menu with focus element.
 - [x] Spotify sticky
 - [x] Color theme
+- [x] Sub menus
+- [x] Dock preference always on top.
+- [ ] Sync
+- [ ] Toolbar for mobile.
 - [ ] iframe sticky
+- [ ] declarativeNetRequest -> unblock iframe
 - [ ] Drag bookmark dock item.
 - [ ] Blockly
 - [ ] Remove flexbox-based autoArrange
 - [ ] Import document
 - [ ] Web extension version.
-- [ ] declarativeNetRequest -> unblock iframe
 
 ## Sticky Lifecycle
 

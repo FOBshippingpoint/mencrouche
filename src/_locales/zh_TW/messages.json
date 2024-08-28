@@ -310,5 +310,69 @@
 	"cannot_found_spotify_media": {
 		"message": "找不到Spotify曲目",
 		"description": "Error message displayed when the Spotify media cannot be found in the provided input."
+	},
+	"new_other_sticky_group": {
+		"message": "其他便利貼",
+		"description": "Context menu sub-menu name for other sticky group."
+	},
+	"standard_sticky_edit_mode_on": {
+		"message": "編輯模式",
+		"description": "Context menu label for toggle on standard sticky edit mode."
+	},
+	"standard_sticky_edit_mode_off": {
+		"message": "檢視模式",
+		"description": "Context menu label for toggle off standard sticky edit mode."
+	},
+	"standard_sticky_split_view_on": {
+		"message": "雙欄模式",
+		"description": "Context menu label for toggle on standard sticky split view."
+	},
+	"standard_sticky_split_view_off": {
+		"message": "單欄模式",
+		"description": "Context menu label for toggle off standard sticky split view."
+	},
+  "maximize_sticky": {
+		"message": "最大化便利貼",
+		"description": "Context menu option to maximize a sticky note."
+	},
+	"minimize_sticky": {
+		"message": "最小化便利貼",
+		"description": "Context menu option to minimize a sticky note."
+	},
+	"pin_sticky": {
+		"message": "釘選便利貼",
+		"description": "Context menu option to pin a sticky note."
+	},
+	"unpin_sticky": {
+		"message": "取消釘選便利貼",
+		"description": "Context menu option to unpin a sticky note."
+	},
+	"sticky_ghost_mode_on": {
+		"message": "幽靈模式",
+		"description": "Context menu option to enable ghost mode on a sticky note."
+	},
+	"sticky_ghost_mode_off": {
+		"message": "關閉幽靈模式",
+		"description": "Context menu option to disable ghost mode on a sticky note."
+	},
+	"unsaved_changes": {
+		"message": "尚未儲存變更",
+		"description": "Dialog title indicating unsaved changes."
+	},
+	"unsaved_changes_message": {
+		"message": "確定要離開嗎？",
+		"description": "Dialog message prompting the user to confirm leaving with unsaved changes."
+	},
+	"leave_settings_page": {
+		"message": "離開",
+		"description": "Dialog button label to confirm leaving the settings page."
+	},
+	"always_on_top_checkbox_label": {
+		"message": "顯示於最上層",
+		"description": "Label for the checkbox that keeps a dock always on top."
+	},
+	"always_on_top_help": {
+		"message": "避免被便利貼遮住",
+		"description": "Help message for checkbox that keeps a dock always on top."
 	}
 }

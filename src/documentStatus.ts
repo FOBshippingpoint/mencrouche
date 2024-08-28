@@ -1,6 +1,4 @@
-import { executeCommand } from "./commands";
 import { dataset, saveDataset } from "./myDataset";
-import { stickyManager } from "./sticky";
 import { $ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
 import { toDataUrl } from "./utils/toDataUrl";
@@ -10,13 +8,8 @@ type DocumentStatus = "saved" | "unsaved" | "saving";
 const ds = $<HTMLButtonElement>("#documentStatus")!;
 const span = ds.$<HTMLSpanElement>("span")!;
 
-ds.on("click", () => {
-  executeCommand("save_document");
-});
-
 export function switchDocumentStatus(status: DocumentStatus) {
   if (ds.className === status) return;
-  console.log("save document", status);
   ds.classList.remove("saved");
   ds.classList.remove("unsaved");
   ds.classList.remove("saving");
@@ -28,6 +21,16 @@ export function switchDocumentStatus(status: DocumentStatus) {
 
 export async function saveDocument() {
   switchDocumentStatus("saving");
+  localStorage.setItem("doc", await serializeDocument());
+  saveDataset();
+
+  // Prevent mutation observer callback for stickyManager.saveAll.
+  setTimeout(() => {
+    switchDocumentStatus("saved");
+  }, 0);
+}
+
+export async function serializeDocument() {
   let html = $(".stickyContainer")!.innerHTML;
 
   const urls = dataset.getItem("urls", []);
@@ -40,12 +43,5 @@ export async function saveDocument() {
     dataset.setItem("urls", blobToDataUrlMappings);
   }
 
-  stickyManager.saveAll();
-  localStorage.setItem("doc", html);
-  saveDataset();
-
-  // Prevent mutation observer callback for stickyManager.saveAll.
-  setTimeout(() => {
-    switchDocumentStatus("saved");
-  }, 0);
+  return html;
 }

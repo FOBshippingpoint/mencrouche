@@ -108,9 +108,11 @@ export const spotifySticky: CustomSticky = {
       editLinkBtn.on("click", () => {
         current = sticky;
         linkInput.value = sticky.dataset.link ?? "";
-        form
-          .$$<HTMLOptionElement>("option")
-          .do((el) => (el.selected = current.dataset.height === el.value));
+        form.$$<HTMLOptionElement>("option").do((el) => {
+          if (current.dataset.height) {
+            el.selected = current.dataset.height === el.value;
+          }
+        });
         dialog.showModal();
         linkInput.select();
       });

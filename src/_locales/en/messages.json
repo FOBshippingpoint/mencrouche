@@ -310,5 +310,69 @@
 	"cannot_found_spotify_media": {
 		"message": "Spotify track not found",
 		"description": "Error message displayed when the Spotify media cannot be found in the provided input."
+	},
+  "new_other_sticky_group": {
+		"message": "Other Sticky Notes",
+		"description": "Context menu sub-menu name for other sticky group."
+	},
+	"standard_sticky_edit_mode_on": {
+		"message": "Edit Mode",
+		"description": "Context menu label for toggle on standard sticky edit mode."
+	},
+	"standard_sticky_edit_mode_off": {
+		"message": "View Mode",
+		"description": "Context menu label for toggle off standard sticky edit mode."
+	},
+	"standard_sticky_split_view_on": {
+		"message": "Split View",
+		"description": "Context menu label for toggle on standard sticky split view."
+	},
+	"standard_sticky_split_view_off": {
+		"message": "Single-Column View",
+		"description": "Context menu label for toggle off standard sticky split view."
+	},
+	"maximize_sticky": {
+		"message": "Maximize Sticky Note",
+		"description": "Context menu option to maximize a sticky note."
+	},
+	"minimize_sticky": {
+		"message": "Minimize Sticky Note",
+		"description": "Context menu option to minimize a sticky note."
+	},
+	"pin_sticky": {
+		"message": "Pin Sticky Note",
+		"description": "Context menu option to pin a sticky note."
+	},
+	"unpin_sticky": {
+		"message": "Unpin Sticky Note",
+		"description": "Context menu option to unpin a sticky note."
+	},
+	"sticky_ghost_mode_on": {
+		"message": "Enable Ghost Mode",
+		"description": "Context menu option to enable ghost mode on a sticky note."
+	},
+	"sticky_ghost_mode_off": {
+		"message": "Disable Ghost Mode",
+		"description": "Context menu option to disable ghost mode on a sticky note."
+	},
+	"unsaved_changes": {
+		"message": "Unsaved Changes",
+		"description": "Dialog title indicating unsaved changes."
+	},
+	"unsaved_changes_message": {
+		"message": "Exit now?",
+		"description": "Dialog message prompting the user to confirm leaving with unsaved changes."
+	},
+	"leave_settings_page": {
+		"message": "Leave Page",
+		"description": "Dialog button label to confirm leaving the settings page."
+	},
+	"always_on_top_checkbox_label": {
+		"message": "Always On Top",
+		"description": "Label for the checkbox that keeps a dock always on top."
+	},
+	"always_on_top_help": {
+		"message": "Avoid dock cover by stickies.",
+		"description": "Help message for checkbox that keeps a dock always on top."
 	}
 }

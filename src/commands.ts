@@ -10,10 +10,7 @@ export interface Undoable {
 
 export interface Command {
   name: string;
-  isMenuItem: boolean;
-  menuIconName?: string;
   execute?: () => void;
-  makeUndoable?: () => Undoable;
   defaultShortcut?: string;
 }
 
@@ -190,16 +187,7 @@ export function initCommandPalette() {
 }
 
 export function executeCommand(commandName: string) {
-  const command = commands.find(({ name }) => name === commandName);
-  if (command) {
-    if (command.makeUndoable) {
-      // Undoable commands.
-      apocalypse.write(command.makeUndoable!());
-    } else {
-      // Non-undoable commands.
-      command.execute!();
-    }
-  }
+  commands.find(({ name }) => name === commandName).execute?.();
 }
 
 export function registerCommand(command: Command) {
