@@ -203,8 +203,8 @@ function getUserPreferredLanguage() {
 }
 
 async function init() {
-  const ds = $<HTMLButtonElement>("#documentStatus")!;
-  ds.on("click", () => executeCommand("save_document"));
+  const saveDocumentBtn = $<HTMLDivElement>("#documentStatus button")!;
+  saveDocumentBtn.on("click", () => executeCommand("save_document"));
 
   let stickyContainerHtml = localStorage.getItem("doc");
   if (stickyContainerHtml) {

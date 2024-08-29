@@ -130,6 +130,13 @@ h6 {
   align-items: center;
   gap: var(--size-2);
 
+  /* Vertical bar between save button and status */
+  hr {
+    width: var(--border-size-1);
+    margin-inline-end: var(--size-1);
+    height: 0.8lh;
+    background-color: var(--surface-1);
+  }
   div {
     border-radius: 50%;
     transition: background-color 0.5s var(--ease-elastic-in-out-5);
@@ -156,10 +163,10 @@ h6 {
 nav {
   padding-inline: var(--size-3);
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: var(--size-2);
-  justify-self: stretch;
+  padding-bottom: var(--border-size-1);
   border-bottom: var(--border-size-1) solid var(--surface-3);
   box-shadow: var(--shadow-1);
 
@@ -170,11 +177,15 @@ nav {
     border: unset;
   }
 
-  label,#settingsBtn {
+  #documentStatus button,
+  label,
+  #settingsBtn {
     border-radius: var(--radius-2);
     padding: var(--size-1);
   }
-  label:hover,#settingsBtn:hover {
+  #documentStatus button:hover,
+  label:hover,
+  #settingsBtn:hover {
     background-color: var(--surface-2);
   }
 }
