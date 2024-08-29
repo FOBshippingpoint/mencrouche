@@ -161,14 +161,14 @@ export const n81i = {
   /**
    * Translates an HTML element and its children based on the `data-i18n` attribute.
    * The attribute `data-i18n-for` can be used to specify which attribute to set the translation to.
-   * @param element - The HTML element to translate.
+   * @param node - The HTML element to translate.
    */
-  translateElement(element: HTMLElement | DocumentFragment) {
-    const children = element.querySelectorAll("[data-i18n]");
-    for (const el of [...children, element]) {
-      const { i18n, i18nFor } = el.dataset ?? {};
+  translateElement(node: ParentNode) {
+    const children = node.querySelectorAll("[data-i18n]");
+    for (const el of [...children, node]) {
+      const { i18n, i18nFor } = el["dataset"] ?? {};
       if (i18n) {
-        this.translateLater(i18n, (message) => {
+        this.translateLater(i18n, (message: string) => {
           if (i18nFor) {
             (el as any).setAttribute(i18nFor, message);
           } else {
@@ -220,7 +220,7 @@ export const n81i = {
    * Returns the list of all available locales.
    * @returns An array of available locale strings.
    */
-  getAllLocales() {
+  getAllLocales(): readonly string[] {
     return availableLocales;
   },
   /**

@@ -16,7 +16,7 @@ import { initSettings } from "./settings";
 import { n81i } from "./utils/n81i";
 import { saveDocument, switchDocumentStatus } from "./documentStatus";
 import { createSticky } from "./sticky";
-import { dataset } from "./myDataset";
+import { dataset, saveDataset } from "./myDataset";
 import { toggleSettingsPage } from "./settings";
 import { youtubeSticky } from "./stickyPlugins/youtube";
 import { addPublicApi } from "./publicApi";
@@ -25,8 +25,9 @@ import "./dock";
 import { initDock } from "./dock";
 import { spotifySticky } from "./stickyPlugins/spotify";
 import { initStandardSticky } from "./stickyPlugins/standard";
+import { depot, SyncInfo } from "./utils/depot";
 
-function newSticky(type: string) {
+function myCreateSticky(type: string) {
   let sticky: Sticky | null = null;
   let options: CreateStickyOptions | null = null;
 
@@ -81,7 +82,12 @@ const defaultCommands: Command[] = [
     name: "save_document",
     async execute() {
       stickyManager.saveAll();
+      const syncInfo = dataset.getItem("syncInfo") as SyncInfo;
+      saveDataset();
       saveDocument();
+      if (syncInfo) {
+        await depot.save(syncInfo);
+      }
     },
     defaultShortcut: "C-s",
   },
@@ -105,7 +111,7 @@ const defaultCommands: Command[] = [
   {
     name: "add_standard_sticky",
     execute() {
-      const sticky = newSticky("standard");
+      const sticky = myCreateSticky("standard");
       stickyManager.add(sticky);
     },
     defaultShortcut: "C-q",
@@ -113,7 +119,7 @@ const defaultCommands: Command[] = [
   {
     name: "add_youtube_sticky",
     execute() {
-      const sticky = newSticky("youtube");
+      const sticky = myCreateSticky("youtube");
       sticky.plugin.youtube.onSubmit = () => {
         stickyManager.add(sticky);
       };
@@ -123,7 +129,7 @@ const defaultCommands: Command[] = [
   {
     name: "add_spotify_sticky",
     execute() {
-      const sticky = newSticky("spotify");
+      const sticky = myCreateSticky("spotify");
       sticky.plugin.spotify.onSubmit = () => {
         stickyManager.add(sticky);
       };
@@ -206,6 +212,18 @@ async function init() {
   const saveDocumentBtn = $<HTMLDivElement>("#documentStatus button")!;
   saveDocumentBtn.on("click", () => executeCommand("save_document"));
 
+  if (window.location.hash) {
+    const params = new URLSearchParams(window.location.hash.substring(1));
+    const url = params.get("url");
+    const id = params.get("id");
+    await depot.load({ url, id });
+  } else {
+    const syncInfo = dataset.getItem("syncInfo", {}) as SyncInfo;
+    if (syncInfo?.url && syncInfo?.id) {
+      await depot.load(syncInfo);
+    }
+  }
+
   let stickyContainerHtml = localStorage.getItem("doc");
   if (stickyContainerHtml) {
     const urls =
@@ -250,14 +268,16 @@ async function init() {
     registerCommand(command);
   }
 
-  const addStickyDropdownContainer = $<HTMLButtonElement>("#addStickyDropdownContainer")!;
+  const addStickyDropdownContainer = $<HTMLButtonElement>(
+    "#addStickyDropdownContainer",
+  )!;
   const addOtherStickyBtn = $<HTMLButtonElement>(".addOtherStickyBtn")!;
   const otherStickyDropdown = $<HTMLDivElement>(".dropdownButtons")!;
   addOtherStickyBtn.on("click", () => {
     otherStickyDropdown.classList.toggle("none");
   });
   addStickyDropdownContainer.on("click", (e) => {
-    const command = e.target?.closest("[data-command]")?.dataset.command; 
+    const command = e.target?.closest("[data-command]")?.dataset.command;
     if (command) {
       executeCommand(command);
       otherStickyDropdown.classList.add("none");

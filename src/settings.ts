@@ -1,28 +1,31 @@
-import { serializeDocument } from "./documentStatus";
+import { saveDocument, serializeDocument } from "./documentStatus";
 import { createDialog } from "./generalDialog";
 import { createKikey, Kikey } from "./kikey/kikey";
 import { KeyBinding, parseBinding } from "./kikey/parseBinding";
-import { dataset } from "./myDataset";
-import { $, $$, $$$ } from "./utils/dollars";
+import { dataset, saveDataset } from "./myDataset";
+import { depot, SyncInfo } from "./utils/depot";
+import { $, $$$ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
 import { toDataUrl } from "./utils/toDataUrl";
 
 const changesManager = (() => {
-  const todos: Function[] = [];
+  type Todo = () => void;
+  const todos = new Map<string, Todo>();
+
   return {
     isDirty: false,
-    addChange(func: () => void) {
-      todos.push(func);
+    setChange(key: string, todo: Todo) {
+      todos.set(key, todo);
       this.isDirty = true;
     },
     onRevert() {},
     save() {
-      todos.forEach((f) => f());
+      [...todos.values()].forEach((f) => f());
       this.isDirty = false;
     },
     cancel() {
       this.onRevert?.();
-      todos.length = 0;
+      todos.clear();
       this.isDirty = false;
     },
   };
@@ -42,8 +45,10 @@ const resetBackgroundImageBtn = $<HTMLButtonElement>(
 )!;
 const deleteDocumentBtn = $<HTMLButtonElement>("#deleteDocumentBtn")!;
 const exportDocumentBtn = $<HTMLButtonElement>("#exportDocumentBtn")!;
+const shareDataLinkBtn = $<HTMLButtonElement>("#shareDataLinkBtn")!;
 const saveBtn = $<HTMLButtonElement>("#saveSettingsBtn")!;
 const saveAndCloseBtn = $<HTMLButtonElement>("#saveAndCloseSettingsBtn")!;
+const syncUrlInput = $<HTMLInputElement>('[name="syncUrl"]')!;
 const cancelBtn = $<HTMLButtonElement>("#cancelSettingsBtn")!;
 const hueWheel = $<HTMLDivElement>("#hueWheel")!;
 const resetPaletteHueBtn = $<HTMLDivElement>("#setPaletteHueToDefaultBtn")!;
@@ -77,6 +82,30 @@ settingsBtn.on("click", () => {
   }
 });
 
+syncUrlInput.on("input", () => {
+  changesManager.setChange("setStorageSyncUrl", () => {
+    const syncInfo = dataset.getOrSetItem("syncInfo", {});
+    syncInfo["url"] = syncUrlInput.value;
+    dataset.setItem("syncInfo", syncInfo);
+    depot.save(syncInfo as SyncInfo);
+  });
+});
+shareDataLinkBtn.on("click", () => {
+  const syncInfo = dataset.getItem("syncInfo") as SyncInfo;
+  if (syncInfo?.id) {
+    const url = new URL(window.location.origin);
+    url.hash = new URLSearchParams({
+      url: syncInfo.url,
+      id: syncInfo.id,
+    }).toString();
+    navigator.clipboard
+      .writeText(url.toString())
+      .then(() => {
+        console.log("Text copied");
+      })
+      .catch((err) => console.error(err.name, err.message));
+  }
+});
 deleteDocumentBtn.on("click", () => {
   if (confirm(n81i.t("confirm_delete_document"))) {
     localStorage.clear();
@@ -273,6 +302,9 @@ function openSettingsPage() {
   const uiOpacity = dataset.getOrSetItem("uiOpacity", 1);
   const paletteHue = dataset.getItem("paletteHue") as string;
   const backgroundImageUrl = dataset.getItem("backgroundImageUrl");
+  const syncInfo = dataset.getItem("syncInfo") as SyncInfo;
+  console.log("set input value", syncInfo);
+  syncUrlInput.value = syncInfo?.url ?? "";
   changesManager.onRevert = () => {
     // Reset ui opacity
     document.documentElement.style.setProperty(
@@ -348,7 +380,7 @@ function initLanguage() {
     // Pre-loading when user select, instead of applying settings.
     n81i.loadLanguage(langDropdown.value);
 
-    changesManager.addChange(async () => {
+    changesManager.setChange("setLanguage", async () => {
       dataset.setItem("language", langDropdown.value);
       await n81i.changeLanguage(langDropdown.value);
       n81i.translatePage();
@@ -435,7 +467,7 @@ function initShortcuts() {
           btn.textContent = n81i.t("record_shortcut_btn");
           const newSequence = recordingKikey.stopRecord();
           if (newSequence) {
-            changesManager.addChange(() => {
+            changesManager.setChange(actionName, () => {
               shortcutManager.update(actionName, newSequence);
             });
             input.value = keySequenceToString(newSequence);
@@ -446,7 +478,9 @@ function initShortcuts() {
         btn.dataset.recording =
           btn.dataset.recording === "false" ? "true" : "false";
       } else if ((e.target as HTMLElement).matches(".resetBtn")) {
-        changesManager.addChange(() => shortcutManager.restore(actionName));
+        changesManager.setChange(actionName, () =>
+          shortcutManager.restore(actionName),
+        );
         input.value = shortcutManager.getDefaultKeySequence(actionName);
       }
     }

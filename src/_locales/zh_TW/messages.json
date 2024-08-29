@@ -382,5 +382,13 @@
 	"add_spotify_sticky_btn": {
 		"message": "Spotify",
 		"description": "Button label for adding Spotify sticky."
+	},
+	"sync_url_input_label": {
+		"message": "雲端同步連結",
+		"description": "Input label for syncing service url."
+	},
+	"share_data_link_btn": {
+		"message": "分享連結",
+		"description": "Input label for sharing data link."
 	}
 }

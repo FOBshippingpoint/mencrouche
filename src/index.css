@@ -680,21 +680,6 @@ nav {
 .dropzone[active] {
   background-color: var(--surface-2);
 }
-/* .btn { */
-/*   border-radius: var(--radius-conditional-2); */
-/*   display: inline-flex; */
-/*   align-items: center; */
-/*   padding-block: var(--size-relative-1); */
-/*   padding-inline: var(--size-relative-6); */
-/*   border: var(--surface-2) solid var(--size-relative-1); */
-/* } */
-/* .iconBtn { */
-/*   border-radius: var(--radius-conditional-2); */
-/*   display: inline-flex; */
-/*   align-items: center; */
-/*   aspect-ratio: var(--ratio-square); */
-/*   border: var(--surface-2) solid var(--size-relative-1); */
-/* } */
 .formGroupHorizontal {
   display: flex;
   align-items: flex-start;
@@ -720,6 +705,14 @@ nav {
     input {
       font-family: var(--font-mono);
     }
+  }
+}
+#storagePref {
+  display: grid;
+  gap: var(--size-3);
+  label {
+    display: grid;
+    gap: var(--size-1);
   }
 }
 /* @settings end */
