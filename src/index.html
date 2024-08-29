@@ -20,28 +20,54 @@
           <div></div>
           <span></span>
         </button>
-        <button
-          id="newStickyBtn"
-          class="pureBtn"
-          data-i18n-for="title"
-          data-i18n="new_standard_sticky"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-plus"
-          >
-            <path d="M5 12h14" />
-            <path d="M12 5v14" />
-          </svg>
-        </button>
+        <div id="addStickyDropdownContainer">
+          <div>
+            <button
+              class="pureBtn addStandardStickyBtn"
+              data-command="add_standard_sticky"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-plus"
+              >
+                <path d="M5 12h14" />
+                <path d="M12 5v14" />
+              </svg>
+            </button>
+            <button class="pureBtn addOtherStickyBtn">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-chevron-down"
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+          </div>
+          <div class="dropdownButtons shadow none">
+            <button class="pureBtn" data-command="add_youtube_sticky">
+              <span data-i18n="add_youtube_sticky_btn"></span>
+            </button>
+            <button class="pureBtn" data-command="add_spotify_sticky">
+              <span data-i18n="add_spotify_sticky_btn"></span>
+            </button>
+          </div>
+        </div>
         <label for="themeToggle" id="darkIcon" hidden=""
           ><svg
             xmlns="http://www.w3.org/2000/svg"
@@ -593,7 +619,7 @@
                   ></option>
                   <option
                     value="_blank"
-                    data-i18n="open_bookmark_in_new_tab_menu_item"
+                    data-i18n="open_bookmark_in_add_tab_menu_item"
                   ></option>
                 </select>
               </label>
@@ -646,8 +672,9 @@
             >
               <circle cx="12" cy="12" r="10" />
               <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-              <path d="M12 17h.01" /></svg
-          ></div>
+              <path d="M12 17h.01" />
+            </svg>
+          </div>
         </label>
         <label>
           <input type="checkbox" name="showAddBtn" />

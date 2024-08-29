@@ -103,7 +103,7 @@ const defaultCommands: Command[] = [
     defaultShortcut: "C-A-x",
   },
   {
-    name: "new_standard_sticky",
+    name: "add_standard_sticky",
     execute() {
       const sticky = newSticky("standard");
       stickyManager.add(sticky);
@@ -111,7 +111,7 @@ const defaultCommands: Command[] = [
     defaultShortcut: "C-q",
   },
   {
-    name: "new_youtube_sticky",
+    name: "add_youtube_sticky",
     execute() {
       const sticky = newSticky("youtube");
       sticky.plugin.youtube.onSubmit = () => {
@@ -121,7 +121,7 @@ const defaultCommands: Command[] = [
     defaultShortcut: "C-A-y",
   },
   {
-    name: "new_spotify_sticky",
+    name: "add_spotify_sticky",
     execute() {
       const sticky = newSticky("spotify");
       sticky.plugin.spotify.onSubmit = () => {
@@ -236,10 +236,6 @@ async function init() {
   });
   n81i.translatePage();
 
-  $("#newStickyBtn")!.on("click", () => {
-    executeCommand("new_standard_sticky");
-  });
-
   switchDocumentStatus("saved");
   new MutationObserver(() => {
     switchDocumentStatus("unsaved");
@@ -254,29 +250,51 @@ async function init() {
     registerCommand(command);
   }
 
+  const addStickyDropdownContainer = $<HTMLButtonElement>("#addStickyDropdownContainer")!;
+  const addOtherStickyBtn = $<HTMLButtonElement>(".addOtherStickyBtn")!;
+  const otherStickyDropdown = $<HTMLDivElement>(".dropdownButtons")!;
+  addOtherStickyBtn.on("click", () => {
+    otherStickyDropdown.classList.toggle("none");
+  });
+  addStickyDropdownContainer.on("click", (e) => {
+    const command = e.target?.closest("[data-command]")?.dataset.command; 
+    if (command) {
+      executeCommand(command);
+      otherStickyDropdown.classList.add("none");
+    }
+  });
+  document.body.on("click", (e) => {
+    if (
+      !e.target.closest(".dropdownButtons") &&
+      !e.target.closest(".addOtherStickyBtn")
+    ) {
+      otherStickyDropdown.classList.add("none");
+    }
+  });
+
   const menuItems = [
     {
-      name: "new_standard_sticky",
+      name: "add_standard_sticky",
       icon: "lucide-plus",
       execute() {
-        executeCommand("new_standard_sticky");
+        executeCommand("add_standard_sticky");
       },
     },
     {
-      name: "new_other_sticky_group",
+      name: "add_other_sticky_group",
       subItems: [
         {
-          name: "new_youtube_sticky",
+          name: "add_youtube_sticky",
           icon: "lucide-youtube",
           execute() {
-            executeCommand("new_youtube_sticky");
+            executeCommand("add_youtube_sticky");
           },
         },
         {
-          name: "new_spotify_sticky",
+          name: "add_spotify_sticky",
           icon: "mdi:spotify",
           execute() {
-            executeCommand("new_spotify_sticky");
+            executeCommand("add_spotify_sticky");
           },
         },
       ],

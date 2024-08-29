@@ -97,7 +97,6 @@ const standardSticky: CustomSticky = {
     if (state === "create") {
       sticky.dataset.contextMenu = "standard basic";
       sticky.replaceBody(textarea, preview);
-      console.log(widgets);
       sticky.addControlWidget(editModeToggleLbl);
       // Default set to edit mode.
       sticky.classList.add("editMode");

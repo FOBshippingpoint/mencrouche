@@ -158,7 +158,7 @@ nav {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--size-4);
+  gap: var(--size-2);
   justify-self: stretch;
   border-bottom: var(--border-size-1) solid var(--surface-3);
   box-shadow: var(--shadow-1);
@@ -168,6 +168,67 @@ nav {
     outline-color: unset;
     background: unset;
     border: unset;
+  }
+
+  label,#settingsBtn {
+    border-radius: var(--radius-2);
+    padding: var(--size-1);
+  }
+  label:hover,#settingsBtn:hover {
+    background-color: var(--surface-2);
+  }
+}
+
+#addStickyDropdownContainer {
+  position: relative;
+
+  div:first-child {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+
+    button {
+      /* background-color: var(--surface-2); */
+      padding-block: var(--size-1);
+    }
+    button:hover {
+      background-color: var(--surface-2);
+    }
+    button:nth-child(1) {
+      border-radius: var(--radius-2) 0 0 var(--radius-2);
+    }
+    button:nth-child(2) {
+      border-radius: 0 var(--radius-2) var(--radius-2) 0;
+    }
+  }
+
+  .dropdownButtons {
+    position: absolute;
+    margin-top: var(--size-1);
+    display: grid;
+    background-color: var(--surface-2);
+    border: var(--border-size-1) solid var(--surface-3);
+    border-radius: var(--radius-conditional-2);
+    box-shadow: var(--shadow-2);
+    padding-block: var(--size-1);
+    z-index: var(--layer-important);
+
+    button {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: var(--radius-conditional-1);
+      font-size: 0.9rem;
+      white-space: nowrap;
+      padding-inline: var(--size-2);
+      padding-block-start: var(--size-1);
+      padding-block-end: calc(
+        var(--size-1) + 0.052em
+      ); /* 0.052em is the myth value from https://tonsky.me/blog/centering/ */
+    }
+    button:hover {
+      background-color: var(--surface-3);
+    }
   }
 }
 

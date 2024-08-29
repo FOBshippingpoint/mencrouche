@@ -91,19 +91,19 @@
 		"message": "無效的圖片連結。請嘗試其他連結。",
 		"description": "Alert message for an invalid image URL."
 	},
-	"new_bookmark_sticky": {
+	"add_bookmark_sticky": {
 		"message": "新增書籤貼",
 		"description": "Command description for adding a new bookmark sticky."
 	},
-	"new_standard_sticky": {
+	"add_standard_sticky": {
 		"message": "新增便利貼",
 		"description": "Command description for adding a new sticky note."
 	},
-	"new_youtube_sticky": {
+	"add_youtube_sticky": {
 		"message": "新增YouTube便利貼",
 		"description": "Command description for adding a new youtube sticky note."
 	},
-  "new_spotify_sticky": {
+  "add_spotify_sticky": {
     "message": "新增Spotify便利貼",
     "description": "Command description for adding a new spotify sticky note."
   },
@@ -111,7 +111,7 @@
 		"message": "在此分頁開啟",
 		"description": "Context menu item label text for opening bookmark link in current tab."
 	},
-	"open_bookmark_in_new_tab_menu_item": {
+	"open_bookmark_in_add_tab_menu_item": {
 		"message": "用新分頁開啟",
 		"description": "Context menu item label text for opening bookmark link in a new tab."
 	},
@@ -311,7 +311,7 @@
 		"message": "找不到Spotify曲目",
 		"description": "Error message displayed when the Spotify media cannot be found in the provided input."
 	},
-	"new_other_sticky_group": {
+	"add_other_sticky_group": {
 		"message": "其他便利貼",
 		"description": "Context menu sub-menu name for other sticky group."
 	},
@@ -374,5 +374,13 @@
 	"always_on_top_help": {
 		"message": "避免被便利貼遮住",
 		"description": "Help message for checkbox that keeps a dock always on top."
+	},
+	"add_youtube_sticky_btn": {
+		"message": "YouTube",
+		"description": "Button label for adding YouTube sticky."
+	},
+	"add_spotify_sticky_btn": {
+		"message": "Spotify",
+		"description": "Button label for adding Spotify sticky."
 	}
 }

@@ -107,7 +107,7 @@ registerContextMenu("dockBookmark", [
     },
   },
   {
-    name: "open_bookmark_in_new_tab_menu_item",
+    name: "open_bookmark_in_add_tab_menu_item",
     icon: "lucide-external-link",
     execute(target) {
       window.open((target as HTMLAnchorElement).href, "_blank");

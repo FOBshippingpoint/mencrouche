@@ -87,19 +87,19 @@
     "message": "Invalid image URL. Please try another link.",
     "description": "Alert message for an invalid image URL."
   },
-  "new_bookmark_sticky": {
+  "add_bookmark_sticky": {
     "message": "New bookmark sticky",
     "description": "Command description for adding a new bookmark sticky."
   },
-  "new_standard_sticky": {
+  "add_standard_sticky": {
     "message": "New sticky note",
     "description": "Command description for adding a new sticky note."
   },
-  "new_youtube_sticky": {
+  "add_youtube_sticky": {
     "message": "New YouTube Sticky",
     "description": "Command description for adding a new youtube sticky note."
   },
-  "new_spotify_sticky": {
+  "add_spotify_sticky": {
     "message": "New Spotify Sticky",
     "description": "Command description for adding a new spotify sticky note."
   },
@@ -107,7 +107,7 @@
     "message": "Open in current tab",
     "description": "Context menu item label text for opening bookmark link in current tab."
   },
-  "open_bookmark_in_new_tab_menu_item": {
+  "open_bookmark_in_add_tab_menu_item": {
     "message": "Open in new tab",
     "description": "Context menu item label text for opening bookmark link in a new tab."
   },
@@ -311,7 +311,7 @@
 		"message": "Spotify track not found",
 		"description": "Error message displayed when the Spotify media cannot be found in the provided input."
 	},
-  "new_other_sticky_group": {
+  "add_other_sticky_group": {
 		"message": "Other Sticky Notes",
 		"description": "Context menu sub-menu name for other sticky group."
 	},
