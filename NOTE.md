@@ -11,7 +11,10 @@
 - [x] Color theme
 - [x] Sub menus
 - [x] Dock preference always on top.
-- [ ] Sync
+- [x] Sync
+- [x] Spotify border radius adjust. (after words: impossible due to spotify embedded content already had border-radius, unless we can get the background color, we cannot get rid of that border.)
+- [x] Dropdown add sticky.
+- [x] Add nav for settings.
 - [ ] Toolbar for mobile.
 - [ ] iframe sticky
 - [ ] declarativeNetRequest -> unblock iframe
@@ -20,12 +23,6 @@
 - [ ] Remove flexbox-based autoArrange
 - [ ] Import document
 - [ ] Web extension version.
-
-## Sticky Lifecycle
-
-- New
-- Restore/Duplicate
-- Delete
 
 ## BUGS
 

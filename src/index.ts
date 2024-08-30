@@ -216,7 +216,9 @@ async function init() {
     const params = new URLSearchParams(window.location.hash.substring(1));
     const url = params.get("url");
     const id = params.get("id");
-    await depot.load({ url, id });
+    if (url && id) {
+      await depot.load({ url, id });
+    }
   } else {
     const syncInfo = dataset.getItem("syncInfo", {}) as SyncInfo;
     if (syncInfo?.url && syncInfo?.id) {

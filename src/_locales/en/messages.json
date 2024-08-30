@@ -390,5 +390,9 @@
 	"share_data_link_btn": {
 		"message": "Sharing Document",
 		"description": "Input label for sharing data link."
+	},
+	"settings": {
+		"message": "Settings",
+		"description": "Settings page header."
 	}
 }

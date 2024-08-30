@@ -1,14 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap");
-/* @import "https://unpkg.com/open-props"; */
-/* @import "https://unpkg.com/open-props/normalize.min.css"; */
-
-/* the following switch imports have selectors that enable the override of the system setting */
-/* @import "https://unpkg.com/open-props/theme.light.switch.min.css"; */
-/* @import "https://unpkg.com/open-props/theme.dark.switch.min.css"; */
 
 /* 
- * parcel need 'npm:' prefix to import css from node_modules. but vite don't.
- * so we use cdn for now.
+ * Parcel needs 'npm:' prefix to import css from node_modules.
  */
 @import "npm:open-props/index.css";
 @import "npm:open-props/palette.css";
@@ -17,10 +10,6 @@
 @import "npm:open-props/forms.css";
 @import "npm:open-props/animations.css";
 @import "npm:open-props/utilities.css";
-
-/* the following switch imports have selectors that enable the override of the system setting */
-/* @import "open-props/theme.light.switch.min.css"; */
-/* @import "open-props/theme.dark.switch.min.css"; */
 
 :root {
   --page-background: unset;
@@ -160,7 +149,7 @@ h6 {
   background-color: rgb(255, 107, 107);
 }
 
-nav {
+#navbar {
   padding-inline: var(--size-3);
   display: flex;
   align-items: center;
@@ -563,16 +552,78 @@ nav {
 
 /* @settings start */
 #settings {
-  box-shadow: var(--shadow-2);
-  padding: var(--size-fluid-1) var(--size-fluid-3);
-  display: flex;
-  flex-direction: column;
-  gap: var(--size-7);
-  overflow: auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas: "main";
 
-  header {
-    padding-bottom: var(--size-3);
+  nav {
+    display: none;
+    grid-area: nav;
+    align-self: start;
+    overflow-y: auto;
+    top: 0;
+    position: sticky;
+
+    h2 {
+      padding-block-start: var(--size-fluid-3);
+      padding-block-end: var(--size-fluid-2);
+      padding-inline-start: var(--size-6);
+      display: block;
+    }
+    ul {
+      padding-inline-start: 0;
+      list-style-type: none;
+    }
+    li {
+      a {
+        padding-block: var(--size-2);
+        text-decoration: none;
+        padding-inline-start: var(--size-8);
+        display: block;
+      }
+      a,
+      a:visited {
+        color: var(--text-1);
+      }
+      a:hover {
+        color: var(--link-visited);
+      }
+      cursor: pointer;
+    }
   }
+
+  /* The main area of settings */
+  > div {
+    grid-area: main;
+    padding: 0 var(--size-fluid-4) var(--size-fluid-1) var(--size-fluid-4);
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+
+    header {
+      padding-bottom: var(--size-3);
+    }
+
+    section {
+      padding-block-start: var(--size-fluid-3);
+    }
+    :target {
+      h2 {
+        color: var(--link);
+      }
+      h2::before {
+        content: "#";
+        transform: translateX(-1.2ch);
+        position: absolute;
+      }
+    }
+    hr {
+      margin-block-start: var(--size-fluid-4);
+    }
+  }
+}
+#settingsBtnGroup {
+  padding-block-end: var(--size-fluid-4);
 }
 #langDropdown {
   min-width: var(--size-fluid-8);
@@ -1146,6 +1197,15 @@ dialog {
 
   .dummyScreen {
     width: var(--size-12);
+  }
+
+  #settings {
+    grid-template-columns: 2fr 7fr;
+    grid-template-areas: "nav main";
+
+    nav {
+      display: initial;
+    }
   }
 
   dialog {
