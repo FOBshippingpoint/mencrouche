@@ -16,55 +16,140 @@
 - Video: https://www.youtube.com/watch?v=dkSeImiW1fQ
 - Song: https://open.spotify.com/track/6woV8uWxn7rcLZxJKYruS1
 
-## Getting Started
+<!-- ## For Users -->
+<!---->
+<!-- See the intro video. -->
+<!---->
+<!-- ## For Developers -->
+
+## Installation
 
 1. Install [Bun](https://bun.sh/docs/installation) (or Node.js if preferred).
 2. Install dependencies:
     ```sh
     bun install
     ```
-3. Start the local development server (press `o + enter` to open in the browser):
+3. Start local development server, will automatically open the page.
     ```sh
     bun dev-site
     ```
+4. Have fun!
 
-## Serialization Method
+## Overview
 
-While JSON is effective for serializing JavaScript objects, it’s less suited for UI elements. Thus, Mencrouche uses an HTML to serialize data. However, this approach requires re-establishing interactivity. For instance, deserializing an HTML button from a string won’t automatically restore its event listeners.
+![2024-09-03_02-26](https://github.com/user-attachments/assets/a7e7d3b3-3a51-46e6-99c6-62773bcd5ea7)
 
-### Sticky Lifecycle
+**Sticky** is the soul of mencrouche, you can drag, resize, pin, or hide border.
+Beyond the basic functionality, you can extend sticky to match your needs.
+Just like Markdown sticky, YouTube sticky, and Spotify sticky.
 
-A sticky can go through three different states:
-- New
-- Restored (from the recycle bin or deserialized from an HTML string)
-- Deleted
+### Create the _Clock Sticky_
 
-The `mc` API provides a `registerSticky` method. Here’s a simple clock sticky example:
+Let's create a Clock sticky that shows the current time.
+We need to add an `span` element inside sticky body, and update time via `setInterval`.
+You can paste following code sample into browser console.
 
 ```javascript
-let clearInterval;
-function startUpdating(span) {
-  clearInterval = setInterval(() => {
+mc.registerSticky({
+  type: "clock",
+  onCreate(sticky) {
+    const span = document.createElement("span");
+    sticky.replaceBody(span);
+    setInterval(() => {
+      span.textContent = new Date().toLocaleString();
+    }, 100);
+  },
+  onSave() {},
+  onDelete() {},
+  onRestore() {},
+});
+mc.stickyManager.create({ type: "clock" });
+```
+
+You should see a sticky appended to the workspace:
+
+![動畫](https://github.com/user-attachments/assets/7746b05e-caac-4572-88ba-3187183f0201)
+
+The `on` functions are **sticky life cycles** as shown below:
+
+![圖片](https://github.com/user-attachments/assets/08d8441b-ffc0-4b07-bba3-2f4c641382ac)
+
+First, we focus on the `onDelete`. The previous snippets did not clean up the `setInterval` callback,
+if you close the sticky, callback still exists, which leads to an unnecessary calculation.
+
+Here is the new version (remember to refresh page before paste!):
+
+```javascript
+mc.registerSticky({
+  type: "clock",
+  onCreate(sticky) {
+    const span = document.createElement("span");
+    sticky.replaceBody(span);
+
+    // Store in sticky.plugin to prevent name collision.
+    sticky.plugin.intervalId = setInterval(() => {
+      console.log("update time");
+      span.textContent = new Date().toLocaleString();
+    }, 100);
+  },
+  onSave() {},
+  onDelete(sticky) {
+    clearInterval(sticky.plugin.intervalId);
+  },
+  onRestore() {},
+});
+mc.stickyManager.create({ type: "clock" });
+```
+
+In the new version, you can see "update time" prints every 100ms. After close sticky, you won't see "update time" again.
+
+How about add some color for our clock?
+
+```javascript
+function enableClock(sticky) {
+  const span = document.createElement("span");
+  const randomColorBtn = document.createElement("button");
+  randomColorBtn.textContent = "Change color";
+  randomColorBtn.addEventListener("click", () => {
+    const color = "#" + (~~(Math.random() * (1 << 24))).toString(16);
+    span.style.color = color;
+    sticky.plugin.color = color;
+  });
+  sticky.replaceBody(span, randomColorBtn);
+
+  sticky.plugin.intervalId = setInterval(() => {
     span.textContent = new Date().toLocaleString();
   }, 100);
 }
 mc.registerSticky({
-  type: "clock", // <-- Sticky type
-  onNew(sticky) { // <-- Called when the sticky is newly created
-    const span = $$$("span"); // Create span element
-    span.classList.add("clock");
-    sticky.replaceBody(span); // Inject span element into the sticky body
-    startUpdating(span);
+  type: "clock",
+  onCreate(sticky) {
+    enableClock(sticky);
   },
-  onRestore(sticky) { // <-- Called when deserialized or restored from the recycle bin
-    const span = sticky.$(".clock"); // JQuery-like selectors API
-    startUpdating(span);
+  onSave(sticky) {
+    // Use later in `onRestore`
+    return {
+      color: sticky.plugin.color,
+    };
   },
-  onDelete() { // <-- Called when the sticky is deleted
-    clearInterval(); // Run clean-up scripts
+  onDelete(sticky) {
+    clearInterval(sticky.plugin.intervalId);
+  },
+  onRestore(sticky, pluginConfig) {
+    enableClock(sticky);
+    span.style.color = pluginConfig.color;
   },
 });
+mc.stickyManager.create({ type: "clock" });
 ```
+
+Ta-da!
+
+![動畫](https://github.com/user-attachments/assets/2d25d439-d308-4f1d-a153-b61ad8adc099)
+
+The new `enableClock` function is used for initializing dom elements and intractability. We need to do that on creation and restoration, so it is good to define a function for that.In the `onSave` function, we return an object that contains single property 'color' to construct a JSON file, so that we can restore the stickies based on the saved states.
+In `onRestore`, we use the extra argument `pluginConfig` to get saved properties from JSON file.
+
 
 ## Dollars API ($, $$, $$$)
 
