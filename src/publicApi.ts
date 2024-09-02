@@ -4,6 +4,7 @@ import {
   getCustomStickyTypes,
   getCustomStickyComposer,
   registerSticky,
+  stickyManager,
 } from "./sticky";
 import { n81i } from "./utils/n81i";
 import { dataset } from "./myDataset";
@@ -23,6 +24,7 @@ const mc = {
   n81i,
   dataset,
   apocalypse,
+  stickyManager,
   registerSticky,
   executeCommand,
   registerCommand,

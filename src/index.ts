@@ -260,7 +260,7 @@ saveDocumentBtn.on("click", () => executeCommand("save_document"));
 //   }
 // }
 
-await n81i.init({
+n81i.init({
   locale: dataset.getOrSetItem<string>("language", getUserPreferredLanguage()),
   availableLocales: AVAILABLE_LOCALES,
   resourceLoader: async (locale: string) => {
