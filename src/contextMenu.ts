@@ -1,6 +1,6 @@
 import { dataset } from "./myDataset";
-import { getTemplateWidgets } from "./stickyPlugins/getWidgets";
 import { $, $$$ } from "./utils/dollars";
+import { getTemplateWidgets } from "./utils/getTemplateWidgets";
 import { n81i } from "./utils/n81i";
 
 const contextMenu = $<HTMLDivElement>("#contextMenu")!;
@@ -124,7 +124,7 @@ export function initContextMenu() {
 type MenuItemBuilder = (
   eventTarget: EventTarget,
 ) => MenuItemDefinition | null | "hr";
-type MenuItem = MenuItemDefinition | MenuItemBuilder | "hr";
+export type MenuItem = MenuItemDefinition | MenuItemBuilder | "hr";
 
 export interface MenuItemDefinition {
   name: string;
@@ -144,8 +144,6 @@ export interface MenuItemDefinition {
 export function registerContextMenu(name: string, menuItems: MenuItem[]) {
   registry.set(name, menuItems);
 }
-
-registerContextMenu("youtube", [{ name: "pause_video" }]);
 
 function buildMenuItems(menuItems: MenuItem[], eventTarget: EventTarget) {
   const theme = dataset.getItem("theme") as "light" | "dark";

@@ -1,54 +1,37 @@
-import {
-  CreateStickyOptions,
-  Sticky,
-  initStickyEnvironment,
-  registerSticky,
-  stickyManager,
-} from "./sticky";
+import { stickyManager } from "./sticky";
 import { $ } from "./utils/dollars";
 import {
   initCommandPalette,
   executeCommand,
   registerCommand,
-  Command,
+  type Command,
 } from "./commands";
 import { initSettings } from "./settings";
 import { n81i } from "./utils/n81i";
-import { saveDocument, switchDocumentStatus } from "./documentStatus";
-import { createSticky } from "./sticky";
+import { switchDocumentStatus } from "./documentStatus";
 import { dataset, saveDataset } from "./myDataset";
 import { toggleSettingsPage } from "./settings";
-import { youtubeSticky } from "./stickyPlugins/youtube";
+import { initYouTubeSticky } from "./stickyPlugins/youtube";
 import { addPublicApi } from "./publicApi";
 import { initContextMenu, registerContextMenu } from "./contextMenu";
-import "./dock";
-import { initDock } from "./dock";
-import { spotifySticky } from "./stickyPlugins/spotify";
-import { initStandardSticky } from "./stickyPlugins/standard";
-import { depot, SyncInfo } from "./utils/depot";
+import { initDock, saveDock } from "./dock";
+import { initSpotifySticky } from "./stickyPlugins/spotify";
+import { initMarkdownSticky } from "./stickyPlugins/markdown";
+import { depot, type SyncInfo } from "./utils/depot";
 
-function myCreateSticky(type: string) {
-  let sticky: Sticky | null = null;
-  let options: CreateStickyOptions | null = null;
+// The `url:` prefix is a custom prefix defined in `.parcelrc`.
+// Which aims to get the url of transformed resource, in raw format.
+// see https://github.com/parcel-bundler/parcel/issues/1080#issuecomment-557240449
+// for more information
+// TODO:
+// Currently, this approach increase bundle size, should find another way to
+// dynamic import the url based on the current parcel command (website or ext).
+// @ts-ignore
+import en from "url:./_locales/en/messages.json";
+// @ts-ignore
+import zh_TW from "url:./_locales/zh_TW/messages.json";
 
-  if (options) {
-    sticky = createSticky(type, options);
-  } else {
-    sticky = createSticky(type);
-  }
-  options = {
-    coord: {
-      left: sticky.offsetLeft,
-      top: sticky.offsetTop,
-    },
-    size: {
-      width: sticky.offsetWidth,
-      height: sticky.offsetHeight,
-    },
-  };
-
-  return sticky;
-}
+const urls = { en, zh_TW };
 
 const stickyContainer = $<HTMLDivElement>(".stickyContainer")!;
 
@@ -84,7 +67,7 @@ const defaultCommands: Command[] = [
       stickyManager.saveAll();
       const syncInfo = dataset.getItem("syncInfo") as SyncInfo;
       saveDataset();
-      saveDocument();
+      // saveDocument();
       if (syncInfo) {
         await depot.save(syncInfo);
       }
@@ -109,30 +92,23 @@ const defaultCommands: Command[] = [
     defaultShortcut: "C-A-x",
   },
   {
-    name: "add_standard_sticky",
+    name: "add_markdown_sticky",
     execute() {
-      const sticky = myCreateSticky("standard");
-      stickyManager.add(sticky);
+      stickyManager.create({ type: "markdown" });
     },
     defaultShortcut: "C-q",
   },
   {
     name: "add_youtube_sticky",
     execute() {
-      const sticky = myCreateSticky("youtube");
-      sticky.plugin.youtube.onSubmit = () => {
-        stickyManager.add(sticky);
-      };
+      stickyManager.create({ type: "youtube" });
     },
     defaultShortcut: "C-A-y",
   },
   {
     name: "add_spotify_sticky",
     execute() {
-      const sticky = myCreateSticky("spotify");
-      sticky.plugin.spotify.onSubmit = () => {
-        stickyManager.add(sticky);
-      };
+      stickyManager.create({ type: "spotify" });
     },
     defaultShortcut: "C-A-s",
   },
@@ -153,7 +129,7 @@ const defaultCommands: Command[] = [
   {
     name: "toggle_split_view",
     execute() {
-      stickyManager.getLatestSticky()?.plugin.standard.toggleSplitView();
+      stickyManager.getLatestSticky()?.plugin?.toggleSplitView();
     },
     defaultShortcut: "A-v",
   },
@@ -167,7 +143,7 @@ const defaultCommands: Command[] = [
   {
     name: "toggle_sticky_edit_mode",
     execute() {
-      stickyManager.getLatestSticky()?.plugin.standard.toggleEditMode();
+      stickyManager.getLatestSticky()?.plugin?.toggleEditMode();
     },
     defaultShortcut: "A-e",
   },
@@ -208,133 +184,176 @@ function getUserPreferredLanguage() {
   }
 }
 
-async function init() {
-  const saveDocumentBtn = $<HTMLDivElement>("#documentStatus button")!;
-  saveDocumentBtn.on("click", () => executeCommand("save_document"));
-
-  if (window.location.hash) {
-    const params = new URLSearchParams(window.location.hash.substring(1));
-    const url = params.get("url");
-    const id = params.get("id");
-    if (url && id) {
-      await depot.load({ url, id });
-    }
-  } else {
-    const syncInfo = dataset.getItem("syncInfo", {}) as SyncInfo;
-    if (syncInfo?.url && syncInfo?.id) {
-      await depot.load(syncInfo);
-    }
-  }
-
-  let stickyContainerHtml = localStorage.getItem("doc");
-  if (stickyContainerHtml) {
-    const urls =
-      dataset.getItem<{ blobUrl: string; dataUrl: string }[]>("urls") ?? [];
-    const promises = urls.map(async ({ blobUrl, dataUrl }) => {
-      const response = await fetch(dataUrl);
-      const blob = await response.blob();
-      return [blobUrl, URL.createObjectURL(blob)];
-    });
-    for (const [oldUrl, newUrl] of await Promise.all(promises)) {
-      stickyContainerHtml = stickyContainerHtml.replaceAll(oldUrl, newUrl);
-    }
-    dataset.removeItem("urls");
-
-    const fragment = document
-      .createRange()
-      .createContextualFragment(stickyContainerHtml);
-    $(fragment)!.$$(".deleted").kill();
-    stickyContainer.replaceChildren(fragment);
-  }
-
-  await n81i.init({
-    locale: dataset.getOrSetItem<string>(
-      "language",
-      getUserPreferredLanguage(),
-    ),
-    availableLocales: AVAILABLE_LOCALES,
-  });
-  n81i.translatePage();
-
-  switchDocumentStatus("saved");
-  new MutationObserver(() => {
-    switchDocumentStatus("unsaved");
-  }).observe(stickyContainer, {
-    attributes: true,
-    childList: true,
-    subtree: true,
-  });
-
-  // Register default commands.
-  for (const command of defaultCommands) {
-    registerCommand(command);
-  }
-
-  const addStickyDropdownContainer = $<HTMLButtonElement>(
-    "#addStickyDropdownContainer",
-  )!;
-  const addOtherStickyBtn = $<HTMLButtonElement>(".addOtherStickyBtn")!;
-  const otherStickyDropdown = $<HTMLDivElement>(".dropdownButtons")!;
-  addOtherStickyBtn.on("click", () => {
-    otherStickyDropdown.classList.toggle("none");
-  });
-  addStickyDropdownContainer.on("click", (e) => {
-    const command = e.target?.closest("[data-command]")?.dataset.command;
-    if (command) {
-      executeCommand(command);
-      otherStickyDropdown.classList.add("none");
-    }
-  });
-  document.body.on("click", (e) => {
-    if (
-      !e.target.closest(".dropdownButtons") &&
-      !e.target.closest(".addOtherStickyBtn")
-    ) {
-      otherStickyDropdown.classList.add("none");
-    }
-  });
-
-  const menuItems = [
-    {
-      name: "add_standard_sticky",
-      icon: "lucide-plus",
-      execute() {
-        executeCommand("add_standard_sticky");
-      },
-    },
-    {
-      name: "add_other_sticky_group",
-      subItems: [
-        {
-          name: "add_youtube_sticky",
-          icon: "lucide-youtube",
-          execute() {
-            executeCommand("add_youtube_sticky");
-          },
-        },
-        {
-          name: "add_spotify_sticky",
-          icon: "mdi:spotify",
-          execute() {
-            executeCommand("add_spotify_sticky");
-          },
-        },
-      ],
-    },
-  ];
-  $(".stickyContainer")!.dataset.contextMenu = "main";
-  registerContextMenu("main", menuItems);
-
-  initStickyEnvironment();
-  initContextMenu();
-  initSettings();
-  initDock();
-  initStandardSticky();
-  registerSticky(youtubeSticky);
-  registerSticky(spotifySticky);
-  stickyManager.restoreAllFromHtml();
-  initCommandPalette();
+async function serialize() {
+  // Save stickies
+  dataset.setItem("stickies", stickyManager.saveAll());
+  // Save dock
+  saveDock();
+  return dataset.toJson();
 }
 
-init();
+async function uploadJsonToPublicS3(
+  bucketName: string,
+  key: string,
+  json: string,
+): Promise<void> {
+  const endpoint = `https://${bucketName}.s3.amazonaws.com/${key}`;
+
+  try {
+    const response = await fetch(endpoint, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: json,
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    console.log(`Successfully uploaded JSON to S3: ${bucketName}/${key}`);
+  } catch (error) {
+    console.error("Error uploading JSON to S3:", error);
+    throw error;
+  }
+}
+
+function reload() {
+  // after load dataset from json...
+  console.log(JSON.parse(dataset.toJson()));
+
+  initContextMenu();
+  initSettings({
+    onExport: () => {
+      return serialize();
+    },
+    onImport(json: string) {
+      dataset.fromJson(json);
+      reload();
+    },
+  });
+  stickyManager.deleteAll();
+  stickyManager.restoreAll(dataset.getItem("stickies", []));
+}
+
+// from local
+const jsonString = localStorage.getItem("mencrouche") ?? "{}";
+dataset.fromJson(jsonString);
+// from remote
+// some fetch shit...
+
+const saveDocumentBtn = $<HTMLDivElement>("#documentStatus button")!;
+saveDocumentBtn.on("click", () => executeCommand("save_document"));
+
+// if (window.location.hash) {
+//   const params = new URLSearchParams(window.location.hash.substring(1));
+//   const url = params.get("url");
+//   const id = params.get("id");
+//   if (url && id) {
+//     await depot.load({ url, id });
+//   }
+// } else {
+//   const syncInfo = dataset.getItem("syncInfo", {}) as SyncInfo;
+//   if (syncInfo?.url && syncInfo?.id) {
+//     await depot.load(syncInfo);
+//   }
+// }
+
+await n81i.init({
+  locale: dataset.getOrSetItem<string>("language", getUserPreferredLanguage()),
+  availableLocales: AVAILABLE_LOCALES,
+  resourceLoader: async (locale: string) => {
+    let url: string;
+    if (window.browser) {
+      url = `./_locales/${locale}/messages.json`;
+    } else {
+      url = (urls as any)[locale];
+    }
+    const response = await fetch(url);
+    return await response.json();
+  },
+});
+n81i.translatePage();
+
+switchDocumentStatus("saved");
+new MutationObserver(() => {
+  switchDocumentStatus("unsaved");
+}).observe(stickyContainer, {
+  attributes: true,
+  childList: true,
+  subtree: true,
+});
+
+// Register default commands.
+for (const command of defaultCommands) {
+  registerCommand(command);
+}
+
+const addStickyDropdownContainer = $<HTMLButtonElement>(
+  "#addStickyDropdownContainer",
+)!;
+const addOtherStickyBtn = $<HTMLButtonElement>(".addOtherStickyBtn")!;
+const otherStickyDropdown = $<HTMLDivElement>(".dropdownButtons")!;
+addOtherStickyBtn.on("click", () => {
+  otherStickyDropdown.classList.toggle("none");
+});
+addStickyDropdownContainer.on("click", (e) => {
+  const command = e.target?.closest("[data-command]")?.dataset.command;
+  if (command) {
+    executeCommand(command);
+    otherStickyDropdown.classList.add("none");
+  }
+});
+document.body.on("click", (e) => {
+  if (
+    !e.target.closest(".dropdownButtons") &&
+    !e.target.closest(".addOtherStickyBtn")
+  ) {
+    otherStickyDropdown.classList.add("none");
+  }
+});
+
+const menuItems = [
+  {
+    name: "add_markdown_sticky",
+    icon: "lucide-plus",
+    execute() {
+      executeCommand("add_markdown_sticky");
+    },
+  },
+  {
+    name: "add_other_sticky_group",
+    subItems: [
+      {
+        name: "add_youtube_sticky",
+        icon: "lucide-youtube",
+        execute() {
+          executeCommand("add_youtube_sticky");
+        },
+      },
+      {
+        name: "add_spotify_sticky",
+        icon: "mdi:spotify",
+        execute() {
+          executeCommand("add_spotify_sticky");
+        },
+      },
+    ],
+  },
+];
+$(".stickyContainer")!.dataset.contextMenu = "main";
+registerContextMenu("main", menuItems);
+
+// Register custom stickies.
+initMarkdownSticky();
+initSpotifySticky();
+initYouTubeSticky();
+
+initCommandPalette();
+initDock();
+
+reload();
+dataset.setItem("availableLocales", AVAILABLE_LOCALES);
+
 addPublicApi();

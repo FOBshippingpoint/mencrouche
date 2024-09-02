@@ -95,7 +95,7 @@
 		"message": "新增書籤貼",
 		"description": "Command description for adding a new bookmark sticky."
 	},
-	"add_standard_sticky": {
+	"add_markdown_sticky": {
 		"message": "新增便利貼",
 		"description": "Command description for adding a new sticky note."
 	},
@@ -315,21 +315,21 @@
 		"message": "其他便利貼",
 		"description": "Context menu sub-menu name for other sticky group."
 	},
-	"standard_sticky_edit_mode_on": {
+	"markdown_sticky_edit_mode_on": {
 		"message": "編輯模式",
-		"description": "Context menu label for toggle on standard sticky edit mode."
+		"description": "Context menu label for toggle on markdown sticky edit mode."
 	},
-	"standard_sticky_edit_mode_off": {
+	"markdown_sticky_edit_mode_off": {
 		"message": "檢視模式",
-		"description": "Context menu label for toggle off standard sticky edit mode."
+		"description": "Context menu label for toggle off markdown sticky edit mode."
 	},
-	"standard_sticky_split_view_on": {
+	"markdown_sticky_split_view_on": {
 		"message": "雙欄模式",
-		"description": "Context menu label for toggle on standard sticky split view."
+		"description": "Context menu label for toggle on markdown sticky split view."
 	},
-	"standard_sticky_split_view_off": {
+	"markdown_sticky_split_view_off": {
 		"message": "單欄模式",
-		"description": "Context menu label for toggle off standard sticky split view."
+		"description": "Context menu label for toggle off markdown sticky split view."
 	},
   "maximize_sticky": {
 		"message": "最大化便利貼",
@@ -394,5 +394,9 @@
 	"settings": {
 		"message": "設定",
 		"description": "Settings page header."
-	}
+	},
+  "import_document_input_label": {
+		"message": "匯入",
+		"description": "Label for import file input."
+  }
 }

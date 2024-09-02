@@ -1,14 +1,14 @@
-import { registerCommand, executeCommand, apocalypse } from "./commands";
+import { registerCommand, executeCommand, } from "./commands";
 import { $, $$, $$$ } from "./utils/dollars";
 import {
-  createSticky,
   getCustomStickyTypes,
-  getRelatedCustomStickies,
+  getCustomStickyComposer,
   registerSticky,
 } from "./sticky";
 import { n81i } from "./utils/n81i";
 import { dataset } from "./myDataset";
 import { registerContextMenu } from "./contextMenu";
+import { apocalypse } from "./apocalypse";
 
 declare global {
   interface Window {
@@ -23,13 +23,12 @@ const mc = {
   n81i,
   dataset,
   apocalypse,
-  createSticky,
   registerSticky,
   executeCommand,
   registerCommand,
   registerContextMenu,
   getCustomStickyTypes,
-  getRelatedCustomStickies,
+  getCustomStickyComposer,
 };
 
 export function addPublicApi() {

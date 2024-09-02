@@ -1,4 +1,4 @@
-import { initDataset } from "./utils/dataset";
+import { createDataset } from "./utils/dataset";
 import { $ } from "./utils/dollars";
 
 const datasetContainer = $("#dataset")!;
@@ -15,4 +15,4 @@ export function saveDataset() {
   localStorage.setItem("dataset", datasetContainer.innerHTML);
 }
 
-export let dataset = initDataset(datasetContainer);
+export const dataset = createDataset();

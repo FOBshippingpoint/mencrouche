@@ -1,50 +1,16 @@
-import { createKikey } from "./kikey";
+import { createKikey } from "kikey";
 import { initShortcutManager } from "./settings";
 import { $ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
-
-export interface Undoable {
-  execute: () => void;
-  undo: () => void;
-}
+import { apocalypse } from "./apocalypse";
 
 export interface Command {
   name: string;
-  execute?: () => void;
+  execute: () => void;
   defaultShortcut?: string;
 }
 
 export const commands: Command[] = [];
-
-// Cuz 'history' already exists in Web API.
-export class Apocalypse {
-  private arr: Undoable[] = [];
-  private cur: number = -1;
-
-  redo() {
-    if (this.cur < this.arr.length - 1) {
-      this.cur++;
-      this.arr[this.cur].execute();
-    }
-  }
-  undo() {
-    if (this.cur >= 0) {
-      this.arr[this.cur].undo();
-      this.cur--;
-    }
-  }
-  write(undoable: Undoable) {
-    // If we're in the middle of the stack, remove all "future" commands
-    if (this.cur < this.arr.length - 1) {
-      this.arr.splice(this.cur + 1);
-    }
-
-    this.arr.push(undoable);
-    this.cur++;
-    undoable.execute();
-  }
-}
-export const apocalypse: Apocalypse = new Apocalypse();
 
 export function initCommandPalette() {
   const shortcutManager = initShortcutManager();
@@ -83,6 +49,7 @@ export function initCommandPalette() {
       filteredCommands = commands;
     } else {
       filteredCommands = commands.filter(({ name }) =>
+        // TODO: multi language search
         name.toLowerCase().includes(query),
       );
     }
@@ -119,11 +86,11 @@ export function initCommandPalette() {
 
   function selectCommand(direction: "up" | "down") {
     const items = [...commandList.children] as HTMLLIElement[];
-    let idx = items.findIndex(
-      (item) => item.dataset.commandName === keyboardSelectedCommandName,
-    );
+    let idx = items.findIndex((item) => {
+      item.dataset.commandName === keyboardSelectedCommandName;
+    });
     if (idx !== -1) {
-      items[idx].setAttribute("aria-selected", "false");
+      items[idx]!.setAttribute("aria-selected", "false");
     }
 
     if (direction === "down") {
@@ -187,7 +154,13 @@ export function initCommandPalette() {
 }
 
 export function executeCommand(commandName: string) {
-  commands.find(({ name }) => name === commandName).execute?.();
+  const command = commands.find(({ name }) => name === commandName);
+  if (!command) {
+    throw Error(
+      `Command '${commandName}' not found. Please call 'registerCommand' first.`,
+    );
+  }
+  command.execute();
 }
 
 export function registerCommand(command: Command) {

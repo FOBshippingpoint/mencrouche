@@ -1,102 +1,92 @@
-import { Apocalypse, apocalypse } from "./commands";
+import { Apocalypse, apocalypse } from "./apocalypse";
 import { registerContextMenu } from "./contextMenu";
-import { $, $$, Allowance } from "./utils/dollars";
+import { $, $$, type Allowance } from "./utils/dollars";
+import { getTemplateWidgets } from "./utils/getTemplateWidgets";
 import { n81i } from "./utils/n81i";
 import { BinPacker } from "./utils/packer";
 
-export type StickyPlugin = Record<string, any>;
-export interface StickyPluginRegistry {
-  [key: string]: any;
-}
-export interface Sticky extends Allowance<HTMLDivElement> {
+export interface StickyPlugin {}
+export interface Sticky<T extends StickyPlugin = StickyPlugin>
+  extends Allowance<HTMLDivElement> {
   delete: () => void;
   forceDelete: () => void;
-  restore: () => void;
   duplicate: () => Sticky;
   toggleMaximize: () => void;
   toggleGhostMode: () => void;
   togglePin: () => void;
   addControlWidget: (element: HTMLElement) => void;
   replaceBody: (...nodes: (Node | string)[]) => void;
-  plugin: StickyPluginRegistry;
+  save: () => Record<string, unknown>;
+  plugin: T;
 }
 
-const stickyTemplate = $<HTMLTemplateElement>("#sticky")!;
 // This element is for getting var(--size-fluid-9) in pixels. So that we can
 // set default sticky position to center if user hasn't move the cursor yet.
 const stickySizeDummy = $<HTMLDivElement>("#stickySizeDummy")!;
+const stickyContainer = $<HTMLDivElement>(".stickyContainer")!;
 
-let stickyContainer: Allowance<HTMLDivElement>;
-let pointerX: number;
-let pointerY: number;
-let mutationObserver: MutationObserver;
+// Continuosly track pointer position.
+let pointerX = stickyContainer.getBoundingClientRect().width / 2;
+let pointerY =
+  (stickyContainer.getBoundingClientRect().height -
+    stickySizeDummy.getBoundingClientRect().width) /
+  2;
+stickyContainer.on("pointermove", (e) => {
+  pointerX = e.clientX - stickyContainer!.getBoundingClientRect().left;
+  pointerY = e.clientY - stickyContainer!.getBoundingClientRect().top;
+});
 
-export function initStickyEnvironment() {
-  stickyContainer = $<HTMLDivElement>(".stickyContainer")!;
+const mutationObserver = new MutationObserver((mutations) => {
+  for (const mutation of mutations) {
+    mutation.target.dispatchEvent(new CustomEvent("classchange"));
+  }
+});
 
-  stickyContainer.on("pointermove", (e) => {
-    pointerX = e.clientX - stickyContainer!.getBoundingClientRect().left;
-    pointerY = e.clientY - stickyContainer!.getBoundingClientRect().top;
-  });
-
-  pointerX = stickyContainer.getBoundingClientRect().width / 2;
-  pointerY =
-    (stickyContainer.getBoundingClientRect().height -
-      stickySizeDummy.getBoundingClientRect().width) /
-    2;
-
-  mutationObserver = new MutationObserver((mutations) => {
-    for (const mutation of mutations) {
-      mutation.target.dispatchEvent(new CustomEvent("classchange"));
-    }
-  });
-
-  registerContextMenu("basic", [
-    (sticky: Sticky) => ({
-      name: "delete_sticky",
-      icon: "lucide-trash",
-      execute() {
-        sticky.delete();
-      },
-    }),
-    (sticky: Sticky) => ({
-      name: "duplicate_sticky",
-      icon: "lucide-copy",
-      execute() {
-        sticky.duplicate();
-      },
-    }),
-    (sticky: Sticky) => ({
-      name:
-        (sticky.classList.contains("maximized") ? "minimize" : "maximize") +
-        "_sticky",
-      icon: sticky.classList.contains("maximized")
-        ? "lucide-minimize-2"
-        : "lucide-maximize-2",
-      execute() {
-        sticky.toggleMaximize();
-      },
-    }),
-    (sticky: Sticky) => ({
-      name: (sticky.classList.contains("pin") ? "unpin" : "pin") + "_sticky",
-      icon: sticky.classList.contains("pin") ? "lucide-pin-off" : "lucide-pin",
-      execute() {
-        sticky.togglePin();
-      },
-    }),
-    (sticky: Sticky) => ({
-      name:
-        "sticky_ghost_mode_" +
-        (sticky.classList.contains("ghost") ? "off" : "on"),
-      icon: sticky.classList.contains("ghost")
-        ? "lucide-square"
-        : "lucide-box-select",
-      execute() {
-        sticky.toggleGhostMode();
-      },
-    }),
-  ]);
-}
+registerContextMenu("basic", [
+  (sticky: Sticky) => ({
+    name: "delete_sticky",
+    icon: "lucide-trash",
+    execute() {
+      sticky.delete();
+    },
+  }),
+  (sticky: Sticky) => ({
+    name: "duplicate_sticky",
+    icon: "lucide-copy",
+    execute() {
+      sticky.duplicate();
+    },
+  }),
+  (sticky: Sticky) => ({
+    name:
+      (sticky.classList.contains("maximized") ? "minimize" : "maximize") +
+      "_sticky",
+    icon: sticky.classList.contains("maximized")
+      ? "lucide-minimize-2"
+      : "lucide-maximize-2",
+    execute() {
+      sticky.toggleMaximize();
+    },
+  }),
+  (sticky: Sticky) => ({
+    name: (sticky.classList.contains("pin") ? "unpin" : "pin") + "_sticky",
+    icon: sticky.classList.contains("pin") ? "lucide-pin-off" : "lucide-pin",
+    execute() {
+      sticky.togglePin();
+    },
+  }),
+  (sticky: Sticky) => ({
+    name:
+      "sticky_ghost_mode_" +
+      (sticky.classList.contains("ghost") ? "off" : "on"),
+    icon: sticky.classList.contains("ghost")
+      ? "lucide-square"
+      : "lucide-box-select",
+    execute() {
+      sticky.toggleGhostMode();
+    },
+  }),
+]);
 
 class StickyManager {
   #highestZIndex: number = 0;
@@ -120,54 +110,20 @@ class StickyManager {
     }
   }
 
-  add(sticky: Sticky) {
-    // TODO: delete this line
-    sticky.dataset.id = crypto.randomUUID();
-
-    this.#apocalypse.write({
-      execute: () => {
-        this.#stickies.push(sticky);
-        stickyContainer.appendChild(sticky);
-      },
-      undo: () => {
-        this.forceDelete(sticky);
-      },
-    });
-  }
-
-  restore(sticky: Sticky) {
-    const isDeleted = sticky.classList.contains("deleted");
-    this.#apocalypse.write({
-      execute: () => {
-        if (isDeleted) {
-          this.#restoreSticky(sticky);
-        }
-      },
-      undo: () => {
-        if (isDeleted) {
-          this.#deleteSticky(sticky);
-        }
-      },
-    });
-  }
-
-  restoreAllFromHtml() {
-    for (const sticky of stickyContainer.$$<HTMLDivElement>(".sticky")) {
-      const extendedSticky = enableFunctionality(sticky);
-      this.#stickies.push(extendedSticky);
-      for (const customSticky of getRelatedCustomStickies(extendedSticky)) {
-        customSticky.on(extendedSticky, "restoreFromHtml");
-      }
+  restoreAll(stickies: BuildStickyOptions[]) {
+    for (const sticky of stickies) {
+      this.#restoreSticky(sticky);
     }
   }
 
   delete(sticky: Sticky) {
+    const obj = this.save(sticky);
     this.#apocalypse.write({
       execute: () => {
         this.#deleteSticky(sticky);
       },
       undo: () => {
-        this.#restoreSticky(sticky);
+        this.#restoreSticky(obj);
       },
     });
   }
@@ -185,7 +141,7 @@ class StickyManager {
   }
 
   deleteAll() {
-    const backup = [...this.#stickies];
+    const backup = this.saveAll();
     this.#apocalypse.write({
       execute: () => {
         while (this.#stickies.length) {
@@ -200,12 +156,26 @@ class StickyManager {
     });
   }
 
-  saveAll() {
-    for (const sticky of this.#stickies) {
-      for (const customSticky of getRelatedCustomStickies(sticky)) {
-        customSticky.on(sticky, "save");
-      }
+  save(sticky: Sticky) {
+    const obj = sticky.save();
+    obj.pluginConfig = {};
+    const customSticky = getCustomStickyComposer(sticky);
+    if (customSticky) {
+      obj.type = customSticky.type;
+      Object.assign(obj.pluginConfig, customSticky.onSave(sticky));
     }
+
+    // If pluginConfig has any content, return as is.
+    for (const _ in obj.pluginConfig) {
+      return obj;
+    }
+    // If not, delete pluginConfig and return.
+    delete obj.pluginConfig;
+    return obj;
+  }
+
+  saveAll() {
+    return this.#stickies.map(this.save);
   }
 
   duplicate(sticky: Sticky) {
@@ -213,11 +183,9 @@ class StickyManager {
     const duplicated = enableFunctionality(clone as any);
     this.#apocalypse.write({
       execute: () => {
+        this.#addToTop(duplicated);
         duplicated.style.left = `${parseInt(duplicated.style.left, 10) + 20}px`;
         duplicated.style.top = `${parseInt(duplicated.style.top, 10) + 20}px`;
-        this.moveToTop(duplicated);
-        stickyContainer.appendChild(duplicated);
-        this.#stickies.push(duplicated);
         duplicated.focus();
       },
       undo: () => {
@@ -279,7 +247,7 @@ class StickyManager {
           },
         );
         for (let i = 0; i < fittedBlocks.length; i++) {
-          const sticky = stickies[i];
+          const sticky = stickies[i]!;
           const fitted = fittedBlocks[i];
           if (fitted) {
             sticky.style.left = `${fitted.x + GAP}px`;
@@ -297,8 +265,8 @@ class StickyManager {
           },
         );
         for (const sticky of stickies) {
-          sticky.style.left = sticky.dataset.left;
-          sticky.style.top = sticky.dataset.top;
+          sticky.style.left = sticky.dataset.left!;
+          sticky.style.top = sticky.dataset.top!;
           delete sticky.dataset.left;
           delete sticky.dataset.top;
         }
@@ -316,28 +284,118 @@ class StickyManager {
   }
 
   #deleteSticky(sticky: Sticky) {
-    sticky.on("animationend", () => sticky.classList.add("none"), {
-      once: true,
-    });
-    sticky.classList.add("deleted");
     const idx = this.#stickies.indexOf(sticky);
     if (idx !== -1) {
       this.#stickies.splice(idx, 1);
     }
     this.#stickies.at(-1)?.focus();
-    sticky.dataset.idx = idx.toString();
-    for (const custom of getRelatedCustomStickies(sticky)) {
-      custom.on(sticky, "delete");
+
+    const custom = getCustomStickyComposer(sticky);
+    if (custom) {
+      custom.onDelete(sticky);
     }
+
+    sticky.on(
+      "animationend",
+      () => {
+        sticky.remove();
+      },
+      {
+        once: true,
+      },
+    );
+    sticky.classList.add("deleted");
   }
 
-  #restoreSticky(sticky: Sticky) {
-    sticky.classList.remove("none", "deleted");
-    for (const custom of getRelatedCustomStickies(sticky)) {
-      custom.on(sticky, "restore");
-    }
-    this.#stickies.splice(parseInt(sticky.dataset.idx!), 0, sticky);
+  #restoreSticky(options: BuildStickyOptions) {
+    const sticky = buildSticky("restore", options);
+    this.#stickies.push(sticky);
+    stickyContainer.appendChild(sticky);
   }
+
+  #addToTop(sticky: Sticky) {
+    this.moveToTop(sticky);
+    this.#stickies.push(sticky);
+    stickyContainer.appendChild(sticky);
+  }
+
+  create(options: BuildStickyOptions) {
+    let backupOptions: Record<string, unknown>;
+    let sticky: Sticky;
+
+    this.#apocalypse.write({
+      execute: () => {
+        sticky = buildSticky("create", backupOptions ?? options);
+        this.#addToTop(sticky);
+        backupOptions = sticky.save();
+      },
+      undo: () => {
+        this.forceDelete(sticky);
+      },
+    });
+  }
+}
+
+function buildSticky(
+  buildType: "create" | "restore",
+  {
+    type,
+    left,
+    top,
+    width,
+    height,
+    zIndex,
+    className,
+    pluginConfig,
+  }: BuildStickyOptions = {},
+) {
+  const sticky = $<HTMLDivElement>(
+    getTemplateWidgets("sticky").firstElementChild as any,
+  )!;
+
+  if (left) {
+    sticky.style.left = `${left}px`;
+  } else {
+    sticky.style.left = `${pointerX - stickySizeDummy.getBoundingClientRect().width / 2}px`;
+  }
+  if (top) {
+    sticky.style.top = `${top}px`;
+  } else {
+    sticky.style.top = `${Math.max(pointerY - 10, 0)}px`;
+  }
+  if (width) {
+    sticky.style.width = `${width}px`;
+  }
+  if (height) {
+    sticky.style.height = `${height}px`;
+  }
+  if (zIndex) {
+    sticky.style.zIndex = zIndex.toString();
+  }
+  if (className) {
+    sticky.className = className;
+  }
+
+  const basicSticky = enableFunctionality(sticky);
+  basicSticky.dataset.contextMenu = "basic";
+  if (type) {
+    const custom = customStickiComposers.get(type);
+    if (custom) {
+      if (buildType === "create") {
+        custom.onCreate(basicSticky);
+        basicSticky.classList.add(type);
+      } else if (buildType === "restore") {
+        custom.onRestore(basicSticky, pluginConfig);
+      }
+    } else {
+      throw Error(
+        `Custom sticky type '${type}' not found. Please register sticky type first via 'registerSticky'.`,
+      );
+    }
+  }
+  n81i.translateElement(basicSticky);
+
+  return basicSticky;
 }
 
 export const stickyManager = new StickyManager(apocalypse);
@@ -504,9 +562,6 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
     forceDelete() {
       stickyManager.forceDelete(extendedSticky);
     },
-    restore() {
-      stickyManager.restore(extendedSticky);
-    },
     duplicate() {
       stickyManager.duplicate(extendedSticky);
     },
@@ -538,6 +593,18 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
       sticky.$(".stickyBody")!.replaceChildren(...nodes);
     },
     plugin: {},
+    save() {
+      const obj = {
+        className: sticky.className,
+      };
+      for (const key of ["width", "height", "left", "top", "zIndex"]) {
+        const value = sticky.style[key as keyof typeof sticky.style];
+        if (value !== "") {
+          obj[key] = parseFloat(value);
+        }
+      }
+      return obj;
+    },
   });
 
   sticky.on("pointerdown", (e) => {
@@ -562,93 +629,59 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
   return sticky as Sticky;
 }
 
-const customStickies = new Map<string, CustomSticky>();
+const customStickiComposers = new Map<string, CustomStickyComposer>();
 
-export interface CreateStickyOptions {
-  coord?: {
-    left: number;
-    top: number;
-  };
-  size?: {
-    width: number;
-    height: number;
-  };
+export interface BuildStickyOptions {
+  type?: string;
+  left?: number;
+  top?: number;
+  width?: number;
+  height?: number;
+  zIndex?: number;
+  className?: string;
+  pluginConfig?: CustomStickyConfig;
 }
 
-export function createSticky(type?: string, options: CreateStickyOptions = {}) {
-  const sticky = $<HTMLDivElement>(
-    (stickyTemplate.content.cloneNode(true) as any).firstElementChild,
-  )!;
-
-  if (options.coord) {
-    sticky.style.left = `${options.coord.left}px`;
-    sticky.style.top = `${options.coord.top}px`;
-  } else {
-    sticky.style.left = `${pointerX - stickySizeDummy.getBoundingClientRect().width / 2}px`;
-    sticky.style.top = `${Math.max(pointerY - 10, 0)}px`;
-  }
-  if (options.size) {
-    sticky.style.width = `${options.size.width}px`;
-    sticky.style.height = `${options.size.height}px`;
-  }
-
-  const basicSticky = enableFunctionality(sticky);
-  basicSticky.dataset.contextMenu = "basic";
-  if (type) {
-    const custom = customStickies.get(type);
-    if (custom) {
-      custom.on(basicSticky, "create");
-      basicSticky.classList.add(type);
-    } else {
-      throw Error(
-        `Custom sticky type '${type}' not found. Please register sticky type first via 'registerSticky'.`,
-      );
-    }
-  }
-  n81i.translateElement(basicSticky);
-
-  return basicSticky;
-}
-
-export type StickyLifeCycleState =
-  | "create"
-  | "restore"
-  | "restoreFromHtml"
-  | "delete"
-  | "save";
-
-export interface CustomSticky {
+export interface CustomStickyConfig extends Record<string, unknown> {}
+export interface CustomStickyComposer {
   type: string;
-  on: (sticky: Sticky, state: StickyLifeCycleState) => void;
+  onCreate(sticky: Sticky): void;
+  onSave(sticky: Sticky): CustomStickyConfig | undefined;
+  onDelete(sticky: Sticky): void;
+  onRestore(sticky: Sticky, config?: CustomStickyConfig): void;
 }
 
-export function registerSticky(customSticky: CustomSticky) {
-  if (customStickies.has(customSticky.type)) {
+export function registerSticky(customSticky: CustomStickyComposer) {
+  if (customStickiComposers.has(customSticky.type)) {
     throw Error(
       `Custom sticky '${customSticky.type}' already exists. Please try another name.`,
     );
   }
 
-  customStickies.set(customSticky.type, customSticky);
+  customStickiComposers.set(customSticky.type, customSticky);
 }
 
-export function getRelatedCustomStickies(
+export function getCustomStickyComposer(
   sticky: Allowance<HTMLDivElement> | Sticky,
 ) {
-  const result = [];
   for (const className of sticky.classList.values()) {
-    const custom = customStickies.get(className);
+    const custom = customStickiComposers.get(className);
     if (custom) {
-      result.push(custom);
+      return custom;
     }
   }
-  return result;
 }
 
 export function getCustomStickyTypes() {
-  return [...customStickies.values()].map(({ type }) => type);
+  return [...customStickiComposers.values()].map(({ type }) => type);
 }
 
-initStickyEnvironment();
+export function getWidgets(sticky: Sticky, widgetTemplateId: string) {
+  for (const type of getCustomStickyTypes()) {
+    if (sticky.classList.contains(type)) {
+      return sticky;
+    }
+  }
 
-export { stickyContainer };
+  return getTemplateWidgets(widgetTemplateId)!;
+}

@@ -273,7 +273,7 @@ h6 {
     opacity: 0;
     pointer-events: none;
   }
-  .standard textarea::placeholder {
+  .markdown textarea::placeholder {
     opacity: 0;
   }
 }
@@ -414,7 +414,7 @@ h6 {
   }
 }
 
-.standard.editMode.splitView .stickyBody {
+.markdown.editMode.splitView .stickyBody {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(1, 1fr);
@@ -434,7 +434,7 @@ h6 {
   }
 }
 
-.standard {
+.markdown {
   .stickyBody:has(.preview:not([hidden])) {
     overflow: auto;
   }
@@ -595,7 +595,7 @@ h6 {
   /* The main area of settings */
   > div {
     grid-area: main;
-    padding: 0 var(--size-fluid-4) var(--size-fluid-1) var(--size-fluid-4);
+    padding: 0 var(--size-fluid-3) var(--size-fluid-1) var(--size-fluid-3);
     display: flex;
     flex-direction: column;
     overflow: auto;

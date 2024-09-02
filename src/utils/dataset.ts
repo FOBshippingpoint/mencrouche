@@ -1,14 +1,4 @@
-function cast(value: string): unknown {
-  if (value === "undefined") return undefined;
-  if (!isNaN(Number(value))) return Number(value);
-  try {
-    return JSON.parse(value);
-  } catch {
-    return value;
-  }
-}
-
-interface Dataset {
+export interface Dataset {
   getItem<T>(key: string, defaultValue?: T): T | undefined;
   getOrSetItem<T>(key: string, defaultValue: T): T;
   setItem(key: string, value: unknown): void;
@@ -18,79 +8,82 @@ interface Dataset {
     key: string,
     callback: (oldValue: T | undefined, newValue: T | undefined) => void,
   ): void;
+  toJson(): string;
+  fromJson(json: string): void;
+  fromObject(object: Record<string, unknown>): void;
 }
 
-let singleton: Dataset | undefined;
+export function createDataset(): Dataset {
+  const storage = new Map<string, unknown>();
+  const listeners = new Map<
+    string,
+    ((oldValue: unknown, newValue: unknown) => void)[]
+  >();
 
-export function initDataset(container: Element) {
-  if (!singleton) {
-    singleton = {
-      getItem<T>(key: string, defaultValue?: T): T | undefined {
-        const el = document.getElementById(key);
-        if (el instanceof HTMLDataElement) {
-          return (cast(el.value) as T) ?? defaultValue;
-        } else {
-          return defaultValue;
-        }
-      },
-      getOrSetItem<T>(key: string, defaultValue: T): T {
-        const el = document.getElementById(key);
-        if (el) {
-          return this.getItem(key) as T;
-        } else {
-          this.setItem(key, defaultValue);
-          return defaultValue;
-        }
-      },
-      setItem(key: string, value: unknown) {
-        let _el = document.getElementById(key);
-        if (!(_el instanceof HTMLDataElement)) {
-          _el = document.createElement("data");
-          _el.id = key;
-          container.append(_el);
-        }
+  return {
+    getItem<T>(key: string, defaultValue?: T): T | undefined {
+      const value = storage.get(key);
+      return (value !== undefined ? value : defaultValue) as T | undefined;
+    },
 
-        const el = _el as HTMLDataElement;
+    getOrSetItem<T>(key: string, defaultValue: T): T {
+      if (storage.has(key)) {
+        return storage.get(key) as T;
+      } else {
+        this.setItem(key, defaultValue);
+        return defaultValue;
+      }
+    },
 
-        let newValue: string;
-        if (typeof value === "string") {
-          newValue = value;
-        } else {
-          newValue = JSON.stringify(value);
+    setItem(key: string, value: unknown) {
+      const oldValue = storage.get(key);
+      if (oldValue !== value) {
+        storage.set(key, value);
+        const callbacks = listeners.get(key);
+        if (callbacks) {
+          callbacks.forEach((callback) => callback(oldValue, value));
         }
-        if (el.value !== newValue) {
-          el.value = newValue;
-          el.dispatchEvent(
-            new CustomEvent("valuechange", {
-              detail: { oldValue: el.value, newValue },
-              bubbles: true,
-              cancelable: true,
-            }),
-          );
-        }
-      },
-      derivedSetItem<T>(key: string, func: (oldValue: T | undefined) => T) {
-        this.setItem(key, func(this.getItem<T>(key)));
-      },
-      removeItem(key: string) {
-        document.getElementById(key)?.remove();
-      },
-      on<T>(
-        key: string,
-        callback: (oldValue: T | undefined, newValue: T | undefined) => void,
-      ) {
-        const el = document.getElementById(key);
-        if (el) {
-          el.addEventListener("valuechange", (e) => {
-            callback(cast(e.detail.oldValue), cast(e.detail.newValue));
-          });
-        } else {
-          throw new Error(
-            `The data '${key}' is not initialized. Have you called 'dataset.setItem' yet?`,
-          );
-        }
-      },
-    };
-  }
-  return singleton;
+      }
+    },
+
+    derivedSetItem<T>(key: string, func: (oldValue: T | undefined) => T) {
+      const oldValue = this.getItem<T>(key);
+      const newValue = func(oldValue);
+      this.setItem(key, newValue);
+    },
+
+    removeItem(key: string) {
+      storage.delete(key);
+    },
+
+    on<T>(
+      key: string,
+      callback: (oldValue: T | undefined, newValue: T | undefined) => void,
+    ) {
+      if (!listeners.has(key)) {
+        listeners.set(key, []);
+      }
+      listeners
+        .get(key)!
+        .push(callback as (oldValue: unknown, newValue: unknown) => void);
+    },
+
+    toJson() {
+      return JSON.stringify(Object.fromEntries(storage.entries()));
+    },
+
+    fromJson(json: string) {
+      const obj = JSON.parse(json);
+      storage.clear();
+      for (const [key, value] of Object.entries(obj)) {
+        this.setItem(key, value);
+      }
+    },
+
+    fromObject(object: Record<string, unknown>) {
+      for (const [key, value] of Object.entries(object)) {
+        this.setItem(key, value);
+      }
+    },
+  };
 }

@@ -1,9 +1,8 @@
-import { saveDocument, serializeDocument } from "./documentStatus";
 import { createDialog } from "./generalDialog";
-import { createKikey, Kikey } from "./kikey/kikey";
-import { KeyBinding, parseBinding } from "./kikey/parseBinding";
-import { dataset, saveDataset } from "./myDataset";
-import { depot, SyncInfo } from "./utils/depot";
+import { createKikey } from "kikey";
+import { parseBinding } from "kikey";
+import { dataset } from "./myDataset";
+import { depot, type SyncInfo } from "./utils/depot";
 import { $, $$$ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
 import { toDataUrl } from "./utils/toDataUrl";
@@ -20,7 +19,9 @@ const changesManager = (() => {
     },
     onRevert() {},
     save() {
-      [...todos.values()].forEach((f) => f());
+      for (const todo of todos.values()) {
+        todo();
+      }
       this.isDirty = false;
     },
     cancel() {
@@ -30,6 +31,9 @@ const changesManager = (() => {
     },
   };
 })();
+
+let onExport: () => Promise<string>;
+let onImport: (json: string) => void;
 
 const settings = $<HTMLElement>("#settings")!;
 const settingsBtn = $<HTMLButtonElement>("#settingsBtn")!;
@@ -45,6 +49,9 @@ const resetBackgroundImageBtn = $<HTMLButtonElement>(
 )!;
 const deleteDocumentBtn = $<HTMLButtonElement>("#deleteDocumentBtn")!;
 const exportDocumentBtn = $<HTMLButtonElement>("#exportDocumentBtn")!;
+const importDocumentFileInput = $<HTMLInputElement>(
+  "#importDocumentFileInput",
+)!;
 const shareDataLinkBtn = $<HTMLButtonElement>("#shareDataLinkBtn")!;
 const saveBtn = $<HTMLButtonElement>("#saveSettingsBtn")!;
 const saveAndCloseBtn = $<HTMLButtonElement>("#saveAndCloseSettingsBtn")!;
@@ -152,7 +159,7 @@ exportDocumentBtn.on("click", async () => {
     const a = document.createElement("a");
     a.href = blobUrl;
     a.download = suggestedName;
-    a.style.display = "none";
+    a.hidden = true;
     document.body.append(a);
     // Programmatically click the element.
     a.click();
@@ -163,13 +170,22 @@ exportDocumentBtn.on("click", async () => {
     }, 1000);
   }
 
-  const doc = await serializeDocument();
-  if (doc) {
-    const blob = new Blob([doc], { type: "text/html" });
-    saveFile(
-      blob,
-      `mencrouche_${new Date().toISOString().substring(0, 10)}.html`,
-    );
+  const json = await onExport();
+  const blob = new Blob([json], { type: "application/json" });
+  saveFile(
+    blob,
+    `mencrouche_${new Date().toISOString().substring(0, 10)}.json`,
+  );
+});
+importDocumentFileInput.on("change", () => {
+  const file = importDocumentFileInput.files?.[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.readAsText(file);
+    reader.addEventListener("load", () => {
+      onImport(reader.result as string);
+      closeSettingsPage();
+    });
   }
 });
 
@@ -207,7 +223,7 @@ backgroundImageUrlInput.on("paste", async (e) => {
         const url = await (await clipboardItem.getType("text/plain")).text();
         new URL(url);
         dropzone.style.background = `url(${url}) center center / cover no-repeat`;
-        setBackgroundImageByUrl(url);
+        dataset.setItem("backgroundImageUrl", url);
         changesManager.isDirty = true;
       } catch (_) {
         alert(n81i.t("image_url_is_not_valid_alert"));
@@ -222,7 +238,7 @@ function handleBlob(blob: Blob | File) {
     backgroundImageUrlInput.value = url;
   }
   dropzone.style.background = `url(${url}) center center / cover no-repeat`;
-  setBackgroundImageByUrl(url);
+  dataset.setItem("backgroundImageUrl", url);
   changesManager.isDirty = true;
 }
 
@@ -269,7 +285,7 @@ fileInput.on("change", (e) => {
 resetBackgroundImageBtn.on("click", () => {
   dropzone.style.backgroundImage = "unset";
   backgroundImageUrlInput.value = "";
-  unsetBackgroundImage();
+  dataset.setItem("backgroundImageUrl", null);
 });
 
 // TODO: somehow laggy? maybe we need throttle?
@@ -279,22 +295,6 @@ uiOpacityInput.on("input", () => {
   changesManager.isDirty = true;
 });
 
-async function setBackgroundImageByUrl(url: string) {
-  if (url.startsWith("blob")) {
-    url = await toDataUrl(url);
-  }
-  document.documentElement.style.setProperty(
-    "--page-background",
-    `url(${url}) no-repeat center center fixed`,
-  );
-  dataset.setItem("backgroundImageUrl", url);
-}
-
-function unsetBackgroundImage() {
-  document.documentElement.style.setProperty("--page-background", "unset");
-  dataset.removeItem("backgroundImageUrl");
-}
-
 function openSettingsPage() {
   settings.classList.remove("none");
   $(".stickyContainer")!.classList.add("none");
@@ -302,9 +302,6 @@ function openSettingsPage() {
   const uiOpacity = dataset.getOrSetItem("uiOpacity", 1);
   const paletteHue = dataset.getItem("paletteHue") as string;
   const backgroundImageUrl = dataset.getItem("backgroundImageUrl");
-  const syncInfo = dataset.getItem("syncInfo") as SyncInfo;
-  console.log("set input value", syncInfo);
-  syncUrlInput.value = syncInfo?.url ?? "";
   changesManager.onRevert = () => {
     // Reset ui opacity
     document.documentElement.style.setProperty(
@@ -323,9 +320,9 @@ function openSettingsPage() {
 
     // Reset background image
     if (backgroundImageUrl) {
-      setBackgroundImageByUrl(backgroundImageUrl as string);
+      dataset.setItem("backgroundImageUrl", backgroundImageUrl);
     } else {
-      unsetBackgroundImage();
+      dataset.setItem("backgroundImageUrl", null);
     }
   };
 }
@@ -346,40 +343,56 @@ export function toggleSettingsPage() {
   }
 }
 
-function initBackground() {
-  const url = dataset.getItem<string>("backgroundImageUrl");
-  if (url) {
-    setBackgroundImageByUrl(url);
-  } else {
-    unsetBackgroundImage();
+// Initialize background image.
+const url = dataset.getItem<string>("backgroundImageUrl");
+if (url) {
+  changeBackgroundImage(url);
+}
+dataset.on<string>("backgroundImageUrl", (_, url) => {
+  changeBackgroundImage(url as string);
+});
+async function changeBackgroundImage(url: string | null) {
+  if (url?.startsWith("blob")) {
+    url = await toDataUrl(url);
   }
+  document.documentElement.style.setProperty(
+    "--page-background",
+    url ? `url(${url}) no-repeat center center fixed` : "unset",
+  );
 }
 
-function initLanguage() {
-  function toBCP47LangTag(chromeLocale: string) {
-    return chromeLocale.replaceAll("_", "-");
+// Initialize language dropdown.
+function toBCP47LangTag(chromeLocale: string) {
+  return chromeLocale.replaceAll("_", "-");
+}
+const langDropdown = $<HTMLSelectElement>("#langDropdown")!;
+dataset.on<string[]>("availableLocales", (_, locales) => {
+  if (locales) {
+    updateLangDropDown(locales);
   }
-  const langDropdown = $<HTMLSelectElement>("#langDropdown")!;
-  langDropdown.innerHTML = "";
-  for (const locale of n81i.getAllLocales()) {
+});
+function updateLangDropDown(locales: string[]) {
+  langDropdown.replaceChildren();
+  for (const locale of locales) {
     const option = $$$("option");
     if (dataset.getItem("language") === locale) {
       option.selected = true;
     }
     option.value = locale;
     const bcp47 = toBCP47LangTag(locale);
-    option.textContent =
-      new Intl.DisplayNames([bcp47], {
-        type: "language",
-      }).of(bcp47) ?? locale;
-
+    const translatedLocaleName = new Intl.DisplayNames([bcp47], {
+      type: "language",
+    }).of(bcp47);
+    if (translatedLocaleName) {
+      option.textContent = `${translatedLocaleName} - ${locale}`;
+    } else {
+      option.textContent = locale;
+    }
     langDropdown.append(option);
   }
-
   langDropdown.on("change", async () => {
     // Pre-loading when user select, instead of applying settings.
     n81i.loadLanguage(langDropdown.value);
-
     changesManager.setChange("setLanguage", async () => {
       dataset.setItem("language", langDropdown.value);
       await n81i.changeLanguage(langDropdown.value);
@@ -388,13 +401,20 @@ function initLanguage() {
   });
 }
 
-export function initSettings() {
-  initBackground();
-  initLanguage();
-  initTheme();
+// Initialize language
+dataset.on<string>("locale", async (_, locale) => {
+  if (!locale) return;
+  await n81i.changeLanguage(locale);
+  n81i.translatePage();
+});
+
+export function initSettings(handlers: {
+  onExport: () => Promise<string>;
+  onImport: (json: string) => void;
+}) {
+  onExport = handlers.onExport;
+  onImport = handlers.onImport;
   initShortcuts();
-  initUiOpacity();
-  initPaletteHue();
 }
 
 function queryPrefersColorScheme() {
@@ -403,26 +423,25 @@ function queryPrefersColorScheme() {
     : "light";
 }
 
-function initTheme() {
-  const theme = dataset.getOrSetItem("theme", queryPrefersColorScheme());
-  const themeToggle = $<HTMLInputElement>("#themeToggle")!;
-  change(theme);
-
-  // true = light
-  // false = dark
-  function change(theme: "light" | "dark" | undefined) {
-    $("#lightIcon")!.hidden = theme !== "dark";
-    $("#darkIcon")!.hidden = theme === "dark";
-    themeToggle.checked = theme === "light";
-    document.documentElement.setAttribute("data-theme", theme as string);
-  }
-
-  dataset.on<"light" | "dark">("theme", (_, theme) => change(theme));
-  themeToggle.on("change", (e) => {
-    const value = (e.target as any).checked ? "light" : "dark";
-    dataset.setItem("theme", value);
-  });
+// Initialize theme.
+const theme = dataset.getOrSetItem("theme", queryPrefersColorScheme());
+const themeToggle = $<HTMLInputElement>("#themeToggle")!;
+changeTheme(theme);
+// true = light
+// false = dark
+function changeTheme(theme: "light" | "dark" | undefined) {
+  $("#lightIcon")!.hidden = theme !== "dark";
+  $("#darkIcon")!.hidden = theme === "dark";
+  themeToggle.checked = theme === "light";
+  document.documentElement.setAttribute("data-theme", theme as string);
 }
+dataset.on<"light" | "dark">("theme", (_, theme) => changeTheme(theme));
+themeToggle.on("change", (e) => {
+  const value = (e.target as any).checked ? "light" : "dark";
+  dataset.setItem("theme", value);
+});
+
+function updateShortcutList() {}
 
 function initShortcuts() {
   const shortcutManager = initShortcutManager();
@@ -487,7 +506,10 @@ function initShortcuts() {
   });
 }
 
-function keyBindingToString(binding: KeyBinding, isMac = false): string {
+function keyBindingToString(
+  binding: ReturnType<typeof parseBinding>,
+  isMac = false,
+): string {
   const modifiers = [
     { key: "ctrlKey", default: "Ctrl", mac: "⌘" },
     { key: "shiftKey", default: "Shift", mac: "⇧" },
@@ -496,7 +518,7 @@ function keyBindingToString(binding: KeyBinding, isMac = false): string {
   ];
 
   const parts = modifiers
-    .filter((mod) => binding[mod.key as keyof KeyBinding])
+    .filter((mod) => binding[mod.key as keyof ReturnType<typeof parseBinding>])
     .map((mod) => (isMac ? mod.mac : mod.default));
 
   let key = binding.key;
@@ -512,8 +534,10 @@ function keyBindingToString(binding: KeyBinding, isMac = false): string {
 
   return parts.join(" + ");
 }
-function keySequenceToString(sequence: string | KeyBinding[]) {
-  let s: KeyBinding[];
+function keySequenceToString(
+  sequence: string | ReturnType<typeof parseBinding>[],
+) {
+  let s: ReturnType<typeof parseBinding>[];
   if (typeof sequence === "string") {
     s = sequence.split(" ").map(parseBinding);
   } else {
@@ -523,15 +547,14 @@ function keySequenceToString(sequence: string | KeyBinding[]) {
   return s.map((b) => keyBindingToString(b)).join(", ");
 }
 
-function initUiOpacity() {
-  const uiOpacity = dataset.getOrSetItem("uiOpacity", 1);
-  document.documentElement.style.setProperty(
-    "--ui-opacity",
-    uiOpacity.toString(),
-  );
-  uiOpacityInput.style.opacity = uiOpacity.toString();
-  uiOpacityInput.value = (uiOpacity * 100).toString();
-}
+// initialize ui opacity
+const uiOpacity = dataset.getOrSetItem("uiOpacity", 1);
+document.documentElement.style.setProperty(
+  "--ui-opacity",
+  uiOpacity.toString(),
+);
+uiOpacityInput.style.opacity = uiOpacity.toString();
+uiOpacityInput.value = (uiOpacity * 100).toString();
 
 type Action = {
   default: string;
@@ -556,7 +579,10 @@ interface ShortcutManager {
     callback: (e: KeyboardEvent) => void,
     option?: ShortcutRegisterOption,
   ): void;
-  update(actionName: string, newSequence: string | KeyBinding[]): void;
+  update(
+    actionName: string,
+    newSequence: string | ReturnType<typeof parseBinding>[],
+  ): void;
   restore(actionName: string): void;
   getKeySequence(actionName: string): string;
   getDefaultKeySequence(actionName: string): string;
@@ -572,11 +598,11 @@ export function initShortcutManager() {
   if (!singleton) {
     const actions = new Map<string, Action>();
     for (const [actionName, value] of Object.entries(actions)) {
-      value.custom ||= dataset.getItem<string>(actionName) as string;
+      value.custom ??= dataset.getItem<string>(actionName);
     }
 
     interface KikeyInfo {
-      kikey: Kikey;
+      kikey: ReturnType<typeof createKikey>;
       callback: (e: KeyboardEvent) => void;
     }
 
@@ -683,12 +709,12 @@ export function initShortcutManager() {
   return singleton;
 }
 
+// Initialize palette hue
 hueWheel.on("pointerdown", () => hueWheel.on("pointermove", adjustPaletteHue));
 hueWheel.on("pointerup", () => hueWheel.off("pointermove", adjustPaletteHue));
 resetPaletteHueBtn.on("click", () => {
   document.documentElement.style.removeProperty("--palette-hue");
 });
-
 function adjustPaletteHue(e: MouseEvent) {
   const rect = hueWheel.getBoundingClientRect();
   const centerX = rect.left + rect.width / 2;
@@ -704,10 +730,7 @@ function adjustPaletteHue(e: MouseEvent) {
   dataset.setItem("paletteHue", paletteHue);
   changesManager.isDirty = true;
 }
-
-function initPaletteHue() {
-  const paletteHue = dataset.getItem("paletteHue") as string;
-  if (paletteHue) {
-    document.documentElement.style.setProperty("--palette-hue", paletteHue);
-  }
+const paletteHue = dataset.getItem("paletteHue") as string;
+if (paletteHue) {
+  document.documentElement.style.setProperty("--palette-hue", paletteHue);
 }

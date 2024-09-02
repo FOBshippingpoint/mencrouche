@@ -12,9 +12,11 @@
 - [x] Sub menus
 - [x] Dock preference always on top.
 - [x] Sync
-- [x] Spotify border radius adjust. (after words: impossible due to spotify embedded content already had border-radius, unless we can get the background color, we cannot get rid of that border.)
+- [x] {impossible} Spotify border radius adjust.
+    - Spotify embedded content already had border-radius, unless we can get the background color, we cannot get rid of that border.
 - [x] Dropdown add sticky.
 - [x] Add nav for settings.
+- [ ] Add script customization textarea.
 - [ ] Toolbar for mobile.
 - [ ] iframe sticky
 - [ ] declarativeNetRequest -> unblock iframe

@@ -44,8 +44,8 @@
         <div id="addStickyDropdownContainer">
           <div>
             <button
-              class="pureBtn addStandardStickyBtn"
-              data-command="add_standard_sticky"
+              class="pureBtn addMarkdownStickyBtn"
+              data-command="add_markdown_sticky"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -231,7 +231,6 @@
             </svg>
           </button>
           <iframe
-            class="none"
             width="100%"
             height="100%"
             frameborder="0"
@@ -297,7 +296,7 @@
             loading="lazy"
           ></iframe>
         </template>
-        <template id="standardStickyWidgets">
+        <template id="markdownStickyWidgets">
           <label class="editModeToggleLbl">
             <svg
               class="none"
@@ -342,7 +341,7 @@
           ></textarea>
           <div class="preview" hidden=""></div>
         </template>
-        <template id="standardStickyWidgets">
+        <template id="markdownStickyWidgets">
           <label class="editModeToggleLbl">
             <svg
               class="none"
@@ -611,6 +610,10 @@
                   data-i18n="export_document_btn"
                 ></button>
               </div>
+              <label class="content">
+                <span data-i18n="import_document_input_label"></span>
+                <input id="importDocumentFileInput" type="file" />
+              </label>
               <div class="formGroup">
                 <label>
                   <span data-i18n="sync_url_input_label"></span>

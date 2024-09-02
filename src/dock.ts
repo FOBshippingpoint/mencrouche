@@ -1,8 +1,9 @@
-import { $, Allowance } from "./utils/dollars";
-import { getTemplateWidgets } from "./stickyPlugins/getWidgets";
+import { $, type Allowance } from "./utils/dollars";
 import { registerContextMenu } from "./contextMenu";
-import { apocalypse } from "./commands";
 import { formToObject } from "./utils/formToObject";
+import { getTemplateWidgets } from "./utils/getTemplateWidgets";
+import { dataset } from "./myDataset";
+import { apocalypse } from "./apocalypse";
 
 let dock: Allowance<HTMLDivElement>;
 let slot: Allowance<HTMLSlotElement>;
@@ -165,10 +166,39 @@ export function initDock() {
   });
 }
 
+interface DockPrefJson {
+  bookmarks: DockBookmarkAttrs[];
+  pref: DockPrefAttrs;
+}
+
+export function saveDock() {
+  const dockPref: DockPrefJson = {
+    bookmarks: dock.$$<HTMLAnchorElement>(".dockBookmark").map((anchor) => {
+      return {
+        label: anchor.$("p")!.textContent,
+        hrefLike: anchor.href,
+        target: anchor.target,
+      };
+    }),
+    pref: { ...dock.dataset },
+  };
+  dataset.setItem("dock", dockPref);
+}
+dataset.on("dock", (_, dockPref) => {
+  if (dockPref) {
+    for (const bookmarkPref of dockPref.bookmarks) {
+      const anchor = createDockBookmark(bookmarkPref);
+      slot.appendChild(anchor);
+    }
+    updateDock(dockPref.pref);
+  }
+});
+
 function updateDockBookmark(
   { label, hrefLike, iconSize, target }: DockBookmarkAttrs,
   dockBookmark: Allowance<HTMLAnchorElement>,
 ) {
+  console.log(arguments);
   const anchor = dockBookmark;
   const p = dockBookmark.$<HTMLParagraphElement>("p")!;
   const img = dockBookmark.$<HTMLImageElement>("img")!;

@@ -1,15 +1,3 @@
-// The `url:` prefix is a custom prefix defined in `.parcelrc`.
-// Which aims to get the url of transformed resource, in raw format.
-// see https://github.com/parcel-bundler/parcel/issues/1080#issuecomment-557240449
-// for more information
-// TODO:
-// Currently, this approach increase bundle size, should find another way to
-// dynamic import the url based on the current parcel command (website or ext).
-import en from "url:../_locales/en/messages.json";
-import zh_TW from "url:../_locales/zh_TW/messages.json";
-
-const urls = { en, zh_TW };
-
 interface Message {
   message: string;
   description: string;
@@ -19,9 +7,11 @@ interface MessagesJson {
   [key: string]: Message;
 }
 
+type LocaleResourceLoader = (locale: string) => Promise<MessagesJson>;
 interface N81iInitOptions {
   locale: string;
   availableLocales: string[];
+  resourceLoader: LocaleResourceLoader;
   fallback?: string;
 }
 
@@ -33,6 +23,7 @@ let _locale = "en";
 let fallback = "en";
 let availableLocales = ["en"];
 let isInitialized = false;
+let resourceLoader: LocaleResourceLoader;
 
 const localeAndMessagesJson = new Map<string, MessagesJson>();
 const messageMap = new Map<string, string>();
@@ -60,12 +51,7 @@ export const n81i = {
    */
   async loadLanguage(locale: string) {
     if (!localeAndMessagesJson.has(locale)) {
-      let url: string = (urls as any)[locale];
-      if (window.browser) {
-        url = `./_locales/${locale}/messages.json`;
-      }
-      const response = await fetch(url);
-      const json = await response.json();
+      const json = await resourceLoader(locale);
       mergeMessagesJson(locale, json);
     }
   },
@@ -73,17 +59,13 @@ export const n81i = {
    * Initializes the i18n module with the specified options.
    * This method should be called before any translation occurs.
    * @param options - Configuration options for initialization.
-   * @param options.locale - The initial locale to set (default is "en").
+   * @param options.locale
    * @param options.availableLocales - Array of available locales.
    * @param options.fallback - (Optional) Fallback locale if a key is not found.
    * @returns The initialized i18n module.
    */
-  async init(
-    options: N81iInitOptions = {
-      locale: "en",
-      availableLocales: ["en"],
-    },
-  ) {
+  async init(options: N81iInitOptions) {
+    resourceLoader = options.resourceLoader;
     await this.changeLanguage(options.locale);
     if (options.fallback) {
       fallback = options.fallback;
@@ -166,7 +148,11 @@ export const n81i = {
   translateElement(node: ParentNode) {
     const children = node.querySelectorAll("[data-i18n]");
     for (const el of [...children, node]) {
-      const { i18n, i18nFor } = el["dataset"] ?? {};
+      // TODO: dup code in translateElement and translatePage
+      // But I don't want to expose method that translate without children
+      // Also, if we use translateElement inside translatePage,
+      // It would trigger unnecessary queries.
+      const { i18n, i18nFor } = (el as HTMLElement).dataset ?? {};
       if (i18n) {
         this.translateLater(i18n, (message: string) => {
           if (i18nFor) {
@@ -181,9 +167,18 @@ export const n81i = {
   /**
    * Translates the entire page by translating all elements with the `data-i18n` attribute.
    */
-  translatePage() {
+  translatePage(document: Document = window.document) {
     for (const el of document.querySelectorAll("[data-i18n]")) {
-      this.translateElement(el as HTMLElement);
+      const { i18n, i18nFor } = (el as HTMLElement).dataset ?? {};
+      if (i18n) {
+        this.translateLater(i18n, (message: string) => {
+          if (i18nFor) {
+            (el as any).setAttribute(i18nFor, message);
+          } else {
+            el.textContent = message;
+          }
+        });
+      }
     }
   },
   /**
@@ -192,7 +187,7 @@ export const n81i = {
    *
    * @example
    * ```typescript
-   * n81i.addTranslations({
+   * await n81i.addTranslations({
    *   ja: {
    *     hello: {
    *       message: "こんにちは",
@@ -206,12 +201,16 @@ export const n81i = {
    *     },
    *   },
    * });
+   * await n81i.changeLanguage("ja");
+   * console.log(n81i.t("hello")) // こんにちは
    * ````
    */
-  addTranslations(resource: N81iResource) {
+  async addTranslations(resource: N81iResource) {
     for (const [locale, json] of Object.entries(resource)) {
       if (availableLocales.indexOf(locale) === -1) {
         availableLocales.push(locale);
+      } else {
+        await this.loadLanguage(locale);
       }
       mergeMessagesJson(locale, json);
     }
