@@ -9,15 +9,14 @@ import {
 import { initSettings } from "./settings";
 import { n81i } from "./utils/n81i";
 import { switchDocumentStatus } from "./documentStatus";
-import { dataset, saveDataset } from "./myDataset";
+import { dataset } from "./myDataset";
 import { toggleSettingsPage } from "./settings";
 import { initYouTubeSticky } from "./stickyPlugins/youtube";
 import { addPublicApi } from "./publicApi";
 import { initContextMenu, registerContextMenu } from "./contextMenu";
-import { initDock, saveDock } from "./dock";
+import { saveDock } from "./dock";
 import { initSpotifySticky } from "./stickyPlugins/spotify";
 import { initMarkdownSticky } from "./stickyPlugins/markdown";
-import { depot, type SyncInfo } from "./utils/depot";
 
 // The `url:` prefix is a custom prefix defined in `.parcelrc`.
 // Which aims to get the url of transformed resource, in raw format.
@@ -64,13 +63,8 @@ const defaultCommands: Command[] = [
   {
     name: "save_document",
     async execute() {
-      stickyManager.saveAll();
-      const syncInfo = dataset.getItem("syncInfo") as SyncInfo;
-      saveDataset();
-      // saveDocument();
-      if (syncInfo) {
-        await depot.save(syncInfo);
-      }
+      const json = await serialize();
+      localStorage.setItem("mencrouche", json);
     },
     defaultShortcut: "C-s",
   },
@@ -351,7 +345,6 @@ initSpotifySticky();
 initYouTubeSticky();
 
 initCommandPalette();
-initDock();
 
 reload();
 dataset.setItem("availableLocales", AVAILABLE_LOCALES);

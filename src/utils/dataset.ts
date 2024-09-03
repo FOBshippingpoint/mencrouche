@@ -53,6 +53,10 @@ export function createDataset(): Dataset {
     },
 
     removeItem(key: string) {
+      const callbacks = listeners.get(key);
+      if (callbacks) {
+        callbacks.forEach((callback) => callback(storage.get(key), undefined));
+      }
       storage.delete(key);
     },
 
@@ -74,9 +78,20 @@ export function createDataset(): Dataset {
 
     fromJson(json: string) {
       const obj = JSON.parse(json);
-      storage.clear();
-      for (const [key, value] of Object.entries(obj)) {
-        this.setItem(key, value);
+      const existingKeys = new Set(storage.keys());
+
+      for (const [key, newValue] of Object.entries(obj)) {
+        const oldValue = storage.get(key);
+        existingKeys.delete(key); // This key is present in both the current state and the new state.
+
+        if (oldValue !== newValue) {
+          this.setItem(key, newValue);
+        }
+      }
+
+      // Any remaining keys in existingKeys are in the current state but not in the new JSON, so they should be removed.
+      for (const key of existingKeys) {
+        this.removeItem(key);
       }
     },
 

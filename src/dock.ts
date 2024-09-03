@@ -5,9 +5,6 @@ import { getTemplateWidgets } from "./utils/getTemplateWidgets";
 import { dataset } from "./myDataset";
 import { apocalypse } from "./apocalypse";
 
-let dock: Allowance<HTMLDivElement>;
-let slot: Allowance<HTMLSlotElement>;
-
 const dialog = $<HTMLDialogElement>("#bookmarkDialog")!;
 const appearanceDialog = $<HTMLDialogElement>("#dockAppearanceDialog")!;
 const preview = $(getTemplateWidgets("dockBookmark").firstElementChild as any);
@@ -32,7 +29,17 @@ appearanceDialog
   });
 
 let current: Allowance<HTMLAnchorElement> | null = null;
-let addBookmarkBtn: Allowance<HTMLButtonElement>;
+
+const dock = $<HTMLDivElement>(".dock")!;
+const slot = dock.$<HTMLSlotElement>("slot")!;
+const addBookmarkBtn = $<HTMLButtonElement>(".addBookmarkBtn")!;
+
+addBookmarkBtn.on("click", () => {
+  dialog.$$<HTMLInputElement>("input").do((el) => (el.value = ""));
+  updateDockBookmark({ hrefLike: "javascript:;" }, preview);
+  current = null;
+  dialog.showModal();
+});
 
 form.on("input", () => {
   try {
@@ -153,19 +160,6 @@ registerContextMenu("dock", [
   },
 ]);
 
-export function initDock() {
-  dock = $<HTMLDivElement>(".dock")!;
-  slot = dock.$<HTMLSlotElement>("slot")!;
-  addBookmarkBtn = $<HTMLButtonElement>(".addBookmarkBtn")!;
-
-  addBookmarkBtn.on("click", () => {
-    dialog.$$<HTMLInputElement>("input").do((el) => (el.value = ""));
-    updateDockBookmark({ hrefLike: "javascript:;" }, preview);
-    current = null;
-    dialog.showModal();
-  });
-}
-
 interface DockPrefJson {
   bookmarks: DockBookmarkAttrs[];
   pref: DockPrefAttrs;
@@ -186,6 +180,7 @@ export function saveDock() {
 }
 dataset.on("dock", (_, dockPref) => {
   if (dockPref) {
+    slot.replaceChildren();
     for (const bookmarkPref of dockPref.bookmarks) {
       const anchor = createDockBookmark(bookmarkPref);
       slot.appendChild(anchor);
@@ -198,7 +193,6 @@ function updateDockBookmark(
   { label, hrefLike, iconSize, target }: DockBookmarkAttrs,
   dockBookmark: Allowance<HTMLAnchorElement>,
 ) {
-  console.log(arguments);
   const anchor = dockBookmark;
   const p = dockBookmark.$<HTMLParagraphElement>("p")!;
   const img = dockBookmark.$<HTMLImageElement>("img")!;

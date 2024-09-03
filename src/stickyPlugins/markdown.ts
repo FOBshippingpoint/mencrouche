@@ -1,6 +1,7 @@
 import { marked } from "marked";
 import {
   type CustomStickyComposer,
+  type CustomStickyConfig,
   type Sticky,
   type StickyPlugin,
   registerSticky,
@@ -20,24 +21,28 @@ interface MarkdownPlugin extends StickyPlugin {
   toggleEditMode: () => void;
   updatePreview: () => void;
 }
+interface MarkdownConfig extends CustomStickyConfig {
+  prevInput: string;
+  blobUrlDataUrlMap: BlobUrlDataUrl[];
+}
 
 type BlobUrlDataUrl = [string, string];
-const globalBlobUrlDataUrlMap = new Map<
-  HTMLTextAreaElement,
-  BlobUrlDataUrl[]
->();
+const globalBlobUrlDataUrlMap = new Map<Sticky, BlobUrlDataUrl[]>();
 
-function handleTextAreaPaste(textarea: HTMLTextAreaElement) {
+function handleTextAreaPaste(
+  sticky: Sticky<MarkdownPlugin>,
+  textarea: HTMLTextAreaElement,
+) {
   textarea.on("paste", async (e) => {
     let isPasteImage = false;
 
     function convertBlobUrlAndPaste(blob: Blob) {
       const blobUrl = URL.createObjectURL(blob);
 
-      if (!globalBlobUrlDataUrlMap.has(textarea)) {
-        globalBlobUrlDataUrlMap.set(textarea, []);
+      if (!globalBlobUrlDataUrlMap.has(sticky)) {
+        globalBlobUrlDataUrlMap.set(sticky, []);
       }
-      const map = globalBlobUrlDataUrlMap.get(textarea)!;
+      const map = globalBlobUrlDataUrlMap.get(sticky)!;
       blobToDataUrl(blob).then((dataUrl) => {
         map.push([blobUrl, dataUrl]);
       });
@@ -93,16 +98,19 @@ const markdownSticky: CustomStickyComposer = {
     enable(sticky);
     // Default set to edit mode.
     sticky.classList.add("editMode");
+    sticky.$<HTMLTextAreaElement>("textarea")!.focus();
   },
   onSave(sticky) {
     const textarea = sticky.$<HTMLTextAreaElement>("textarea")!;
     return {
       prevInput: textarea.value,
-      blobUrlDataUrlMap: globalBlobUrlDataUrlMap.get(textarea),
+      blobUrlDataUrlMap: globalBlobUrlDataUrlMap.get(sticky),
     };
   },
-  onDelete() {},
-  onRestore(sticky: Sticky<MarkdownPlugin>, pluginConfig) {
+  onDelete(sticky: Sticky<MarkdownPlugin>) {
+    globalBlobUrlDataUrlMap.delete(sticky);
+  },
+  onRestore(sticky: Sticky<MarkdownPlugin>, pluginConfig: MarkdownConfig) {
     enable(sticky);
 
     const textarea = sticky.$<HTMLTextAreaElement>("textarea")!;
@@ -118,9 +126,12 @@ const markdownSticky: CustomStickyComposer = {
             const blob = await response.blob();
             const newBlobUrl = URL.createObjectURL(blob);
             prevInput = prevInput.replaceAll(oldBlobUrl, newBlobUrl);
+
+            return [newBlobUrl, dataUrl] as BlobUrlDataUrl;
           },
         );
-        Promise.all(promises).then(() => {
+        Promise.all(promises).then((newBlobUrlDataUrlMap) => {
+          globalBlobUrlDataUrlMap.set(sticky, newBlobUrlDataUrlMap);
           textarea.value = prevInput;
           sticky.plugin.updatePreview();
         });
@@ -178,10 +189,7 @@ function enable(sticky: Sticky<MarkdownPlugin>) {
   sticky.replaceBody(textarea, preview);
   sticky.addControlWidget(editModeToggleLbl);
 
-  // Idk why we need setTimeout to let focus work...
-  // setTimeout(() => textarea.focus(), 0);
-
-  handleTextAreaPaste(textarea);
+  handleTextAreaPaste(sticky, textarea);
 
   textarea.on("input", () => {
     if (sticky.classList.contains("splitView")) {

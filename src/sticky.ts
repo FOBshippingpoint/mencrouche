@@ -114,6 +114,7 @@ class StickyManager {
     for (const sticky of stickies) {
       this.#restoreSticky(sticky);
     }
+    this.refreshHighestZIndex();
   }
 
   delete(sticky: Sticky) {

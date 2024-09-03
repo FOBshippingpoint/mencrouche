@@ -188,7 +188,10 @@ function enable(sticky: Sticky<YouTubePlugin>, onScriptLoad: () => void) {
     function task() {
       sticky.plugin.player = new YT.Player(iframe.id, {
         events: {
-          onReady: () => onScriptLoad(),
+          onReady: () => {
+            onScriptLoad();
+            console.log(sticky.plugin.player);
+          },
         },
       });
     }
