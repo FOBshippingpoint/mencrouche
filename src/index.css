@@ -277,6 +277,14 @@ h6 {
     opacity: 0;
   }
 }
+.peakGhost.ghost .stickyHeader {
+  opacity: 0.5;
+  pointer-events: initial;
+}
+.peakGhost .ghost .stickyHeader {
+  opacity: 0.5;
+  pointer-events: initial;
+}
 .resizeHandle {
   position: absolute;
   background-color: transparent;

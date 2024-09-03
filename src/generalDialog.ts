@@ -17,29 +17,31 @@ interface DialogOptions {
 }
 
 export function createDialog({ title, message, buttons }: DialogOptions) {
-  dialogTitle.dataset.i18n = title;
-  dialogMessage.dataset.i18n = message;
-  const buttonMap = new Map<HTMLButtonElement, () => void>();
-
-  for (const btnAttrs of buttons) {
-    const button = $$$("button");
-    for (const [key, value] of Object.entries(btnAttrs)) {
-      if (key !== "onClick") {
-        button.setAttribute(key, value as string);
-      }
-    }
-    if (btnAttrs.onClick) {
-      buttonMap.set(button, btnAttrs.onClick);
-    }
-    dialogButtonGroup.appendChild(button);
-  }
-  n81i.translateElement(dialog);
-
   let controller: AbortController;
 
   return {
     open() {
       controller = new AbortController();
+      dialogTitle.dataset.i18n = title;
+      dialogMessage.dataset.i18n = message;
+      const buttonMap = new Map<HTMLButtonElement, () => void>();
+
+      const frag = document.createDocumentFragment();
+      for (const btnAttrs of buttons) {
+        const button = $$$("button");
+        for (const [key, value] of Object.entries(btnAttrs)) {
+          if (key !== "onClick") {
+            button.setAttribute(key, value as string);
+          }
+        }
+        if (btnAttrs.onClick) {
+          buttonMap.set(button, btnAttrs.onClick);
+        }
+        frag.appendChild(button);
+      }
+      dialogButtonGroup.replaceChildren(frag);
+      n81i.translateElement(dialog);
+
       for (const [button, onClick] of buttonMap.entries()) {
         button.on("click", onClick, { signal: controller.signal });
       }

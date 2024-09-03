@@ -395,8 +395,20 @@
 		"message": "設定",
 		"description": "Settings page header."
 	},
-  "import_document_input_label": {
+  "import_document_btn": {
 		"message": "匯入",
-		"description": "Label for import file input."
-  }
+		"description": "Button label for import file."
+	},
+	"discard_current_changes": {
+		"message": "載入舊檔",
+		"description": "Dialog title indicating replace title and select."
+	},
+	"discard_current_changes_and_load_file_message": {
+		"message": "確定要放棄目前變更並開啟舊檔？",
+		"description": "Dialog message prompting the user to confirm discard current changes and load selected file."
+	},
+	"discard_btn": {
+		"message": "放棄並載入",
+		"description": "Dialog button label to confirm discard current changes and load selected file."
+	}
 }

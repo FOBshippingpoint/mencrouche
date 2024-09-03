@@ -1,6 +1,6 @@
 /**
  * Copy from Excalidraw's source code.
- * https://github.com/excalidraw/excalidraw/blob/824ad603e1525ad9eddc1ce47088c3ca544fe8c0/packages/excalidraw/data/blob.ts
+ * https://github.com/excalidraw/excalidraw/blob/824ad603e1525ad9eddc1ce47088c3ca544fe8c0/packages/excalidraw/data/encryption.ts
  */
 const ENCRYPTION_KEY_BITS = 128;
 import { blobToArrayBuffer } from "./blob";
@@ -61,10 +61,10 @@ export const encryptData = async (
     typeof data === "string"
       ? new TextEncoder().encode(data)
       : data instanceof Uint8Array
-      ? data
-      : data instanceof Blob
-      ? await blobToArrayBuffer(data)
-      : data;
+        ? data
+        : data instanceof Blob
+          ? await blobToArrayBuffer(data)
+          : data;
 
   // We use symmetric encryption. AES-GCM is the recommended algorithm and
   // includes checks that the ciphertext has not been modified by an attacker.

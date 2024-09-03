@@ -609,11 +609,18 @@
                   class="btn"
                   data-i18n="export_document_btn"
                 ></button>
+                <button
+                  id="importDocumentBtn"
+                  class="btn"
+                  data-i18n="import_document_btn"
+                ></button>
               </div>
-              <label class="content">
-                <span data-i18n="import_document_input_label"></span>
-                <input id="importDocumentFileInput" type="file" accept=".json, application/json"/>
-              </label>
+              <input
+                hidden
+                id="importDocumentFileInput"
+                type="file"
+                accept=".json, application/json"
+              />
               <div class="formGroup">
                 <label>
                   <span data-i18n="sync_url_input_label"></span>

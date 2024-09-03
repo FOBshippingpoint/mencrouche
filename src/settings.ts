@@ -49,6 +49,7 @@ const resetBackgroundImageBtn = $<HTMLButtonElement>(
 )!;
 const deleteDocumentBtn = $<HTMLButtonElement>("#deleteDocumentBtn")!;
 const exportDocumentBtn = $<HTMLButtonElement>("#exportDocumentBtn")!;
+const importDocumentBtn = $<HTMLButtonElement>("#importDocumentBtn")!;
 const importDocumentFileInput = $<HTMLInputElement>(
   "#importDocumentFileInput",
 )!;
@@ -59,14 +60,14 @@ const syncUrlInput = $<HTMLInputElement>('[name="syncUrl"]')!;
 const cancelBtn = $<HTMLButtonElement>("#cancelSettingsBtn")!;
 const hueWheel = $<HTMLDivElement>("#hueWheel")!;
 const resetPaletteHueBtn = $<HTMLDivElement>("#setPaletteHueToDefaultBtn")!;
-const dialog = createDialog({
+const unsavedChangesAlertDialog = createDialog({
   title: "unsaved_changes",
   message: "unsaved_changes_message",
   buttons: [
     {
       "data-i18n": "cancel_submit_btn",
       onClick() {
-        dialog.close();
+        unsavedChangesAlertDialog.close();
       },
     },
     {
@@ -74,7 +75,7 @@ const dialog = createDialog({
       onClick() {
         changesManager.cancel();
         closeSettingsPage();
-        dialog.close();
+        unsavedChangesAlertDialog.close();
       },
       type: "reset",
     },
@@ -83,7 +84,7 @@ const dialog = createDialog({
 
 settingsBtn.on("click", () => {
   if (changesManager.isDirty) {
-    dialog.open();
+    unsavedChangesAlertDialog.open();
   } else {
     toggleSettingsPage();
   }
@@ -177,16 +178,39 @@ exportDocumentBtn.on("click", async () => {
     `mencrouche_${new Date().toISOString().substring(0, 10)}.json`,
   );
 });
+importDocumentBtn.on("click", () => {
+  importDocumentFileInput.click();
+});
 importDocumentFileInput.on("change", () => {
   const file = importDocumentFileInput.files?.[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.readAsText(file);
-    reader.addEventListener("load", () => {
-      onImport(reader.result as string);
-      closeSettingsPage();
-    });
-  }
+  const discardCurrentChangesDialog = createDialog({
+    title: "discard_current_changes",
+    message: "discard_current_changes_and_load_file_message",
+    buttons: [
+      {
+        "data-i18n": "cancel_submit_btn",
+        onClick() {
+          discardCurrentChangesDialog.close();
+        },
+      },
+      {
+        "data-i18n": "discard_btn",
+        onClick() {
+          if (file) {
+            const reader = new FileReader();
+            reader.readAsText(file);
+            reader.addEventListener("load", () => {
+              onImport(reader.result as string);
+              closeSettingsPage();
+            });
+          }
+          discardCurrentChangesDialog.close();
+        },
+        type: "reset",
+      },
+    ],
+  });
+  discardCurrentChangesDialog.open();
 });
 
 saveBtn.on("click", () => {
@@ -734,3 +758,8 @@ const paletteHue = dataset.getItem("paletteHue") as string;
 if (paletteHue) {
   document.documentElement.style.setProperty("--palette-hue", paletteHue);
 }
+
+dataset.on("isGhostMode", (_, isGhostMode) => {
+  console.log("isghost mode", isGhostMode)
+  $(".stickyContainer")!.classList.toggle("ghost", !!isGhostMode);
+});
