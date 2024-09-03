@@ -351,10 +351,10 @@ dataset.setItem("availableLocales", AVAILABLE_LOCALES);
 
 // Peak hidden border when pressing shift key.
 document.body.on("keydown", (e) => {
-  stickyContainer.classList.toggle("peakGhost", e.shiftKey);
+  stickyContainer.classList.toggle("peakGhost", e.ctrlKey);
 });
 document.body.on("keyup", (e) => {
-  stickyContainer.classList.toggle("peakGhost", e.shiftKey);
+  stickyContainer.classList.toggle("peakGhost", e.ctrlKey);
 });
 
 addPublicApi();

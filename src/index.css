@@ -277,13 +277,21 @@ h6 {
     opacity: 0;
   }
 }
-.peakGhost.ghost .stickyHeader {
-  opacity: 0.5;
-  pointer-events: initial;
+.peakGhost.ghost {
+  .sticky:not(.pin) {
+    .resizeHandle,
+    .stickyHeader {
+      opacity: 0.5;
+      pointer-events: initial;
+    }
+  }
 }
-.peakGhost .ghost .stickyHeader {
-  opacity: 0.5;
-  pointer-events: initial;
+.peakGhost .sticky.ghost:not(.pin) {
+  .resizeHandle,
+  .stickyHeader {
+    opacity: 0.5;
+    pointer-events: initial;
+  }
 }
 .resizeHandle {
   position: absolute;
@@ -370,7 +378,8 @@ h6 {
     opacity: 0.5;
   }
 }
-.pin:not(.ghost) {
+/* 感覺這邊還是有點BUG */
+.stickyContainer:not(.ghost:not(.peakGhost)) .pin.sticky:not(.ghost) {
   outline: var(--border-size-3) solid var(--well-1);
 }
 
