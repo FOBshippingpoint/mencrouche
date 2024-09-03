@@ -39,15 +39,11 @@
 
 ![2024-09-03_02-26](https://github.com/user-attachments/assets/a7e7d3b3-3a51-46e6-99c6-62773bcd5ea7)
 
-**Sticky** is the soul of mencrouche, you can drag, resize, pin, or hide border.
-Beyond the basic functionality, you can extend sticky to match your needs.
-Just like Markdown sticky, YouTube sticky, and Spotify sticky.
+**Sticky** is the core feature of mencrouche, allowing you to drag, resize, pin, or hide the border of stickies. You can also extend sticky functionality to fit your needs, such as creating Markdown sticky, YouTube sticky, or Spotify sticky.
 
 ### Create the _Clock Sticky_
 
-Let's create a Clock sticky that shows the current time.
-We need to add an `span` element inside sticky body, and update time via `setInterval`.
-You can paste following code sample into browser console.
+Let's create a Clock sticky that displays the current time. We'll add a `span` element inside the sticky body and update the time using `setInterval`. Paste the following code into the browser console:
 
 ```javascript
 mc.registerSticky({
@@ -66,18 +62,17 @@ mc.registerSticky({
 mc.stickyManager.create({ type: "clock" });
 ```
 
-You should see a sticky appended to the workspace:
+After executing the code, you should see a sticky appended to the workspace:
 
 ![動畫](https://github.com/user-attachments/assets/7746b05e-caac-4572-88ba-3187183f0201)
 
-The `on` functions are **sticky life cycles** as shown below:
+The `on` functions are sticky life cycles:
 
-![圖片](https://github.com/user-attachments/assets/08d8441b-ffc0-4b07-bba3-2f4c641382ac)
+![圖片](https://github.com/user-attachments/assets/0211c6c0-6edc-490c-b24d-dd0735d90246)
 
-First, we focus on the `onDelete`. The previous snippets did not clean up the `setInterval` callback,
-if you close the sticky, callback still exists, which leads to an unnecessary calculation.
+#### Improving the Clock Sticky
 
-Here is the new version (remember to refresh page before paste!):
+The previous code snippet does not clean up the `setInterval` callback. If you close the sticky, the callback continues to run, leading to unnecessary calculations. Below is an improved version (remember to refresh the page before pasting):
 
 ```javascript
 mc.registerSticky({
@@ -86,7 +81,7 @@ mc.registerSticky({
     const span = document.createElement("span");
     sticky.replaceBody(span);
 
-    // Store in sticky.plugin to prevent name collision.
+    // Store in `sticky.plugin` to prevent name collision.
     sticky.plugin.intervalId = setInterval(() => {
       console.log("update time");
       span.textContent = new Date().toLocaleString();
@@ -101,9 +96,11 @@ mc.registerSticky({
 mc.stickyManager.create({ type: "clock" });
 ```
 
-In the new version, you can see "update time" prints every 100ms. After close sticky, you won't see "update time" again.
+In this version, "update time" is printed every 100ms. After closing the sticky, the message will no longer appear.
 
-How about add some color for our clock?
+#### Adding Color to the Clock
+
+Next, we'll add a feature to change the clock's color.
 
 ```javascript
 function enableClock(sticky) {
@@ -127,7 +124,7 @@ mc.registerSticky({
     enableClock(sticky);
   },
   onSave(sticky) {
-    // Use later in `onRestore`
+    // Save the color to use later in `onRestore`
     return {
       color: sticky.plugin.color,
     };
@@ -137,7 +134,7 @@ mc.registerSticky({
   },
   onRestore(sticky, pluginConfig) {
     enableClock(sticky);
-    span.style.color = pluginConfig.color;
+    sticky.querySelector("span").style.color = pluginConfig.color;
   },
 });
 mc.stickyManager.create({ type: "clock" });
@@ -147,11 +144,9 @@ Ta-da!
 
 ![動畫](https://github.com/user-attachments/assets/2d25d439-d308-4f1d-a153-b61ad8adc099)
 
-The new `enableClock` function is used for initializing dom elements and intractability. We need to do that on creation and restoration, so it is good to define a function for that.In the `onSave` function, we return an object that contains single property 'color' to construct a JSON file, so that we can restore the stickies based on the saved states.
-In `onRestore`, we use the extra argument `pluginConfig` to get saved properties from JSON file.
+The new version refactored the DOM elements initialization, and established interactivity into one `enableClock` function. The `onSave` function returns an object containing the color property, which is stored in a JSON file. During `onRestore`, we retrieve and apply this saved color using the pluginConfig parameter.
 
-
-## Dollars API ($, $$, $$$)
+## Dollars API ($ $$ $$$)
 
 In my opinion, the JQuery API is more intuitive than the native DOM API, but we didn’t want to include JQuery due to its package size. So, we created our own lightweight JQuery-like tool for Mencrouche, called *Dollars*.
 
@@ -214,7 +209,7 @@ n81i.addTranslations({
   },
 });
 
-n81i.changeLanguage("zh_TW");
+await n81i.changeLanguage("zh_TW");
 console.log(n81i.t("hello")); // prints "你好"
 ```
 
