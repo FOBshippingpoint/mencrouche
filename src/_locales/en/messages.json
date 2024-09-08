@@ -394,5 +394,25 @@
 	"settings": {
 		"message": "Settings",
 		"description": "Settings page header."
+	},
+  "import_document_btn": {
+		"message": "Import",
+		"description": "Button label for import file."
+	},
+	"discard_current_changes": {
+		"message": "Discard current changes",
+		"description": "Dialog title indicating replace title and select."
+	},
+	"discard_current_changes_and_load_file_message": {
+		"message": "Discard all changes and load from file?",
+		"description": "Dialog message prompting the user to confirm discard current changes and load selected file."
+	},
+	"discard_btn": {
+		"message": "Discard and load",
+		"description": "Dialog button label to confirm discard current changes and load selected file."
+	},
+	"sync_remote_auth_key_input_label": {
+		"message": "Cloud Sync Secret Key",
+		"description": "Input label for syncing service authorization key."
 	}
 }

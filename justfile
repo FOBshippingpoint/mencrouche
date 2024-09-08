@@ -1,3 +1,6 @@
+# justfile is the "makefile" like commands recipes.
+# See https://github.com/casey/just for more information.
+
 default: dev
 alias cd := clean-dev
 

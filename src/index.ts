@@ -1,20 +1,25 @@
 import { stickyManager } from "./sticky";
 import { $ } from "./utils/dollars";
+import { executeCommand, registerCommand, type Command } from "./commands";
 import {
-  initCommandPalette,
-  executeCommand,
-  registerCommand,
-  type Command,
-} from "./commands";
-import { initSettings } from "./settings";
+  createShortcutItem,
+  registerFileImportExport,
+  toggleSettingsPage,
+} from "./settings";
 import { n81i } from "./utils/n81i";
 import { switchDocumentStatus } from "./documentStatus";
-import { dataset } from "./myDataset";
-import { toggleSettingsPage } from "./settings";
+import {
+  dataset,
+  importFromJsonFile,
+  loadEncryptedFileFromRemote,
+  loadFileFromIndexedDb,
+  saveAndEncryptFileToRemote,
+  saveFileToIndexedDb,
+  serializeToJson,
+} from "./myDataset";
 import { initYouTubeSticky } from "./stickyPlugins/youtube";
 import { addPublicApi } from "./publicApi";
-import { initContextMenu, registerContextMenu } from "./contextMenu";
-import { saveDock } from "./dock";
+import { registerContextMenu } from "./contextMenu";
 import { initSpotifySticky } from "./stickyPlugins/spotify";
 import { initMarkdownSticky } from "./stickyPlugins/markdown";
 
@@ -29,6 +34,9 @@ import { initMarkdownSticky } from "./stickyPlugins/markdown";
 import en from "url:./_locales/en/messages.json";
 // @ts-ignore
 import zh_TW from "url:./_locales/zh_TW/messages.json";
+import { shortcutManager } from "./shortcutManager";
+import { saveWizard } from "./saveWizard";
+import "./dock";
 
 const urls = { en, zh_TW };
 
@@ -63,8 +71,10 @@ const defaultCommands: Command[] = [
   {
     name: "save_document",
     async execute() {
-      const json = await serialize();
-      localStorage.setItem("mencrouche", json);
+      switchDocumentStatus("saving");
+      await saveWizard.prepareSave();
+      await serialize();
+      switchDocumentStatus("saved");
     },
     defaultShortcut: "C-s",
   },
@@ -179,182 +189,137 @@ function getUserPreferredLanguage() {
 }
 
 async function serialize() {
-  // Save stickies
-  dataset.setItem("stickies", stickyManager.saveAll());
-  // Save dock
-  saveDock();
-  return dataset.toJson();
-}
-
-async function uploadJsonToPublicS3(
-  bucketName: string,
-  key: string,
-  json: string,
-): Promise<void> {
-  const endpoint = `https://${bucketName}.s3.amazonaws.com/${key}`;
-
-  try {
-    const response = await fetch(endpoint, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: json,
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    console.log(`Successfully uploaded JSON to S3: ${bucketName}/${key}`);
-  } catch (error) {
-    console.error("Error uploading JSON to S3:", error);
-    throw error;
+  saveFileToIndexedDb();
+  const enableCloudSync = localStorage.getItem("enableCloudSync");
+  if (enableCloudSync === "true") {
+    await saveAndEncryptFileToRemote();
   }
 }
 
-function reload() {
-  // after load dataset from json...
-  console.log(JSON.parse(dataset.toJson()));
-
-  initContextMenu();
-  initSettings({
-    onExport: () => {
-      return serialize();
-    },
-    onImport(json: string) {
-      dataset.fromJson(json);
-      reload();
-    },
-  });
-  stickyManager.deleteAll();
-  stickyManager.restoreAll(dataset.getItem("stickies", []));
-}
-
-// from local
-const jsonString = localStorage.getItem("mencrouche") ?? "{}";
-dataset.fromJson(jsonString);
-// from remote
-// some fetch shit...
+registerFileImportExport({
+  onExport: async () => {
+    await saveWizard.prepareSave();
+    const json = serializeToJson();
+    return json;
+  },
+  onImport(jsonFile: File) {
+    return importFromJsonFile(jsonFile);
+  },
+});
 
 const saveDocumentBtn = $<HTMLDivElement>("#documentStatus button")!;
 saveDocumentBtn.on("click", () => executeCommand("save_document"));
 
-// if (window.location.hash) {
-//   const params = new URLSearchParams(window.location.hash.substring(1));
-//   const url = params.get("url");
-//   const id = params.get("id");
-//   if (url && id) {
-//     await depot.load({ url, id });
-//   }
-// } else {
-//   const syncInfo = dataset.getItem("syncInfo", {}) as SyncInfo;
-//   if (syncInfo?.url && syncInfo?.id) {
-//     await depot.load(syncInfo);
-//   }
-// }
-
-n81i.init({
-  locale: dataset.getOrSetItem<string>("language", getUserPreferredLanguage()),
-  availableLocales: AVAILABLE_LOCALES,
-  resourceLoader: async (locale: string) => {
-    let url: string;
-    if (window.browser) {
-      url = `./_locales/${locale}/messages.json`;
-    } else {
-      url = (urls as any)[locale];
+function saveSyncInfoFromUrlFragment() {
+  const b64 = window.location.hash.slice(1);
+  const json = window.atob(b64);
+  const syncInfo = JSON.parse(json);
+  for (const key of ["syncUrl", "syncResourceId", "encryptionKey"]) {
+    if (!syncInfo[key]) {
+      throw Error(
+        `Sync information inside URL fragment does not contain '${key}'.`,
+      );
     }
-    const response = await fetch(url);
-    return await response.json();
-  },
-});
-n81i.translatePage();
-
-switchDocumentStatus("saved");
-new MutationObserver(() => {
-  switchDocumentStatus("unsaved");
-}).observe(stickyContainer, {
-  attributes: true,
-  childList: true,
-  subtree: true,
-});
-
-// Register default commands.
-for (const command of defaultCommands) {
-  registerCommand(command);
+    localStorage.setItem(key, syncInfo[key]);
+  }
 }
 
-const addStickyDropdownContainer = $<HTMLButtonElement>(
-  "#addStickyDropdownContainer",
-)!;
-const addOtherStickyBtn = $<HTMLButtonElement>(".addOtherStickyBtn")!;
-const otherStickyDropdown = $<HTMLDivElement>(".dropdownButtons")!;
-addOtherStickyBtn.on("click", () => {
-  otherStickyDropdown.classList.toggle("none");
-});
-addStickyDropdownContainer.on("click", (e) => {
-  const command = e.target?.closest("[data-command]")?.dataset.command;
-  if (command) {
-    executeCommand(command);
-    otherStickyDropdown.classList.add("none");
-  }
-});
-document.body.on("click", (e) => {
-  if (
-    !e.target.closest(".dropdownButtons") &&
-    !e.target.closest(".addOtherStickyBtn")
+async function main() {
+  let shouldLoadFromIndexedDb = false;
+  if (window.location.hash) {
+    try {
+      // load from remote
+      saveSyncInfoFromUrlFragment();
+      await loadEncryptedFileFromRemote();
+    } catch (error) {
+      console.log(error);
+      shouldLoadFromIndexedDb = true;
+    }
+  } else if (
+    localStorage.getItem("enableCloudSync") === "true" &&
+    localStorage.getItem("syncUrl")
   ) {
-    otherStickyDropdown.classList.add("none");
+    await loadEncryptedFileFromRemote();
   }
-});
+  if (shouldLoadFromIndexedDb) {
+    // load from local
+    await loadFileFromIndexedDb();
+  }
 
-const menuItems = [
-  {
-    name: "add_markdown_sticky",
-    icon: "lucide-plus",
-    execute() {
-      executeCommand("add_markdown_sticky");
+  n81i.init({
+    locale: dataset.getOrSetItem<string>("locale", getUserPreferredLanguage()),
+    availableLocales: AVAILABLE_LOCALES,
+    resourceLoader: async (locale: string) => {
+      let url: string;
+      if (window.browser) {
+        url = `./_locales/${locale}/messages.json`;
+      } else {
+        url = (urls as any)[locale];
+      }
+      const response = await fetch(url);
+      return await response.json();
     },
-  },
-  {
-    name: "add_other_sticky_group",
-    subItems: [
-      {
-        name: "add_youtube_sticky",
-        icon: "lucide-youtube",
-        execute() {
-          executeCommand("add_youtube_sticky");
-        },
+  });
+  n81i.translatePage();
+
+  switchDocumentStatus("saved");
+  new MutationObserver(() => {
+    switchDocumentStatus("unsaved");
+  }).observe(stickyContainer, {
+    attributes: true,
+    childList: true,
+    subtree: true,
+  });
+
+  // Register default commands.
+  for (const command of defaultCommands) {
+    registerCommand(command);
+  }
+  // Create shortcut editor DOM
+  for (const action of shortcutManager.getAllActions()) {
+    createShortcutItem(action);
+  }
+
+  const menuItems = [
+    {
+      name: "add_markdown_sticky",
+      icon: "lucide-plus",
+      execute() {
+        executeCommand("add_markdown_sticky");
       },
-      {
-        name: "add_spotify_sticky",
-        icon: "mdi:spotify",
-        execute() {
-          executeCommand("add_spotify_sticky");
+    },
+    {
+      name: "add_other_sticky_group",
+      subItems: [
+        {
+          name: "add_youtube_sticky",
+          icon: "lucide-youtube",
+          execute() {
+            executeCommand("add_youtube_sticky");
+          },
         },
-      },
-    ],
-  },
-];
-$(".stickyContainer")!.dataset.contextMenu = "main";
-registerContextMenu("main", menuItems);
+        {
+          name: "add_spotify_sticky",
+          icon: "mdi:spotify",
+          execute() {
+            executeCommand("add_spotify_sticky");
+          },
+        },
+      ],
+    },
+  ];
+  stickyContainer.dataset.contextMenu = "main";
+  registerContextMenu("main", menuItems);
 
-// Register custom stickies.
-initMarkdownSticky();
-initSpotifySticky();
-initYouTubeSticky();
+  // Register custom stickies.
+  initMarkdownSticky();
+  initSpotifySticky();
+  initYouTubeSticky();
 
-initCommandPalette();
+  dataset.setItem("availableLocales", AVAILABLE_LOCALES);
 
-reload();
-dataset.setItem("availableLocales", AVAILABLE_LOCALES);
-
-// Peak hidden border when pressing shift key.
-document.body.on("keydown", (e) => {
-  stickyContainer.classList.toggle("peakGhost", e.ctrlKey);
-});
-document.body.on("keyup", (e) => {
-  stickyContainer.classList.toggle("peakGhost", e.ctrlKey);
-});
+  saveWizard.finishLoad();
+}
 
 addPublicApi();
+main();

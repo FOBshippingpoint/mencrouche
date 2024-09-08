@@ -26,6 +26,8 @@ interface MarkdownConfig extends CustomStickyConfig {
   blobUrlDataUrlMap: BlobUrlDataUrl[];
 }
 
+// TODO: we do not revokeObjectURL when the link is gone
+// This may cause serious memory problem. should improve later.
 type BlobUrlDataUrl = [string, string];
 const globalBlobUrlDataUrlMap = new Map<Sticky, BlobUrlDataUrl[]>();
 

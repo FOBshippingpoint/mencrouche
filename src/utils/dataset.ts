@@ -9,6 +9,7 @@ export interface Dataset {
     callback: (oldValue: T | undefined, newValue: T | undefined) => void,
   ): void;
   toJson(): string;
+  toObject(): Record<string, unknown>;
   fromJson(json: string): void;
   fromObject(object: Record<string, unknown>): void;
 }
@@ -73,11 +74,19 @@ export function createDataset(): Dataset {
     },
 
     toJson() {
-      return JSON.stringify(Object.fromEntries(storage.entries()));
+      return JSON.stringify(this.toObject());
+    },
+
+    toObject() {
+      return Object.fromEntries(storage.entries());
     },
 
     fromJson(json: string) {
       const obj = JSON.parse(json);
+      this.fromObject(obj);
+    },
+
+    fromObject(obj: Record<string, unknown>) {
       const existingKeys = new Set(storage.keys());
 
       for (const [key, newValue] of Object.entries(obj)) {
@@ -92,12 +101,6 @@ export function createDataset(): Dataset {
       // Any remaining keys in existingKeys are in the current state but not in the new JSON, so they should be removed.
       for (const key of existingKeys) {
         this.removeItem(key);
-      }
-    },
-
-    fromObject(object: Record<string, unknown>) {
-      for (const [key, value] of Object.entries(object)) {
-        this.setItem(key, value);
       }
     },
   };

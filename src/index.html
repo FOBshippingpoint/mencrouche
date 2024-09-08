@@ -162,20 +162,6 @@
       <section class="mainSection">
         <div class="stickyContainer">
           <div
-            id="debug"
-            hidden=""
-            style="
-              position: absolute;
-              right: 0;
-              bottom: 0;
-              color: var(--text-1);
-              padding: var(--size-2);
-              user-select: none;
-            "
-          >
-            debug
-          </div>
-          <div
             class="dock flex rounded padding surface shadow alwaysOnTop"
             data-context-menu="dock"
             data-position="right"
@@ -490,11 +476,11 @@
                 ></a>
               </li>
               <li>
-                <a href="#shortcutsPref" data-i18n="settings_shortcuts_section">
+                <a href="#storagePref" data-i18n="settings_storage_section">
                 </a>
               </li>
               <li>
-                <a href="#storagePref" data-i18n="settings_storage_section">
+                <a href="#shortcutsPref" data-i18n="settings_shortcuts_section">
                 </a>
               </li>
             </ul>
@@ -557,12 +543,7 @@
                     <path d="M17 22v-5.5"></path>
                     <circle cx="9" cy="9" r="2"></circle>
                   </svg>
-                  <input
-                    type="file"
-                    class="fileInput"
-                    accept="image/*"
-                    hidden=""
-                  />
+                  <input type="file" accept="image/*" hidden="" />
                 </div>
                 <label for="backgroundImageUrlInput">
                   <span data-i18n="background_image_link"></span>
@@ -579,20 +560,6 @@
                   data-i18n="set_to_default_btn"
                 ></button>
               </div>
-            </section>
-            <section id="shortcutsPref">
-              <header>
-                <h2 data-i18n="settings_shortcuts_section"></h2>
-              </header>
-              <div id="shortcutList"></div>
-              <template id="shortcutListItem">
-                <label>
-                  <span></span>
-                  <input type="text" disabled />
-                  <button data-recording="false" class="btn recordBtn"></button>
-                  <button type="reset" class="btn resetBtn"></button>
-                </label>
-              </template>
             </section>
             <section id="storagePref">
               <header>
@@ -626,12 +593,30 @@
                   <span data-i18n="sync_url_input_label"></span>
                   <input type="url" name="syncUrl" />
                 </label>
+                <label>
+                  <span data-i18n="sync_remote_auth_key_input_label"></span>
+                  <input type="password" name="syncRemoteAuthKey" />
+                </label>
                 <button
                   id="shareDataLinkBtn"
                   class="btn"
                   data-i18n="share_data_link_btn"
                 ></button>
               </div>
+            </section>
+            <section id="shortcutsPref">
+              <header>
+                <h2 data-i18n="settings_shortcuts_section"></h2>
+              </header>
+              <div id="shortcutList"></div>
+              <template id="shortcutListItem">
+                <label>
+                  <span></span>
+                  <input type="text" disabled />
+                  <button data-recording="false" class="btn recordBtn"></button>
+                  <button type="reset" class="btn resetBtn"></button>
+                </label>
+              </template>
             </section>
             <hr />
             <section id="settingsBtnGroup" class="formGroupHorizontal">
@@ -821,10 +806,10 @@
         <select name="height">
           <option
             selected
-            value="352px"
-            data-i18n="spotify_normal_height"
+            value="152px"
+            data-i18n="spotify_compact_height"
           ></option>
-          <option value="152px" data-i18n="spotify_compact_height"></option>
+          <option value="352px" data-i18n="spotify_normal_height"></option>
         </select>
         <div class="gaButtonGroup">
           <button

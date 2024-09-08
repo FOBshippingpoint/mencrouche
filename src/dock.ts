@@ -4,6 +4,7 @@ import { formToObject } from "./utils/formToObject";
 import { getTemplateWidgets } from "./utils/getTemplateWidgets";
 import { dataset } from "./myDataset";
 import { apocalypse } from "./apocalypse";
+import { saveWizard } from "./saveWizard";
 
 const dialog = $<HTMLDialogElement>("#bookmarkDialog")!;
 const appearanceDialog = $<HTMLDialogElement>("#dockAppearanceDialog")!;
@@ -165,30 +166,6 @@ interface DockPrefJson {
   pref: DockPrefAttrs;
 }
 
-export function saveDock() {
-  const dockPref: DockPrefJson = {
-    bookmarks: dock.$$<HTMLAnchorElement>(".dockBookmark").map((anchor) => {
-      return {
-        label: anchor.$("p")!.textContent,
-        hrefLike: anchor.href,
-        target: anchor.target,
-      };
-    }),
-    pref: { ...dock.dataset },
-  };
-  dataset.setItem("dock", dockPref);
-}
-dataset.on("dock", (_, dockPref) => {
-  if (dockPref) {
-    slot.replaceChildren();
-    for (const bookmarkPref of dockPref.bookmarks) {
-      const anchor = createDockBookmark(bookmarkPref);
-      slot.appendChild(anchor);
-    }
-    updateDock(dockPref.pref);
-  }
-});
-
 function updateDockBookmark(
   { label, hrefLike, iconSize, target }: DockBookmarkAttrs,
   dockBookmark: Allowance<HTMLAnchorElement>,
@@ -285,3 +262,30 @@ function updateDock({
     el.$("p")!.hidden = !showLabel;
   });
 }
+
+saveWizard.register({
+  beforeSave() {
+    const dockPref: DockPrefJson = {
+      bookmarks: dock.$$<HTMLAnchorElement>(".dockBookmark").map((anchor) => {
+        return {
+          label: anchor.$("p")!.textContent,
+          hrefLike: anchor.href,
+          target: anchor.target,
+        };
+      }),
+      pref: { ...dock.dataset },
+    };
+    dataset.setItem("dock", dockPref);
+  },
+  afterLoad() {
+    const dockPref = dataset.getItem("dock");
+    if (dockPref) {
+      slot.replaceChildren();
+      for (const bookmarkPref of dockPref.bookmarks) {
+        const anchor = createDockBookmark(bookmarkPref);
+        slot.appendChild(anchor);
+      }
+      updateDock(dockPref.pref);
+    }
+  },
+});

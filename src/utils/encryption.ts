@@ -3,7 +3,6 @@
  * https://github.com/excalidraw/excalidraw/blob/824ad603e1525ad9eddc1ce47088c3ca544fe8c0/packages/excalidraw/data/encryption.ts
  */
 const ENCRYPTION_KEY_BITS = 128;
-import { blobToArrayBuffer } from "./blob";
 
 export const IV_LENGTH_BYTES = 12;
 
@@ -94,4 +93,21 @@ export const decryptData = async (
     key,
     encrypted,
   );
+};
+
+export const blobToArrayBuffer = (blob: Blob): Promise<ArrayBuffer> => {
+  if ("arrayBuffer" in blob) {
+    return blob.arrayBuffer();
+  }
+  // Safari
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (!event.target?.result) {
+        return reject(new Error("Couldn't convert blob to ArrayBuffer"));
+      }
+      resolve(event.target.result as ArrayBuffer);
+    };
+    reader.readAsArrayBuffer(blob);
+  });
 };

@@ -1,4 +1,3 @@
-import { dataset } from "./myDataset";
 import { $, $$$ } from "./utils/dollars";
 import { getTemplateWidgets } from "./utils/getTemplateWidgets";
 import { n81i } from "./utils/n81i";
@@ -21,105 +20,102 @@ function isIos() {
   );
 }
 
-export function initContextMenu() {
-  contextMenu.on("click", (e) => {
-    // const commandName = (e.target as any).closest("[data-command-name]")
-    // 	?.dataset.commandName;
-    // if (commandName) {
-    // 	executeCommand(commandName);
-    // }
-    if (e.target.closest("[data-sub-item-active]")) {
-      return;
-    }
-    contextMenu.classList.add("none");
-  });
+contextMenu.on("click", (e) => {
+  // const commandName = (e.target as any).closest("[data-command-name]")
+  // 	?.dataset.commandName;
+  // if (commandName) {
+  // 	executeCommand(commandName);
+  // }
+  if ((e.target as Element).closest("[data-sub-item-active]")) {
+    return;
+  }
+  contextMenu.classList.add("none");
+});
 
-  function showContextMenu(e: MouseEvent | CustomEvent) {
-    $("#debug").textContent = $("#debug")?.textContent + "context menu";
-    const target = (e.target as HTMLElement).closest("[data-context-menu]") as
-      | HTMLElement
-      | undefined;
+function showContextMenu(e: MouseEvent | CustomEvent) {
+  const target = (e.target as HTMLElement).closest("[data-context-menu]") as
+    | HTMLElement
+    | undefined;
 
-    if (!target) {
-      return;
-    }
-
-    const keys = target.dataset.contextMenu.split(" ");
-    const frag = document.createDocumentFragment();
-    for (const key of keys ?? []) {
-      const menuItems = registry.get(key);
-      frag.appendChild(buildMenuItems(menuItems, target));
-    }
-    contextMenu.replaceChildren(frag);
-
-    e.preventDefault();
-    contextMenu.classList.remove("none");
-
-    let x: number;
-    let y: number;
-    if (e instanceof MouseEvent) {
-      x = e.clientX;
-      y = e.clientY;
-    } else {
-      x = e.detail.originalEvent.clientX;
-      y = e.detail.originalEvent.clientY;
-    }
-
-    const docRect = document.body.getBoundingClientRect();
-    const menuRect = contextMenu.getBoundingClientRect();
-
-    contextMenu.style.top = `${Math.min(y, docRect.height - menuRect.height)}px`;
-    contextMenu.style.left = `${Math.min(x, docRect.width - menuRect.width)}px`;
+  if (!target) {
+    return;
   }
 
-  document.on("contextmenu", (e) => {
-    if (e.shiftKey) return;
-    if (!$("#settings")!.classList.contains("none")) return;
-    if (e.target.matches("input,textarea")) return;
+  const keys = target.dataset.contextMenu!.split(" ");
+  const frag = document.createDocumentFragment();
+  for (const key of keys ?? []) {
+    const menuItems = registry.get(key);
+    frag.appendChild(buildMenuItems(menuItems, target));
+  }
+  contextMenu.replaceChildren(frag);
 
+  e.preventDefault();
+  contextMenu.classList.remove("none");
+
+  let x: number;
+  let y: number;
+  if (e instanceof MouseEvent) {
+    x = e.clientX;
+    y = e.clientY;
+  } else {
+    x = e.detail.originalEvent.clientX;
+    y = e.detail.originalEvent.clientY;
+  }
+
+  const docRect = document.body.getBoundingClientRect();
+  const menuRect = contextMenu.getBoundingClientRect();
+
+  contextMenu.style.top = `${Math.min(y, docRect.height - menuRect.height)}px`;
+  contextMenu.style.left = `${Math.min(x, docRect.width - menuRect.width)}px`;
+}
+
+document.on("contextmenu", (e) => {
+  if (e.shiftKey) return;
+  if (!$("#settings")!.classList.contains("none")) return;
+  if ((e.target as Element).matches("input,textarea")) return;
+
+  showContextMenu(e);
+});
+
+if (isIos()) {
+  document.on("longpress", (e) => {
     showContextMenu(e);
   });
-
-  if (isIos()) {
-    document.on("longpress", (e) => {
-      showContextMenu(e);
-    });
-  }
-
-  document.on("click", (e) => {
-    if (!(e as any).target.closest(".contextMenu")) {
-      contextMenu.classList.add("none");
-    }
-  });
-
-  let timer: number;
-  let isLongPress = false;
-
-  function startLongPress(e: PointerEvent) {
-    timer = window.setTimeout(() => {
-      isLongPress = true;
-      const longPressEvent = new CustomEvent("longpress", {
-        bubbles: true,
-        cancelable: true,
-        detail: { originalEvent: e },
-      });
-      e.target?.dispatchEvent(longPressEvent);
-    }, 1500);
-  }
-
-  function endLongPress(event: PointerEvent) {
-    clearTimeout(timer);
-    if (isLongPress) {
-      event.preventDefault();
-    }
-    isLongPress = false;
-  }
-
-  document.on("pointerdown", startLongPress);
-  document.on("pointerup", endLongPress);
-  document.on("pointercancel", endLongPress);
-  document.on("pointerleave", endLongPress);
 }
+
+document.on("click", (e) => {
+  if (!(e as any).target.closest(".contextMenu")) {
+    contextMenu.classList.add("none");
+  }
+});
+
+let timer: number;
+let isLongPress = false;
+
+function startLongPress(e: PointerEvent) {
+  timer = window.setTimeout(() => {
+    isLongPress = true;
+    const longPressEvent = new CustomEvent("longpress", {
+      bubbles: true,
+      cancelable: true,
+      detail: { originalEvent: e },
+    });
+    e.target?.dispatchEvent(longPressEvent);
+  }, 1500);
+}
+
+function endLongPress(event: PointerEvent) {
+  clearTimeout(timer);
+  if (isLongPress) {
+    event.preventDefault();
+  }
+  isLongPress = false;
+}
+
+document.on("pointerdown", startLongPress);
+document.on("pointerup", endLongPress);
+document.on("pointercancel", endLongPress);
+document.on("pointerleave", endLongPress);
 
 type MenuItemBuilder = (
   eventTarget: EventTarget,
@@ -146,7 +142,10 @@ export function registerContextMenu(name: string, menuItems: MenuItem[]) {
 }
 
 function buildMenuItems(menuItems: MenuItem[], eventTarget: EventTarget) {
-  const theme = dataset.getItem("theme") as "light" | "dark";
+  // TODO:
+  // this line used to decouple from dataset, but I think it has the room to improve.
+  const theme = document.documentElement.dataset.theme;
+
   const frag = document.createDocumentFragment();
   for (const item of menuItems) {
     let menuItem: MenuItem | null = item;
@@ -211,7 +210,9 @@ function buildMenuItems(menuItems: MenuItem[], eventTarget: EventTarget) {
         btn.on("mouseenter", showSubItems);
         // btn.on("click", showSubItems);
       } else if (menuItemDef.execute) {
-        btn.on("click", () => menuItemDef.execute(eventTarget), { once: true });
+        btn.on("click", () => menuItemDef.execute!(eventTarget), {
+          once: true,
+        });
       }
     }
   }

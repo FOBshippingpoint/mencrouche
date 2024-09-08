@@ -1,5 +1,7 @@
 import { Apocalypse, apocalypse } from "./apocalypse";
 import { registerContextMenu } from "./contextMenu";
+import { dataset } from "./myDataset";
+import { saveWizard } from "./saveWizard";
 import { $, $$, type Allowance } from "./utils/dollars";
 import { getTemplateWidgets } from "./utils/getTemplateWidgets";
 import { n81i } from "./utils/n81i";
@@ -8,6 +10,7 @@ import { BinPacker } from "./utils/packer";
 export interface StickyPlugin {}
 export interface Sticky<T extends StickyPlugin = StickyPlugin>
   extends Allowance<HTMLDivElement> {
+  type: string;
   delete: () => void;
   forceDelete: () => void;
   duplicate: () => Sticky;
@@ -110,7 +113,8 @@ class StickyManager {
     }
   }
 
-  restoreAll(stickies: BuildStickyOptions[]) {
+  restoreAndReplaceAll(stickies: BuildStickyOptions[]) {
+    this.forceDeleteAll();
     for (const sticky of stickies) {
       this.#restoreSticky(sticky);
     }
@@ -139,6 +143,13 @@ class StickyManager {
   forceDelete(sticky: Sticky) {
     this.#stickies.splice(this.#stickies.indexOf(sticky), 1);
     sticky.remove();
+  }
+
+  forceDeleteAll() {
+    for (const sticky of this.#stickies) {
+      sticky.remove();
+    }
+    this.#stickies.length = 0;
   }
 
   deleteAll() {
@@ -206,6 +217,8 @@ class StickyManager {
     this.#highestZIndex++;
     sticky.style.zIndex = this.#highestZIndex.toString();
     sticky.style.order = this.#highestZIndex.toString();
+    this.#stickies.splice(this.#stickies.indexOf(sticky), 1);
+    this.#stickies.push(sticky);
   }
 
   arrange() {
@@ -385,6 +398,7 @@ function buildSticky(
       if (buildType === "create") {
         custom.onCreate(basicSticky);
         basicSticky.classList.add(type);
+        basicSticky.type = type;
       } else if (buildType === "restore") {
         custom.onRestore(basicSticky, pluginConfig);
       }
@@ -596,6 +610,7 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
     plugin: {},
     save() {
       const obj = {
+        type: extendedSticky.type,
         className: sticky.className,
       };
       for (const key of ["width", "height", "left", "top", "zIndex"]) {
@@ -609,7 +624,7 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
   });
 
   sticky.on("pointerdown", (e) => {
-    if (e.button !== 2 /* Not right-click */) {
+    if (e.button !== 2 /* NOT right-click */) {
       stickyManager.moveToTop(extendedSticky);
     }
   });
@@ -686,3 +701,23 @@ export function getWidgets(sticky: Sticky, widgetTemplateId: string) {
 
   return getTemplateWidgets(widgetTemplateId)!;
 }
+
+// Peak hidden border when pressing ctrl key.
+document.body.on("keydown", (e) => {
+  stickyContainer.classList.toggle("peakGhost", e.ctrlKey);
+});
+document.body.on("keyup", (e) => {
+  stickyContainer.classList.toggle("peakGhost", e.ctrlKey);
+});
+
+saveWizard.register({
+  beforeSave() {
+    dataset.setItem("stickies", stickyManager.saveAll());
+  },
+  afterLoad() {
+    const stickies = dataset.getOrSetItem<BuildStickyOptions[]>("stickies", []);
+    if (stickies) {
+      stickyManager.restoreAndReplaceAll(stickies);
+    }
+  },
+});

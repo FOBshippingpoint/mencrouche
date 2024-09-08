@@ -11,7 +11,7 @@ import { formToObject } from "../utils/formToObject";
 import { getTemplateWidgets } from "../utils/getTemplateWidgets";
 
 interface YouTubePlugin extends StickyPlugin {
-  initPlayer?: () => void;
+  initPlayer: () => void;
   player?: YT.Player;
 }
 interface YouTubeConfig extends CustomStickyConfig {
@@ -76,6 +76,7 @@ form.on("submit", (e) => {
   }
 
   current.$<HTMLIFrameElement>("iframe")!.src = embedUrl.toString();
+  current.plugin.initPlayer();
   current.dataset.videoId = videoId;
   current.dataset.link = link;
   current.dataset.autoplay = autoplay;
@@ -132,8 +133,9 @@ const youtubeSticky: CustomStickyComposer = {
     // Save current player state and time.
     if (sticky.plugin.player) {
       const pluginConfig: YouTubeConfig = {
-        playerState: sticky.plugin.player.getPlayerState(),
-        currentTime: sticky.plugin.player.getCurrentTime(),
+        playerState:
+          sticky.plugin.player.getPlayerState?.() ?? YT.PlayerState.UNSTARTED,
+        currentTime: sticky.plugin.player.getCurrentTime?.() ?? 0,
         iframeSrc: sticky.$<HTMLIFrameElement>("iframe")!.src,
       };
       return pluginConfig;
@@ -150,6 +152,7 @@ const youtubeSticky: CustomStickyComposer = {
       }
     });
     sticky.$<HTMLIFrameElement>("iframe")!.src = pluginConfig.iframeSrc;
+    sticky.plugin.initPlayer();
   },
 };
 
@@ -181,33 +184,23 @@ function enable(sticky: Sticky<YouTubePlugin>, onScriptLoad: () => void) {
     linkInput.select();
   });
 
-  function createPlayer() {
-    // TODO: improve this shit.
-    // Prevent empty iframe.src.
-    // Stupid, but works, may improve.
-    function task() {
+  let inited = false;
+  sticky.plugin.initPlayer = () => {
+    if (inited) return;
+    if (isYoutubeScriptLoaded) {
       sticky.plugin.player = new YT.Player(iframe.id, {
         events: {
           onReady: () => {
             onScriptLoad();
-            console.log(sticky.plugin.player);
+            inited = true;
           },
         },
       });
     }
-    if (iframe.src) {
-      task();
-    } else {
-      const observer = new MutationObserver(() => {
-        task();
-        observer.disconnect();
-      });
-      observer.observe(iframe, { attributes: true, attributeFilter: ["src"] });
-    }
-  }
+  };
 
   if (isYoutubeScriptLoaded) {
-    createPlayer();
+    sticky.plugin.initPlayer();
   } else {
     const tag = document.createElement("script");
     tag.src = "https://www.youtube.com/iframe_api";
@@ -217,7 +210,7 @@ function enable(sticky: Sticky<YouTubePlugin>, onScriptLoad: () => void) {
     Object.assign(window, {
       onYouTubeIframeAPIReady() {
         isYoutubeScriptLoaded = true;
-        createPlayer();
+        sticky.plugin.initPlayer();
       },
     });
   }

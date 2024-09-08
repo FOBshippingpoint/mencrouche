@@ -229,4 +229,7 @@ export const n81i = {
   getCurrentLocale() {
     return _locale;
   },
+  isInitialized() {
+    return isInitialized;
+  },
 };

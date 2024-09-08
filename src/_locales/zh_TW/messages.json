@@ -410,5 +410,9 @@
 	"discard_btn": {
 		"message": "放棄並載入",
 		"description": "Dialog button label to confirm discard current changes and load selected file."
+	},
+	"sync_remote_auth_key_input_label": {
+		"message": "同步密鑰",
+		"description": "Input label for syncing service authorization key."
 	}
 }

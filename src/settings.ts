@@ -1,11 +1,14 @@
 import { createDialog } from "./generalDialog";
 import { createKikey } from "kikey";
-import { parseBinding } from "kikey";
 import { dataset } from "./myDataset";
 import { depot, type SyncInfo } from "./utils/depot";
 import { $, $$$ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
 import { toDataUrl } from "./utils/toDataUrl";
+import { keySequenceToString, shortcutManager } from "./shortcutManager";
+import { getTemplateWidgets } from "./utils/getTemplateWidgets";
+import { executeCommand } from "./commands";
+import { saveWizard } from "./saveWizard";
 
 const changesManager = (() => {
   type Todo = () => void;
@@ -33,33 +36,39 @@ const changesManager = (() => {
 })();
 
 let onExport: () => Promise<string>;
-let onImport: (json: string) => void;
+let onImport: (jsonFile: File) => Promise<void>;
 
+// awk '{ print length($2), $0 }' asdf | /usr/bin/sort -n | cut -d ' ' -f2- > asdfasdf
+const saveBtn = $<HTMLButtonElement>("#saveSettingsBtn")!;
+const hueWheel = $<HTMLDivElement>("#hueWheel")!;
 const settings = $<HTMLElement>("#settings")!;
+const cancelBtn = $<HTMLButtonElement>("#cancelSettingsBtn")!;
 const settingsBtn = $<HTMLButtonElement>("#settingsBtn")!;
-const dropzone = $<HTMLDivElement>(".dropzone")!;
-const fileInput = $<HTMLInputElement>(".fileInput")!;
-const backgroundImageUrlInput = $<HTMLInputElement>(
-  "#backgroundImageUrlInput",
+const syncUrlInput = $<HTMLInputElement>('[name="syncUrl"]')!;
+const syncRemoteAuthKeyInput = $<HTMLInputElement>(
+  '[name="syncRemoteAuthKey"]',
 )!;
-const shortcutListItemTemplate = $<HTMLTemplateElement>("#shortcutListItem")!;
+const shortcutList = $<HTMLDivElement>("#shortcutList")!;
 const uiOpacityInput = $<HTMLInputElement>("#uiOpacityInput")!;
-const resetBackgroundImageBtn = $<HTMLButtonElement>(
-  "#setBackgroundImageToDefaultBtn",
-)!;
+const saveAndCloseBtn = $<HTMLButtonElement>("#saveAndCloseSettingsBtn")!;
+const shareDataLinkBtn = $<HTMLButtonElement>("#shareDataLinkBtn")!;
 const deleteDocumentBtn = $<HTMLButtonElement>("#deleteDocumentBtn")!;
 const exportDocumentBtn = $<HTMLButtonElement>("#exportDocumentBtn")!;
 const importDocumentBtn = $<HTMLButtonElement>("#importDocumentBtn")!;
+const resetPaletteHueBtn = $<HTMLDivElement>("#setPaletteHueToDefaultBtn")!;
+const backgroundImageDropzone = $<HTMLDivElement>(".dropzone")!;
+const backgroundImageUrlInput = $<HTMLInputElement>(
+  "#backgroundImageUrlInput",
+)!;
 const importDocumentFileInput = $<HTMLInputElement>(
   "#importDocumentFileInput",
 )!;
-const shareDataLinkBtn = $<HTMLButtonElement>("#shareDataLinkBtn")!;
-const saveBtn = $<HTMLButtonElement>("#saveSettingsBtn")!;
-const saveAndCloseBtn = $<HTMLButtonElement>("#saveAndCloseSettingsBtn")!;
-const syncUrlInput = $<HTMLInputElement>('[name="syncUrl"]')!;
-const cancelBtn = $<HTMLButtonElement>("#cancelSettingsBtn")!;
-const hueWheel = $<HTMLDivElement>("#hueWheel")!;
-const resetPaletteHueBtn = $<HTMLDivElement>("#setPaletteHueToDefaultBtn")!;
+const resetBackgroundImageBtn = $<HTMLButtonElement>(
+  "#setBackgroundImageToDefaultBtn",
+)!;
+const backgroundImageFileInput =
+  backgroundImageDropzone.$<HTMLInputElement>("input")!;
+
 const unsavedChangesAlertDialog = createDialog({
   title: "unsaved_changes",
   message: "unsaved_changes_message",
@@ -90,28 +99,39 @@ settingsBtn.on("click", () => {
   }
 });
 
+syncUrlInput.value = localStorage.getItem("syncUrl") ?? "";
 syncUrlInput.on("input", () => {
   changesManager.setChange("setStorageSyncUrl", () => {
-    const syncInfo = dataset.getOrSetItem("syncInfo", {});
-    syncInfo["url"] = syncUrlInput.value;
-    dataset.setItem("syncInfo", syncInfo);
-    depot.save(syncInfo as SyncInfo);
+    localStorage.setItem("syncUrl", syncUrlInput.value);
+  });
+});
+syncRemoteAuthKeyInput.value = localStorage.getItem("syncRemoteAuthKey") ?? "";
+syncRemoteAuthKeyInput.on("input", () => {
+  changesManager.setChange("setStorageSyncRemoteAuthKey", () => {
+    localStorage.setItem("syncRemoteAuthKey", syncRemoteAuthKeyInput.value);
   });
 });
 shareDataLinkBtn.on("click", () => {
-  const syncInfo = dataset.getItem("syncInfo") as SyncInfo;
-  if (syncInfo?.id) {
+  const syncUrl = localStorage.getItem("syncUrl");
+  const syncResourceId = localStorage.getItem("syncResourceId");
+  const encryptionKey = localStorage.getItem("encryptionKey");
+  if (syncUrl && syncResourceId && encryptionKey) {
     const url = new URL(window.location.origin);
-    url.hash = new URLSearchParams({
-      url: syncInfo.url,
-      id: syncInfo.id,
-    }).toString();
+    url.hash = window.btoa(
+      JSON.stringify({
+        syncUrl,
+        syncResourceId,
+        encryptionKey,
+      }),
+    );
     navigator.clipboard
       .writeText(url.toString())
       .then(() => {
         console.log("Text copied");
       })
       .catch((err) => console.error(err.name, err.message));
+  } else {
+    alert("Cannot share the data.");
   }
 });
 deleteDocumentBtn.on("click", () => {
@@ -197,12 +217,8 @@ importDocumentFileInput.on("change", () => {
         "data-i18n": "discard_btn",
         onClick() {
           if (file) {
-            const reader = new FileReader();
-            reader.readAsText(file);
-            reader.addEventListener("load", () => {
-              onImport(reader.result as string);
-              closeSettingsPage();
-            });
+            onImport(file);
+            closeSettingsPage();
           }
           discardCurrentChangesDialog.close();
         },
@@ -246,7 +262,7 @@ backgroundImageUrlInput.on("paste", async (e) => {
       try {
         const url = await (await clipboardItem.getType("text/plain")).text();
         new URL(url);
-        dropzone.style.background = `url(${url}) center center / cover no-repeat`;
+        backgroundImageDropzone.style.background = `url(${url}) center center / cover no-repeat`;
         dataset.setItem("backgroundImageUrl", url);
         changesManager.isDirty = true;
       } catch (_) {
@@ -261,23 +277,23 @@ function handleBlob(blob: Blob | File) {
   if (!url.startsWith("blob")) {
     backgroundImageUrlInput.value = url;
   }
-  dropzone.style.background = `url(${url}) center center / cover no-repeat`;
+  backgroundImageDropzone.style.background = `url(${url}) center center / cover no-repeat`;
   dataset.setItem("backgroundImageUrl", url);
   changesManager.isDirty = true;
 }
 
 // Handle drag and drop events
-dropzone.on("dragover", (event) => {
+backgroundImageDropzone.on("dragover", (event) => {
   event.preventDefault(); // Prevent default browser behavior (open file)
-  dropzone.setAttribute("active", "");
+  backgroundImageDropzone.setAttribute("active", "");
 });
-dropzone.on("dragleave", () => {
-  dropzone.removeAttribute("active");
+backgroundImageDropzone.on("dragleave", () => {
+  backgroundImageDropzone.removeAttribute("active");
 });
 
-dropzone.on("drop", (e) => {
+backgroundImageDropzone.on("drop", (e) => {
   e.preventDefault();
-  dropzone.removeAttribute("active");
+  backgroundImageDropzone.removeAttribute("active");
   if (e.dataTransfer?.items) {
     // Use DataTransferItemList interface to access the file(s)
     [...e.dataTransfer?.items].forEach((item, i) => {
@@ -296,18 +312,20 @@ dropzone.on("drop", (e) => {
 });
 
 // Handle click on dropzone to open file selection dialog
-dropzone.on("click", () => {
-  fileInput.click();
+backgroundImageDropzone.on("click", () => {
+  backgroundImageFileInput.click();
 });
 
 // Handle file selection from dialog
-fileInput.on("change", (e) => {
-  const selectedFile = e.target.files[0];
-  handleBlob(selectedFile);
+backgroundImageFileInput.on("change", () => {
+  const selectedFile = backgroundImageFileInput.files?.[0];
+  if (selectedFile) {
+    handleBlob(selectedFile);
+  }
 });
 
 resetBackgroundImageBtn.on("click", () => {
-  dropzone.style.backgroundImage = "unset";
+  backgroundImageDropzone.style.backgroundImage = "unset";
   backgroundImageUrlInput.value = "";
   dataset.setItem("backgroundImageUrl", null);
 });
@@ -315,7 +333,7 @@ resetBackgroundImageBtn.on("click", () => {
 // TODO: somehow laggy? maybe we need throttle?
 uiOpacityInput.on("input", () => {
   const uiOpacity = (uiOpacityInput.valueAsNumber / 100).toString();
-  document.documentElement.style.setProperty("--ui-opacity", uiOpacity);
+  setCssProperty("--ui-opacity", uiOpacity);
   changesManager.isDirty = true;
 });
 
@@ -328,20 +346,15 @@ function openSettingsPage() {
   const backgroundImageUrl = dataset.getItem("backgroundImageUrl");
   changesManager.onRevert = () => {
     // Reset ui opacity
-    document.documentElement.style.setProperty(
-      "--ui-opacity",
-      uiOpacity.toString(),
-    );
+    setCssProperty("--ui-opacity", uiOpacity.toString());
     uiOpacityInput.style.opacity = uiOpacity.toString();
     uiOpacityInput.value = (uiOpacity * 100).toString();
-
     // Reset palette hue
     if (paletteHue) {
-      document.documentElement.style.setProperty("--palette-hue", paletteHue);
+      setCssProperty("--palette-hue", paletteHue);
     } else {
-      document.documentElement.style.removeProperty("--palette-hue");
+      setCssProperty("--palette-hue", null);
     }
-
     // Reset background image
     if (backgroundImageUrl) {
       dataset.setItem("backgroundImageUrl", backgroundImageUrl);
@@ -353,7 +366,7 @@ function openSettingsPage() {
 
 function closeSettingsPage() {
   settings.classList.add("none");
-  dropzone.style.backgroundImage = "unset";
+  backgroundImageDropzone.style.backgroundImage = "unset";
   backgroundImageUrlInput.value = "";
   $(".stickyContainer")!.classList.remove("none");
 }
@@ -373,13 +386,13 @@ if (url) {
   changeBackgroundImage(url);
 }
 dataset.on<string>("backgroundImageUrl", (_, url) => {
-  changeBackgroundImage(url as string);
+  changeBackgroundImage(url);
 });
-async function changeBackgroundImage(url: string | null) {
+async function changeBackgroundImage(url: string | undefined) {
   if (url?.startsWith("blob")) {
     url = await toDataUrl(url);
   }
-  document.documentElement.style.setProperty(
+  setCssProperty(
     "--page-background",
     url ? `url(${url}) no-repeat center center fixed` : "unset",
   );
@@ -399,7 +412,7 @@ function updateLangDropDown(locales: string[]) {
   langDropdown.replaceChildren();
   for (const locale of locales) {
     const option = $$$("option");
-    if (dataset.getItem("language") === locale) {
+    if (dataset.getItem("locale") === locale) {
       option.selected = true;
     }
     option.value = locale;
@@ -417,8 +430,8 @@ function updateLangDropDown(locales: string[]) {
   langDropdown.on("change", async () => {
     // Pre-loading when user select, instead of applying settings.
     n81i.loadLanguage(langDropdown.value);
-    changesManager.setChange("setLanguage", async () => {
-      dataset.setItem("language", langDropdown.value);
+    changesManager.setChange("setLocale", async () => {
+      dataset.setItem("locale", langDropdown.value);
       await n81i.changeLanguage(langDropdown.value);
       n81i.translatePage();
     });
@@ -428,17 +441,18 @@ function updateLangDropDown(locales: string[]) {
 // Initialize language
 dataset.on<string>("locale", async (_, locale) => {
   if (!locale) return;
-  await n81i.changeLanguage(locale);
-  n81i.translatePage();
+  if (n81i.isInitialized()) {
+    await n81i.changeLanguage(locale);
+    n81i.translatePage();
+  }
 });
 
-export function initSettings(handlers: {
+export function registerFileImportExport(handlers: {
   onExport: () => Promise<string>;
-  onImport: (json: string) => void;
+  onImport: (jsonFile: File) => Promise<void>;
 }) {
   onExport = handlers.onExport;
   onImport = handlers.onImport;
-  initShortcuts();
 }
 
 function queryPrefersColorScheme() {
@@ -465,279 +479,77 @@ themeToggle.on("change", (e) => {
   dataset.setItem("theme", value);
 });
 
-function updateShortcutList() {}
+export function createShortcutItem({
+  actionName,
+  keySequence,
+}: {
+  actionName: string;
+  keySequence: string;
+}) {
+  const widgets = getTemplateWidgets("shortcutListItem");
+  const label = widgets.$<HTMLLabelElement>("label")!;
+  const input = label.$<HTMLInputElement>("input")!;
+  const span = label.$<HTMLInputElement>("span")!;
+  const recordBtn = label.$<HTMLInputElement>(".recordBtn")!;
+  const resetBtn = label.$<HTMLInputElement>(".resetBtn")!;
+  label.htmlFor = actionName;
+  span.dataset.i18n = actionName;
+  input.value = keySequence;
+  input.dataset.actionName = actionName;
+  recordBtn.dataset.i18n = "record_shortcut_btn";
+  resetBtn.dataset.i18n = "reset_btn";
 
-function initShortcuts() {
-  const shortcutManager = initShortcutManager();
-  const shortcutList = $("#shortcutList")!;
+  n81i.translateElement(label);
+  shortcutList.appendChild(label);
+}
 
-  const frag = document.createDocumentFragment();
-  for (const { actionName, keySequence } of shortcutManager.getAllActions()) {
-    const label = $<HTMLLabelElement>(
-      (shortcutListItemTemplate.content.cloneNode(true) as any)
-        .firstElementChild,
-    )!;
-    const input = label.$<HTMLInputElement>("input")!;
-    const span = label.$<HTMLInputElement>("span")!;
-    const recordBtn = label.$<HTMLInputElement>(".recordBtn")!;
-    const resetBtn = label.$<HTMLInputElement>(".resetBtn")!;
-    label.htmlFor = actionName;
-    span.dataset.i18n = actionName;
-    input.value = keySequence;
-    input.dataset.actionName = actionName;
-    recordBtn.dataset.i18n = "record_shortcut_btn";
-    resetBtn.dataset.i18n = "reset_btn";
-    n81i.translateElement(label);
-    frag.appendChild(label);
-  }
-  shortcutList.appendChild(frag);
+const recordingKikey = createKikey();
+shortcutList.on("click", (e) => {
+  if ((e.target as HTMLElement).matches("button")) {
+    const btn = e.target as HTMLButtonElement;
+    const input = btn.closest("label")!.querySelector("input")!;
+    const actionName = input.dataset.actionName!;
 
-  const recordingKikey = createKikey();
-  shortcutList.on("click", (e) => {
-    if ((e.target as HTMLElement).matches("button")) {
-      const btn = e.target as HTMLButtonElement;
-      const input = btn.closest("label")!.querySelector("input")!;
-      const actionName = input.dataset.actionName!;
-
-      if ((e.target as HTMLElement).matches(".recordBtn")) {
-        if (btn.dataset.recording === "false") {
-          // Start
-          btn.textContent = n81i.t("stop_record_shortcut_btn");
-          recordingKikey.startRecord();
-          input.value = "...";
+    if (btn.classList.contains("recordBtn")) {
+      if (!btn.classList.contains("recording")) {
+        // Start
+        btn.textContent = n81i.t("stop_record_shortcut_btn");
+        recordingKikey.startRecord();
+        input.value = "...";
+      } else {
+        // Stop
+        btn.textContent = n81i.t("record_shortcut_btn");
+        const newSequence = recordingKikey.stopRecord();
+        if (newSequence) {
+          changesManager.setChange(actionName, () => {
+            shortcutManager.update(actionName, newSequence);
+          });
+          input.value = keySequenceToString(newSequence);
         } else {
-          // Stop
-          btn.textContent = n81i.t("record_shortcut_btn");
-          const newSequence = recordingKikey.stopRecord();
-          if (newSequence) {
-            changesManager.setChange(actionName, () => {
-              shortcutManager.update(actionName, newSequence);
-            });
-            input.value = keySequenceToString(newSequence);
-          } else {
-            input.value = shortcutManager.getKeySequence(actionName);
-          }
+          input.value = shortcutManager.getKeySequence(actionName);
         }
-        btn.dataset.recording =
-          btn.dataset.recording === "false" ? "true" : "false";
-      } else if ((e.target as HTMLElement).matches(".resetBtn")) {
-        changesManager.setChange(actionName, () =>
-          shortcutManager.restore(actionName),
-        );
-        input.value = shortcutManager.getDefaultKeySequence(actionName);
       }
+      btn.classList.toggle("recording");
+    } else if (btn.classList.contains("resetBtn")) {
+      changesManager.setChange(actionName, () =>
+        shortcutManager.restore(actionName),
+      );
+      input.value = shortcutManager.getDefaultKeySequence(actionName);
     }
-  });
-}
-
-function keyBindingToString(
-  binding: ReturnType<typeof parseBinding>,
-  isMac = false,
-): string {
-  const modifiers = [
-    { key: "ctrlKey", default: "Ctrl", mac: "⌘" },
-    { key: "shiftKey", default: "Shift", mac: "⇧" },
-    { key: "altKey", default: "Alt", mac: "⌥" },
-    { key: "metaKey", default: "Meta", mac: "⌃" },
-  ];
-
-  const parts = modifiers
-    .filter((mod) => binding[mod.key as keyof ReturnType<typeof parseBinding>])
-    .map((mod) => (isMac ? mod.mac : mod.default));
-
-  let key = binding.key;
-  const arrowKeys: { [key: string]: string } = {
-    arrowup: "↑",
-    arrowdown: "↓",
-    arrowleft: "←",
-    arrowright: "→",
-  };
-  key = arrowKeys[key.toLowerCase()] ?? key;
-
-  parts.push(key.length === 1 ? key.toUpperCase() : key);
-
-  return parts.join(" + ");
-}
-function keySequenceToString(
-  sequence: string | ReturnType<typeof parseBinding>[],
-) {
-  let s: ReturnType<typeof parseBinding>[];
-  if (typeof sequence === "string") {
-    s = sequence.split(" ").map(parseBinding);
-  } else {
-    s = sequence;
   }
-
-  return s.map((b) => keyBindingToString(b)).join(", ");
-}
+});
 
 // initialize ui opacity
 const uiOpacity = dataset.getOrSetItem("uiOpacity", 1);
-document.documentElement.style.setProperty(
-  "--ui-opacity",
-  uiOpacity.toString(),
-);
+setCssProperty("--ui-opacity", uiOpacity.toString());
 uiOpacityInput.style.opacity = uiOpacity.toString();
 uiOpacityInput.value = (uiOpacity * 100).toString();
-
-type Action = {
-  default: string;
-  custom: string | null;
-};
-
-interface ShortcutRegisterOption {
-  el?: Document | HTMLElement;
-  shouldPreventDefault?: boolean;
-}
-
-interface ShortcutManager {
-  on(
-    actionName: string,
-    keySequence: string,
-    callback: (e: KeyboardEvent) => void,
-    option?: ShortcutRegisterOption,
-  ): void;
-  once(
-    actionName: string,
-    keySequence: string,
-    callback: (e: KeyboardEvent) => void,
-    option?: ShortcutRegisterOption,
-  ): void;
-  update(
-    actionName: string,
-    newSequence: string | ReturnType<typeof parseBinding>[],
-  ): void;
-  restore(actionName: string): void;
-  getKeySequence(actionName: string): string;
-  getDefaultKeySequence(actionName: string): string;
-  getAllActions(): Array<{
-    actionName: string;
-    keySequence: string;
-  }>;
-  has(actionName: string): boolean;
-}
-
-let singleton: ShortcutManager | undefined;
-export function initShortcutManager() {
-  if (!singleton) {
-    const actions = new Map<string, Action>();
-    for (const [actionName, value] of Object.entries(actions)) {
-      value.custom ??= dataset.getItem<string>(actionName);
-    }
-
-    interface KikeyInfo {
-      kikey: ReturnType<typeof createKikey>;
-      callback: (e: KeyboardEvent) => void;
-    }
-
-    const registry: Record<string, KikeyInfo[]> = {} as any;
-    const globalKikey = createKikey();
-
-    function getCurrent(actionName: string) {
-      if (!actions.has(actionName)) {
-        throw Error(
-          `Action name '${actionName}' not found. Maybe you want to register the action? You can try to call 'on' or 'once'.`,
-        );
-      }
-      return (
-        actions.get(actionName)!.custom ?? actions.get(actionName)!.default
-      );
-    }
-
-    function registerAction(
-      actionName: string,
-      keySequence: string,
-      callback: (e: KeyboardEvent) => void,
-      isOnce: boolean = false,
-      option: ShortcutRegisterOption = {},
-    ) {
-      if (actions.has(actionName)) {
-        throw Error(
-          `Action name '${actionName}' already exists. Please try another name. Or maybe you want to 'update' instead?`,
-        );
-      }
-      actions.set(actionName, { default: keySequence, custom: null });
-      const kikey = option.el ? createKikey(option.el) : globalKikey;
-
-      let cb = callback;
-      if (option.shouldPreventDefault) {
-        cb = (e: KeyboardEvent) => {
-          e.preventDefault();
-          callback(e);
-        };
-      }
-
-      if (isOnce) {
-        kikey.once(getCurrent(actionName), cb);
-      } else {
-        kikey.on(getCurrent(actionName), cb);
-      }
-
-      if (!registry[actionName]) {
-        registry[actionName] = [];
-      }
-      registry[actionName].push({ kikey, callback: cb });
-    }
-
-    singleton = {
-      on(
-        actionName: string,
-        keySequence: string,
-        callback: (e: KeyboardEvent) => void,
-        option: ShortcutRegisterOption = { shouldPreventDefault: true },
-      ) {
-        registerAction(actionName, keySequence, callback, false, option);
-      },
-      once(
-        actionName: string,
-        keySequence: string,
-        callback: (e: KeyboardEvent) => void,
-        option: ShortcutRegisterOption = { shouldPreventDefault: true },
-      ) {
-        registerAction(actionName, keySequence, callback, true, option);
-      },
-      update(actionName: string, newSequence: string) {
-        for (const { kikey, callback } of registry[actionName] ?? []) {
-          kikey.updateSequence(newSequence, callback);
-          actions.get(actionName)!.custom = newSequence;
-          dataset.setItem(actionName, newSequence);
-        }
-      },
-      restore(actionName: string) {
-        for (const { kikey, callback } of registry[actionName] ?? []) {
-          kikey.updateSequence(actions.get(actionName)!.default, callback);
-          actions.get(actionName)!.custom = null;
-          dataset.removeItem(actionName);
-        }
-      },
-      getKeySequence(actionName: string) {
-        return keySequenceToString(getCurrent(actionName));
-      },
-      getDefaultKeySequence(actionName: string) {
-        return keySequenceToString(actions.get(actionName)!.default);
-      },
-      getAllActions() {
-        return [...actions.entries()].map(([key, value]) => ({
-          actionName: key,
-          keySequence: keySequenceToString(
-            (value.custom ?? value.default).split(" ").map(parseBinding),
-          ),
-        }));
-      },
-      has(actionName: string) {
-        return actions.has(actionName);
-      },
-    };
-  }
-
-  return singleton;
-}
 
 // Initialize palette hue
 hueWheel.on("pointerdown", () => hueWheel.on("pointermove", adjustPaletteHue));
 hueWheel.on("pointerup", () => hueWheel.off("pointermove", adjustPaletteHue));
 resetPaletteHueBtn.on("click", () => {
-  document.documentElement.style.removeProperty("--palette-hue");
+  setCssProperty("--palette-hue", null);
 });
 function adjustPaletteHue(e: MouseEvent) {
   const rect = hueWheel.getBoundingClientRect();
@@ -750,16 +562,62 @@ function adjustPaletteHue(e: MouseEvent) {
   const angle = Math.atan2(y, x) * (180 / Math.PI);
   const paletteHue = Math.round(angle).toString();
 
-  document.documentElement.style.setProperty("--palette-hue", paletteHue);
+  setCssProperty("--palette-hue", paletteHue);
   dataset.setItem("paletteHue", paletteHue);
   changesManager.isDirty = true;
 }
 const paletteHue = dataset.getItem("paletteHue") as string;
 if (paletteHue) {
-  document.documentElement.style.setProperty("--palette-hue", paletteHue);
+  setCssProperty("--palette-hue", paletteHue);
 }
 
+// Reflecting to global ghost mode configuration.
 dataset.on("isGhostMode", (_, isGhostMode) => {
-  console.log("isghost mode", isGhostMode)
   $(".stickyContainer")!.classList.toggle("ghost", !!isGhostMode);
+});
+
+// Initialize add sticky dropdown buttons at navbar.
+const addStickyDropdownContainer = $<HTMLButtonElement>(
+  "#addStickyDropdownContainer",
+)!;
+const addOtherStickyBtn = $<HTMLButtonElement>(".addOtherStickyBtn")!;
+const otherStickyDropdown = $<HTMLDivElement>(".dropdownButtons")!;
+addOtherStickyBtn.on("click", () => {
+  otherStickyDropdown.classList.toggle("none");
+});
+addStickyDropdownContainer.on("click", (e) => {
+  const command = (
+    (e.target as Element)?.closest("[data-command]") as HTMLElement
+  ).dataset.command;
+  if (command) {
+    executeCommand(command);
+    otherStickyDropdown.classList.add("none");
+  }
+});
+document.body.on("click", (e) => {
+  if (
+    !(e.target as Element).closest(".dropdownButtons") &&
+    !(e.target as Element).closest(".addOtherStickyBtn")
+  ) {
+    otherStickyDropdown.classList.add("none");
+  }
+});
+
+function setCssProperty(name: string, value: string | null) {
+  if (value === null) {
+    document.documentElement.style.removeProperty(name);
+  } else {
+    document.documentElement.style.setProperty(name, value);
+  }
+}
+
+saveWizard.register({
+  async beforeSave() {
+    const url = dataset.getItem<string>("backgroundImageUrl");
+    if (url?.startsWith("blob")) {
+      const dataUrl = await toDataUrl(url);
+      dataset.setItem("backgroundImageUrl", dataUrl);
+    }
+  },
+  afterLoad() {},
 });
