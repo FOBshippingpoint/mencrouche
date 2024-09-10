@@ -1,10 +1,89 @@
-import { $, type Allowance } from "./utils/dollars";
 import { registerContextMenu } from "./contextMenu";
 import { formToObject } from "./utils/formToObject";
 import { getTemplateWidgets } from "./utils/getTemplateWidgets";
-import { dataset } from "./myDataset";
 import { apocalypse } from "./apocalypse";
-import { saveWizard } from "./saveWizard";
+import { dataset, addTodoAfterLoad, addTodoBeforeSave } from "./dataWizard";
+import { $, type Allowance } from "./utils/dollars";
+
+// Drag and drop code was modified from https://codepen.io/gabrielferreira/pen/jMgaLe
+// Under MIT License (https://blog.codepen.io/legal/licensing/)
+class TheIncrediblyVerboseAndOverlyDescriptiveDragAndDropSortHelperThatDoesWayMoreThanItShouldProbably {
+  private container: Allowance<HTMLElement>;
+  private dragSrcEl: HTMLElement | null = null;
+
+  constructor(container: HTMLElement) {
+    this.container = $(container)!;
+    this.initializeDragAndDrop();
+  }
+
+  private initializeDragAndDrop() {
+    this.container
+      .$$('[draggable="true"]')
+      .forEach((el) => this.add(el as HTMLElement));
+  }
+
+  add(el: HTMLElement): void {
+    el.on("dragstart", this.dragStart.bind(this));
+    el.on("dragenter", this.dragEnter);
+    el.on("dragover", this.dragOver);
+    el.on("dragleave", this.dragLeave);
+    el.on("drop", this.dragDrop.bind(this));
+    el.on("dragend", this.dragEnd.bind(this));
+  }
+
+  private dragStart(e: DragEvent) {
+    if (e.target instanceof HTMLElement) {
+      const target = e.target.closest('[draggable="true"]')! as HTMLElement;
+      target.style.opacity = "0.4";
+      this.dragSrcEl = target;
+    }
+  }
+
+  private dragEnter(e: DragEvent) {
+    (e.target as HTMLElement).classList.add("dragOver");
+  }
+
+  private dragLeave(e: DragEvent) {
+    (e.target as HTMLElement).classList.remove("dragOver");
+  }
+
+  private dragOver(e: DragEvent) {
+    e.preventDefault();
+    if (e.dataTransfer) {
+      e.dataTransfer.dropEffect = "move";
+    }
+    return false;
+  }
+
+  private dragDrop(e: DragEvent) {
+    e.stopPropagation();
+    const target = (e.target as HTMLElement).closest(
+      '[draggable="true"]',
+    ) as HTMLElement;
+    if (this.dragSrcEl && this.dragSrcEl !== target) {
+      this.swap(this.dragSrcEl, target);
+    }
+    this.container
+      .$$(".dragOver")
+      .forEach((el) => el.classList.remove("dragOver"));
+    return false;
+  }
+
+  private dragEnd() {
+    this.container
+      .querySelectorAll('[draggable="true"]')
+      .forEach((el) => el.classList.remove("dragOver"));
+    if (this.dragSrcEl) {
+      this.dragSrcEl.style.opacity = "1";
+    }
+  }
+
+  private swap(a: Node, b: Node) {
+    const aSibling = a.nextSibling === b ? a : a.nextSibling;
+    b.parentNode!.insertBefore(a, b);
+    a.parentNode!.insertBefore(b, aSibling);
+  }
+}
 
 const dialog = $<HTMLDialogElement>("#bookmarkDialog")!;
 const appearanceDialog = $<HTMLDialogElement>("#dockAppearanceDialog")!;
@@ -17,7 +96,15 @@ const hrefLikeInput = form.$<HTMLInputElement>('[name="hrefLike"]')!;
 // TODO: add custom icon
 const iconInput = form.$<HTMLInputElement>('[name="icon"]')!;
 const labelInput = form.$<HTMLInputElement>('[name="label"]')!;
+const dock = $<HTMLDivElement>(".dock")!;
+const slot = dock.$<HTMLSlotElement>("slot")!;
+const addBookmarkBtn = $<HTMLButtonElement>(".addBookmarkBtn")!;
+
 let prevDockAppearanceAttrs: DockPrefAttrs;
+const dnd =
+  new TheIncrediblyVerboseAndOverlyDescriptiveDragAndDropSortHelperThatDoesWayMoreThanItShouldProbably(
+    dock,
+  );
 
 dialog
   .$<HTMLFormElement>('[data-i18n="cancel_submit_btn"]')!
@@ -30,10 +117,6 @@ appearanceDialog
   });
 
 let current: Allowance<HTMLAnchorElement> | null = null;
-
-const dock = $<HTMLDivElement>(".dock")!;
-const slot = dock.$<HTMLSlotElement>("slot")!;
-const addBookmarkBtn = $<HTMLButtonElement>(".addBookmarkBtn")!;
 
 addBookmarkBtn.on("click", () => {
   dialog.$$<HTMLInputElement>("input").do((el) => (el.value = ""));
@@ -202,12 +285,14 @@ interface DockBookmarkAttrs {
 }
 
 function createDockBookmark(attrs: DockBookmarkAttrs) {
-  return updateDockBookmark(
+  const dockBookmark = updateDockBookmark(
     attrs,
     $<HTMLAnchorElement>(
       getTemplateWidgets("dockBookmark").firstElementChild as any,
     )!,
   );
+  dnd.add(dockBookmark);
+  return dockBookmark;
 }
 
 function getFaviconUrl(domainUrl: string, size?: number) {
@@ -224,7 +309,18 @@ function toUrl(url: string, base = "https://example.com") {
 
 appearanceForm.on("input", () => {
   const attrs = formToObject(appearanceForm);
-  updateDock(attrs);
+  const backupAttrs = {
+    ...dock.dataset,
+    iconSize: parseInt(dock.dataset.iconSize!),
+  };
+  apocalypse.write({
+    execute() {
+      updateDock(attrs);
+    },
+    undo() {
+      updateDock(backupAttrs);
+    },
+  });
 });
 appearanceForm.on("submit", (e) => {
   e.preventDefault();
@@ -263,29 +359,27 @@ function updateDock({
   });
 }
 
-saveWizard.register({
-  beforeSave() {
-    const dockPref: DockPrefJson = {
-      bookmarks: dock.$$<HTMLAnchorElement>(".dockBookmark").map((anchor) => {
-        return {
-          label: anchor.$("p")!.textContent,
-          hrefLike: anchor.href,
-          target: anchor.target,
-        };
-      }),
-      pref: { ...dock.dataset },
-    };
-    dataset.setItem("dock", dockPref);
-  },
-  afterLoad() {
-    const dockPref = dataset.getItem("dock");
-    if (dockPref) {
-      slot.replaceChildren();
-      for (const bookmarkPref of dockPref.bookmarks) {
-        const anchor = createDockBookmark(bookmarkPref);
-        slot.appendChild(anchor);
-      }
-      updateDock(dockPref.pref);
+addTodoBeforeSave(() => {
+  const dockPref: DockPrefJson = {
+    bookmarks: dock.$$<HTMLAnchorElement>(".dockBookmark").map((anchor) => {
+      return {
+        label: anchor.$("p")!.textContent,
+        hrefLike: anchor.href,
+        target: anchor.target,
+      };
+    }),
+    pref: { ...dock.dataset },
+  };
+  dataset.setItem("dock", dockPref);
+});
+addTodoAfterLoad(() => {
+  const dockPref = dataset.getItem("dock");
+  if (dockPref) {
+    slot.replaceChildren();
+    for (const bookmarkPref of dockPref.bookmarks) {
+      const anchor = createDockBookmark(bookmarkPref);
+      slot.appendChild(anchor);
     }
-  },
+    updateDock(dockPref.pref);
+  }
 });

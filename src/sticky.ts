@@ -1,13 +1,19 @@
 import { Apocalypse, apocalypse } from "./apocalypse";
 import { registerContextMenu } from "./contextMenu";
-import { dataset } from "./myDataset";
-import { saveWizard } from "./saveWizard";
-import { $, $$, type Allowance } from "./utils/dollars";
+import {
+  dataset,
+  addTodoAfterLoad as addTodoAfterLoad,
+  addTodoBeforeSave as addTodoBeforeSave,
+} from "./dataWizard";
 import { getTemplateWidgets } from "./utils/getTemplateWidgets";
 import { n81i } from "./utils/n81i";
 import { BinPacker } from "./utils/packer";
+import { $, $$, type Allowance } from "./utils/dollars";
 
 export interface StickyPlugin {}
+interface StickyConfig extends Record<string, unknown> {
+  pluginConfig?: CustomStickyConfig;
+}
 export interface Sticky<T extends StickyPlugin = StickyPlugin>
   extends Allowance<HTMLDivElement> {
   type: string;
@@ -19,7 +25,7 @@ export interface Sticky<T extends StickyPlugin = StickyPlugin>
   togglePin: () => void;
   addControlWidget: (element: HTMLElement) => void;
   replaceBody: (...nodes: (Node | string)[]) => void;
-  save: () => Record<string, unknown>;
+  save: () => StickyConfig;
   plugin: T;
 }
 
@@ -93,7 +99,7 @@ registerContextMenu("basic", [
 
 class StickyManager {
   #highestZIndex: number = 0;
-  /** An array for tracking the sticky order, from lowest -> topest */
+  /** An array for tracking the sticky order [lowest, ..., topest] */
   #stickies: Sticky[] = [];
   #apocalypse: Apocalypse;
 
@@ -169,21 +175,21 @@ class StickyManager {
   }
 
   save(sticky: Sticky) {
-    const obj = sticky.save();
-    obj.pluginConfig = {};
+    const config = sticky.save();
+    config.pluginConfig = {};
     const customSticky = getCustomStickyComposer(sticky);
     if (customSticky) {
-      obj.type = customSticky.type;
-      Object.assign(obj.pluginConfig, customSticky.onSave(sticky));
+      config.type = customSticky.type;
+      Object.assign(config.pluginConfig, customSticky.onSave(sticky));
     }
 
     // If pluginConfig has any content, return as is.
-    for (const _ in obj.pluginConfig) {
-      return obj;
+    for (const _ in config.pluginConfig) {
+      return config;
     }
     // If not, delete pluginConfig and return.
-    delete obj.pluginConfig;
-    return obj;
+    delete config.pluginConfig;
+    return config;
   }
 
   saveAll() {
@@ -191,17 +197,17 @@ class StickyManager {
   }
 
   duplicate(sticky: Sticky) {
-    const clone = $<HTMLDivElement>(sticky.cloneNode(true) as any);
-    const duplicated = enableFunctionality(clone as any);
+    const config = this.save(sticky);
+    const duplicated = buildSticky("restore", config);
+    duplicated.style.left = `${parseInt(duplicated.style.left, 10) + 20}px`;
+    duplicated.style.top = `${parseInt(duplicated.style.top, 10) + 20}px`;
     this.#apocalypse.write({
       execute: () => {
         this.#addToTop(duplicated);
-        duplicated.style.left = `${parseInt(duplicated.style.left, 10) + 20}px`;
-        duplicated.style.top = `${parseInt(duplicated.style.top, 10) + 20}px`;
         duplicated.focus();
       },
       undo: () => {
-        this.#deleteSticky(duplicated);
+        this.forceDelete(duplicated);
       },
     });
   }
@@ -217,8 +223,11 @@ class StickyManager {
     this.#highestZIndex++;
     sticky.style.zIndex = this.#highestZIndex.toString();
     sticky.style.order = this.#highestZIndex.toString();
-    this.#stickies.splice(this.#stickies.indexOf(sticky), 1);
-    this.#stickies.push(sticky);
+    let idx = this.#stickies.indexOf(sticky);
+    if (idx !== -1) {
+      this.#stickies.splice(idx, 1);
+      this.#stickies.push(sticky);
+    }
   }
 
   arrange() {
@@ -328,8 +337,8 @@ class StickyManager {
   }
 
   #addToTop(sticky: Sticky) {
-    this.moveToTop(sticky);
     this.#stickies.push(sticky);
+    this.moveToTop(sticky);
     stickyContainer.appendChild(sticky);
   }
 
@@ -348,40 +357,102 @@ class StickyManager {
       },
     });
   }
+
+  pause(sticky: Sticky) {
+    const id = sticky.id;
+    const prevRect = extractRect(sticky);
+
+    return (type: "drag" | "resize") => {
+      const currRect = extractRect(sticky);
+
+      this.#apocalypse.write({
+        toString() {
+          return prevRect.toString() + type;
+        },
+        execute: () => {
+          const s = this.getById(id)!;
+          if (type === "drag") {
+            s.style.left = `${currRect[0]}px`;
+            s.style.top = `${currRect[1]}px`;
+          } else if (type === "resize") {
+            s.style.width = `${currRect[2]}px`;
+            s.style.height = `${currRect[3]}px`;
+          }
+        },
+        undo: () => {
+          const s = this.getById(id)!;
+          if (type === "drag") {
+            if (prevRect[0] !== null && prevRect[0] !== undefined) {
+              s.style.left = `${prevRect[0]}px`;
+            }
+            if (prevRect[1] !== null && prevRect[1] !== undefined) {
+              s.style.top = `${prevRect[1]}px`;
+            }
+          } else if (type === "resize") {
+            if (prevRect[2] !== undefined) {
+              s.style.width = `${
+                prevRect[2] === null
+                  ? stickySizeDummy.getBoundingClientRect().width
+                  : prevRect[2]
+              }px`;
+            }
+            if (prevRect[3] !== undefined) {
+              s.style.height = `${
+                prevRect[3] === null
+                  ? stickySizeDummy.getBoundingClientRect().width // Width not height because the dummy only had width with zero height.
+                  : prevRect[3]
+              }px`;
+            }
+          }
+        },
+      });
+    };
+  }
+
+  getById(id: string) {
+    for (const sticky of this.#stickies) {
+      if (sticky.id === id) {
+        return sticky;
+      }
+    }
+  }
 }
 
 function buildSticky(
   buildType: "create" | "restore",
-  {
-    type,
-    left,
-    top,
-    width,
-    height,
-    zIndex,
-    className,
-    pluginConfig,
-  }: BuildStickyOptions = {},
+  { id, type, rect, zIndex, className, pluginConfig }: BuildStickyOptions = {},
 ) {
   const sticky = $<HTMLDivElement>(
     getTemplateWidgets("sticky").firstElementChild as any,
   )!;
 
-  if (left) {
-    sticky.style.left = `${left}px`;
+  sticky.id = id ?? crypto.randomUUID();
+
+  if (rect) {
+    const [left, top, width, height] = rect;
+
+    if (typeof left === "number") {
+      sticky.style.left = `${left}px`;
+    } else {
+      sticky.style.left = `${pointerX - stickySizeDummy.getBoundingClientRect().width / 2}px`;
+    }
+
+    if (typeof top === "number") {
+      sticky.style.top = `${top}px`;
+    } else {
+      sticky.style.top = `${Math.max(pointerY - 10, 0)}px`;
+    }
+
+    if (typeof width === "number") {
+      sticky.style.width = `${width}px`;
+    }
+
+    if (typeof height === "number") {
+      sticky.style.height = `${height}px`;
+    }
   } else {
     sticky.style.left = `${pointerX - stickySizeDummy.getBoundingClientRect().width / 2}px`;
-  }
-  if (top) {
-    sticky.style.top = `${top}px`;
-  } else {
     sticky.style.top = `${Math.max(pointerY - 10, 0)}px`;
-  }
-  if (width) {
-    sticky.style.width = `${width}px`;
-  }
-  if (height) {
-    sticky.style.height = `${height}px`;
   }
   if (zIndex) {
     sticky.style.zIndex = zIndex.toString();
@@ -446,6 +517,9 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
     handle.on("pointerdown", resizeStart);
   }
 
+  let resumeForDrag: (type: "drag" | "resize") => void;
+  let resumeForResize: (type: "drag" | "resize") => void;
+
   function dragStart(e: PointerEvent) {
     if (e.button !== 2 && e.target === stickyHeader) {
       isDragging = true;
@@ -468,6 +542,8 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
 
     document.on("pointermove", drag);
     document.on("pointerup", dragEnd);
+
+    resumeForDrag = stickyManager.pause(sticky as Sticky);
   }
 
   function drag(e: PointerEvent) {
@@ -496,6 +572,8 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
 
     document.removeEventListener("pointermove", drag);
     document.removeEventListener("pointerup", dragEnd);
+
+    resumeForDrag("drag");
   }
 
   function resizeStart(e: PointerEvent) {
@@ -512,6 +590,8 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
 
     document.on("pointermove", resize);
     document.on("pointerup", resizeEnd);
+
+    resumeForResize = stickyManager.pause(sticky as Sticky);
   }
 
   function resize(e: PointerEvent) {
@@ -566,6 +646,8 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
 
     document.removeEventListener("pointermove", resize);
     document.removeEventListener("pointerup", resizeEnd);
+
+    resumeForResize("resize");
   }
 
   const extendedSticky = sticky as Sticky;
@@ -609,17 +691,24 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
     },
     plugin: {},
     save() {
-      const obj = {
+      const config: {
+        id: string;
+        type: string;
+        className: string;
+        rect?: Rectangle;
+        zIndex?: number;
+      } = {
+        id: extendedSticky.id,
         type: extendedSticky.type,
         className: sticky.className,
       };
-      for (const key of ["width", "height", "left", "top", "zIndex"]) {
-        const value = sticky.style[key as keyof typeof sticky.style];
-        if (value !== "") {
-          obj[key] = parseFloat(value);
-        }
+      config.rect = extractRect(sticky);
+      const zIndex = sticky.style.zIndex;
+      if (zIndex !== "") {
+        config.zIndex = parseInt(zIndex);
       }
-      return obj;
+
+      return config;
     },
   });
 
@@ -645,14 +734,28 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
   return sticky as Sticky;
 }
 
+function extractRect(element: HTMLElement): Rectangle {
+  const rect: Rectangle = [null, null, null, null];
+  const rectProperties = ["left", "top", "width", "height"] as const;
+  rectProperties.forEach((prop, index) => {
+    const value = element.style[prop];
+    rect[index] = value ? parseInt(value) : null;
+  });
+  return rect;
+}
+
 const customStickiComposers = new Map<string, CustomStickyComposer>();
 
+type Rectangle = [
+  left: number | null,
+  top: number | null,
+  width: number | null,
+  height: number | null,
+];
 export interface BuildStickyOptions {
+  id?: string;
   type?: string;
-  left?: number;
-  top?: number;
-  width?: number;
-  height?: number;
+  rect?: Rectangle;
   zIndex?: number;
   className?: string;
   pluginConfig?: CustomStickyConfig;
@@ -698,7 +801,6 @@ export function getWidgets(sticky: Sticky, widgetTemplateId: string) {
       return sticky;
     }
   }
-
   return getTemplateWidgets(widgetTemplateId)!;
 }
 
@@ -710,14 +812,10 @@ document.body.on("keyup", (e) => {
   stickyContainer.classList.toggle("peakGhost", e.ctrlKey);
 });
 
-saveWizard.register({
-  beforeSave() {
-    dataset.setItem("stickies", stickyManager.saveAll());
-  },
-  afterLoad() {
-    const stickies = dataset.getOrSetItem<BuildStickyOptions[]>("stickies", []);
-    if (stickies) {
-      stickyManager.restoreAndReplaceAll(stickies);
-    }
-  },
+addTodoBeforeSave(() => {
+  dataset.setItem("stickies", stickyManager.saveAll());
+});
+addTodoAfterLoad(() => {
+  const stickies = dataset.getOrSetItem<BuildStickyOptions[]>("stickies", []);
+  stickyManager.restoreAndReplaceAll(stickies);
 });

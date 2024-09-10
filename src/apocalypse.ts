@@ -1,6 +1,7 @@
 export interface Undoable {
   execute: () => void;
   undo: () => void;
+  toString?: () => string;
 }
 
 // Cuz 'history' already exists in Web API.
@@ -29,6 +30,9 @@ export class Apocalypse {
     this.arr.push(undoable);
     this.cur++;
     undoable.execute();
+  }
+  listAll(): readonly Undoable[] {
+    return this.arr;
   }
 }
 

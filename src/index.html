@@ -191,7 +191,7 @@
           </div>
         </div>
         <template id="dockBookmark">
-          <a class="dockBookmark dockItem rounded square">
+          <a class="dockBookmark dockItem rounded square" draggable="true">
             <img />
             <p class="text-xs"></p>
           </a>
@@ -483,6 +483,10 @@
                 <a href="#shortcutsPref" data-i18n="settings_shortcuts_section">
                 </a>
               </li>
+              <li>
+                <a href="#advancedPref" data-i18n="settings_advanced_section">
+                </a>
+              </li>
             </ul>
           </nav>
           <div>
@@ -617,6 +621,67 @@
                   <button type="reset" class="btn resetBtn"></button>
                 </label>
               </template>
+            </section>
+            <section id="advancedPref">
+              <header>
+                <h2 data-i18n="settings_advanced_section"></h2>
+              </header>
+              <details>
+                <summary data-i18n="click_to_expand"></summary>
+                <label for="customJsTextArea">
+                  <span data-i18n="custom_javascript_label"></span>
+                  <div
+                    data-i18n="custom_javascript_help"
+                    data-i18n-for="data-tooltip"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-circle-help"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                      <path d="M12 17h.01" />
+                    </svg></div
+                ></label>
+                <textarea
+                  id="customJsTextArea"
+                  data-i18n="custom_javascript_placeholder"
+                  data-i18n-for="placeholder"
+                ></textarea>
+                <label for="customCssTextArea">
+                  <span data-i18n="custom_css_label"></span>
+                  <div data-i18n="custom_css_help" data-i18n-for="data-tooltip">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-circle-help"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                      <path d="M12 17h.01" />
+                    </svg></div
+                ></label>
+                <textarea
+                  id="customCssTextArea"
+                  data-i18n="custom_css_placeholder"
+                  data-i18n-for="placeholder"
+                ></textarea>
+              </details>
             </section>
             <hr />
             <section id="settingsBtnGroup" class="formGroupHorizontal">
@@ -828,6 +893,6 @@
         <div class="dialogButtonGroup"></div>
       </div>
     </dialog>
-    <slot id="dataset"></slot>
+    <slot id="customJsSlot"></slot>
   </body>
 </html>

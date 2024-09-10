@@ -16,15 +16,18 @@
     - Spotify embedded content already had border-radius, unless we can get the background color, we cannot get rid of that border.
 - [x] Dropdown add sticky.
 - [x] Add nav for settings.
-- [ ] Add script customization textarea.
+- [x] Add javascript customization textarea.
+- [x] Add css customization textarea.
+- [x] Remove flexbox-based autoArrange
+- [x] Import document
+- [x] Undo/redo for movement and resizing.
 - [ ] Toolbar for mobile.
 - [ ] iframe sticky
 - [ ] declarativeNetRequest -> unblock iframe
 - [ ] Drag bookmark dock item.
 - [ ] Blockly
-- [ ] Remove flexbox-based autoArrange
-- [ ] Import document
 - [ ] Web extension version.
+- [ ] zooming
 
 ## BUGS
 

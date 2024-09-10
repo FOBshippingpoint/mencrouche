@@ -47,7 +47,7 @@ function updateFilteredCommands() {
     filteredCommands = commands;
   } else {
     filteredCommands = commands.filter(({ name }) =>
-      // TODO: multi language search
+      // TODO: add multi language search
       name.toLowerCase().includes(query),
     );
   }

@@ -1,7 +1,7 @@
 export function upgradeFileToLatest(
   mcFile: MencroucheFileFormat,
 ): MencroucheFileFormat {
-  let currentVersion = mcFile.mencroucheFileFormatVersion || 0;
+  let currentVersion = mcFile.mencroucheFileFormatVersion ?? 1;
 
   return migrations.reduce((acc, migration) => {
     if (migration.version > currentVersion) {
@@ -28,7 +28,7 @@ const migrations = [
   },
 ];
 
-interface MencroucheFileFormat extends Record<string, unknown> {
+export interface MencroucheFileFormat extends Record<string, unknown> {
   mencroucheFileFormatVersion: number;
 }
 

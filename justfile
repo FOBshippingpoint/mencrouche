@@ -15,3 +15,8 @@ loc:
   @/usr/bin/find src -name '*.ts' \
   | xargs -n 1 wc -l \
   | awk '{ sum += $1 } END { print sum, "lines (^_^)" }'  
+
+todo:
+  @echo Listing todos...
+  @/usr/bin/find src -name '*.ts' \
+  | xargs -n 1 awk -v RS= ' /TODO/ { sum += 1; print $0; } END { if (sum > 0) print sum, "todos orz\n" }'  

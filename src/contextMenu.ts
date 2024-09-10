@@ -21,11 +21,6 @@ function isIos() {
 }
 
 contextMenu.on("click", (e) => {
-  // const commandName = (e.target as any).closest("[data-command-name]")
-  // 	?.dataset.commandName;
-  // if (commandName) {
-  // 	executeCommand(commandName);
-  // }
   if ((e.target as Element).closest("[data-sub-item-active]")) {
     return;
   }
@@ -120,14 +115,15 @@ document.on("pointerleave", endLongPress);
 type MenuItemBuilder = (
   eventTarget: EventTarget,
 ) => MenuItemDefinition | null | "hr";
-export type MenuItem = MenuItemDefinition | MenuItemBuilder | "hr";
 
-export interface MenuItemDefinition {
+interface MenuItemDefinition {
   name: string;
   icon?: string;
   execute?: (eventTarget: EventTarget) => void;
   subItems?: MenuItem[];
 }
+
+export type MenuItem = MenuItemDefinition | MenuItemBuilder | "hr";
 
 /**
  * Register a context menu (right-click menu) for element with

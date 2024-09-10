@@ -414,5 +414,69 @@
 	"sync_remote_auth_key_input_label": {
 		"message": "Cloud Sync Secret Key",
 		"description": "Input label for syncing service authorization key."
+	},
+  "trust_third_party_content": {
+    "message": "Trust Third-Party Content",
+    "description": "Dialog title asking the user to grant permission for trusting third-party content."
+  },
+  "trust_third_party_content_message": {
+    "message": "Do you want to trust third-party content and enable code execution?",
+    "description": "Dialog message asking the user to grant permission for trusting third-party content and executing any JavaScript."
+  },
+  "do_not_trust_btn": {
+    "message": "Load Standard Content Only",
+    "description": "Dialog button label to load standard content only (without JavaScript)."
+  },
+  "trust_btn": {
+    "message": "Trust",
+    "description": "Dialog button label to load all third-party content, including JavaScript."
+  },
+  "settings_advanced_section": {
+    "message": "Advanced",
+    "description": "Title for the advanced settings section."
+  },
+  "custom_javascript_label": {
+    "message": "Custom JavaScript Code",
+    "description": "Label for custom JavaScript code textarea."
+  },
+  "custom_javascript_help": {
+    "message": "JavaScript code can be used to extend/modify Mencrouche. For your safety, do not paste code from unknown sources.",
+    "description": "Help message for the usage and warning for custom JavaScript."
+  },
+  "custom_javascript_placeholder": {
+    "message": "Only enter code you trust",
+    "description": "Placeholder for custom JavaScript textarea warning the user not to enter unknown code."
+  },
+  "custom_css_label": {
+    "message": "Custom CSS",
+    "description": "Label for custom CSS textarea."
+  },
+  "custom_css_help": {
+    "message": "CSS can modify the appearance of the webpage. Pasting CSS from unknown sources may damage the functionality.",
+    "description": "Help message for the usage and warning for custom CSS."
+  },
+  "custom_css_placeholder": {
+    "message": "Only enter CSS you trust",
+    "description": "Placeholder for custom CSS textarea warning the user not to enter unknown styles."
+  },
+  "ok_btn": {
+    "message": "OK",
+    "description": "Button label for OK."
+  },
+  "reload_needed": {
+    "message": "Reload Required",
+    "description": "Dialog title notifying the user that a page refresh is needed to apply custom JavaScript."
+  },
+  "reload_needed_message": {
+    "message": "Reload the page to apply custom JavaScript",
+    "description": "Dialog message notifying the user that a page refresh is needed to apply custom JavaScript."
+  },
+  "click_to_expand": {
+    "message": "Click to Expand",
+    "description": "Details summary message."
+	},
+	"copied": {
+		"message": "Copied",
+		"description": "Button state for copy operation."
 	}
 }

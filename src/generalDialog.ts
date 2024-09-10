@@ -14,9 +14,15 @@ interface DialogOptions {
   title: string;
   message: string;
   buttons: ButtonAttrs[];
+  onClose?: () => void;
 }
 
-export function createDialog({ title, message, buttons }: DialogOptions) {
+export function createDialog({
+  title,
+  message,
+  buttons,
+  onClose,
+}: DialogOptions) {
   let controller: AbortController;
 
   return {
@@ -46,6 +52,7 @@ export function createDialog({ title, message, buttons }: DialogOptions) {
         button.on("click", onClick, { signal: controller.signal });
       }
       dialog.showModal();
+      dialog.on("close", () => onClose?.(), { signal: controller.signal });
     },
     close() {
       dialog.close();

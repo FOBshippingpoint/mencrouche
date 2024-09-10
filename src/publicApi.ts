@@ -7,9 +7,9 @@ import {
   stickyManager,
 } from "./sticky";
 import { n81i } from "./utils/n81i";
-import { dataset } from "./myDataset";
 import { registerContextMenu } from "./contextMenu";
 import { apocalypse } from "./apocalypse";
+import { dataset } from "./dataWizard";
 
 declare global {
   interface Window {

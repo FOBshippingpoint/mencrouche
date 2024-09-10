@@ -1,10 +1,10 @@
 import { createKikey, parseBinding } from "kikey";
-import { dataset } from "./myDataset";
+import { dataset } from "./dataWizard";
 
-type Action = {
+interface Action {
   default: string;
   custom?: string;
-};
+}
 
 interface ShortcutRegisterOption {
   el?: Document | HTMLElement;

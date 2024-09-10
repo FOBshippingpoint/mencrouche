@@ -41,6 +41,15 @@
 
 **Sticky** is the core feature of mencrouche, allowing you to drag, resize, pin, or hide the border of stickies. You can also extend sticky functionality to fit your needs, such as creating Markdown sticky, YouTube sticky, or Spotify sticky.
 
+Mencrouche provides rich API for extensions:
+- [Sticky](#create-the-clock-sticky)
+- [Selector Shorthands](#dollars-api---)
+- [Internationalization](#internationalization-api-n81i)
+- [Undo/Repo](#undoredo-api-apocalypse)
+- [Undo/Repo](#undoredo-api-apocalypse)
+- [Context Menu](#context-menu-api)
+- [Commands](#commands-api)
+
 ### Create the _Clock Sticky_
 
 Let's create a Clock sticky that displays the current time. We'll add a `span` element inside the sticky body and update the time using `setInterval`. Paste the following code into the browser console:
@@ -158,7 +167,7 @@ In my opinion, the JQuery API is more intuitive than the native DOM API, but we 
     $("a")[0].href = "https://youtube.com";
 
     // Dollars
-    $("a").href = "https://youtube.com";
+    mc.$("a").href = "https://youtube.com";
     ```
 - Double dollar signs return an array of selected elements. There are no helper functions:
     ```javascript
@@ -166,7 +175,7 @@ In my opinion, the JQuery API is more intuitive than the native DOM API, but we 
     $("a").addClass("link");
 
     // Dollars
-    $$("a").forEach((el) => el.classList.add("link"));
+    mc.$$("a").forEach((el) => el.classList.add("link"));
     ```
 - Triple dollar signs are an alias for `document.createElement()`:
     ```javascript
@@ -174,7 +183,7 @@ In my opinion, the JQuery API is more intuitive than the native DOM API, but we 
     $("<div></div>");
 
     // Dollars
-    $$$("div");
+    mc.$$$("div");
     ```
 - Trailing `$` and `$$` are used for selecting elements within a subtree:
     ```javascript
@@ -182,19 +191,19 @@ In my opinion, the JQuery API is more intuitive than the native DOM API, but we 
     $(pureDomElement, ".comment").value("Start typing");
 
     // Dollars
-    $(pureDomElement).$(".comment").value = "Start typing";
-    $(pureDomElement).$$(".comment").forEach((el) => el.value = "Start typing");
+    mc.$(pureDomElement).$(".comment").value = "Start typing";
+    mc.$(pureDomElement).$$(".comment").forEach((el) => el.value = "Start typing");
     ```
 
 ## Internationalization API (n81i)
 
-Mencrouche has a built-in internationalization feature. Use `n81i` (the palindrome of the i18n ;) ) to translate content into different locales.
+Mencrouche has a built-in internationalization feature. Use `mc.n81i` (the palindrome of the i18n ;) ) to translate content into different locales.
 
 ### Basic Usage
 
 #### Adding Translations
 ```javascript
-n81i.addTranslations({
+mc.n81i.addTranslations({
   ja: {
     hello: {
       message: "こんにちは",
@@ -209,8 +218,8 @@ n81i.addTranslations({
   },
 });
 
-await n81i.changeLanguage("zh_TW");
-console.log(n81i.t("hello")); // prints "你好"
+await mc.n81i.changeLanguage("zh_TW");
+console.log(mc.n81i.t("hello")); // prints "你好"
 ```
 
 #### Translating HTML Elements
@@ -220,14 +229,14 @@ Use the `data-i18n` attribute to specify a translation key. By default, it will 
 ```javascript
 // Before: <div data-i18n="author"></div>
 //  After: <div data-i18n="author">作者</div>
-n81i.translateElement(div);
+mc.n81i.translateElement(div);
 
 // Before: <input data-i18n="email" data-i18n-for="placeholder" />
 //  After: <input data-i18n="email" data-i18n-for="placeholder" placeholder="電子郵件" />
-n81i.translateElement(input);
+mc.n81i.translateElement(input);
 ```
 
-## Apocalypse (Undo/Redo API)
+## Undo/Redo API (apocalypse)
 
 The apocalypse API allowing users to revert or reapply changes. Users can trigger undo/redo actions via `Ctrl + Z` and `Ctrl + Y`.
 
@@ -242,8 +251,8 @@ mc.apocalypse.write({
   },
 });
 
-apocalypse.undo(); // Undo previous changes.
-apocalypse.redo(); // Redo changes.
+mc.apocalypse.undo(); // Undo previous changes.
+mc.apocalypse.redo(); // Redo changes.
 ```
 
 ## Context Menu API

@@ -9,6 +9,8 @@ import {
 import { registerContextMenu, type MenuItem } from "../contextMenu";
 import { blobToDataUrl } from "../utils/toDataUrl";
 import { getTemplateWidgets } from "../utils/getTemplateWidgets";
+import DOMPurify from "dompurify";
+// import hljs from "highlight.js/lib/core";
 
 declare module "../sticky" {
   interface StickyPluginRegistryMap {
@@ -182,8 +184,24 @@ function enable(sticky: Sticky<MarkdownPlugin>) {
   const preview = widgets.$<HTMLDivElement>(".preview")!;
 
   function updatePreview() {
-    const html = marked.parse(textarea.value) as string;
+    const dirtyHtml = marked.parse(textarea.value) as string;
+    let html: string;
+    if (localStorage.getItem("isThirdPartyContentTrusted") === "true") {
+      html = dirtyHtml;
+    } else {
+      // Sanitize the HTML content before parse.
+      html = DOMPurify.sanitize(dirtyHtml);
+    }
     const fragment = document.createRange().createContextualFragment(html);
+    // for (const el of fragment.querySelectorAll("pre code")) {
+    //   const language = el.className.slice(9); // "language-javascript" => "javascript"
+    //   import("highlight.js/lib/languages/javascript").then((module) => {
+    //     hljs.registerLanguage(language, javascript);
+    //   });
+    //   hljs.highlightElement(el as HTMLElement);
+    //   // import(`highlight.js/lib/languages/${language}`).then((module) => {
+    //   // });
+    // }
     preview.replaceChildren(fragment);
   }
 

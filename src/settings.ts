@@ -1,42 +1,51 @@
 import { createDialog } from "./generalDialog";
 import { createKikey } from "kikey";
-import { dataset } from "./myDataset";
-import { depot, type SyncInfo } from "./utils/depot";
 import { $, $$$ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
 import { toDataUrl } from "./utils/toDataUrl";
 import { keySequenceToString, shortcutManager } from "./shortcutManager";
 import { getTemplateWidgets } from "./utils/getTemplateWidgets";
 import { executeCommand } from "./commands";
-import { saveWizard } from "./saveWizard";
+import {
+  addTodoAfterLoad,
+  addTodoBeforeSave,
+  dataset,
+  JsonFileSource,
+  loadFromSource,
+  saveToSources,
+} from "./dataWizard";
+import { openDB } from "idb";
 
 const changesManager = (() => {
   type Todo = () => void;
   const todos = new Map<string, Todo>();
+  let isDirty = false;
 
   return {
-    isDirty: false,
+    isDirty() {
+      return isDirty;
+    },
+    markDirty() {
+      isDirty = true;
+    },
     setChange(key: string, todo: Todo) {
       todos.set(key, todo);
-      this.isDirty = true;
+      isDirty = true;
     },
     onRevert() {},
     save() {
       for (const todo of todos.values()) {
         todo();
       }
-      this.isDirty = false;
+      isDirty = false;
     },
     cancel() {
       this.onRevert?.();
       todos.clear();
-      this.isDirty = false;
+      isDirty = false;
     },
   };
 })();
-
-let onExport: () => Promise<string>;
-let onImport: (jsonFile: File) => Promise<void>;
 
 // awk '{ print length($2), $0 }' asdf | /usr/bin/sort -n | cut -d ' ' -f2- > asdfasdf
 const saveBtn = $<HTMLButtonElement>("#saveSettingsBtn")!;
@@ -56,6 +65,9 @@ const deleteDocumentBtn = $<HTMLButtonElement>("#deleteDocumentBtn")!;
 const exportDocumentBtn = $<HTMLButtonElement>("#exportDocumentBtn")!;
 const importDocumentBtn = $<HTMLButtonElement>("#importDocumentBtn")!;
 const resetPaletteHueBtn = $<HTMLDivElement>("#setPaletteHueToDefaultBtn")!;
+const customJsTextArea = $<HTMLTextAreaElement>("#customJsTextArea")!;
+const customJsSlot = $<HTMLSlotElement>("#customJsSlot")!;
+const customCssTextArea = $<HTMLTextAreaElement>("#customCssTextArea")!;
 const backgroundImageDropzone = $<HTMLDivElement>(".dropzone")!;
 const backgroundImageUrlInput = $<HTMLInputElement>(
   "#backgroundImageUrlInput",
@@ -92,7 +104,7 @@ const unsavedChangesAlertDialog = createDialog({
 });
 
 settingsBtn.on("click", () => {
-  if (changesManager.isDirty) {
+  if (changesManager.isDirty()) {
     unsavedChangesAlertDialog.open();
   } else {
     toggleSettingsPage();
@@ -127,77 +139,87 @@ shareDataLinkBtn.on("click", () => {
     navigator.clipboard
       .writeText(url.toString())
       .then(() => {
-        console.log("Text copied");
+        shareDataLinkBtn.textContent = n81i.t("copied");
+        shareDataLinkBtn.on(
+          "pointerleave",
+          () => n81i.translateElement(shareDataLinkBtn),
+          { once: true },
+        );
       })
       .catch((err) => console.error(err.name, err.message));
   } else {
     alert("Cannot share the data.");
   }
 });
-deleteDocumentBtn.on("click", () => {
+deleteDocumentBtn.on("click", async () => {
   if (confirm(n81i.t("confirm_delete_document"))) {
     localStorage.clear();
+    try {
+      // TODO: should use constant to avoid duplicates string.
+      // PS same in `/src/dataWizard.ts`
+      const db = await openDB("mencrouche");
+      db.deleteObjectStore("data");
+    } catch (error) {
+      console.log("An error occurred when deleting IndexedDB", error);
+      alert("Failed to delete data");
+    }
+    alert("Deleted! Please refresh the page.");
   }
 });
-exportDocumentBtn.on("click", async () => {
-  // Copied from web.dev: https://web.dev/patterns/files/save-a-file#progressive_enhancement
-  async function saveFile(blob: Blob, suggestedName: string) {
-    // Feature detection. The API needs to be supported
-    // and the app not run in an iframe.
-    const supportsFileSystemAccess =
-      "showSaveFilePicker" in window &&
-      (() => {
-        try {
-          return window.self === window.top;
-        } catch {
-          return false;
-        }
-      })();
-    // If the File System Access API is supported…
-    if (supportsFileSystemAccess) {
+
+// TODO: IDK, this api looks really bad.
+// maybe we should separate the logic of save and load.
+let fileReadyForImport: File;
+const jsonFileSource = new JsonFileSource(
+  (savedMcJsonFile) => {
+    saveFile(savedMcJsonFile, savedMcJsonFile.name);
+  },
+  () => {
+    return new Promise<File>((resolve) => {
+      resolve(fileReadyForImport);
+    });
+  },
+);
+// Copied from web.dev: https://web.dev/patterns/files/save-a-file#progressive_enhancement
+async function saveFile(blob: Blob, suggestedName: string) {
+  const supportsFileSystemAccess =
+    "showSaveFilePicker" in window &&
+    (() => {
       try {
-        // Show the file save dialog.
-        const handle = await (window as any).showSaveFilePicker({
-          suggestedName,
-        });
-        // Write the blob to the file.
-        const writable = await handle.createWritable();
-        await writable.write(blob);
-        await writable.close();
+        return window.self === window.top;
+      } catch {
+        return false;
+      }
+    })();
+  if (supportsFileSystemAccess) {
+    try {
+      const handle = await (window as any).showSaveFilePicker({
+        suggestedName,
+      });
+      const writable = await handle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+      return;
+    } catch (err: any) {
+      if (err.name !== "AbortError") {
+        console.error(err.name, err.message);
         return;
-      } catch (err: any) {
-        // Fail silently if the user has simply canceled the dialog.
-        if (err.name !== "AbortError") {
-          console.error(err.name, err.message);
-          return;
-        }
       }
     }
-    // Fallback if the File System Access API is not supported…
-    // Create the blob URL.
-    const blobUrl = URL.createObjectURL(blob);
-    // Create the `<a download>` element and append it invisibly.
-    const a = document.createElement("a");
-    a.href = blobUrl;
-    a.download = suggestedName;
-    a.hidden = true;
-    document.body.append(a);
-    // Programmatically click the element.
-    a.click();
-    // Revoke the blob URL and remove the element.
-    setTimeout(() => {
-      URL.revokeObjectURL(blobUrl);
-      a.remove();
-    }, 1000);
   }
-
-  const json = await onExport();
-  const blob = new Blob([json], { type: "application/json" });
-  saveFile(
-    blob,
-    `mencrouche_${new Date().toISOString().substring(0, 10)}.json`,
-  );
-});
+  const blobUrl = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = blobUrl;
+  a.download = suggestedName;
+  a.hidden = true;
+  document.body.append(a);
+  a.click();
+  setTimeout(() => {
+    URL.revokeObjectURL(blobUrl);
+    a.remove();
+  }, 1000);
+}
+exportDocumentBtn.on("click", () => saveToSources(jsonFileSource));
 importDocumentBtn.on("click", () => {
   importDocumentFileInput.click();
 });
@@ -215,9 +237,11 @@ importDocumentFileInput.on("change", () => {
       },
       {
         "data-i18n": "discard_btn",
-        onClick() {
+        async onClick() {
           if (file) {
-            onImport(file);
+            fileReadyForImport = file;
+            const finishLoad = await loadFromSource(jsonFileSource);
+            finishLoad();
             closeSettingsPage();
           }
           discardCurrentChangesDialog.close();
@@ -264,7 +288,7 @@ backgroundImageUrlInput.on("paste", async (e) => {
         new URL(url);
         backgroundImageDropzone.style.background = `url(${url}) center center / cover no-repeat`;
         dataset.setItem("backgroundImageUrl", url);
-        changesManager.isDirty = true;
+        changesManager.markDirty();
       } catch (_) {
         alert(n81i.t("image_url_is_not_valid_alert"));
       }
@@ -279,7 +303,7 @@ function handleBlob(blob: Blob | File) {
   }
   backgroundImageDropzone.style.background = `url(${url}) center center / cover no-repeat`;
   dataset.setItem("backgroundImageUrl", url);
-  changesManager.isDirty = true;
+  changesManager.markDirty();
 }
 
 // Handle drag and drop events
@@ -332,35 +356,23 @@ resetBackgroundImageBtn.on("click", () => {
 
 // TODO: somehow laggy? maybe we need throttle?
 uiOpacityInput.on("input", () => {
-  const uiOpacity = (uiOpacityInput.valueAsNumber / 100).toString();
-  setCssProperty("--ui-opacity", uiOpacity);
-  changesManager.isDirty = true;
+  const uiOpacity = uiOpacityInput.valueAsNumber / 100;
+  dataset.setItem("uiOpacity", uiOpacity);
+  changesManager.markDirty();
 });
 
 function openSettingsPage() {
   settings.classList.remove("none");
   $(".stickyContainer")!.classList.add("none");
 
+  // Backup attributes.
   const uiOpacity = dataset.getOrSetItem("uiOpacity", 1);
   const paletteHue = dataset.getItem("paletteHue") as string;
   const backgroundImageUrl = dataset.getItem("backgroundImageUrl");
   changesManager.onRevert = () => {
-    // Reset ui opacity
-    setCssProperty("--ui-opacity", uiOpacity.toString());
-    uiOpacityInput.style.opacity = uiOpacity.toString();
-    uiOpacityInput.value = (uiOpacity * 100).toString();
-    // Reset palette hue
-    if (paletteHue) {
-      setCssProperty("--palette-hue", paletteHue);
-    } else {
-      setCssProperty("--palette-hue", null);
-    }
-    // Reset background image
-    if (backgroundImageUrl) {
-      dataset.setItem("backgroundImageUrl", backgroundImageUrl);
-    } else {
-      dataset.setItem("backgroundImageUrl", null);
-    }
+    dataset.setItem("uiOpacity", uiOpacity);
+    dataset.setItem("paletteHue", paletteHue);
+    dataset.setItem("backgroundImageUrl", backgroundImageUrl);
   };
 }
 
@@ -381,10 +393,6 @@ export function toggleSettingsPage() {
 }
 
 // Initialize background image.
-const url = dataset.getItem<string>("backgroundImageUrl");
-if (url) {
-  changeBackgroundImage(url);
-}
 dataset.on<string>("backgroundImageUrl", (_, url) => {
   changeBackgroundImage(url);
 });
@@ -446,14 +454,6 @@ dataset.on<string>("locale", async (_, locale) => {
     n81i.translatePage();
   }
 });
-
-export function registerFileImportExport(handlers: {
-  onExport: () => Promise<string>;
-  onImport: (jsonFile: File) => Promise<void>;
-}) {
-  onExport = handlers.onExport;
-  onImport = handlers.onImport;
-}
 
 function queryPrefersColorScheme() {
   return window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -540,12 +540,20 @@ shortcutList.on("click", (e) => {
 });
 
 // initialize ui opacity
-const uiOpacity = dataset.getOrSetItem("uiOpacity", 1);
-setCssProperty("--ui-opacity", uiOpacity.toString());
-uiOpacityInput.style.opacity = uiOpacity.toString();
-uiOpacityInput.value = (uiOpacity * 100).toString();
+dataset.on<number>("uiOpacity", (_, uiOpacity) => {
+  if (uiOpacity !== undefined) {
+    setCssProperty("--ui-opacity", uiOpacity.toString());
+    uiOpacityInput.style.opacity = uiOpacity.toString();
+    uiOpacityInput.value = (uiOpacity * 100).toString();
+  }
+});
 
 // Initialize palette hue
+dataset.on<string>("paletteHue", (_, paletteHue) => {
+  if (paletteHue) {
+    setCssProperty("--palette-hue", paletteHue);
+  }
+});
 hueWheel.on("pointerdown", () => hueWheel.on("pointermove", adjustPaletteHue));
 hueWheel.on("pointerup", () => hueWheel.off("pointermove", adjustPaletteHue));
 resetPaletteHueBtn.on("click", () => {
@@ -564,11 +572,7 @@ function adjustPaletteHue(e: MouseEvent) {
 
   setCssProperty("--palette-hue", paletteHue);
   dataset.setItem("paletteHue", paletteHue);
-  changesManager.isDirty = true;
-}
-const paletteHue = dataset.getItem("paletteHue") as string;
-if (paletteHue) {
-  setCssProperty("--palette-hue", paletteHue);
+  changesManager.markDirty();
 }
 
 // Reflecting to global ghost mode configuration.
@@ -611,13 +615,62 @@ function setCssProperty(name: string, value: string | null) {
   }
 }
 
-saveWizard.register({
-  async beforeSave() {
-    const url = dataset.getItem<string>("backgroundImageUrl");
-    if (url?.startsWith("blob")) {
-      const dataUrl = await toDataUrl(url);
-      dataset.setItem("backgroundImageUrl", dataUrl);
-    }
-  },
-  afterLoad() {},
+const customCssStyleSheet = new CSSStyleSheet();
+document.adoptedStyleSheets.push(customCssStyleSheet);
+dataset.on<string>("customCss", (_, css) => {
+  customCssStyleSheet.replaceSync(css);
+});
+customCssTextArea.on("input", () => {
+  changesManager.setChange("customCss", () => {
+    dataset.setItem("customCss", customCssTextArea.value);
+  });
+});
+
+let isFirstJsLoad = true;
+dataset.on<string>("customJs", (_, js) => {
+  if (isFirstJsLoad) {
+    isFirstJsLoad = false;
+    const frag = document
+      .createRange()
+      .createContextualFragment(`<script>${js}</script>`);
+    customJsSlot.replaceChildren(frag);
+  }
+});
+customJsTextArea.on("input", () => {
+  changesManager.setChange("customJs", () => {
+    const customJs = customJsTextArea.value;
+    changesManager.setChange("setCustomJs", () => {
+      const confirmReloadDialog = createDialog({
+        title: "reload_needed",
+        message: "reload_needed_message",
+        buttons: [
+          {
+            "data-i18n": "ok_btn",
+            onClick() {
+              changesManager.cancel();
+              isFirstJsLoad = false;
+              dataset.setItem("customJs", customJs);
+              confirmReloadDialog.close();
+            },
+          },
+        ],
+        onClose() {
+          confirmReloadDialog.close();
+        },
+      });
+      confirmReloadDialog.open();
+    });
+  });
+});
+
+addTodoBeforeSave(async () => {
+  const url = dataset.getItem<string>("backgroundImageUrl");
+  if (url?.startsWith("blob")) {
+    const dataUrl = await toDataUrl(url);
+    dataset.setItem("backgroundImageUrl", dataUrl);
+  }
+});
+addTodoAfterLoad(() => {
+  customCssTextArea.value = dataset.getItem("customCss") ?? "";
+  customJsTextArea.value = dataset.getItem("customJs") ?? "";
 });

@@ -414,5 +414,77 @@
 	"sync_remote_auth_key_input_label": {
 		"message": "同步密鑰",
 		"description": "Input label for syncing service authorization key."
+	},
+	"discard_btn": {
+		"message": "放棄並載入",
+		"description": "Dialog button label to confirm discard current changes and load selected file."
+	},
+	"sync_remote_auth_key_input_label": {
+		"message": "同步密鑰",
+		"description": "Input label for syncing service authorization key."
+	},
+	"trust_thrid_party_content": {
+		"message": "信任第三方內容",
+		"description": "Dialog title that asking user to grant permission for trusting third party content."
+	},
+	"trust_thrid_party_content_message": {
+		"message": "是否要信任第三方內容並啟用程式碼執行？",
+		"description": "Dialog message that asking user to grant permission for trusting third party content and execution any JavaScript."
+	},
+	"do_not_trust_btn": {
+		"message": "僅載入標準內容",
+		"description": "Dialog button label to load standard content only (without JavaScript)."
+	},
+	"trust_btn": {
+		"message": "信任",
+		"description": "Dialog button label to load all third party content, including JavaScript."
+	},
+	"settings_advanced_section": {
+		"message": "進階",
+		"description": "Title for the advanced settings section."
+  },
+	"custom_javascript_label": {
+		"message": "自訂JavaScript程式碼",
+		"description": "Label for custom JavaScript code textarea."
+  },
+	"custom_javascript_help": {
+		"message": "JavaScript程式碼可用於擴展/修改Mencrouche，為了您的安全，切勿貼上來源不明的程式碼。",
+		"description": "Help message for the usage and warning for custom JavaScript."
+	},
+	"custom_javascript_placeholder": {
+		"message": "請僅輸入您信任的程式碼",
+		"description": "Placeholder for custom JavaScript textarea warning user do not enter unknown code."
+  },
+	"custom_css_label": {
+		"message": "自訂CSS",
+		"description": "Label for custom CSS textarea."
+  },
+	"custom_css_help": {
+		"message": "CSS可以修改網頁的外觀，貼上來源不明的CSS可能造成功能異常。",
+		"description": "Help message for the usage and warning for custom CSS."
+	},
+	"custom_css_placeholder": {
+		"message": "請僅輸入您信任的CSS",
+		"description": "Placeholder for custom css textarea warning user do not enter unknown styles."
+	},
+	"ok_btn": {
+		"message": "了解",
+		"description": "Button label for OK."
+	},
+	"reload_needed": {
+		"message": "需要重新載入",
+		"description": "Dialog title for notify user refresh page is needed for applying custom JavaScript."
+	},
+	"reload_needed_message": {
+		"message": "重新載入網頁以啟用自訂JavaScript",
+		"description": "Dialog message for notify user refresh page is needed for applying custom JavaScript."
+	},
+	"click_to_expand": {
+		"message": "點擊展開",
+		"description": "Details summary message."
+	},
+	"copied": {
+		"message": "已複製",
+		"description": "Button state for copy operation."
 	}
 }

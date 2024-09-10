@@ -10,6 +10,7 @@
 @import "npm:open-props/forms.css";
 @import "npm:open-props/animations.css";
 @import "npm:open-props/utilities.css";
+@import "npm:highlight.js/styles/atom-one-dark.min.css";
 
 :root {
   --page-background: unset;
@@ -428,6 +429,15 @@ h6 {
   .preview {
     height: 100%;
     padding-inline: var(--size-2);
+
+    pre {
+      width: 100%;
+      max-inline-size: unset;
+
+      code {
+        border-radius: var(--radius-conditional-2);
+      }
+    }
   }
 }
 
@@ -497,16 +507,6 @@ h6 {
   width: 100%;
   height: 100%;
   overflow: hidden;
-}
-.autoArrange {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  flex-wrap: wrap;
-
-  .sticky {
-    position: static;
-  }
 }
 
 .mainSection {
@@ -783,6 +783,26 @@ h6 {
     gap: var(--size-1);
   }
 }
+#advancedPref {
+  textarea:first-of-type {
+    margin-block-end: var(--size-3);
+  }
+  details {
+    max-inline-size: var(--size-content-3);
+  }
+  details[open] {
+    padding-block-end: var(--size-3);
+  }
+}
+#customJsTextArea,
+#customCssTextArea {
+  resize: both;
+  max-inline-size: 100%;
+  block-size: var(--size-content-2);
+  display: block;
+  margin-block-start: var(--size-2);
+  white-space: pre;
+}
 /* @settings end */
 
 .icon {
@@ -923,35 +943,6 @@ ul {
     gap: var(--size-1);
   }
 }
-.bookmark .stickyBody {
-  overflow: auto;
-}
-.bookmark .body {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--size-3);
-
-  a,
-  a:visited {
-    color: var(--text-2);
-  }
-
-  .dragOver {
-    outline: var(--border-size-2) dotted var(--text-1);
-  }
-  [draggable] {
-    user-select: none;
-  }
-}
-.bookmark.editMode .body {
-  flex-direction: column;
-}
-.ghost.bookmark .stickyBody button {
-  display: none;
-}
-.bookmark:not(.editMode) .stickyBody button {
-  display: none;
-}
 
 .pureBtn {
   box-shadow: unset;
@@ -966,6 +957,16 @@ hr {
 
 .dock {
   position: absolute;
+
+  [draggable="true"] {
+    will-change: transform;
+    cursor: move;
+    transition: all 200ms;
+    user-select: none;
+  }
+  [draggable="true"].dragOver,[draggable="true"]:has(.dragOver) {
+    transform: scale(1.1, 1.1);
+  }
 }
 .alwaysOnTop {
   z-index: var(--layer-important);
@@ -1151,7 +1152,9 @@ dialog {
   pointer-events: none;
 }
 [data-tooltip]:hover:before,
-[data-tooltip]:hover:after {
+[data-tooltip]:hover:after,
+[data-tooltip]:active:before,
+[data-tooltip]:active:after {
   visibility: visible;
   opacity: 1;
 }
@@ -1171,8 +1174,7 @@ dialog {
   color: var(--text-1);
   padding: 8px 10px;
   font-size: 1rem;
-  line-height: 1rem;
-  white-space: nowrap;
+  inline-size: var(--size-content-2);
 }
 [data-tooltip] {
   --rotation: -135deg;
@@ -1190,7 +1192,7 @@ dialog {
 [data-tooltip]:before,
 [data-tooltip]:after {
   left: 100%;
-  bottom: 50%;
+  top: 50%;
 }
 [data-tooltip]:hover:before {
   transform: translateX(8px) rotate(var(--rotation));
@@ -1228,5 +1230,10 @@ dialog {
   dialog {
     padding-block: var(--size-6);
     padding-inline: var(--size-8);
+  }
+
+  #customJsTextArea,
+  #customCssTextArea {
+    inline-size: var(--size-content-3);
   }
 }
