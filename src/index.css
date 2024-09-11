@@ -964,7 +964,8 @@ hr {
     transition: all 200ms;
     user-select: none;
   }
-  [draggable="true"].dragOver,[draggable="true"]:has(.dragOver) {
+  [draggable="true"].dragOver,
+  [draggable="true"]:has(.dragOver) {
     transform: scale(1.1, 1.1);
   }
 }
@@ -1160,6 +1161,7 @@ dialog {
 }
 [data-tooltip]:hover:before,
 [data-tooltip]:before {
+  /* Bubble triangle */
   content: "";
   position: absolute;
   background: transparent;
@@ -1168,13 +1170,26 @@ dialog {
   clip-path: polygon(0% 0%, 100% 0%, 100% 100%);
 }
 [data-tooltip]:after {
+  /* Help content */
   content: attr(data-tooltip);
   border-radius: var(--border-size-3);
   background-color: var(--well-1);
   color: var(--text-1);
   padding: 8px 10px;
   font-size: 1rem;
+  white-space: nowrap;
+}
+[data-tooltip][data-tooltip-sm]:after {
+  white-space: normal;
+  inline-size: var(--size-content-1);
+}
+[data-tooltip][data-tooltip-md]:after {
+  white-space: normal;
   inline-size: var(--size-content-2);
+}
+[data-tooltip][data-tooltip-lg]:after {
+  white-space: normal;
+  inline-size: var(--size-content-3);
 }
 [data-tooltip] {
   --rotation: -135deg;
@@ -1183,11 +1198,11 @@ dialog {
 }
 [data-tooltip]:before {
   margin-left: -5.5px;
-  margin-bottom: -6px;
+  margin-top: -6px;
   transform: rotate(var(--rotation));
 }
 [data-tooltip]:after {
-  margin-bottom: calc(-1 * (1rem + 16px) / 2);
+  margin-top: calc(-1 * (1rem + 16px) / 2);
 }
 [data-tooltip]:before,
 [data-tooltip]:after {

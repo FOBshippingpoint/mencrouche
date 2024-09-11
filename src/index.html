@@ -570,20 +570,51 @@
                 <h2 data-i18n="settings_storage_section"></h2>
               </header>
               <div class="formGroupHorizontal">
+                <button id="importDocumentBtn" class="btn">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-folder-open"
+                  >
+                    <path
+                      d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"
+                    />
+                  </svg>
+                  <span data-i18n="import_document_btn"></span>
+                </button>
+                <button id="exportDocumentBtn" class="btn">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-folder-down"
+                  >
+                    <path
+                      d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"
+                    />
+                    <path d="M12 10v6" />
+                    <path d="m15 13-3 3-3-3" />
+                  </svg>
+                  <span data-i18n="export_document_btn"></span>
+                </button>
                 <button
                   id="deleteDocumentBtn"
                   class="btn"
                   data-i18n="delete_document_btn"
-                ></button>
-                <button
-                  id="exportDocumentBtn"
-                  class="btn"
-                  data-i18n="export_document_btn"
-                ></button>
-                <button
-                  id="importDocumentBtn"
-                  class="btn"
-                  data-i18n="import_document_btn"
+                  type="reset"
                 ></button>
               </div>
               <input
@@ -601,11 +632,28 @@
                   <span data-i18n="sync_remote_auth_key_input_label"></span>
                   <input type="password" name="syncRemoteAuthKey" />
                 </label>
-                <button
-                  id="shareDataLinkBtn"
-                  class="btn"
-                  data-i18n="share_data_link_btn"
-                ></button>
+                <button id="shareDataLinkBtn" class="btn">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-link"
+                  >
+                    <path
+                      d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
+                    />
+                    <path
+                      d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
+                    />
+                  </svg>
+                  <span data-i18n="share_data_link_btn"></span>
+                </button>
               </div>
             </section>
             <section id="shortcutsPref">
@@ -633,6 +681,7 @@
                   <div
                     data-i18n="custom_javascript_help"
                     data-i18n-for="data-tooltip"
+                    data-tooltip-md
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -655,6 +704,7 @@
                   id="customJsTextArea"
                   data-i18n="custom_javascript_placeholder"
                   data-i18n-for="placeholder"
+                  data-tooltip-md
                 ></textarea>
                 <label for="customCssTextArea">
                   <span data-i18n="custom_css_label"></span>

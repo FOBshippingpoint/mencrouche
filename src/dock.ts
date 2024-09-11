@@ -22,7 +22,7 @@ class TheIncrediblyVerboseAndOverlyDescriptiveDragAndDropSortHelperThatDoesWayMo
       .forEach((el) => this.add(el as HTMLElement));
   }
 
-  add(el: HTMLElement): void {
+  add(el: HTMLElement) {
     el.on("dragstart", this.dragStart.bind(this));
     el.on("dragenter", this.dragEnter);
     el.on("dragover", this.dragOver);
@@ -169,6 +169,21 @@ form.on("submit", (e) => {
 
 registerContextMenu("dockBookmark", [
   {
+    name: "open_bookmark_in_add_tab_menu_item",
+    icon: "lucide-external-link",
+    execute(target) {
+      window.open((target as HTMLAnchorElement).href, "_blank");
+    },
+  },
+  {
+    name: "open_bookmark_in_current_tab_menu_item",
+    icon: "lucide-link-2",
+    execute(target) {
+      window.open((target as HTMLAnchorElement).href, "_self");
+    },
+  },
+  "hr",
+  {
     name: "edit_bookmark_menu_item",
     icon: "lucide-pencil",
     execute(target) {
@@ -196,20 +211,6 @@ registerContextMenu("dockBookmark", [
           (target as HTMLAnchorElement).classList.remove("none");
         },
       });
-    },
-  },
-  {
-    name: "open_bookmark_in_add_tab_menu_item",
-    icon: "lucide-external-link",
-    execute(target) {
-      window.open((target as HTMLAnchorElement).href, "_blank");
-    },
-  },
-  {
-    name: "open_bookmark_in_current_tab_menu_item",
-    icon: "lucide-link-2",
-    execute(target) {
-      window.open((target as HTMLAnchorElement).href, "_self");
     },
   },
 ]);
@@ -373,7 +374,7 @@ addTodoBeforeSave(() => {
   dataset.setItem("dock", dockPref);
 });
 addTodoAfterLoad(() => {
-  const dockPref = dataset.getItem("dock");
+  const dockPref = dataset.getItem<DockPrefJson>("dock");
   if (dockPref) {
     slot.replaceChildren();
     for (const bookmarkPref of dockPref.bookmarks) {
