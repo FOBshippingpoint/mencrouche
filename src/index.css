@@ -778,7 +778,7 @@ h6 {
 #storagePref {
   display: grid;
   gap: var(--size-3);
-  label {
+  label:not(:has([type="checkbox"])) {
     display: grid;
     gap: var(--size-1);
   }
@@ -1177,19 +1177,8 @@ dialog {
   color: var(--text-1);
   padding: 8px 10px;
   font-size: 1rem;
-  white-space: nowrap;
-}
-[data-tooltip][data-tooltip-sm]:after {
-  white-space: normal;
-  inline-size: var(--size-content-1);
-}
-[data-tooltip][data-tooltip-md]:after {
-  white-space: normal;
-  inline-size: var(--size-content-2);
-}
-[data-tooltip][data-tooltip-lg]:after {
-  white-space: normal;
-  inline-size: var(--size-content-3);
+  max-inline-size: 28ch;
+  inline-size: max-content;
 }
 [data-tooltip] {
   --rotation: -135deg;

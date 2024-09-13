@@ -486,5 +486,9 @@
 	"copied": {
 		"message": "已複製",
 		"description": "Button state for copy operation."
+	},
+	"is_cloud_sync_enabled_checkbox_label": {
+		"message": "啟用雲端同步",
+		"description": "Checkbox label for enabling cloud sync."
 	}
 }

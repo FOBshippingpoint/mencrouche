@@ -10,6 +10,7 @@ import { registerContextMenu, type MenuItem } from "../contextMenu";
 import { blobToDataUrl } from "../utils/toDataUrl";
 import { getTemplateWidgets } from "../utils/getTemplateWidgets";
 import DOMPurify from "dompurify";
+import { markDirtyAndSaveDocument } from "../lifesaver";
 // import hljs from "highlight.js/lib/core";
 
 declare module "../sticky" {
@@ -212,12 +213,13 @@ function enable(sticky: Sticky<MarkdownPlugin>) {
   handleTextAreaPaste(sticky, textarea);
 
   textarea.on("input", () => {
+    textarea.dataset.value = textarea.value;
+    markDirtyAndSaveDocument();
     if (sticky.classList.contains("splitView")) {
       updatePreview();
       sticky.dataset.prevInput = textarea.value;
     }
   });
-  textarea.on("input", () => (textarea.dataset.value = textarea.value));
   editModeToggleLbl.on("change", () => {
     editModeToggleLbl.$$("svg").do((el) => el.classList.toggle("none"));
     sticky.classList.toggle("editMode");

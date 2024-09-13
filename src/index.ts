@@ -7,11 +7,13 @@ import { initSpotifySticky } from "./stickyPlugins/spotify";
 import { initYouTubeSticky } from "./stickyPlugins/youtube";
 import { n81i } from "./utils/n81i";
 import { registerContextMenu } from "./contextMenu";
-import { switchDocumentStatus } from "./documentStatus";
 import { shortcutManager } from "./shortcutManager";
+import { loadDocument, saveDocument } from "./lifesaver";
+import {
+  addTodoAfterLoad,
+  dataset,
+} from "./dataWizard";
 import "./dock";
-import { generateEncryptionKey } from "./utils/encryption";
-import { createDialog } from "./generalDialog";
 // The `url:` prefix is a custom prefix defined in `.parcelrc`.
 // Which aims to get the url of transformed resource, in raw format.
 // see https://github.com/parcel-bundler/parcel/issues/1080#issuecomment-557240449
@@ -25,15 +27,6 @@ import en from "url:./_locales/en/messages.json";
 // @ts-ignore
 import zh_TW from "url:./_locales/zh_TW/messages.json";
 
-import {
-  addTodoAfterLoad,
-  dataset,
-  IndexedDbSource,
-  loadFromSource,
-  RemoteSource,
-  saveToSources,
-  type Source,
-} from "./dataWizard";
 import { executeCommand, registerCommand, type Command } from "./commands";
 
 const urls = { en, zh_TW };
@@ -41,30 +34,6 @@ const urls = { en, zh_TW };
 const stickyContainer = $<HTMLDivElement>(".stickyContainer")!;
 
 const AVAILABLE_LOCALES = ["en", "zh_TW"];
-
-function getLocalStorageItem(key: string): string {
-  const value = localStorage.getItem(key);
-  if (!value) throw new Error(`${key} not found in localStorage.`);
-  return value;
-}
-
-async function getOrGenerateEncryptionKey(): Promise<string> {
-  let key = localStorage.getItem("encryptionKey");
-  if (!key) {
-    key = await generateEncryptionKey();
-    localStorage.setItem("encryptionKey", key);
-  }
-  return key;
-}
-
-function getOrCreateSyncResourceId(): string {
-  let syncResourceId = localStorage.getItem("syncResourceId");
-  if (!syncResourceId) {
-    syncResourceId = crypto.randomUUID();
-    localStorage.setItem("syncResourceId", syncResourceId);
-  }
-  return syncResourceId;
-}
 
 const defaultCommands: Command[] = [
   {
@@ -92,23 +61,8 @@ const defaultCommands: Command[] = [
   },
   {
     name: "save_document",
-    async execute() {
-      switchDocumentStatus("saving");
-      const sources: Source[] = [new IndexedDbSource()];
-      const isCloudSyncEnabled =
-        localStorage.getItem("isCloudSyncEnabled") === "true";
-      if (isCloudSyncEnabled && localStorage.getItem("syncUrl")) {
-        const syncInfo = {
-          syncUrl: getLocalStorageItem("syncUrl"),
-          syncResourceId: getOrCreateSyncResourceId(),
-          encryptionKey: await getOrGenerateEncryptionKey(),
-          syncRemoteAuthKey: getLocalStorageItem("syncRemoteAuthKey"),
-        };
-        const remoteSource = new RemoteSource(syncInfo);
-        sources.push(remoteSource);
-      }
-      await saveToSources(...sources);
-      switchDocumentStatus("saved");
+    execute() {
+      saveDocument();
     },
     defaultShortcut: "C-s",
   },
@@ -222,45 +176,6 @@ function getUserPreferredLanguage() {
   }
 }
 
-function parseSyncInfoFromUrlFragment() {
-  const b64 = window.location.hash.slice(1);
-  try {
-    const json = window.atob(b64);
-    return JSON.parse(json);
-  } catch (error) {
-    console.log("Cannot parse from URL fragment, got error: ", error);
-  }
-}
-
-function grantTrustThirdPartyContentPermission() {
-  return new Promise<boolean>((resolve) => {
-    const trustThridPartyContentDialog = createDialog({
-      title: "trust_thrid_party_content",
-      message: "trust_thrid_party_content_message",
-      buttons: [
-        {
-          "data-i18n": "do_not_trust_btn",
-          onClick() {
-            trustThridPartyContentDialog.close();
-            resolve(false);
-          },
-        },
-        {
-          "data-i18n": "trust_btn",
-          onClick() {
-            trustThridPartyContentDialog.close();
-            resolve(true);
-          },
-          type: "reset",
-        },
-      ],
-      onClose() {
-        resolve(false);
-      },
-    });
-    trustThridPartyContentDialog.open();
-  });
-}
 
 n81i.init({
   locale: dataset.getOrSetItem<string>("locale", getUserPreferredLanguage()),
@@ -279,28 +194,7 @@ n81i.init({
 n81i.translatePage();
 
 async function main() {
-  let finishLoad: () => Promise<void>;
-  const urlFragSyncInfo = parseSyncInfoFromUrlFragment();
-  if (urlFragSyncInfo) {
-    const remoteSource = new RemoteSource(urlFragSyncInfo);
-    finishLoad = await loadFromSource(remoteSource);
-  } else {
-    // TODO: dup code
-    const isCloudSyncEnabled =
-      localStorage.getItem("isCloudSyncEnabled") === "true";
-    if (isCloudSyncEnabled && localStorage.getItem("syncUrl")) {
-      const syncInfo = {
-        syncUrl: getLocalStorageItem("syncUrl"),
-        syncResourceId: getOrCreateSyncResourceId(),
-        encryptionKey: await getOrGenerateEncryptionKey(),
-        syncRemoteAuthKey: getLocalStorageItem("syncRemoteAuthKey"),
-      };
-      const remoteSource = new RemoteSource(syncInfo);
-      finishLoad = await loadFromSource(remoteSource);
-    } else {
-      finishLoad = await loadFromSource(new IndexedDbSource());
-    }
-  }
+  const finishLoad = await loadDocument();
 
   // Register default commands.
   for (const command of defaultCommands) {

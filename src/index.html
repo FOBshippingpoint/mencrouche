@@ -625,13 +625,17 @@
               />
               <div class="formGroup">
                 <label>
+                  <input checked type="checkbox" name="isCloudSyncEnabled" />
+                  <span data-i18n="is_cloud_sync_enabled_checkbox_label"></span>
+                </label>
+                <label>
                   <span data-i18n="sync_url_input_label"></span>
                   <input type="url" name="syncUrl" />
                 </label>
-                <label>
-                  <span data-i18n="sync_remote_auth_key_input_label"></span>
-                  <input type="password" name="syncRemoteAuthKey" />
-                </label>
+                <!-- <label> -->
+                <!--   <span data-i18n="sync_remote_auth_key_input_label"></span> -->
+                <!--   <input type="password" name="syncRemoteAuthKey" /> -->
+                <!-- </label> -->
                 <button id="shareDataLinkBtn" class="btn">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -681,7 +685,6 @@
                   <div
                     data-i18n="custom_javascript_help"
                     data-i18n-for="data-tooltip"
-                    data-tooltip-md
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -704,7 +707,6 @@
                   id="customJsTextArea"
                   data-i18n="custom_javascript_placeholder"
                   data-i18n-for="placeholder"
-                  data-tooltip-md
                 ></textarea>
                 <label for="customCssTextArea">
                   <span data-i18n="custom_css_label"></span>

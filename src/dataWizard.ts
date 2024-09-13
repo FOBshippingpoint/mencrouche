@@ -23,34 +23,6 @@ export function addTodoBeforeSave(todo: Todo) {
 export function addTodoAfterLoad(todo: Todo) {
   afterLoadTodos.push(todo);
 }
-function debounce(callback: Function, isLeadingEdge = false, waitMS = 200) {
-  let timeoutId: number | undefined;
-
-  return function (...args: unknown[]) {
-    const context = this;
-    const isCallNow = isLeadingEdge && !timeoutId;
-
-    clearTimeout(timeoutId);
-
-    timeoutId = window.setTimeout(function () {
-      timeoutId = undefined;
-
-      if (!isLeadingEdge) {
-        callback.call(context, ...args);
-      }
-    }, waitMS);
-
-    if (isCallNow) {
-      callback.call(context, ...args);
-    }
-  };
-}
-function markDirty() {
-  // TODO
-  // saveToSources()
-}
-export const markdDirty = debounce(markDirty);
-
 
 function readJsonFile(jsonFile: File) {
   return new Promise<string>((resolve, reject) => {
@@ -106,23 +78,23 @@ export interface Source {
 export class RemoteSource implements Source {
   syncUrl;
   syncResourceId;
-  syncRemoteAuthKey;
+  // syncRemoteAuthKey;
   encryptionKey;
 
   constructor({
     syncUrl,
     syncResourceId,
-    syncRemoteAuthKey,
+    // syncRemoteAuthKey,
     encryptionKey,
   }: {
     syncUrl: string;
     syncResourceId: string;
-    syncRemoteAuthKey: string;
+    // syncRemoteAuthKey: string;
     encryptionKey: string;
   }) {
     this.syncUrl = syncUrl;
     this.syncResourceId = syncResourceId;
-    this.syncRemoteAuthKey = syncRemoteAuthKey;
+    // this.syncRemoteAuthKey = syncRemoteAuthKey;
     this.encryptionKey = encryptionKey;
   }
 
@@ -132,7 +104,7 @@ export class RemoteSource implements Source {
     await this.uploadBlob(
       this.syncUrl,
       this.syncResourceId,
-      this.syncRemoteAuthKey,
+      // this.syncRemoteAuthKey,
       encrypted,
     );
   }
@@ -151,13 +123,13 @@ export class RemoteSource implements Source {
   async uploadBlob(
     syncUrl: string,
     resourceId: string,
-    authKey: string,
+    // authKey: string,
     body: Uint8Array,
   ) {
     const response = await fetch(new URL(resourceId, syncUrl), {
       method: "PUT",
       body,
-      headers: { "X-Custom-Auth-Key": authKey },
+      // headers: { "X-Custom-Auth-Key": authKey },
     });
 
     if (!response.ok) {

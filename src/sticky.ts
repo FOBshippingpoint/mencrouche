@@ -9,6 +9,7 @@ import { getTemplateWidgets } from "./utils/getTemplateWidgets";
 import { n81i } from "./utils/n81i";
 import { BinPacker } from "./utils/packer";
 import { $, $$, type Allowance } from "./utils/dollars";
+import { markDirtyAndSaveDocument } from "./lifesaver";
 
 export interface StickyPlugin {}
 interface StickyConfig extends Record<string, unknown> {
@@ -132,9 +133,11 @@ class StickyManager {
     this.#apocalypse.write({
       execute: () => {
         this.#deleteSticky(sticky);
+        markDirtyAndSaveDocument();
       },
       undo: () => {
         this.#restoreSticky(obj);
+        markDirtyAndSaveDocument();
       },
     });
   }
@@ -143,12 +146,14 @@ class StickyManager {
     const sticky = this.getLatestSticky();
     if (sticky) {
       this.delete(sticky);
+      markDirtyAndSaveDocument();
     }
   }
 
   forceDelete(sticky: Sticky) {
     this.#stickies.splice(this.#stickies.indexOf(sticky), 1);
     sticky.remove();
+    markDirtyAndSaveDocument();
   }
 
   forceDeleteAll() {
@@ -156,6 +161,7 @@ class StickyManager {
       sticky.remove();
     }
     this.#stickies.length = 0;
+    markDirtyAndSaveDocument();
   }
 
   deleteAll() {
@@ -165,11 +171,13 @@ class StickyManager {
         while (this.#stickies.length) {
           this.#deleteSticky(this.#stickies.at(-1)!);
         }
+        markDirtyAndSaveDocument();
       },
       undo: () => {
         for (const sticky of backup) {
           this.#restoreSticky(sticky);
         }
+        markDirtyAndSaveDocument();
       },
     });
   }
@@ -205,9 +213,11 @@ class StickyManager {
       execute: () => {
         this.#addToTop(duplicated);
         duplicated.focus();
+        markDirtyAndSaveDocument();
       },
       undo: () => {
         this.forceDelete(duplicated);
+        markDirtyAndSaveDocument();
       },
     });
   }
@@ -227,6 +237,7 @@ class StickyManager {
     if (idx !== -1) {
       this.#stickies.splice(idx, 1);
       this.#stickies.push(sticky);
+      markDirtyAndSaveDocument();
     }
   }
 
@@ -262,12 +273,13 @@ class StickyManager {
         );
         const fittedBlocks = packer.fit(blocks);
 
-        stickyContainer.on(
-          "transitionend",
-          () => stickyContainer.classList.remove("arranging"),
-          {
-            once: true,
+        onEventOrTimeout(
+          stickyContainer,
+          () => {
+            stickyContainer.classList.remove("arranging");
+            markDirtyAndSaveDocument();
           },
+          "transitionend",
         );
         for (let i = 0; i < fittedBlocks.length; i++) {
           const sticky = stickies[i]!;
@@ -280,12 +292,13 @@ class StickyManager {
         stickyContainer.classList.add("arranging");
       },
       undo() {
-        stickyContainer.on(
-          "transitionend",
-          () => stickyContainer.classList.remove("arranging"),
-          {
-            once: true,
+        onEventOrTimeout(
+          stickyContainer,
+          () => {
+            stickyContainer.classList.remove("arranging");
+            markDirtyAndSaveDocument();
           },
+          "transitionend",
         );
         for (const sticky of stickies) {
           sticky.style.left = sticky.dataset.left!;
@@ -318,15 +331,7 @@ class StickyManager {
       custom.onDelete(sticky);
     }
 
-    sticky.on(
-      "animationend",
-      () => {
-        sticky.remove();
-      },
-      {
-        once: true,
-      },
-    );
+    onEventOrTimeout(sticky, () => sticky.remove(), "animationend");
     sticky.classList.add("deleted");
   }
 
@@ -819,3 +824,24 @@ addTodoAfterLoad(() => {
   const stickies = dataset.getOrSetItem<BuildStickyOptions[]>("stickies", []);
   stickyManager.restoreAndReplaceAll(stickies);
 });
+
+function onEventOrTimeout<K extends keyof HTMLElementEventMap>(
+  el: HTMLElement,
+  todo: () => void,
+  type: K,
+  timeout = 1000,
+) {
+  let timeoutId: number;
+
+  const handler = () => {
+    clearTimeout(timeoutId);
+    todo();
+  };
+
+  el.on(type, handler, { once: true });
+
+  timeoutId = window.setTimeout(() => {
+    el.off(type, handler);
+    todo();
+  }, timeout);
+}

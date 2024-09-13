@@ -86,7 +86,7 @@ function updateFilteredCommands() {
 function selectCommand(direction: "up" | "down") {
   const items = [...commandList.children] as HTMLLIElement[];
   let idx = items.findIndex((item) => {
-    item.dataset.commandName === keyboardSelectedCommandName;
+    return item.dataset.commandName === keyboardSelectedCommandName;
   });
   if (idx !== -1) {
     items[idx]!.setAttribute("aria-selected", "false");

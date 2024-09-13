@@ -15,6 +15,7 @@ import {
   saveToSources,
 } from "./dataWizard";
 import { openDB } from "idb";
+import { markDirtyAndSaveDocument } from "./lifesaver";
 
 const changesManager = (() => {
   type Todo = () => void;
@@ -37,6 +38,7 @@ const changesManager = (() => {
       for (const todo of todos.values()) {
         todo();
       }
+      markDirtyAndSaveDocument();
       isDirty = false;
     },
     cancel() {
@@ -54,9 +56,10 @@ const settings = $<HTMLElement>("#settings")!;
 const cancelBtn = $<HTMLButtonElement>("#cancelSettingsBtn")!;
 const settingsBtn = $<HTMLButtonElement>("#settingsBtn")!;
 const syncUrlInput = $<HTMLInputElement>('[name="syncUrl"]')!;
-const syncRemoteAuthKeyInput = $<HTMLInputElement>(
-  '[name="syncRemoteAuthKey"]',
+const isCloudSyncEnabledCheckbox = $<HTMLInputElement>(
+  '[name="isCloudSyncEnabled"]',
 )!;
+// const syncRemoteAuthKeyInput = $<HTMLInputElement>( '[name="syncRemoteAuthKey"]',)!;
 const shortcutList = $<HTMLDivElement>("#shortcutList")!;
 const uiOpacityInput = $<HTMLInputElement>("#uiOpacityInput")!;
 const saveAndCloseBtn = $<HTMLButtonElement>("#saveAndCloseSettingsBtn")!;
@@ -111,18 +114,33 @@ settingsBtn.on("click", () => {
   }
 });
 
+if (process.env.CLOUD_SYNC_URL && localStorage.getItem("syncUrl") === null) {
+  localStorage.setItem("syncUrl", process.env.CLOUD_SYNC_URL);
+}
+if (localStorage.getItem("isCloudSyncEnabled") === null) {
+  localStorage.setItem("isCloudSyncEnabled", "on");
+}
+isCloudSyncEnabledCheckbox.checked = localStorage.getItem("isCloudSyncEnabled") === "on";
+isCloudSyncEnabledCheckbox.on("input", () => {
+  changesManager.setChange("setIsCloudSyncEnabled", () => {
+    localStorage.setItem(
+      "isCloudSyncEnabled",
+      isCloudSyncEnabledCheckbox.value,
+    );
+  });
+});
 syncUrlInput.value = localStorage.getItem("syncUrl") ?? "";
 syncUrlInput.on("input", () => {
   changesManager.setChange("setStorageSyncUrl", () => {
     localStorage.setItem("syncUrl", syncUrlInput.value);
   });
 });
-syncRemoteAuthKeyInput.value = localStorage.getItem("syncRemoteAuthKey") ?? "";
-syncRemoteAuthKeyInput.on("input", () => {
-  changesManager.setChange("setStorageSyncRemoteAuthKey", () => {
-    localStorage.setItem("syncRemoteAuthKey", syncRemoteAuthKeyInput.value);
-  });
-});
+// syncRemoteAuthKeyInput.value = localStorage.getItem("syncRemoteAuthKey") ?? "";
+// syncRemoteAuthKeyInput.on("input", () => {
+//   changesManager.setChange("setStorageSyncRemoteAuthKey", () => {
+//     localStorage.setItem("syncRemoteAuthKey", syncRemoteAuthKeyInput.value);
+//   });
+// });
 shareDataLinkBtn.on("click", () => {
   const syncUrl = localStorage.getItem("syncUrl");
   const syncResourceId = localStorage.getItem("syncResourceId");

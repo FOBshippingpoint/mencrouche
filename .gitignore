@@ -8,3 +8,4 @@ parcel-bundle-reports
 src/manifest.json
 coverage
 .yarn
+.env

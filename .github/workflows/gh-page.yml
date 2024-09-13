@@ -29,6 +29,10 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
+      - name: Create env file
+        run: |
+          touch .env
+          echo CLOUD_SYNC_URL=${{ secrets.CLOUD_SYNC_URL }} >> .env
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Bun
