@@ -33,6 +33,6 @@
 
 - [x] The background image cannot restore from localstorage.
 - [x] The sticky blob image cannot restore from localstorage.
-- [ ] sticky out of bound when resizing window.
-- [ ] create sticky on the bottom or right cuz the container size change.
+- [x] sticky out of bound when resizing window.
+- [x] create sticky on the bottom or right cuz the container size change.
 - [x] Context menu will not translate when language switched.

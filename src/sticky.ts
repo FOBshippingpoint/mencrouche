@@ -502,22 +502,20 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
   let dragCurrentY: number;
   let dragInitialX: number;
   let dragInitialY: number;
-  let dragX = parseInt(sticky.style.left, 10) || pointerX;
-  let dragY = parseInt(sticky.style.top, 10) || pointerY;
-
+  let dragX = parseInt(sticky.style.left) || pointerX;
+  let dragY = parseInt(sticky.style.top) || pointerY;
   stickyHeader.on("pointerdown", dragStart);
 
   // Resize variables
   const resizeHandles = sticky.$$<HTMLDivElement>(".resizeHandle");
   let isResizing = false;
-  let resizeHandle: HTMLDivElement | null = null;
+  let resizeHandle: HTMLDivElement;
   let resizeStartX: number;
   let resizeStartY: number;
   let resizeStartWidth: number;
   let resizeStartHeight: number;
   let resizeStartLeft: number;
   let resizeStartTop: number;
-
   for (const handle of resizeHandles) {
     handle.on("pointerdown", resizeStart);
   }
@@ -575,8 +573,8 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
     dragInitialY = sticky.offsetTop;
     isDragging = false;
 
-    document.removeEventListener("pointermove", drag);
-    document.removeEventListener("pointerup", dragEnd);
+    document.off("pointermove", drag);
+    document.off("pointerup", dragEnd);
 
     resumeForDrag("drag");
   }
@@ -601,47 +599,28 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
 
   function resize(e: PointerEvent) {
     if (!isResizing) return;
-    const resizeDeltaX = e.clientX - resizeStartX;
-    const resizeDeltaY = e.clientY - resizeStartY;
+    const dx = e.clientX - resizeStartX;
+    let dy = e.clientY - resizeStartY;
 
-    if (
-      resizeHandle!.classList.contains("right") ||
-      resizeHandle!.classList.contains("bottomRight") ||
-      resizeHandle!.classList.contains("topRight")
-    ) {
-      sticky.style.width = `${resizeStartWidth + resizeDeltaX}px`;
+    if (resizeHandle.classList.contains("r")) {
+      sticky.style.width = `${resizeStartWidth + dx}px`;
     }
-    if (
-      resizeHandle!.classList.contains("bottom") ||
-      resizeHandle!.classList.contains("bottomRight") ||
-      resizeHandle!.classList.contains("bottomLeft")
-    ) {
-      sticky.style.height = `${resizeStartHeight + resizeDeltaY}px`;
+    if (resizeHandle.classList.contains("b")) {
+      sticky.style.height = `${resizeStartHeight + dy}px`;
     }
-    if (
-      resizeHandle!.classList.contains("left") ||
-      resizeHandle!.classList.contains("topLeft") ||
-      resizeHandle!.classList.contains("bottomLeft")
-    ) {
-      if (
-        parseInt(getComputedStyle(sticky).minWidth, 10) <
-        resizeStartWidth - resizeDeltaX
-      ) {
-        sticky.style.width = `${resizeStartWidth - resizeDeltaX}px`;
-        sticky.style.left = `${resizeStartLeft + resizeDeltaX}px`;
+    if (resizeHandle.classList.contains("l")) {
+      const minWidth = parseInt(getComputedStyle(sticky).minWidth);
+      if (minWidth < resizeStartWidth - dx) {
+        sticky.style.width = `${resizeStartWidth - dx}px`;
+        sticky.style.left = `${resizeStartLeft + dx}px`;
       }
     }
-    if (
-      resizeHandle!.classList.contains("top") ||
-      resizeHandle!.classList.contains("topLeft") ||
-      resizeHandle!.classList.contains("topRight")
-    ) {
-      if (
-        parseInt(getComputedStyle(sticky).minHeight, 10) <
-        resizeStartHeight - resizeDeltaY
-      ) {
-        sticky.style.height = `${resizeStartHeight - resizeDeltaY}px`;
-        sticky.style.top = `${resizeStartTop + resizeDeltaY}px`;
+    if (resizeHandle.classList.contains("t")) {
+      const minHeight = parseInt(getComputedStyle(sticky).minHeight);
+      dy = dy - Math.min(resizeStartTop + dy, 0);
+      if (minHeight < resizeStartHeight - dy) {
+        sticky.style.height = `${resizeStartHeight - dy}px`;
+        sticky.style.top = `${resizeStartTop + dy}px`;
       }
     }
   }
@@ -649,8 +628,8 @@ export function enableFunctionality(sticky: Allowance<HTMLDivElement>): Sticky {
   function resizeEnd() {
     isResizing = false;
 
-    document.removeEventListener("pointermove", resize);
-    document.removeEventListener("pointerup", resizeEnd);
+    document.off("pointermove", resize);
+    document.off("pointerup", resizeEnd);
 
     resumeForResize("resize");
   }

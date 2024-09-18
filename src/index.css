@@ -294,62 +294,63 @@ h6 {
     pointer-events: initial;
   }
 }
+
 .resizeHandle {
   position: absolute;
   background-color: transparent;
 }
-.resizeHandle.top {
+.resizeHandle.t {
   top: var(--size-00);
   left: var(--size-00);
   right: var(--size-00);
   height: var(--size-2);
   cursor: n-resize;
 }
-.resizeHandle.right {
+.resizeHandle.r {
   top: var(--size-00);
   right: var(--size-00);
   bottom: var(--size-00);
   width: var(--size-2);
   cursor: e-resize;
 }
-.resizeHandle.bottom {
+.resizeHandle.b {
   bottom: var(--size-00);
   left: var(--size-00);
   right: var(--size-00);
   height: var(--size-2);
   cursor: s-resize;
 }
-.resizeHandle.left {
+.resizeHandle.l {
   top: var(--size-00);
   left: var(--size-00);
   bottom: var(--size-00);
   width: var(--size-2);
   cursor: w-resize;
 }
-.resizeHandle.topLeft {
-  top: var(--size-00);
-  left: var(--size-00);
+.resizeHandle.t.l {
+  bottom: unset;
+  right: unset;
   width: var(--size-2);
   height: var(--size-2);
   cursor: nw-resize;
 }
-.resizeHandle.topRight {
-  top: var(--size-00);
-  right: var(--size-00);
+.resizeHandle.t.r {
+  bottom: unset;
+  left: unset;
   width: var(--size-2);
   height: var(--size-2);
   cursor: ne-resize;
 }
-.resizeHandle.bottomLeft {
-  bottom: var(--size-00);
-  left: var(--size-00);
+.resizeHandle.b.l {
+  top: unset;
+  right: unset;
   width: var(--size-2);
   height: var(--size-2);
   cursor: sw-resize;
 }
-.resizeHandle.bottomRight {
-  bottom: var(--size-00);
-  right: var(--size-00);
+.resizeHandle.b.r {
+  top: unset;
+  left: unset;
   width: var(--size-2);
   height: var(--size-2);
   cursor: se-resize;
