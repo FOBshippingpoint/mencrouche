@@ -90,6 +90,7 @@ export class Zoomable implements ZoomContext {
   translateY = 0;
 
   el: HTMLElement;
+  interactEl: HTMLElement;
   minScale: number;
   maxScale: number;
 
@@ -102,11 +103,12 @@ export class Zoomable implements ZoomContext {
     } = {},
   ) {
     this.el = targetEl;
+    this.interactEl = options.interactEl ?? targetEl;
     this.minScale = options.minScale ?? 0.125;
     this.maxScale = options.maxScale ?? 4;
 
     // Setup wheel listener
-    (options.interactEl ?? this.el).on("wheel", (e) => {
+    this.interactEl.on("wheel", (e) => {
       // Ctrl + wheel scroll to zoom.
       if (!e.ctrlKey) return;
 
@@ -176,16 +178,11 @@ class StickyWorkspace {
       this.stickyContainer.offsetWidth / 2, // default x
       (this.stickyContainer.offsetHeight - stickySizeDummy.offsetWidth) / 2, // default y
     ];
-    let cur = [0, 0];
     this.workspaceContainer.on("pointermove", (e) => {
-      cursorPoint[0] = e.clientX - this.workspaceContainer.offsetLeft;
-      cursorPoint[1] = e.clientY - this.workspaceContainer.offsetTop;
-      console.log(cursorPoint, "=", cur);
+      const rect = this.stickyContainer.getBoundingClientRect();
+      cursorPoint[0] = (e.clientX - rect.x) / this.zoomable.scale;
+      cursorPoint[1] = (e.clientY - rect.y) / this.zoomable.scale;
     });
-    // this.stickyContainer.on("pointermove", (e) => {
-    //   cursorPoint[0] = e.clientX - this.stickyContainer.offsetLeft;
-    //   cursorPoint[1] = e.clientY - this.stickyContainer.offsetTop;
-    // });
 
     // Build buildSticky function that has wrap with dynamic cursor point.
     this.buildSticky = buildBuildSticky(cursorPoint, this);
@@ -527,8 +524,8 @@ function buildBuildSticky(
     )!;
 
     sticky.id = id ?? crypto.randomUUID();
-    const pointerX = cursorPoint[0];
-    const pointerY = cursorPoint[1];
+    const x = cursorPoint[0];
+    const y = cursorPoint[1];
 
     if (rect) {
       const [left, top, width, height] = rect;
@@ -536,13 +533,13 @@ function buildBuildSticky(
       if (typeof left === "number") {
         sticky.style.left = `${left}px`;
       } else {
-        sticky.style.left = `${pointerX - stickySizeDummy.getBoundingClientRect().width / 2}px`;
+        sticky.style.left = `${x - stickySizeDummy.getBoundingClientRect().width / 2}px`;
       }
 
       if (typeof top === "number") {
         sticky.style.top = `${top}px`;
       } else {
-        sticky.style.top = `${Math.max(pointerY - 10, 0)}px`;
+        sticky.style.top = `${y - 10}px`;
       }
 
       if (typeof width === "number") {
@@ -553,8 +550,8 @@ function buildBuildSticky(
         sticky.style.height = `${height}px`;
       }
     } else {
-      sticky.style.left = `${pointerX - stickySizeDummy.getBoundingClientRect().width / 2}px`;
-      sticky.style.top = `${Math.max(pointerY - 10, 0)}px`;
+      sticky.style.left = `${x - stickySizeDummy.getBoundingClientRect().width / 2}px`;
+      sticky.style.top = `${y - 10}px`;
     }
     if (zIndex) {
       sticky.style.zIndex = zIndex.toString();
