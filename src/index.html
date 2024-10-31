@@ -160,35 +160,33 @@
         </button>
       </nav>
       <section class="mainSection">
-        <div class="stickyContainer">
-          <div
-            class="dock flex rounded padding surface shadow alwaysOnTop"
-            data-context-menu="dock"
-            data-position="right"
-            data-icon-size="48"
-            data-always-on-top="on"
-            data-show-add-btn="on"
-            data-show-label="on"
-          >
-            <slot></slot>
-            <button class="addBookmarkBtn dockItem rounded">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="48"
-                height="48"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide lucide-plus"
-              >
-                <path d="M5 12h14" />
-                <path d="M12 5v14" />
-              </svg>
-            </button>
-          </div>
+        <div
+          class="dock flex rounded padding surface shadow alwaysOnTop"
+          data-context-menu="dock"
+          data-position="right"
+          data-icon-size="48"
+          data-always-on-top="on"
+          data-show-add-btn="on"
+          data-show-label="on"
+        >
+          <slot></slot>
+          <button class="addBookmarkBtn dockItem rounded">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="48"
+              height="48"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-plus"
+            >
+              <path d="M5 12h14" />
+              <path d="M12 5v14" />
+            </svg>
+          </button>
         </div>
         <template id="dockBookmark">
           <a class="dockBookmark dockItem rounded square" draggable="true">
@@ -437,14 +435,14 @@
               </div>
               <div class="stickyBody"></div>
             </div>
-            <div class="resizeHandle t"></div>
-            <div class="resizeHandle r"></div>
-            <div class="resizeHandle b"></div>
-            <div class="resizeHandle l"></div>
-            <div class="resizeHandle t l"></div>
-            <div class="resizeHandle t r"></div>
-            <div class="resizeHandle b l"></div>
-            <div class="resizeHandle b r"></div>
+            <!-- <div class="resizeHandle t"></div> -->
+            <!-- <div class="resizeHandle r"></div> -->
+            <!-- <div class="resizeHandle b"></div> -->
+            <!-- <div class="resizeHandle l"></div> -->
+            <!-- <div class="resizeHandle t l"></div> -->
+            <!-- <div class="resizeHandle t r"></div> -->
+            <!-- <div class="resizeHandle b l"></div> -->
+            <!-- <div class="resizeHandle b r"></div> -->
           </div>
         </template>
         <div id="commandPalette" hidden="">

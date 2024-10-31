@@ -1,4 +1,4 @@
-import { stickyManager } from "./sticky";
+import { stickyWorkspace } from "./sticky";
 import { $ } from "./utils/dollars";
 import { createShortcutItem, toggleSettingsPage } from "./settings";
 import { addPublicApi } from "./publicApi";
@@ -9,10 +9,7 @@ import { n81i } from "./utils/n81i";
 import { registerContextMenu } from "./contextMenu";
 import { shortcutManager } from "./shortcutManager";
 import { loadDocument, saveDocument } from "./lifesaver";
-import {
-  addTodoAfterLoad,
-  dataset,
-} from "./dataWizard";
+import { addTodoAfterLoad, dataset, finishLoad } from "./dataWizard";
 import "./dock";
 // The `url:` prefix is a custom prefix defined in `.parcelrc`.
 // Which aims to get the url of transformed resource, in raw format.
@@ -30,8 +27,6 @@ import zh_TW from "url:./_locales/zh_TW/messages.json";
 import { executeCommand, registerCommand, type Command } from "./commands";
 
 const urls = { en, zh_TW };
-
-const stickyContainer = $<HTMLDivElement>(".stickyContainer")!;
 
 const AVAILABLE_LOCALES = ["en", "zh_TW"];
 
@@ -79,86 +74,92 @@ const defaultCommands: Command[] = [
   {
     name: "delete_all_stickies",
     execute() {
-      stickyManager.deleteAll();
+      stickyWorkspace.deleteAll();
     },
     defaultShortcut: "C-A-x",
   },
   {
     name: "add_markdown_sticky",
     execute() {
-      stickyManager.create({ type: "markdown" });
+      stickyWorkspace.create({ type: "markdown" });
     },
     defaultShortcut: "C-q",
   },
   {
     name: "add_youtube_sticky",
     execute() {
-      stickyManager.create({ type: "youtube" });
+      stickyWorkspace.create({ type: "youtube" });
     },
     defaultShortcut: "C-A-y",
   },
   {
     name: "add_spotify_sticky",
     execute() {
-      stickyManager.create({ type: "spotify" });
+      stickyWorkspace.create({ type: "spotify" });
     },
     defaultShortcut: "C-A-s",
   },
   {
     name: "delete_sticky",
     execute() {
-      stickyManager.deleteLatest();
+      stickyWorkspace.deleteLatest();
     },
     defaultShortcut: "A-x",
   },
   {
     name: "toggle_auto_arrange",
     execute() {
-      stickyManager.arrange();
+      stickyWorkspace.arrange();
     },
     defaultShortcut: "A-r",
   },
   {
     name: "toggle_split_view",
     execute() {
-      stickyManager.getLatestSticky()?.plugin.toggleSplitView?.();
+      stickyWorkspace.getLatestSticky()?.plugin.toggleSplitView?.();
     },
     defaultShortcut: "A-v",
   },
   {
     name: "toggle_maximize_sticky",
     execute() {
-      stickyManager.getLatestSticky()?.toggleMaximize();
+      stickyWorkspace.getLatestSticky()?.toggleMaximize();
     },
     defaultShortcut: "A-m",
   },
   {
     name: "toggle_sticky_edit_mode",
     execute() {
-      stickyManager.getLatestSticky()?.plugin.toggleEditMode?.();
+      stickyWorkspace.getLatestSticky()?.plugin.toggleEditMode?.();
     },
     defaultShortcut: "A-e",
   },
   {
     name: "toggle_sticky_pin_mode",
     execute() {
-      stickyManager.getLatestSticky()?.togglePin();
+      stickyWorkspace.getLatestSticky()?.togglePin();
     },
     defaultShortcut: "A-p",
   },
   {
     name: "toggle_ghost_mode",
     execute() {
-      stickyManager.getLatestSticky()?.toggleGhostMode();
+      stickyWorkspace.getLatestSticky()?.toggleGhostMode();
     },
     defaultShortcut: "A-g",
   },
   {
     name: "duplicate_sticky",
     execute() {
-      stickyManager.duplicateLatest();
+      stickyWorkspace.duplicateLatest();
     },
     defaultShortcut: "C-d",
+  },
+  {
+    name: "zoom_in",
+    execute() {
+    },
+    defaultShortcut: "C-+",
   },
 ];
 
@@ -175,7 +176,6 @@ function getUserPreferredLanguage() {
     return "en";
   }
 }
-
 
 n81i.init({
   locale: dataset.getOrSetItem<string>("locale", getUserPreferredLanguage()),
@@ -194,7 +194,12 @@ n81i.init({
 n81i.translatePage();
 
 async function main() {
-  const finishLoad = await loadDocument();
+  try {
+    await loadDocument();
+  } catch (error) {
+    console.log(error);
+  }
+  $(".mainSection")!.appendChild(stickyWorkspace.workspaceContainer)
 
   // Register default commands.
   for (const command of defaultCommands) {
@@ -233,7 +238,7 @@ async function main() {
       ],
     },
   ];
-  stickyContainer.dataset.contextMenu = "main";
+  stickyWorkspace.workspaceContainer.dataset.contextMenu = "main";
   registerContextMenu("main", menuItems);
 
   // Register custom stickies.
@@ -248,5 +253,5 @@ addPublicApi();
 main();
 
 addTodoAfterLoad(() => {
-  dataset.setItem("availableLocales", AVAILABLE_LOCALES);
+  dataset.getOrSetItem("availableLocales", AVAILABLE_LOCALES);
 });

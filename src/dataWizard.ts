@@ -54,7 +54,7 @@ async function prepareSave() {
   dataset.setItem("mencroucheFileFormatVersion", 1);
   dataset.setItem("timestamp", new Date().toISOString());
 }
-async function finishLoad() {
+export async function finishLoad() {
   const promises = afterLoadTodos.map((t) => t());
   await Promise.all(promises);
 }
@@ -64,10 +64,6 @@ export async function saveToSources(...sources: Source[]) {
   for (const source of sources) {
     source.save(mcObj);
   }
-}
-export async function loadFromSource(source: Source) {
-  await source.load();
-  return finishLoad;
 }
 
 export interface Source {

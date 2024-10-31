@@ -1,10 +1,19 @@
+/**
+ * publicApi.ts
+ *
+ * Exposing functions, classes for end-user/developer to use.
+ * Simple usage:
+ * ```javascript
+ * window.mc.$(".selectSomeClass");
+ * ```
+ */
 import { registerCommand, executeCommand, } from "./commands";
 import { $, $$, $$$ } from "./utils/dollars";
 import {
   getCustomStickyTypes,
-  getCustomStickyComposer,
+  getCustomSticky,
   registerSticky,
-  stickyManager,
+  stickyWorkspace,
 } from "./sticky";
 import { n81i } from "./utils/n81i";
 import { registerContextMenu } from "./contextMenu";
@@ -24,13 +33,13 @@ const mc = {
   n81i,
   dataset,
   apocalypse,
-  stickyManager,
+  stickyManager: stickyWorkspace,
   registerSticky,
   executeCommand,
   registerCommand,
+  getCustomSticky,
   registerContextMenu,
   getCustomStickyTypes,
-  getCustomStickyComposer,
 };
 
 export function addPublicApi() {

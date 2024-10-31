@@ -507,11 +507,20 @@ h6 {
   position: absolute;
   width: 100%;
   height: 100%;
+  left: 100px;
+  transform-origin: 0 0;
+  background-color: deepskyblue;
+}
+
+.workspace {
   overflow: hidden;
+  width: 100%;
+  height: 100%;
 }
 
 .mainSection {
   position: relative;
+  overflow: hidden;
 }
 
 /* @commandPalette start */
@@ -1150,7 +1159,7 @@ dialog {
   transform: translate3d(0, 0, 0);
   visibility: hidden;
   opacity: 0;
-  z-index: 1000000;
+  z-index: var(--layer-important);
   pointer-events: none;
 }
 [data-tooltip]:hover:before,

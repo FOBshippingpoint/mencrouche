@@ -1,3 +1,10 @@
+## Development
+
+```sh
+# Use `just` tool to start dev server and open webpage in browser.
+just
+```
+
 ## TODOs
 
 - [x] Maximize
@@ -13,7 +20,7 @@
 - [x] Dock preference always on top.
 - [x] Sync
 - [x] {impossible} Spotify border radius adjust.
-    - Spotify embedded content already had border-radius, unless we can get the background color, we cannot get rid of that border.
+    - Spotify embedded content already had border-radius, unless we can get the background color, we cannot get rid of that border.j
 - [x] Dropdown add sticky.
 - [x] Add nav for settings.
 - [x] Add javascript customization textarea.
@@ -21,13 +28,24 @@
 - [x] Remove flexbox-based autoArrange
 - [x] Import document
 - [x] Undo/redo for movement and resizing.
+- [x] Drag bookmark dock item.
+- [x] zooming
+    - Separate the dock level to immune from sticky container scaling.
 - [ ] Toolbar for mobile.
 - [ ] iframe sticky
 - [ ] declarativeNetRequest -> unblock iframe
-- [ ] Drag bookmark dock item.
 - [ ] Blockly
 - [ ] Web extension version.
-- [ ] zooming
+- [ ] Workspace
+    - Should looks like Arc's Space, switching between *work*, *school* etc.
+- [ ] Layout Managing
+    - easy: fixed layouts.
+    - moderate: adjusting size
+- [ ] WYSIWYG text editor
+    - Idk I think user won't like/know markdown, they just want an easy-to-use ui for editing rich text. Candidates:
+    - [TipTap](https://tiptap.dev/docs/editor/getting-started/install/vanilla-javascript)
+    - [Quill](https://quilljs.com/)
+    - [Editor.js](https://editorjs.io/)
 
 ## BUGS
 

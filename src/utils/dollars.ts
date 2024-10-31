@@ -27,7 +27,7 @@ function wrap<T extends HTMLElement>(element: T): Allowance<T> {
       return el ? wrap<K>(el) : null;
     },
     $$<K extends HTMLElement>(selectors: string) {
-      return enhanceList<K>(
+      return wrapList<K>(
         ([...element.querySelectorAll<K>(selectors)] as K[]).map(wrap),
       );
     },
@@ -40,7 +40,7 @@ function wrap<T extends HTMLElement>(element: T): Allowance<T> {
  * @param arr
  * @returns Enahanced list.
  */
-function enhanceList<T extends HTMLElement>(
+function wrapList<T extends HTMLElement>(
   arr: Allowance<T>[],
 ): AllowanceList<T> {
   return Object.assign(arr, {
@@ -59,15 +59,35 @@ function enhanceList<T extends HTMLElement>(
  * @param selectors - Either a CSS selector string or an existing DOM element.
  * @returns The selected element or null if not found.
  */
-export function $<T extends HTMLElement>(
-  selectors: string | T,
-): Allowance<T> | null {
+function $<T extends HTMLElement>(selectors: string | T): Allowance<T> | null {
   if (typeof selectors === "string") {
     const element = document.querySelector<T>(selectors);
     return element ? wrap(element) : null;
   }
   return wrap(selectors);
 }
+// TODO: plugin system.
+// Object.assign($, {
+//   fn: new Proxy(
+//     {
+//       // Standard functions.
+//       left() {
+//         parseInt
+//       }
+//     },
+//     {
+//       set(target: any, prop: string | symbol, val: any) {
+//         if (typeof val === "function") {
+//           target[prop] = val;
+//           return true;
+//         } else {
+//           return false;
+//         }
+//       },
+//     },
+//   ),
+// });
+export { $ };
 
 /**
  * Selects multiple elements from the DOM and returns them as an array.
@@ -76,7 +96,7 @@ export function $<T extends HTMLElement>(
  * @returns An array of the selected elements with additional methods.
  */
 export function $$<T extends HTMLElement>(selectors: string): AllowanceList<T> {
-  return enhanceList([...document.querySelectorAll<T>(selectors)].map(wrap));
+  return wrapList([...document.querySelectorAll<T>(selectors)].map(wrap));
 }
 
 /**

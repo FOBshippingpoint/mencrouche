@@ -144,7 +144,7 @@ describe("createDataset", () => {
       dataset.fromJson(json);
 
       expect(dataset.getItem("key1")).toBe("newValue");
-      expect(dataset.getItem("key2")).toBe(100);
+      expect(dataset.getItem("key2")).toBeUndefined();
     });
 
     it("should overwrite existing values when loading from object", () => {
@@ -158,7 +158,7 @@ describe("createDataset", () => {
       dataset.fromObject(obj);
 
       expect(dataset.getItem("key1")).toBe("newValue");
-      expect(dataset.getItem("key2")).toBe(100);
+      expect(dataset.getItem("key2")).toBeUndefined();
     });
 
     it("should handle empty JSON string", () => {

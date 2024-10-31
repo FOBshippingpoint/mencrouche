@@ -1,42 +1,19 @@
+/**
+ * lifesaver.ts
+ * The highest level of abstraction of saving/loading mencrouche file.
+ * Client could call `saveDocument()` to easily save the document without deciding the Source, handling encryption.
+ */
+
 import { switchDocumentStatus } from "./documentStatus";
 import { generateEncryptionKey } from "./utils/encryption";
+import { createDialog } from "./generalDialog";
+import { debounce } from "./utils/debounce";
 import {
   IndexedDbSource,
-  loadFromSource,
   RemoteSource,
   saveToSources,
   type Source,
 } from "./dataWizard";
-import { createDialog } from "./generalDialog";
-
-function debounce(
-  callback: Function,
-  { isLeadingEdge, waitMs }: { isLeadingEdge?: boolean; waitMs?: number } = {
-    isLeadingEdge: false,
-    waitMs: 3000, // 3 sec delay before saving
-  },
-) {
-  let timeoutId: number | undefined;
-
-  return function (...args: unknown[]) {
-    const context = this;
-    const isCallNow = isLeadingEdge && !timeoutId;
-
-    clearTimeout(timeoutId);
-
-    timeoutId = window.setTimeout(function () {
-      timeoutId = undefined;
-
-      if (!isLeadingEdge) {
-        callback.call(context, ...args);
-      }
-    }, waitMs);
-
-    if (isCallNow) {
-      callback.call(context, ...args);
-    }
-  };
-}
 
 function getLocalStorageItem(key: string): string {
   const value = localStorage.getItem(key);
@@ -99,8 +76,39 @@ interface SyncInfo {
 }
 let urlFragSyncInfo: SyncInfo;
 
+function parseSyncInfoFromUrlFragment() {
+  const b64 = window.location.hash.slice(1);
+  try {
+    const json = window.atob(b64);
+    return JSON.parse(json);
+  } catch (error) {
+    console.log("Cannot parse from URL fragment, got error: ", error);
+  }
+}
+
+export async function loadDocument() {
+  urlFragSyncInfo = parseSyncInfoFromUrlFragment();
+  if (urlFragSyncInfo) {
+    await new RemoteSource(urlFragSyncInfo).load();
+  } else {
+    // TODO: dup code
+    const isCloudSyncEnabled =
+      localStorage.getItem("isCloudSyncEnabled") === "on";
+    if (isCloudSyncEnabled && localStorage.getItem("syncUrl")) {
+      const syncInfo = {
+        syncUrl: getLocalStorageItem("syncUrl"),
+        syncResourceId: getOrCreateSyncResourceId(),
+        encryptionKey: await getOrGenerateEncryptionKey(),
+        // syncRemoteAuthKey: getLocalStorageItem("syncRemoteAuthKey"),
+      };
+      await new RemoteSource(syncInfo).load();
+    } else {
+      await new IndexedDbSource().load();
+    }
+  }
+}
+
 export async function saveDocument() {
-  switchDocumentStatus("saving");
   const sources: Source[] = [new IndexedDbSource()];
   const isCloudSyncEnabled =
     localStorage.getItem("isCloudSyncEnabled") === "on";
@@ -118,42 +126,8 @@ export async function saveDocument() {
   switchDocumentStatus("saved");
 }
 
-function parseSyncInfoFromUrlFragment() {
-  const b64 = window.location.hash.slice(1);
-  try {
-    const json = window.atob(b64);
-    return JSON.parse(json);
-  } catch (error) {
-    console.log("Cannot parse from URL fragment, got error: ", error);
-  }
+const saveDocumentDebounced = debounce(saveDocument);
+export function markDirtyAndSaveDocument() {
+  switchDocumentStatus("saving");
+  saveDocumentDebounced();
 }
-
-export async function loadDocument() {
-  urlFragSyncInfo = parseSyncInfoFromUrlFragment();
-  if (urlFragSyncInfo) {
-    const remoteSource = new RemoteSource(urlFragSyncInfo);
-    return await loadFromSource(remoteSource);
-  } else {
-    // TODO: dup code
-    const isCloudSyncEnabled =
-      localStorage.getItem("isCloudSyncEnabled") === "on";
-    if (isCloudSyncEnabled && localStorage.getItem("syncUrl")) {
-      const syncInfo = {
-        syncUrl: getLocalStorageItem("syncUrl"),
-        syncResourceId: getOrCreateSyncResourceId(),
-        encryptionKey: await getOrGenerateEncryptionKey(),
-        // syncRemoteAuthKey: getLocalStorageItem("syncRemoteAuthKey"),
-      };
-      const remoteSource = new RemoteSource(syncInfo);
-      return await loadFromSource(remoteSource);
-    } else {
-      return await loadFromSource(new IndexedDbSource());
-    }
-  }
-}
-const saveDebounced = debounce(saveDocument);
-
-export const markDirtyAndSaveDocument = () => {
-  switchDocumentStatus("unsaved");
-  saveDebounced();
-};

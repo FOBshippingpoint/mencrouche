@@ -10,8 +10,8 @@ import {
   addTodoAfterLoad,
   addTodoBeforeSave,
   dataset,
+  finishLoad,
   JsonFileSource,
-  loadFromSource,
   saveToSources,
 } from "./dataWizard";
 import { openDB } from "idb";
@@ -258,8 +258,8 @@ importDocumentFileInput.on("change", () => {
         async onClick() {
           if (file) {
             fileReadyForImport = file;
-            const finishLoad = await loadFromSource(jsonFileSource);
-            finishLoad();
+            await jsonFileSource.load();
+            await finishLoad();
             closeSettingsPage();
           }
           discardCurrentChangesDialog.close();
