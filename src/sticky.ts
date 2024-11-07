@@ -5,8 +5,7 @@ import { getTemplateWidgets } from "./utils/getTemplateWidgets";
 import { n81i } from "./utils/n81i";
 import { BinPacker } from "./utils/packer";
 import { markDirtyAndSaveDocument } from "./lifesaver";
-import { $, $$, $$$, type Allowance } from "./utils/dollars";
-import { implementation } from "happy-dom/lib/PropertySymbol.js";
+import { $, $$$, type Allowance } from "./utils/dollars";
 
 export interface StickyPlugin {}
 interface StickyConfig extends Record<string, unknown> {

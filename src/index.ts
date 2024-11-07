@@ -10,6 +10,9 @@ import { registerContextMenu } from "./contextMenu";
 import { shortcutManager } from "./shortcutManager";
 import { loadDocument, saveDocument } from "./lifesaver";
 import { addTodoAfterLoad, dataset, finishLoad } from "./dataWizard";
+import EditorJS from "@editorjs/editorjs";
+import Header from "@editorjs/header";
+import List from "@editorjs/list";
 import "./dock";
 // The `url:` prefix is a custom prefix defined in `.parcelrc`.
 // Which aims to get the url of transformed resource, in raw format.
@@ -157,8 +160,7 @@ const defaultCommands: Command[] = [
   },
   {
     name: "zoom_in",
-    execute() {
-    },
+    execute() {},
     defaultShortcut: "C-+",
   },
 ];
@@ -199,7 +201,7 @@ async function main() {
   } catch (error) {
     console.log(error);
   }
-  $(".mainSection")!.appendChild(stickyWorkspace.workspaceContainer)
+  $("#workspaceSlot")!.appendChild(stickyWorkspace.workspaceContainer);
 
   // Register default commands.
   for (const command of defaultCommands) {
@@ -245,6 +247,14 @@ async function main() {
   initMarkdownSticky();
   initSpotifySticky();
   initYouTubeSticky();
+
+  new EditorJS({
+    holder: "editorjs",
+    tools: {
+      header: Header,
+      list: List,
+    },
+  });
 
   await finishLoad();
 }
