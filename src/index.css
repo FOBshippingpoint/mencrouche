@@ -518,6 +518,12 @@ h6 {
   height: 100%;
 }
 
+#mainSection:has(#settings:not(.none)) {
+  #viewport {
+    display: none;
+  }
+}
+
 #viewport {
   width: 100%;
   height: 100%;
@@ -643,7 +649,6 @@ h6 {
       h2::before {
         content: "#";
         transform: translateX(-1.2ch);
-        position: absolute;
       }
     }
     hr {

@@ -120,7 +120,8 @@ if (process.env.CLOUD_SYNC_URL && localStorage.getItem("syncUrl") === null) {
 if (localStorage.getItem("isCloudSyncEnabled") === null) {
   localStorage.setItem("isCloudSyncEnabled", "on");
 }
-isCloudSyncEnabledCheckbox.checked = localStorage.getItem("isCloudSyncEnabled") === "on";
+isCloudSyncEnabledCheckbox.checked =
+  localStorage.getItem("isCloudSyncEnabled") === "on";
 isCloudSyncEnabledCheckbox.on("input", () => {
   changesManager.setChange("setIsCloudSyncEnabled", () => {
     localStorage.setItem(
@@ -387,10 +388,13 @@ function openSettingsPage() {
   const uiOpacity = dataset.getOrSetItem("uiOpacity", 1);
   const paletteHue = dataset.getItem("paletteHue") as string;
   const backgroundImageUrl = dataset.getItem("backgroundImageUrl");
+  const locale = dataset.getItem("locale") as string;
   changesManager.onRevert = () => {
     dataset.setItem("uiOpacity", uiOpacity);
     dataset.setItem("paletteHue", paletteHue);
     dataset.setItem("backgroundImageUrl", backgroundImageUrl);
+    dataset.setItem("locale", locale);
+    langDropdown.value = locale;
   };
 }
 
@@ -431,38 +435,33 @@ function toBCP47LangTag(chromeLocale: string) {
 const langDropdown = $<HTMLSelectElement>("#langDropdown")!;
 dataset.on<string[]>("availableLocales", (_, locales) => {
   if (locales) {
-    updateLangDropDown(locales);
-  }
-});
-function updateLangDropDown(locales: string[]) {
-  langDropdown.replaceChildren();
-  for (const locale of locales) {
-    const option = $$$("option");
-    if (dataset.getItem("locale") === locale) {
-      option.selected = true;
+    langDropdown.replaceChildren();
+    for (const locale of locales) {
+      const option = $$$("option");
+      if (dataset.getItem("locale") === locale) {
+        option.selected = true;
+      }
+      option.value = locale;
+      const bcp47 = toBCP47LangTag(locale);
+      const translatedLocaleName = new Intl.DisplayNames([bcp47], {
+        type: "language",
+      }).of(bcp47);
+      if (translatedLocaleName) {
+        option.textContent = `${translatedLocaleName} - ${locale}`;
+      } else {
+        option.textContent = locale;
+      }
+      langDropdown.append(option);
     }
-    option.value = locale;
-    const bcp47 = toBCP47LangTag(locale);
-    const translatedLocaleName = new Intl.DisplayNames([bcp47], {
-      type: "language",
-    }).of(bcp47);
-    if (translatedLocaleName) {
-      option.textContent = `${translatedLocaleName} - ${locale}`;
-    } else {
-      option.textContent = locale;
-    }
-    langDropdown.append(option);
-  }
-  langDropdown.on("change", async () => {
-    // Pre-loading when user select, instead of applying settings.
-    n81i.loadLanguage(langDropdown.value);
-    changesManager.setChange("setLocale", async () => {
+    langDropdown.on("change", async () => {
+      n81i.loadLanguage(langDropdown.value);
       dataset.setItem("locale", langDropdown.value);
+      changesManager.markDirty();
       await n81i.changeLanguage(langDropdown.value);
       n81i.translatePage();
     });
-  });
-}
+  }
+});
 
 // Initialize language
 dataset.on<string>("locale", async (_, locale) => {

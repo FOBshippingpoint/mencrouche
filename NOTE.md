@@ -31,6 +31,9 @@ just
 - [x] Drag bookmark dock item.
 - [x] zooming
     - Separate the dock level to immune from sticky container scaling.
+    - :: NOTE: Debug zooming is hard, but I found that by comparing the arguments (width, height, x, y etc.) and their combination, it is more easy to find the correct formula.
+- [x] zooming reset by ctrl 0
+- [ ] Zooming UI
 - [ ] Toolbar for mobile.
 - [ ] iframe sticky
 - [ ] declarativeNetRequest -> unblock iframe
@@ -41,7 +44,7 @@ just
 - [ ] Layout Managing
     - easy: fixed layouts.
     - moderate: adjusting size
-- [ ] WYSIWYG text editor
+- [ ] (WIP) WYSIWYG text editor
     - Idk I think user won't like/know markdown, they just want an easy-to-use ui for editing rich text. Candidates:
     - [TipTap](https://tiptap.dev/docs/editor/getting-started/install/vanilla-javascript)
     - [Quill](https://quilljs.com/)

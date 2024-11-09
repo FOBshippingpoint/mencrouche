@@ -26,7 +26,6 @@ import "./dock";
 import en from "url:./_locales/en/messages.json";
 // @ts-ignore
 import zh_TW from "url:./_locales/zh_TW/messages.json";
-
 import { executeCommand, registerCommand, type Command } from "./commands";
 
 const urls = { en, zh_TW };
@@ -101,6 +100,13 @@ const defaultCommands: Command[] = [
       stickyWorkspace.create({ type: "spotify" });
     },
     defaultShortcut: "C-A-s",
+  },
+  {
+    name: "add_note_sticky",
+    execute() {
+      stickyWorkspace.create({ type: "note" });
+    },
+    defaultShortcut: "C-A-n",
   },
   {
     name: "delete_sticky",
@@ -237,6 +243,13 @@ async function main() {
             executeCommand("add_spotify_sticky");
           },
         },
+        {
+          name: "add_note_sticky",
+          icon: "lucide-notebook-text",
+          execute() {
+            executeCommand("add_note_sticky");
+          },
+        },
       ],
     },
   ];
@@ -247,14 +260,6 @@ async function main() {
   initMarkdownSticky();
   initSpotifySticky();
   initYouTubeSticky();
-
-  new EditorJS({
-    holder: "editorjs",
-    tools: {
-      header: Header,
-      list: List,
-    },
-  });
 
   await finishLoad();
 }

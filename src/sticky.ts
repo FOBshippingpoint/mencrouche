@@ -29,7 +29,6 @@ export interface Sticky<T extends StickyPlugin = StickyPlugin>
 // This element is for getting var(--size-fluid-9) in pixels. So that we can
 // set default sticky position to center if user hasn't move the cursor yet.
 const stickySizeDummy = $<HTMLDivElement>("#stickySizeDummy")!;
-const stickyContainer = $<HTMLDivElement>(".stickyContainer")!;
 
 const mutationObserver = new MutationObserver((mutations) => {
   for (const mutation of mutations) {
@@ -130,6 +129,16 @@ export class Zoomable implements ZoomContext {
         this.scale = newScale;
         this.translateX = newX;
         this.translateY = newY;
+        this.applyTransform();
+      }
+    });
+
+    // Reset scale and transform by "Ctrl + 0"
+    document.on("keydown", (e) => {
+      if (e.ctrlKey && e.key === "0") {
+        this.scale = 1;
+        this.translateX = 0;
+        this.translateY = 0;
         this.applyTransform();
       }
     });
