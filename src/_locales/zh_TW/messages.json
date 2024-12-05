@@ -490,5 +490,9 @@
 	"is_cloud_sync_enabled_checkbox_label": {
 		"message": "啟用雲端同步",
 		"description": "Checkbox label for enabling cloud sync."
+	},
+	"add_markdown_sticky_btn_title": {
+		"message": "Markdown便利貼",
+		"description": "Button title for markdown sticky."
 	}
 }

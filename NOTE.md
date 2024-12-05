@@ -34,21 +34,26 @@ just
     - :: NOTE: Debug zooming is hard, but I found that by comparing the arguments (width, height, x, y etc.) and their combination, it is more easy to find the correct formula.
 - [x] zooming reset by ctrl 0
 - [ ] Zooming UI
+- [x] Fix the default position on top left instead of central problem.
 - [ ] Toolbar for mobile.
 - [ ] iframe sticky
 - [ ] declarativeNetRequest -> unblock iframe
 - [ ] Blockly
 - [ ] Web extension version.
-- [ ] Workspace
-    - Should looks like Arc's Space, switching between *work*, *school* etc.
+- [x] Workspace
+    - Should looks like Arc's Space, switching between *work*, *school* etc. :: we have the workspace class now, but currently just one instance at time, but it provide the possiblity to implement this feature.
 - [ ] Layout Managing
     - easy: fixed layouts.
     - moderate: adjusting size
-- [ ] (WIP) WYSIWYG text editor
+- [ ] (WIPP) WYSIWYG text editor
     - Idk I think user won't like/know markdown, they just want an easy-to-use ui for editing rich text. Candidates:
     - [TipTap](https://tiptap.dev/docs/editor/getting-started/install/vanilla-javascript)
     - [Quill](https://quilljs.com/)
     - [Editor.js](https://editorjs.io/)
+    - [manigandham/rich-text-html-editors.md](https://gist.github.com/manigandham/65543a0bc2bf7006a487)
+- [ ] A11y
+- [ ] (WIP) Grant user permission for custom js and css
+- [ ] Create intro video and tutorial for end user.
 
 ## BUGS
 
@@ -57,3 +62,5 @@ just
 - [x] sticky out of bound when resizing window.
 - [x] create sticky on the bottom or right cuz the container size change.
 - [x] Context menu will not translate when language switched.
+- [ ] (WIP) When sticky is maximized, drag to shrink is working, but the center point is not correct.
+- [ ] When a maximize sticky turn back to normal size, it will lose original y position.

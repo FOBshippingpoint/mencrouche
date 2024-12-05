@@ -182,10 +182,7 @@ class StickyWorkspace {
     });
 
     // Continuosly track the cursor position.
-    const cursorPoint: CursorPoint = [
-      this.stickyContainer.offsetWidth / 2, // default x
-      (this.stickyContainer.offsetHeight - stickySizeDummy.offsetWidth) / 2, // default y
-    ];
+    const cursorPoint: CursorPoint = [NaN, NaN];
     this.workspaceContainer.on("pointermove", (e) => {
       const rect = this.stickyContainer.getBoundingClientRect();
       cursorPoint[0] = (e.clientX - rect.x) / this.zoomable.scale;
@@ -509,8 +506,23 @@ class StickyWorkspace {
       }
     }
   }
+
+  getCentralPoint(): CursorPoint {
+    return [
+      this.stickyContainer.offsetWidth / 2,
+      (this.stickyContainer.offsetHeight - stickySizeDummy.offsetWidth) / 2,
+    ];
+  }
 }
 
+/**
+ * NaN means that there is the cursor point is not initialized.
+ * Since we need stickyContainer to be append first to get the width and height.
+ * TODO: We use this ugly approach to judge whether the point is ready for use.
+ *
+ * :: (number | null) will cause more type issue, but current approach is inconsist.
+ * e.g. the Rectangle type accept null.
+ */
 type CursorPoint = [number, number];
 function buildBuildSticky(
   cursorPoint: CursorPoint,
@@ -532,8 +544,14 @@ function buildBuildSticky(
     )!;
 
     sticky.id = id ?? crypto.randomUUID();
-    const x = cursorPoint[0];
-    const y = cursorPoint[1];
+
+    let x: number;
+    let y: number;
+    if (isNaN(cursorPoint[0])) {
+      [x, y] = stickyWorkspace.getCentralPoint();
+    } else {
+      [x, y] = cursorPoint;
+    }
 
     if (rect) {
       const [left, top, width, height] = rect;
@@ -577,7 +595,7 @@ function buildBuildSticky(
       let resumeForDrag: (type: "drag" | "resize") => void;
       let resumeForResize: (type: "drag" | "resize") => void;
 
-      const draggable = new Draggable(
+      new Draggable(
         sticky,
         {
           handle: stickyHeader,
@@ -585,9 +603,10 @@ function buildBuildSticky(
           padding: 20,
           onDragStart: (e) => {
             if (sticky.classList.contains("maximized")) {
+              console.log("drag");
+              (sticky as Sticky).toggleMaximize();
               sticky.style.top = "0px";
               sticky.style.left = `${e.clientX - sticky.offsetWidth / 2}px`;
-              (sticky as Sticky).toggleMaximize();
             }
             resumeForDrag = stickyWorkspace.pause(sticky as Sticky);
           },
@@ -595,7 +614,7 @@ function buildBuildSticky(
         },
         stickyWorkspace.zoomable,
       );
-      const resizable = new Resizable(
+      new Resizable(
         sticky,
         {
           onResizeStart: () => {

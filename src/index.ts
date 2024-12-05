@@ -10,9 +10,6 @@ import { registerContextMenu } from "./contextMenu";
 import { shortcutManager } from "./shortcutManager";
 import { loadDocument, saveDocument } from "./lifesaver";
 import { addTodoAfterLoad, dataset, finishLoad } from "./dataWizard";
-import EditorJS from "@editorjs/editorjs";
-import Header from "@editorjs/header";
-import List from "@editorjs/list";
 import "./dock";
 // The `url:` prefix is a custom prefix defined in `.parcelrc`.
 // Which aims to get the url of transformed resource, in raw format.
@@ -27,6 +24,7 @@ import en from "url:./_locales/en/messages.json";
 // @ts-ignore
 import zh_TW from "url:./_locales/zh_TW/messages.json";
 import { executeCommand, registerCommand, type Command } from "./commands";
+import { initNoteSticky } from "./stickyPlugins/note";
 
 const urls = { en, zh_TW };
 
@@ -260,6 +258,7 @@ async function main() {
   initMarkdownSticky();
   initSpotifySticky();
   initYouTubeSticky();
+  initNoteSticky();
 
   await finishLoad();
 }

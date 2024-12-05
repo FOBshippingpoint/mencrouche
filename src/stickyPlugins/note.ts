@@ -1,3 +1,4 @@
+import { $, $$$ } from "../utils/dollars";
 import {
   type CustomStickyComposer,
   type CustomStickyConfig,
@@ -5,55 +6,51 @@ import {
   type StickyPlugin,
   registerSticky,
 } from "../sticky";
-import { $, $$$ } from "../utils/dollars";
-import Quill from "quill";
-import Toolbar from "quill/modules/toolbar";
-import Snow from "quill/themes/snow";
-import Bold from "quill/formats/bold";
-import Italic from "quill/formats/italic";
-import Header from "quill/formats/header";
+
+class ShadowDOMEditor extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+  }
+
+  connectedCallback() {
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = `
+                <style>
+                  @import "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css";
+                </style>
+                <div id="editor-container"></div>
+                `;
+
+    this.shadowRoot.appendChild(wrapper);
+
+    const tag = document.createElement("script");
+    tag.src = "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js";
+    const firstScriptTag = document.getElementsByTagName("script")[0];
+    firstScriptTag?.parentNode!.insertBefore(tag, firstScriptTag);
+
+    const editorContainer = this.shadowRoot.getElementById("editor-container");
+
+    tag.onload = () => {
+      new Quill(editorContainer, {
+        theme: "snow",
+      });
+    };
+  }
+}
+
+customElements.define("quill-editor", ShadowDOMEditor);
 
 interface NotePlugin extends StickyPlugin {}
 interface NoteConfig extends CustomStickyConfig {
   // some data
 }
 
-Quill.register({
-  "modules/toolbar": Toolbar,
-  "themes/snow": Snow,
-  "formats/bold": Bold,
-  "formats/italic": Italic,
-  "formats/header": Header,
-});
-
-customElements.define("my-quill", class extends HTMLElement {
-  constructor() {
-    super();
-    const shadowRoot = this.attachShadow({mode: 'open'});
-    shadowRoot.innerHTML = `
-
-    <div></div>
-    `;
-  }
-});
-
 const noteSticky: CustomStickyComposer = {
   type: "note",
   onCreate(sticky: Sticky<NoteConfig>) {
-    const myQuill = $$$("my-quill");
-    const quillHolder = myQuill.$("div")!;
-    sticky.replaceBody(quillHolder);
-    const quill = new Quill(quillHolder, {
-      bounds: quillHolder.parentElement,
-      modules: {
-        toolbar: [
-          [{ header: [1, 2, false] }],
-          ["bold", "italic", "underline"],
-          ["image", "code-block"],
-        ],
-      },
-      theme: "snow",
-    });
+    const quillDom = $$$("quill-editor");
+    sticky.replaceBody(quillDom);
   },
   onSave(sticky: Sticky<NotePlugin>) {},
   onDelete() {},

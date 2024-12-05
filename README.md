@@ -46,7 +46,6 @@ Mencrouche provides rich API for extensions:
 - [Selector Shorthands](#dollars-api---)
 - [Internationalization](#internationalization-api-n81i)
 - [Undo/Repo](#undoredo-api-apocalypse)
-- [Undo/Repo](#undoredo-api-apocalypse)
 - [Context Menu](#context-menu-api)
 - [Commands](#commands-api)
 
