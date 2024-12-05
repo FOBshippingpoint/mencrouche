@@ -25,7 +25,7 @@ let isYoutubeScriptLoaded = false;
 const dialog = $<HTMLDialogElement>("#youtubeDialog")!;
 const form = dialog.$<HTMLFormElement>("form")!;
 const cancelBtn = dialog.$<HTMLButtonElement>(
-  '[data-i18n="cancel_submit_btn"]',
+  '[data-i18n="cancelSubmitBtn"]',
 )!;
 const linkInput = dialog.$<HTMLInputElement>('[name="link"]')!;
 const videoIdInput = dialog.$<HTMLInputElement>('[name="videoId"]')!;
@@ -60,7 +60,7 @@ linkInput.on("input", () => {
     linkInput.setCustomValidity(""); // empty = valid, we need to refresh the
     // validity message to recover from previous invalid state.
   } else {
-    linkInput.setCustomValidity(n81i.t("cannot_found_youtube_video"));
+    linkInput.setCustomValidity(n81i.t("cannotFoundYoutubeVideo"));
     linkInput.reportValidity();
   }
 });

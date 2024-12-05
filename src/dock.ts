@@ -107,10 +107,10 @@ const dnd =
   );
 
 dialog
-  .$<HTMLFormElement>('[data-i18n="cancel_submit_btn"]')!
+  .$<HTMLFormElement>('[data-i18n="cancelSubmitBtn"]')!
   .on("click", () => dialog.close());
 appearanceDialog
-  .$<HTMLFormElement>('[data-i18n="cancel_submit_btn"]')!
+  .$<HTMLFormElement>('[data-i18n="cancelSubmitBtn"]')!
   .on("click", () => {
     updateDock(prevDockAppearanceAttrs);
     appearanceDialog.close();
@@ -169,14 +169,14 @@ form.on("submit", (e) => {
 
 registerContextMenu("dockBookmark", [
   {
-    name: "open_bookmark_in_add_tab_menu_item",
+    name: "openBookmarkInAddTabMenuItem",
     icon: "lucide-external-link",
     execute(target) {
       window.open((target as HTMLAnchorElement).href, "_blank");
     },
   },
   {
-    name: "open_bookmark_in_current_tab_menu_item",
+    name: "openBookmarkInCurrentTabMenuItem",
     icon: "lucide-link-2",
     execute(target) {
       window.open((target as HTMLAnchorElement).href, "_self");
@@ -184,7 +184,7 @@ registerContextMenu("dockBookmark", [
   },
   "hr",
   {
-    name: "edit_bookmark_menu_item",
+    name: "editBookmarkMenuItem",
     icon: "lucide-pencil",
     execute(target) {
       current = $<HTMLAnchorElement>(target as HTMLAnchorElement)!;
@@ -200,7 +200,7 @@ registerContextMenu("dockBookmark", [
     },
   },
   {
-    name: "delete_bookmark_menu_item",
+    name: "deleteBookmarkMenuItem",
     icon: "lucide-trash",
     execute(target) {
       apocalypse.write({
@@ -216,14 +216,14 @@ registerContextMenu("dockBookmark", [
 ]);
 registerContextMenu("dock", [
   {
-    name: "add_bookmark_menu_item",
+    name: "addBookmarkMenuItem",
     icon: "lucide-plus",
     execute() {
       addBookmarkBtn.click();
     },
   },
   {
-    name: "edit_dock_appearance_menu_item",
+    name: "editDockAppearanceMenuItem",
     icon: "lucide-sparkles",
     execute() {
       const { position, alwaysOnTop, showLabel, showAddBtn, iconSize } =

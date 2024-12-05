@@ -155,8 +155,8 @@ const markdownSticky: CustomStickyComposer = {
 const markdownStickyMenuItems: MenuItem[] = [
   (sticky: Sticky<MarkdownPlugin>) => ({
     name:
-      "markdown_sticky_edit_mode_" +
-      (sticky.classList.contains("editMode") ? "off" : "on"),
+      "markdownStickyEditMode" +
+      (sticky.classList.contains("editMode") ? "Off" : "On"),
     icon: sticky.classList.contains("editMode")
       ? "lucide-sticky-note"
       : "lucide-pencil",
@@ -166,8 +166,8 @@ const markdownStickyMenuItems: MenuItem[] = [
   }),
   (sticky: Sticky<MarkdownPlugin>) => ({
     name:
-      "markdown_sticky_split_view_" +
-      (sticky.classList.contains("splitView") ? "off" : "on"),
+      "markdownStickySplitView" +
+      (sticky.classList.contains("splitView") ? "Off" : "On"),
     icon: sticky.classList.contains("splitView")
       ? "lucide-square-equal"
       : "lucide-columns-2",

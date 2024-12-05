@@ -45,8 +45,8 @@
           <div>
             <button
               class="pureBtn addMarkdownStickyBtn"
-              data-command="add_markdown_sticky"
-              data-i18n="add_markdown_sticky_btn_title"
+              data-command="addMarkdownSticky"
+              data-i18n="addMarkdownStickyBtnTitle"
               data-i18n-for="title"
             >
               <svg
@@ -83,11 +83,11 @@
             </button>
           </div>
           <div class="dropdownButtons shadow none">
-            <button class="pureBtn" data-command="add_youtube_sticky">
-              <span data-i18n="add_youtube_sticky_btn"></span>
+            <button class="pureBtn" data-command="addYoutubeSticky">
+              <span data-i18n="addYoutubeStickyBtn"></span>
             </button>
-            <button class="pureBtn" data-command="add_spotify_sticky">
-              <span data-i18n="add_spotify_sticky_btn"></span>
+            <button class="pureBtn" data-command="addSpotifySticky">
+              <span data-i18n="addSpotifyStickyBtn"></span>
             </button>
           </div>
         </div>
@@ -134,13 +134,13 @@
           hidden=""
           type="checkbox"
           data-i18n-for="title"
-          data-i18n="toggle_dark_mode"
+          data-i18n="toggleDarkMode"
         />
         <button
           id="settingsBtn"
           class="pureBtn"
           data-i18n-for="title"
-          data-i18n="toggle_settings"
+          data-i18n="toggleSettings"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -326,7 +326,7 @@
             <input hidden="" type="checkbox" />
           </label>
           <textarea
-            data-i18n="sticky_textarea_start_typing_placeholder"
+            data-i18n="stickyTextareaStartTypingPlaceholder"
             data-i18n-for="placeholder"
           ></textarea>
           <div class="preview" hidden=""></div>
@@ -371,7 +371,7 @@
             <input hidden="" type="checkbox" />
           </label>
           <textarea
-            data-i18n="sticky_textarea_start_typing_placeholder"
+            data-i18n="stickyTextareaStartTypingPlaceholder"
             data-i18n-for="placeholder"
           ></textarea>
           <div class="preview" hidden=""></div>
@@ -447,7 +447,7 @@
           <input
             type="search"
             id="searchInput"
-            data-i18n="command_palette_search_placeholder"
+            data-i18n="commandPaletteSearchPlaceholder"
             data-i18n-for="placeholder"
           />
           <ul id="commandList"></ul>
@@ -463,24 +463,24 @@
             <h2 data-i18n="settings"></h2>
             <ul>
               <li>
-                <a href="#langPref" data-i18n="settings_language_section"></a>
+                <a href="#langPref" data-i18n="settingsLanguageSection"></a>
               </li>
               <li>
                 <a
                   href="#appearancePref"
-                  data-i18n="settings_appearance_section"
+                  data-i18n="settingsAppearanceSection"
                 ></a>
               </li>
               <li>
-                <a href="#storagePref" data-i18n="settings_storage_section">
+                <a href="#storagePref" data-i18n="settingsStorageSection">
                 </a>
               </li>
               <li>
-                <a href="#shortcutsPref" data-i18n="settings_shortcuts_section">
+                <a href="#shortcutsPref" data-i18n="settingsShortcutsSection">
                 </a>
               </li>
               <li>
-                <a href="#advancedPref" data-i18n="settings_advanced_section">
+                <a href="#advancedPref" data-i18n="settingsAdvancedSection">
                 </a>
               </li>
             </ul>
@@ -488,16 +488,16 @@
           <div>
             <section id="langPref">
               <header>
-                <h2 data-i18n="settings_language_section"></h2>
+                <h2 data-i18n="settingsLanguageSection"></h2>
               </header>
               <select id="langDropdown"></select>
             </section>
             <section id="appearancePref">
               <header>
-                <h2 data-i18n="settings_appearance_section"></h2>
+                <h2 data-i18n="settingsAppearanceSection"></h2>
               </header>
               <label for="uiOpacityInput">
-                <span data-i18n="ui_opacity"></span>
+                <span data-i18n="uiOpacity"></span>
                 <input
                   id="uiOpacityInput"
                   type="range"
@@ -508,7 +508,7 @@
                 />
               </label>
               <label>
-                <span data-i18n="palette_hue"></span>
+                <span data-i18n="paletteHue"></span>
                 <div class="huePreview">
                   <button id="hueWheel" class="round pureBtn shadow"></button>
                   <div>A</div>
@@ -517,13 +517,13 @@
                 </div>
                 <button
                   id="setPaletteHueToDefaultBtn"
-                  data-i18n="set_to_default_btn"
+                  data-i18n="setToDefaultBtn"
                 ></button>
               </label>
-              <h3 data-i18n="settings_appearance_background_section"></h3>
+              <h3 data-i18n="settingsAppearanceBackgroundSection"></h3>
               <div class="formGroup">
                 <div class="dropzone">
-                  <p data-i18n="dnd_image_instruction"></p>
+                  <p data-i18n="dndImageInstruction"></p>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="64"
@@ -546,24 +546,24 @@
                   <input type="file" accept="image/*" hidden="" />
                 </div>
                 <label for="backgroundImageUrlInput">
-                  <span data-i18n="background_image_link"></span>
+                  <span data-i18n="backgroundImageLink"></span>
                   <input
                     id="backgroundImageUrlInput"
                     data-i18n-for="placeholder"
-                    data-i18n="background_image_url_input_placeholder"
+                    data-i18n="backgroundImageUrlInputPlaceholder"
                     type="url"
                   />
                 </label>
                 <button
                   id="setBackgroundImageToDefaultBtn"
                   class="btn"
-                  data-i18n="set_to_default_btn"
+                  data-i18n="setToDefaultBtn"
                 ></button>
               </div>
             </section>
             <section id="storagePref">
               <header>
-                <h2 data-i18n="settings_storage_section"></h2>
+                <h2 data-i18n="settingsStorageSection"></h2>
               </header>
               <div class="formGroupHorizontal">
                 <button id="importDocumentBtn" class="btn">
@@ -583,7 +583,7 @@
                       d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"
                     />
                   </svg>
-                  <span data-i18n="import_document_btn"></span>
+                  <span data-i18n="importDocumentBtn"></span>
                 </button>
                 <button id="exportDocumentBtn" class="btn">
                   <svg
@@ -604,12 +604,12 @@
                     <path d="M12 10v6" />
                     <path d="m15 13-3 3-3-3" />
                   </svg>
-                  <span data-i18n="export_document_btn"></span>
+                  <span data-i18n="exportDocumentBtn"></span>
                 </button>
                 <button
                   id="deleteDocumentBtn"
                   class="btn"
-                  data-i18n="delete_document_btn"
+                  data-i18n="deleteDocumentBtn"
                   type="reset"
                 ></button>
               </div>
@@ -622,14 +622,14 @@
               <div class="formGroup">
                 <label>
                   <input checked type="checkbox" name="isCloudSyncEnabled" />
-                  <span data-i18n="is_cloud_sync_enabled_checkbox_label"></span>
+                  <span data-i18n="isCloudSyncEnabledCheckboxLabel"></span>
                 </label>
                 <label>
-                  <span data-i18n="sync_url_input_label"></span>
+                  <span data-i18n="syncUrlInputLabel"></span>
                   <input type="url" name="syncUrl" />
                 </label>
                 <!-- <label> -->
-                <!--   <span data-i18n="sync_remote_auth_key_input_label"></span> -->
+                <!--   <span data-i18n="syncRemoteAuthKeyInputLabel"></span> -->
                 <!--   <input type="password" name="syncRemoteAuthKey" /> -->
                 <!-- </label> -->
                 <button id="shareDataLinkBtn" class="btn">
@@ -652,13 +652,13 @@
                       d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
                     />
                   </svg>
-                  <span data-i18n="share_data_link_btn"></span>
+                  <span data-i18n="shareDataLinkBtn"></span>
                 </button>
               </div>
             </section>
             <section id="shortcutsPref">
               <header>
-                <h2 data-i18n="settings_shortcuts_section"></h2>
+                <h2 data-i18n="settingsShortcutsSection"></h2>
               </header>
               <div id="shortcutList"></div>
               <template id="shortcutListItem">
@@ -672,14 +672,14 @@
             </section>
             <section id="advancedPref">
               <header>
-                <h2 data-i18n="settings_advanced_section"></h2>
+                <h2 data-i18n="settingsAdvancedSection"></h2>
               </header>
               <details>
-                <summary data-i18n="click_to_expand"></summary>
+                <summary data-i18n="clickToExpand"></summary>
                 <label for="customJsTextArea">
-                  <span data-i18n="custom_javascript_label"></span>
+                  <span data-i18n="customJavascriptLabel"></span>
                   <div
-                    data-i18n="custom_javascript_help"
+                    data-i18n="customJavascriptHelp"
                     data-i18n-for="data-tooltip"
                   >
                     <svg
@@ -701,12 +701,12 @@
                 ></label>
                 <textarea
                   id="customJsTextArea"
-                  data-i18n="custom_javascript_placeholder"
+                  data-i18n="customJavascriptPlaceholder"
                   data-i18n-for="placeholder"
                 ></textarea>
                 <label for="customCssTextArea">
-                  <span data-i18n="custom_css_label"></span>
-                  <div data-i18n="custom_css_help" data-i18n-for="data-tooltip">
+                  <span data-i18n="customCssLabel"></span>
+                  <div data-i18n="customCssHelp" data-i18n-for="data-tooltip">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
@@ -726,7 +726,7 @@
                 ></label>
                 <textarea
                   id="customCssTextArea"
-                  data-i18n="custom_css_placeholder"
+                  data-i18n="customCssPlaceholder"
                   data-i18n-for="placeholder"
                 ></textarea>
               </details>
@@ -735,17 +735,17 @@
             <section id="settingsBtnGroup" class="formGroupHorizontal">
               <button
                 id="saveSettingsBtn"
-                data-i18n="save_settings_btn"
+                data-i18n="saveSettingsBtn"
                 class="btn"
               ></button>
               <button
                 id="saveAndCloseSettingsBtn"
-                data-i18n="save_and_close_settings_btn"
+                data-i18n="saveAndCloseSettingsBtn"
                 class="btn"
               ></button>
               <button
                 id="cancelSettingsBtn"
-                data-i18n="cancel_settings_btn"
+                data-i18n="cancelSettingsBtn"
                 class="btn"
               ></button>
             </section>
@@ -764,32 +764,32 @@
       <form>
         <div class="gaInput">
           <label>
-            <span data-i18n="bookmark_href_label"></span>
+            <span data-i18n="bookmarkHrefLabel"></span>
             <input name="hrefLike" required />
           </label>
           <label>
-            <span data-i18n="bookmark_label_label"></span>
+            <span data-i18n="bookmarkLabelLabel"></span>
             <input name="label" />
           </label>
           <details>
-            <summary data-i18n="bookmark_more_options"></summary>
+            <summary data-i18n="bookmarkMoreOptions"></summary>
             <div class="grid">
               <label>
-                <span data-i18n="bookmark_target_label"></span>
+                <span data-i18n="bookmarkTargetLabel"></span>
                 <select name="target">
                   <option
                     selected
                     value="_self"
-                    data-i18n="open_bookmark_in_current_tab_menu_item"
+                    data-i18n="openBookmarkInCurrentTabMenuItem"
                   ></option>
                   <option
                     value="_blank"
-                    data-i18n="open_bookmark_in_add_tab_menu_item"
+                    data-i18n="openBookmarkInAddTabMenuItem"
                   ></option>
                 </select>
               </label>
               <label>
-                <span data-i18n="bookmark_icon_label"></span>
+                <span data-i18n="bookmarkIconLabel"></span>
                 <input name="icon" />
               </label>
             </div>
@@ -800,16 +800,16 @@
           <button
             class="btn"
             type="button"
-            data-i18n="cancel_submit_btn"
+            data-i18n="cancelSubmitBtn"
           ></button>
-          <button class="btn" type="submit" data-i18n="submit_btn"></button>
+          <button class="btn" type="submit" data-i18n="submitBtn"></button>
         </div>
       </form>
     </dialog>
     <dialog id="dockAppearanceDialog">
       <form class="grid">
         <label>
-          <span data-i18n="icon_size_input_label"></span>
+          <span data-i18n="iconSizeInputLabel"></span>
           <input
             type="range"
             name="iconSize"
@@ -821,8 +821,8 @@
         </label>
         <label>
           <input type="checkbox" name="alwaysOnTop" />
-          <span data-i18n="always_on_top_checkbox_label"></span>
-          <div data-i18n="always_on_top_help" data-i18n-for="data-tooltip">
+          <span data-i18n="alwaysOnTopCheckboxLabel"></span>
+          <div data-i18n="alwaysOnTopHelp" data-i18n-for="data-tooltip">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -843,11 +843,11 @@
         </label>
         <label>
           <input type="checkbox" name="showAddBtn" />
-          <span data-i18n="show_add_bookmark_btn_checkbox_label"></span>
+          <span data-i18n="showAddBookmarkBtnCheckboxLabel"></span>
         </label>
         <label>
           <input type="checkbox" name="showLabel" />
-          <span data-i18n="show_label_checkbox_label"></span>
+          <span data-i18n="showLabelCheckboxLabel"></span>
         </label>
         <div class="grid radioGroup">
           <label class="radioOption">
@@ -855,82 +855,82 @@
               <div class="dummyDock dock-right"></div>
             </div>
             <input type="radio" name="position" value="right" />
-            <span data-i18n="dock_position_right_radio_label"></span>
+            <span data-i18n="dockPositionRightRadioLabel"></span>
           </label>
           <label class="radioOption">
             <div class="dummyScreen rounded surface">
               <div class="dummyDock dock-bottom"></div>
             </div>
             <input type="radio" name="position" value="bottom" />
-            <span data-i18n="dock_position_bottom_radio_label"></span>
+            <span data-i18n="dockPositionBottomRadioLabel"></span>
           </label>
           <label class="radioOption">
             <div class="dummyScreen rounded surface">
               <div class="dummyDock dock-top"></div>
             </div>
             <input type="radio" name="position" value="top" />
-            <span data-i18n="dock_position_top_radio_label"></span>
+            <span data-i18n="dockPositionTopRadioLabel"></span>
           </label>
           <label class="radioOption">
             <div class="dummyScreen rounded surface">
               <div class="dummyDock dock-left"></div>
             </div>
             <input type="radio" name="position" value="left" />
-            <span data-i18n="dock_position_left_radio_label"></span>
+            <span data-i18n="dockPositionLeftRadioLabel"></span>
           </label>
         </div>
         <div class="gaButtonGroup">
           <button
             class="btn"
             type="button"
-            data-i18n="cancel_submit_btn"
+            data-i18n="cancelSubmitBtn"
           ></button>
-          <button class="btn" type="submit" data-i18n="submit_btn"></button>
+          <button class="btn" type="submit" data-i18n="submitBtn"></button>
         </div>
       </form>
     </dialog>
     <dialog id="youtubeDialog">
       <form class="grid">
         <label>
-          <span data-i18n="youtube_link_input_label"></span>
+          <span data-i18n="youtubeLinkInputLabel"></span>
           <input name="link" required />
         </label>
         <label>
           <input type="checkbox" name="autoplay" checked />
-          <span data-i18n="youtube_autoplay_checkbox_label"></span>
+          <span data-i18n="youtubeAutoplayCheckboxLabel"></span>
         </label>
         <input name="videoId" type="hidden" />
         <div class="gaButtonGroup">
           <button
             class="btn"
             type="button"
-            data-i18n="cancel_submit_btn"
+            data-i18n="cancelSubmitBtn"
           ></button>
-          <button class="btn" type="submit" data-i18n="submit_btn"></button>
+          <button class="btn" type="submit" data-i18n="submitBtn"></button>
         </div>
       </form>
     </dialog>
     <dialog id="spotifyDialog">
       <form class="grid">
         <label>
-          <span data-i18n="spotify_link_input"></span>
+          <span data-i18n="spotifyLinkInput"></span>
           <input type="url" name="link" required />
         </label>
         <select name="height">
           <option
             selected
             value="152px"
-            data-i18n="spotify_compact_height"
+            data-i18n="spotifyCompactHeight"
           ></option>
-          <option value="352px" data-i18n="spotify_normal_height"></option>
+          <option value="352px" data-i18n="spotifyNormalHeight"></option>
         </select>
         <div class="gaButtonGroup">
           <button
             class="btn"
             type="button"
-            data-i18n="cancel_submit_btn"
+            data-i18n="cancelSubmitBtn"
           ></button>
-          <button class="btn" type="submit" data-i18n="submit_btn"></button>
+          <button class="btn" type="submit" data-i18n="submitBtn"></button>
         </div>
       </form>
     </dialog>

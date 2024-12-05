@@ -38,14 +38,14 @@ const mutationObserver = new MutationObserver((mutations) => {
 
 registerContextMenu("basic", [
   (sticky: Sticky) => ({
-    name: "delete_sticky",
+    name: "deleteSticky",
     icon: "lucide-trash",
     execute() {
       sticky.delete();
     },
   }),
   (sticky: Sticky) => ({
-    name: "duplicate_sticky",
+    name: "duplicateSticky",
     icon: "lucide-copy",
     execute() {
       sticky.duplicate();
@@ -54,7 +54,7 @@ registerContextMenu("basic", [
   (sticky: Sticky) => ({
     name:
       (sticky.classList.contains("maximized") ? "minimize" : "maximize") +
-      "_sticky",
+      "Sticky",
     icon: sticky.classList.contains("maximized")
       ? "lucide-minimize-2"
       : "lucide-maximize-2",
@@ -63,7 +63,7 @@ registerContextMenu("basic", [
     },
   }),
   (sticky: Sticky) => ({
-    name: (sticky.classList.contains("pin") ? "unpin" : "pin") + "_sticky",
+    name: (sticky.classList.contains("pin") ? "unpin" : "pin") + "Sticky",
     icon: sticky.classList.contains("pin") ? "lucide-pin-off" : "lucide-pin",
     execute() {
       sticky.togglePin();
@@ -71,8 +71,8 @@ registerContextMenu("basic", [
   }),
   (sticky: Sticky) => ({
     name:
-      "sticky_ghost_mode_" +
-      (sticky.classList.contains("ghost") ? "off" : "on"),
+      "stickyGhostMode" +
+      (sticky.classList.contains("ghost") ? "Off" : "On"),
     icon: sticky.classList.contains("ghost")
       ? "lucide-square"
       : "lucide-box-select",

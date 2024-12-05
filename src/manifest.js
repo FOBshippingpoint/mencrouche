@@ -4,7 +4,7 @@ export function getManifestString(version = 2) {
 		name: "Goocoucou",
 		version: process.env.npm_package_version,
 		author: "FOBshippingpoint",
-		description: "__MSG_extension_description__",
+		description: "__MSG_extensionDescription__",
 		homepage_url: "https://github.com/FOBshippingpoint/goocoucou-webext",
 		chrome_url_overrides: {
 			newtab: "index.html",

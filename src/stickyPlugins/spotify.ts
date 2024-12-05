@@ -19,7 +19,7 @@ interface SpotifyConfig extends CustomStickyConfig {
 const dialog = $<HTMLDialogElement>("#spotifyDialog")!;
 const form = dialog.$<HTMLFormElement>("form")!;
 const cancelBtn = dialog.$<HTMLButtonElement>(
-  '[data-i18n="cancel_submit_btn"]',
+  '[data-i18n="cancelSubmitBtn"]',
 )!;
 const linkInput = dialog.$<HTMLInputElement>('[name="link"]')!;
 let current: Sticky;
@@ -42,11 +42,11 @@ linkInput.on("input", () => {
       linkInput.setCustomValidity(""); // empty = valid, we need to refresh the
       // validity message to recover from previous invalid state.
     } else {
-      linkInput.setCustomValidity(n81i.t("cannot_found_spotify_media"));
+      linkInput.setCustomValidity(n81i.t("cannotFoundSpotifyMedia"));
       linkInput.reportValidity();
     }
   } catch (_) {
-    linkInput.setCustomValidity(n81i.t("cannot_found_spotify_media"));
+    linkInput.setCustomValidity(n81i.t("cannotFoundSpotifyMedia"));
     linkInput.reportValidity();
   }
 });

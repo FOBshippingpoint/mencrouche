@@ -85,17 +85,17 @@ const backgroundImageFileInput =
   backgroundImageDropzone.$<HTMLInputElement>("input")!;
 
 const unsavedChangesAlertDialog = createDialog({
-  title: "unsaved_changes",
-  message: "unsaved_changes_message",
+  title: "unsavedChanges",
+  message: "unsavedChangesMessage",
   buttons: [
     {
-      "data-i18n": "cancel_submit_btn",
+      "data-i18n": "cancelSubmitBtn",
       onClick() {
         unsavedChangesAlertDialog.close();
       },
     },
     {
-      "data-i18n": "leave_settings_page",
+      "data-i18n": "leaveSettingsPage",
       onClick() {
         changesManager.cancel();
         closeSettingsPage();
@@ -171,7 +171,7 @@ shareDataLinkBtn.on("click", () => {
   }
 });
 deleteDocumentBtn.on("click", async () => {
-  if (confirm(n81i.t("confirm_delete_document"))) {
+  if (confirm(n81i.t("confirmDeleteDocument"))) {
     localStorage.clear();
     try {
       // TODO: should use constant to avoid duplicates string.
@@ -245,17 +245,17 @@ importDocumentBtn.on("click", () => {
 importDocumentFileInput.on("change", () => {
   const file = importDocumentFileInput.files?.[0];
   const discardCurrentChangesDialog = createDialog({
-    title: "discard_current_changes",
-    message: "discard_current_changes_and_load_file_message",
+    title: "discardCurrentChanges",
+    message: "discardCurrentChangesAndLoadFileMessage",
     buttons: [
       {
-        "data-i18n": "cancel_submit_btn",
+        "data-i18n": "cancelSubmitBtn",
         onClick() {
           discardCurrentChangesDialog.close();
         },
       },
       {
-        "data-i18n": "discard_btn",
+        "data-i18n": "discardBtn",
         async onClick() {
           if (file) {
             fileReadyForImport = file;
@@ -309,7 +309,7 @@ backgroundImageUrlInput.on("paste", async (e) => {
         dataset.setItem("backgroundImageUrl", url);
         changesManager.markDirty();
       } catch (_) {
-        alert(n81i.t("image_url_is_not_valid_alert"));
+        alert(n81i.t("imageUrlIsNotValidAlert"));
       }
     }
   }
@@ -513,8 +513,8 @@ export function createShortcutItem({
   span.dataset.i18n = actionName;
   input.value = keySequence;
   input.dataset.actionName = actionName;
-  recordBtn.dataset.i18n = "record_shortcut_btn";
-  resetBtn.dataset.i18n = "reset_btn";
+  recordBtn.dataset.i18n = "recordShortcutBtn";
+  resetBtn.dataset.i18n = "resetBtn";
 
   n81i.translateElement(label);
   shortcutList.appendChild(label);
@@ -530,12 +530,12 @@ shortcutList.on("click", (e) => {
     if (btn.classList.contains("recordBtn")) {
       if (!btn.classList.contains("recording")) {
         // Start
-        btn.textContent = n81i.t("stop_record_shortcut_btn");
+        btn.textContent = n81i.t("stopRecordShortcutBtn");
         recordingKikey.startRecord();
         input.value = "...";
       } else {
         // Stop
-        btn.textContent = n81i.t("record_shortcut_btn");
+        btn.textContent = n81i.t("recordShortcutBtn");
         const newSequence = recordingKikey.stopRecord();
         if (newSequence) {
           changesManager.setChange(actionName, () => {
@@ -658,11 +658,11 @@ customJsTextArea.on("input", () => {
     const customJs = customJsTextArea.value;
     changesManager.setChange("setCustomJs", () => {
       const confirmReloadDialog = createDialog({
-        title: "reload_needed",
-        message: "reload_needed_message",
+        title: "reloadNeeded",
+        message: "reloadNeededMessage",
         buttons: [
           {
-            "data-i18n": "ok_btn",
+            "data-i18n": "okBtn",
             onClick() {
               changesManager.cancel();
               isFirstJsLoad = false;

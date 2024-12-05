@@ -110,7 +110,7 @@ function executeKeyboardSelectedCommand() {
   }
 }
 
-shortcutManager.on("toggle_command_palette", "C-.", toggleCommandPalette);
+shortcutManager.on("toggleCommandPalette", "C-.", toggleCommandPalette);
 searchKikey.on("escape", closeCommandPalette);
 searchKikey.on("arrowup", (e) => {
   e.preventDefault();

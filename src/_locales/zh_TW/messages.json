@@ -1,125 +1,121 @@
 {
-	"add_bookmark_btn": {
+	"addBookmarkBtn": {
 		"message": "新增書籤",
 		"description": "Button text for adding bookmark."
 	},
-	"background_image_link": {
+	"backgroundImageLink": {
 		"message": "背景圖片連結",
 		"description": "Label for the background image URL input."
 	},
-	"background_image_url_input_placeholder": {
+	"backgroundImageUrlInputPlaceholder": {
 		"message": "貼上圖片連結",
 		"description": "Placeholder text for the background image URL input."
 	},
-	"bookmark_href_label": {
+	"bookmarkHrefLabel": {
 		"message": "連結",
 		"description": "Label text for the bookmark link input."
 	},
-	"bookmark_icon_label": {
+	"bookmarkIconLabel": {
 		"message": "圖示 (svg或dataurl)",
 		"description": "Label text for the bookmark link input."
 	},
-	"bookmark_label_label": {
+	"bookmarkLabelLabel": {
 		"message": "標題",
 		"description": "Label text for the bookmark label input."
 	},
-	"bookmark_layout_checkbox": {
-		"message": "切換佈局",
-		"description": "Button text for adding bookmark."
-	},
-	"bookmark_more_options": {
+	"bookmarkMoreOptions": {
 		"message": "更多選項",
 		"description": "More options button for bookmark editing dialog."
 	},
-	"bookmark_target_label": {
+	"bookmarkTargetLabel": {
 		"message": "開啟方式",
 		"description": "Label text for the bookmark anchor target."
 	},
-	"cancel_settings_btn": {
+	"cancelSettingsBtn": {
 		"message": "取消",
 		"description": "Text for the cancel settings button."
 	},
-	"cancel_submit_btn": {
+	"cancelSubmitBtn": {
 		"message": "取消",
 		"description": "Button text for submitting form."
 	},
-	"command_palette_search_placeholder": {
+	"commandPaletteSearchPlaceholder": {
 		"message": "搜尋指令...",
 		"description": "Placeholder text for the command palette search bar."
 	},
-	"confirm_delete_document": {
+	"confirmDeleteDocument": {
 		"message": "確定要刪除文件嗎？",
 		"description": "Confirmation message while deleting document."
 	},
-	"delete_all_stickies": {
+	"deleteAllStickies": {
 		"message": "刪除所有便利貼",
 		"description": "Command description for deleting all sticky notes."
 	},
-	"delete_bookmark_menu_item": {
+	"deleteBookmarkMenuItem": {
 		"message": "刪除",
 		"description": "Context menu item label text for deleting bookmark."
 	},
-	"delete_document_btn": {
+	"deleteDocumentBtn": {
 		"message": "刪除",
 		"description": "Text for the delete document button."
 	},
-	"delete_sticky": {
+	"deleteSticky": {
 		"message": "刪除便利貼",
 		"description": "Command description for deleting a sticky note."
 	},
-	"dnd_image_instruction": {
+	"dndImageInstruction": {
 		"message": "拖曳圖片或點擊來上傳檔案",
 		"description": "Instructions for setting the background image via drag and drop."
 	},
-	"duplicate_sticky": {
+	"duplicateSticky": {
 		"message": "複製便利貼",
 		"description": "Command description for duplicating a sticky note."
 	},
-	"edit_bookmark_menu_item": {
+	"editBookmarkMenuItem": {
 		"message": "編輯",
 		"description": "Context menu item label text for editing bookmark."
 	},
-	"export_document_btn": {
+	"exportDocumentBtn": {
 		"message": "匯出",
 		"description": "Text for the export document button."
 	},
-	"extension_description": {
+	"extensionDescription": {
 		"message": "新分頁",
 		"description": "Description of the extension."
 	},
-	"image_url_is_not_valid_alert": {
+	"imageUrlIsNotValidAlert": {
 		"message": "無效的圖片連結。請嘗試其他連結。",
 		"description": "Alert message for an invalid image URL."
 	},
-	"add_bookmark_sticky": {
+	"addBookmarkSticky": {
 		"message": "新增書籤貼",
 		"description": "Command description for adding a new bookmark sticky."
 	},
-	"add_markdown_sticky": {
+	"addMarkdownSticky": {
 		"message": "新增便利貼",
 		"description": "Command description for adding a new sticky note."
 	},
-	"add_youtube_sticky": {
+	"addYoutubeSticky": {
 		"message": "新增YouTube便利貼",
 		"description": "Command description for adding a new youtube sticky note."
 	},
-  "add_spotify_sticky": {
+  "addSpotifySticky": {
     "message": "新增Spotify便利貼",
     "description": "Command description for adding a new spotify sticky note."
   },
-	"open_bookmark_in_current_tab_menu_item": {
+	"openBookmarkInCurrentTabMenuItem": {
 		"message": "在此分頁開啟",
 		"description": "Context menu item label text for opening bookmark link in current tab."
 	},
-	"open_bookmark_in_add_tab_menu_item": {
+	"openBookmarkInAddTabMenuItem": {
 		"message": "用新分頁開啟",
 		"description": "Context menu item label text for opening bookmark link in a new tab."
 	},
-	"open_youtube": {
+	"openYoutube": {
 		"message": "開啟YouTube",
 		"description": "Command description for opening YouTube."
 	},
-	"record_shortcut_btn": {
+	"recordShortcutBtn": {
 		"message": "錄製",
 		"description": "Text for the record shortcut button."
 	},
@@ -127,19 +123,19 @@
 		"message": "重做",
 		"description": "redo"
 	},
-	"reset_btn": {
+	"resetBtn": {
 		"message": "重設",
 		"description": "Text for the button to reset shortcut to default."
 	},
-	"save_and_close_settings_btn": {
+	"saveAndCloseSettingsBtn": {
 		"message": "儲存並關閉",
 		"description": "Text for the save and close settings button."
 	},
-	"save_document": {
+	"saveDocument": {
 		"message": "儲存文件",
 		"description": "Command description for saving documents."
 	},
-	"save_settings_btn": {
+	"saveSettingsBtn": {
 		"message": "儲存",
 		"description": "Text for the save settings button."
 	},
@@ -151,87 +147,87 @@
 		"message": "儲存中...",
 		"description": "Status message while saving a document."
 	},
-	"set_background_image": {
+	"setBackgroundImage": {
 		"message": "設定背景圖片",
 		"description": "Command description for setting the background image."
 	},
-	"set_to_default_btn": {
+	"setToDefaultBtn": {
 		"message": "重設為預設值",
 		"description": "Button text for resetting the background image to default."
 	},
-	"settings_appearance_background_section": {
+	"settingsAppearanceBackgroundSection": {
 		"message": "背景",
 		"description": "Title for the background subsection in appearance settings."
 	},
-	"settings_appearance_section": {
+	"settingsAppearanceSection": {
 		"message": "外觀",
 		"description": "Title for the appearance section in settings."
 	},
-	"settings_language_section": {
+	"settingsLanguageSection": {
 		"message": "語言",
 		"description": "Title for the language section in settings."
 	},
-	"settings_shortcuts_section": {
+	"settingsShortcutsSection": {
 		"message": "快捷鍵",
 		"description": "Title for the shortcuts section in settings."
 	},
-	"settings_storage_section": {
+	"settingsStorageSection": {
 		"message": "檔案與同步",
 		"description": "Title for the storage section in settings."
 	},
-	"sticky_textarea_start_typing_placeholder": {
+	"stickyTextareaStartTypingPlaceholder": {
 		"message": "開始輸入...",
 		"description": "Placeholder text for the sticky note textarea."
 	},
-	"stop_record_shortcut_btn": {
+	"stopRecordShortcutBtn": {
 		"message": "停止",
 		"description": "Text for the stop recording shortcut button."
 	},
-	"submit_btn": {
+	"submitBtn": {
 		"message": "確認",
 		"description": "Button text for submitting form."
 	},
-	"toggle_auto_arrange": {
+	"toggleAutoArrange": {
 		"message": "切換整齊模式",
 		"description": "Command description for toggling between arrange and free mode for sticky notes."
 	},
-	"toggle_command_palette": {
+	"toggleCommandPalette": {
 		"message": "切換指令窗格",
 		"description": "Command description for toggling the command palette."
 	},
-	"toggle_dark_mode": {
+	"toggleDarkMode": {
 		"message": "切換深色/淺色模式",
 		"description": "Command description for toggling dark mode on/off."
 	},
-	"toggle_ghost_mode": {
+	"toggleGhostMode": {
 		"message": "切換隱藏邊框模式",
 		"description": "Command description for toggling ghost mode."
 	},
-	"toggle_global_ghost_mode": {
+	"toggleGlobalGhostMode": {
 		"message": "切換全域隱藏邊框模式",
 		"description": "Command description for toggling global ghost mode."
 	},
-	"toggle_maximize_sticky": {
+	"toggleMaximizeSticky": {
 		"message": "切換最大化",
 		"description": "Command description for toggling maximize/minimize of a sticky note."
 	},
-	"toggle_settings": {
+	"toggleSettings": {
 		"message": "開啟/關閉設定頁面",
 		"description": "Command description for toggling the settings page."
 	},
-	"toggle_split_view": {
+	"toggleSplitView": {
 		"message": "切換雙欄",
 		"description": "Command description for toggling split view of sticky notes."
 	},
-	"toggle_sticky_edit_mode": {
+	"toggleStickyEditMode": {
 		"message": "切換編輯模式",
 		"description": "Command description for toggling edit/view mode for the current sticky note."
 	},
-	"toggle_sticky_pin_mode": {
+	"toggleStickyPinMode": {
 		"message": "切換釘選",
 		"description": "Command description for toggling pin mode of a sticky note."
 	},
-	"ui_opacity": {
+	"uiOpacity": {
 		"message": "界面透明度",
 		"description": "Label for the UI opacity input."
 	},
@@ -243,151 +239,151 @@
 		"message": "未儲存的變更",
 		"description": "Status message for unsaved changes in a document."
 	},
-	"show_add_bookmark_btn_checkbox_label": {
+	"showAddBookmarkBtnCheckboxLabel": {
 		"message": "顯示新增捷徑按鈕",
 		"description": "Checkbox label for showing/not showing add bookmark button."
 	},
-	"icon_size_input_label": {
+	"iconSizeInputLabel": {
 		"message": "圖示大小",
 		"description": "Label for adjusting bookmark icon size."
 	},
-	"show_label_checkbox_label": {
+	"showLabelCheckboxLabel": {
 		"message": "顯示捷徑標題",
 		"description": "Checkbox label for showing/not showing bookmark label."
 	},
-	"add_bookmark_menu_item": {
+	"addBookmarkMenuItem": {
 		"message": "新增書籤",
 		"description": "Menu item label for adding bookmark."
 	},
-	"edit_dock_appearance_menu_item": {
+	"editDockAppearanceMenuItem": {
 		"message": "設定外觀",
 		"description": "Menu item label for editing dock appearance."
 	},
-	"dock_position_right_radio_label": {
+	"dockPositionRightRadioLabel": {
 		"message": "停駐於右側",
 		"description": "Radio label for dock position right."
 	},
-	"dock_position_bottom_radio_label": {
+	"dockPositionBottomRadioLabel": {
 		"message": "停駐於底端",
 		"description": "Radio label for dock position bottom."
 	},
-	"dock_position_top_radio_label": {
+	"dockPositionTopRadioLabel": {
 		"message": "停駐於頂端",
 		"description": "Radio label for dock position top."
 	},
-	"dock_position_left_radio_label": {
+	"dockPositionLeftRadioLabel": {
 		"message": "停駐於左側",
 		"description": "Radio label for dock position left."
 	},
-	"youtube_link_input_label": {
+	"youtubeLinkInputLabel": {
 		"message": "YouTube影片連結",
 		"description": "Input label for YouTube video link."
 	},
-	"youtube_autoplay_checkbox_label": {
+	"youtubeAutoplayCheckboxLabel": {
 		"message": "自動播放",
 		"description": "Checkbox label for autoplay YouTube video."
 	},
-	"cannot_found_youtube_video": {
+	"cannotFoundYoutubeVideo": {
 		"message": "YouTube影片連結格式有誤",
 		"description": "Error message displayed when the YouTube video ID cannot be found in the provided input."
 	},
-	"palette_hue": {
+	"paletteHue": {
 		"message": "色調",
 		"description": "Label for the palette hue wheel in appearance settings."
 	},
-	"spotify_link_input": {
+	"spotifyLinkInput": {
 		"message": "Spotify曲目連結",
 		"description": "Input label for the Spotify link."
 	},
-	"spotify_normal_height": {
+	"spotifyNormalHeight": {
 		"message": "普通 (352px)",
 		"description": "Normal height option for embedded Spotify media."
 	},
-	"spotify_compact_height": {
+	"spotifyCompactHeight": {
 		"message": "緊密 (152px)",
 		"description": "Compact height option for embedded Spotify media."
 	},
-	"cannot_found_spotify_media": {
+	"cannotFoundSpotifyMedia": {
 		"message": "找不到Spotify曲目",
 		"description": "Error message displayed when the Spotify media cannot be found in the provided input."
 	},
-	"add_other_sticky_group": {
+	"addOtherStickyGroup": {
 		"message": "其他便利貼",
 		"description": "Context menu sub-menu name for other sticky group."
 	},
-	"markdown_sticky_edit_mode_on": {
+	"markdownStickyEditModeOn": {
 		"message": "編輯模式",
 		"description": "Context menu label for toggle on markdown sticky edit mode."
 	},
-	"markdown_sticky_edit_mode_off": {
+	"markdownStickyEditModeOff": {
 		"message": "檢視模式",
 		"description": "Context menu label for toggle off markdown sticky edit mode."
 	},
-	"markdown_sticky_split_view_on": {
+	"markdownStickySplitViewOn": {
 		"message": "雙欄模式",
 		"description": "Context menu label for toggle on markdown sticky split view."
 	},
-	"markdown_sticky_split_view_off": {
+	"markdownStickySplitViewOff": {
 		"message": "單欄模式",
 		"description": "Context menu label for toggle off markdown sticky split view."
 	},
-  "maximize_sticky": {
+  "maximizeSticky": {
 		"message": "最大化便利貼",
 		"description": "Context menu option to maximize a sticky note."
 	},
-	"minimize_sticky": {
+	"minimizeSticky": {
 		"message": "最小化便利貼",
 		"description": "Context menu option to minimize a sticky note."
 	},
-	"pin_sticky": {
+	"pinSticky": {
 		"message": "釘選便利貼",
 		"description": "Context menu option to pin a sticky note."
 	},
-	"unpin_sticky": {
+	"unpinSticky": {
 		"message": "取消釘選便利貼",
 		"description": "Context menu option to unpin a sticky note."
 	},
-	"sticky_ghost_mode_on": {
+	"stickyGhostModeOn": {
 		"message": "隱藏邊框",
 		"description": "Context menu option to enable ghost mode on a sticky note."
 	},
-	"sticky_ghost_mode_off": {
+	"stickyGhostModeOff": {
 		"message": "顯示邊框",
 		"description": "Context menu option to disable ghost mode on a sticky note."
 	},
-	"unsaved_changes": {
+	"unsavedChanges": {
 		"message": "尚未儲存變更",
 		"description": "Dialog title indicating unsaved changes."
 	},
-	"unsaved_changes_message": {
+	"unsavedChangesMessage": {
 		"message": "確定要離開嗎？",
 		"description": "Dialog message prompting the user to confirm leaving with unsaved changes."
 	},
-	"leave_settings_page": {
+	"leaveSettingsPage": {
 		"message": "離開",
 		"description": "Dialog button label to confirm leaving the settings page."
 	},
-	"always_on_top_checkbox_label": {
+	"alwaysOnTopCheckboxLabel": {
 		"message": "顯示於最上層",
 		"description": "Label for the checkbox that keeps a dock always on top."
 	},
-	"always_on_top_help": {
+	"alwaysOnTopHelp": {
 		"message": "避免被便利貼遮住",
 		"description": "Help message for checkbox that keeps a dock always on top."
 	},
-	"add_youtube_sticky_btn": {
+	"addYoutubeStickyBtn": {
 		"message": "YouTube",
 		"description": "Button label for adding YouTube sticky."
 	},
-	"add_spotify_sticky_btn": {
+	"addSpotifyStickyBtn": {
 		"message": "Spotify",
 		"description": "Button label for adding Spotify sticky."
 	},
-	"sync_url_input_label": {
+	"syncUrlInputLabel": {
 		"message": "雲端同步連結",
 		"description": "Input label for syncing service url."
 	},
-	"share_data_link_btn": {
+	"shareDataLinkBtn": {
 		"message": "分享連結",
 		"description": "Input label for sharing data link."
 	},
@@ -395,91 +391,91 @@
 		"message": "設定",
 		"description": "Settings page header."
 	},
-  "import_document_btn": {
+  "importDocumentBtn": {
 		"message": "匯入",
 		"description": "Button label for import file."
 	},
-	"discard_current_changes": {
+	"discardCurrentChanges": {
 		"message": "載入舊檔",
 		"description": "Dialog title indicating replace title and select."
 	},
-	"discard_current_changes_and_load_file_message": {
+	"discardCurrentChangesAndLoadFileMessage": {
 		"message": "確定要放棄目前變更並開啟舊檔？",
 		"description": "Dialog message prompting the user to confirm discard current changes and load selected file."
 	},
-	"discard_btn": {
+	"discardBtn": {
 		"message": "放棄並載入",
 		"description": "Dialog button label to confirm discard current changes and load selected file."
 	},
-	"sync_remote_auth_key_input_label": {
+	"syncRemoteAuthKeyInputLabel": {
 		"message": "同步密鑰",
 		"description": "Input label for syncing service authorization key."
 	},
-	"discard_btn": {
+	"discardBtn": {
 		"message": "放棄並載入",
 		"description": "Dialog button label to confirm discard current changes and load selected file."
 	},
-	"sync_remote_auth_key_input_label": {
+	"syncRemoteAuthKeyInputLabel": {
 		"message": "同步密鑰",
 		"description": "Input label for syncing service authorization key."
 	},
-	"trust_thrid_party_content": {
+	"trustThridPartyContent": {
 		"message": "信任第三方內容",
 		"description": "Dialog title that asking user to grant permission for trusting third party content."
 	},
-	"trust_thrid_party_content_message": {
+	"trustThridPartyContentMessage": {
 		"message": "是否要信任第三方內容並啟用程式碼執行？",
 		"description": "Dialog message that asking user to grant permission for trusting third party content and execution any JavaScript."
 	},
-	"do_not_trust_btn": {
+	"doNotTrustBtn": {
 		"message": "僅載入標準內容",
 		"description": "Dialog button label to load standard content only (without JavaScript)."
 	},
-	"trust_btn": {
+	"trustBtn": {
 		"message": "信任",
 		"description": "Dialog button label to load all third party content, including JavaScript."
 	},
-	"settings_advanced_section": {
+	"settingsAdvancedSection": {
 		"message": "進階",
 		"description": "Title for the advanced settings section."
   },
-	"custom_javascript_label": {
+	"customJavascriptLabel": {
 		"message": "自訂JavaScript程式碼",
 		"description": "Label for custom JavaScript code textarea."
   },
-	"custom_javascript_help": {
+	"customJavascriptHelp": {
 		"message": "JavaScript程式碼可用於擴展/修改Mencrouche，為了您的安全，切勿貼上來源不明的程式碼。",
 		"description": "Help message for the usage and warning for custom JavaScript."
 	},
-	"custom_javascript_placeholder": {
+	"customJavascriptPlaceholder": {
 		"message": "請僅輸入您信任的程式碼",
 		"description": "Placeholder for custom JavaScript textarea warning user do not enter unknown code."
   },
-	"custom_css_label": {
+	"customCssLabel": {
 		"message": "自訂CSS",
 		"description": "Label for custom CSS textarea."
   },
-	"custom_css_help": {
+	"customCssHelp": {
 		"message": "CSS可以修改網頁的外觀，貼上來源不明的CSS可能造成功能異常。",
 		"description": "Help message for the usage and warning for custom CSS."
 	},
-	"custom_css_placeholder": {
+	"customCssPlaceholder": {
 		"message": "請僅輸入您信任的CSS",
 		"description": "Placeholder for custom css textarea warning user do not enter unknown styles."
 	},
-	"ok_btn": {
+	"okBtn": {
 		"message": "了解",
 		"description": "Button label for OK."
 	},
-	"reload_needed": {
+	"reloadNeeded": {
 		"message": "需要重新載入",
 		"description": "Dialog title for notify user refresh page is needed for applying custom JavaScript."
 	},
-	"reload_needed_message": {
+	"reloadNeededMessage": {
 		"message": "重新載入網頁以啟用自訂JavaScript",
 		"description": "Dialog message for notify user refresh page is needed for applying custom JavaScript."
 	},
-	"click_to_expand": {
+	"clickToExpand": {
 		"message": "點擊展開",
 		"description": "Details summary message."
 	},
@@ -487,11 +483,11 @@
 		"message": "已複製",
 		"description": "Button state for copy operation."
 	},
-	"is_cloud_sync_enabled_checkbox_label": {
+	"isCloudSyncEnabledCheckboxLabel": {
 		"message": "啟用雲端同步",
 		"description": "Checkbox label for enabling cloud sync."
 	},
-	"add_markdown_sticky_btn_title": {
+	"addMarkdownStickyBtnTitle": {
 		"message": "Markdown便利貼",
 		"description": "Button title for markdown sticky."
 	}

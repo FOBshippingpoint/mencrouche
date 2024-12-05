@@ -42,18 +42,18 @@ function getOrCreateSyncResourceId(): string {
 function grantTrustThirdPartyContentPermission() {
   return new Promise<boolean>((resolve) => {
     const trustThridPartyContentDialog = createDialog({
-      title: "trust_thrid_party_content",
-      message: "trust_thrid_party_content_message",
+      title: "trustThridPartyContent",
+      message: "trustThridPartyContentMessage",
       buttons: [
         {
-          "data-i18n": "do_not_trust_btn",
+          "data-i18n": "doNotTrustBtn",
           onClick() {
             trustThridPartyContentDialog.close();
             resolve(false);
           },
         },
         {
-          "data-i18n": "trust_btn",
+          "data-i18n": "trustBtn",
           onClick() {
             trustThridPartyContentDialog.close();
             resolve(true);

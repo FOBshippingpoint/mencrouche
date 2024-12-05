@@ -7,7 +7,7 @@ type DocumentStatus = "saved" | "unsaved" | "saving";
 const ds = $<HTMLButtonElement>("#documentStatus")!;
 const span = ds.$<HTMLSpanElement>("span")!;
 const saveDocumentBtn = $<HTMLDivElement>("#documentStatus button")!;
-saveDocumentBtn.on("click", () => executeCommand("save_document"));
+saveDocumentBtn.on("click", () => executeCommand("saveDocument"));
 switchDocumentStatus("saved");
 
 export function switchDocumentStatus(status: DocumentStatus) {

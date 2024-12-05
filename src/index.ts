@@ -32,14 +32,14 @@ const AVAILABLE_LOCALES = ["en", "zh_TW"];
 
 const defaultCommands: Command[] = [
   {
-    name: "toggle_settings",
+    name: "toggleSettings",
     execute() {
       toggleSettingsPage();
     },
     defaultShortcut: "C-,",
   },
   {
-    name: "toggle_dark_mode",
+    name: "toggleDarkMode",
     execute() {
       dataset.derivedSetItem("theme", (theme) =>
         theme === "light" ? "dark" : "light",
@@ -48,21 +48,21 @@ const defaultCommands: Command[] = [
     defaultShortcut: "C-S-l",
   },
   {
-    name: "open_youtube",
+    name: "openYoutube",
     execute() {
       window.open("https://youtube.com", "_blank")!.focus();
     },
     defaultShortcut: "C-o",
   },
   {
-    name: "save_document",
+    name: "saveDocument",
     execute() {
       saveDocument();
     },
     defaultShortcut: "C-s",
   },
   {
-    name: "toggle_global_ghost_mode",
+    name: "toggleGlobalGhostMode",
     execute() {
       dataset.derivedSetItem<boolean>(
         "isGhostMode",
@@ -72,98 +72,98 @@ const defaultCommands: Command[] = [
     defaultShortcut: "C-A-g",
   },
   {
-    name: "delete_all_stickies",
+    name: "deleteAllStickies",
     execute() {
       stickyWorkspace.deleteAll();
     },
     defaultShortcut: "C-A-x",
   },
   {
-    name: "add_markdown_sticky",
+    name: "addMarkdownSticky",
     execute() {
       stickyWorkspace.create({ type: "markdown" });
     },
     defaultShortcut: "C-q",
   },
   {
-    name: "add_youtube_sticky",
+    name: "addYoutubeSticky",
     execute() {
       stickyWorkspace.create({ type: "youtube" });
     },
     defaultShortcut: "C-A-y",
   },
   {
-    name: "add_spotify_sticky",
+    name: "addSpotifySticky",
     execute() {
       stickyWorkspace.create({ type: "spotify" });
     },
     defaultShortcut: "C-A-s",
   },
   {
-    name: "add_note_sticky",
+    name: "addNoteSticky",
     execute() {
       stickyWorkspace.create({ type: "note" });
     },
     defaultShortcut: "C-A-n",
   },
   {
-    name: "delete_sticky",
+    name: "deleteSticky",
     execute() {
       stickyWorkspace.deleteLatest();
     },
     defaultShortcut: "A-x",
   },
   {
-    name: "toggle_auto_arrange",
+    name: "toggleAutoArrange",
     execute() {
       stickyWorkspace.arrange();
     },
     defaultShortcut: "A-r",
   },
   {
-    name: "toggle_split_view",
+    name: "toggleSplitView",
     execute() {
       stickyWorkspace.getLatestSticky()?.plugin.toggleSplitView?.();
     },
     defaultShortcut: "A-v",
   },
   {
-    name: "toggle_maximize_sticky",
+    name: "toggleMaximizeSticky",
     execute() {
       stickyWorkspace.getLatestSticky()?.toggleMaximize();
     },
     defaultShortcut: "A-m",
   },
   {
-    name: "toggle_sticky_edit_mode",
+    name: "toggleStickyEditMode",
     execute() {
       stickyWorkspace.getLatestSticky()?.plugin.toggleEditMode?.();
     },
     defaultShortcut: "A-e",
   },
   {
-    name: "toggle_sticky_pin_mode",
+    name: "toggleStickyPinMode",
     execute() {
       stickyWorkspace.getLatestSticky()?.togglePin();
     },
     defaultShortcut: "A-p",
   },
   {
-    name: "toggle_ghost_mode",
+    name: "toggleGhostMode",
     execute() {
       stickyWorkspace.getLatestSticky()?.toggleGhostMode();
     },
     defaultShortcut: "A-g",
   },
   {
-    name: "duplicate_sticky",
+    name: "duplicateSticky",
     execute() {
       stickyWorkspace.duplicateLatest();
     },
     defaultShortcut: "C-d",
   },
   {
-    name: "zoom_in",
+    name: "zoomIn",
     execute() {},
     defaultShortcut: "C-+",
   },
@@ -218,34 +218,34 @@ async function main() {
 
   const menuItems = [
     {
-      name: "add_markdown_sticky",
+      name: "addMarkdownSticky",
       icon: "lucide-plus",
       execute() {
-        executeCommand("add_markdown_sticky");
+        executeCommand("addMarkdownSticky");
       },
     },
     {
-      name: "add_other_sticky_group",
+      name: "addOtherStickyGroup",
       subItems: [
         {
-          name: "add_youtube_sticky",
+          name: "addYoutubeSticky",
           icon: "lucide-youtube",
           execute() {
-            executeCommand("add_youtube_sticky");
+            executeCommand("addYoutubeSticky");
           },
         },
         {
-          name: "add_spotify_sticky",
+          name: "addSpotifySticky",
           icon: "mdi:spotify",
           execute() {
-            executeCommand("add_spotify_sticky");
+            executeCommand("addSpotifySticky");
           },
         },
         {
-          name: "add_note_sticky",
+          name: "addNoteSticky",
           icon: "lucide-notebook-text",
           execute() {
-            executeCommand("add_note_sticky");
+            executeCommand("addNoteSticky");
           },
         },
       ],
