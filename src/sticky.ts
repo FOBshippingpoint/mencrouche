@@ -71,8 +71,7 @@ registerContextMenu("basic", [
   }),
   (sticky: Sticky) => ({
     name:
-      "stickyGhostMode" +
-      (sticky.classList.contains("ghost") ? "Off" : "On"),
+      "stickyGhostMode" + (sticky.classList.contains("ghost") ? "Off" : "On"),
     icon: sticky.classList.contains("ghost")
       ? "lucide-square"
       : "lucide-box-select",
@@ -836,7 +835,6 @@ function onEventOrTimeout<K extends keyof HTMLElementEventMap>(
   }, timeout);
 }
 
-// Types
 interface DragOptions {
   handle?: HTMLElement;
   container?: HTMLElement;
@@ -904,7 +902,11 @@ export class Draggable extends ZoomAware {
   }
 
   private dragStart(e: PointerEvent) {
-    if (e.button === 2) return; // Ignore right-click
+    // Ignore right-click
+    if (e.button === 2) return;
+    // Ignore any click on "handle" element itself.
+    // This is a strategy to prevent trigger drag on click on header buttons.
+    if (e.target !== e.currentTarget) return;
 
     this.isDragging = true;
     this.initialX = e.clientX;

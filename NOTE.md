@@ -45,7 +45,7 @@ just
 - [ ] Layout Managing
     - easy: fixed layouts.
     - moderate: adjusting size
-- [ ] (WIPP) WYSIWYG text editor
+- [ ] (WIP) WYSIWYG text editor
     - Idk I think user won't like/know markdown, they just want an easy-to-use ui for editing rich text. Candidates:
     - [TipTap](https://tiptap.dev/docs/editor/getting-started/install/vanilla-javascript)
     - [Quill](https://quilljs.com/)
@@ -62,5 +62,5 @@ just
 - [x] sticky out of bound when resizing window.
 - [x] create sticky on the bottom or right cuz the container size change.
 - [x] Context menu will not translate when language switched.
-- [ ] (WIP) When sticky is maximized, drag to shrink is working, but the center point is not correct.
-- [ ] When a maximize sticky turn back to normal size, it will lose original y position.
+- [x] When sticky is maximized, drag to shrink is working, but the center point is not correct.
+- [x] (::because the button trigger "drag to back to normal size", need to find a way to prevent "handle" trigger for it's button child.) When a maximize sticky turn back to normal size by click button, it will lose original y position.
