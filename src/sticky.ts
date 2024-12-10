@@ -602,7 +602,6 @@ function buildBuildSticky(
           padding: 20,
           onDragStart: (e) => {
             if (sticky.classList.contains("maximized")) {
-              console.log("drag");
               (sticky as Sticky).toggleMaximize();
               sticky.style.top = "0px";
               sticky.style.left = `${e.clientX - sticky.offsetWidth / 2}px`;
@@ -639,7 +638,6 @@ function buildBuildSticky(
           stickyWorkspace.duplicate(extendedSticky);
         },
         toggleMaximize() {
-          maximizeToggleLbl.$$("svg").do((el) => el.classList.toggle("none"));
           sticky.classList.toggle("maximized");
 
           sticky.dispatchEvent(

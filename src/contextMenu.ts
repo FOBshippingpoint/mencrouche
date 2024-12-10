@@ -20,13 +20,6 @@ function isIos() {
   );
 }
 
-contextMenu.on("click", (e) => {
-  if ((e.target as Element).closest("[data-sub-item-active]")) {
-    return;
-  }
-  contextMenu.classList.add("none");
-});
-
 function showContextMenu(e: MouseEvent | CustomEvent) {
   const target = (e.target as HTMLElement).closest("[data-context-menu]") as
     | HTMLElement
@@ -206,8 +199,12 @@ function buildMenuItems(menuItems: MenuItem[], eventTarget: EventTarget) {
         btn.on("mouseenter", showSubItems);
         // btn.on("click", showSubItems);
       } else if (menuItemDef.execute) {
-        btn.on("click", () => menuItemDef.execute!(eventTarget), {
-          once: true,
+        btn.on("click", () => {
+          contextMenu.classList.add("none");
+          menuItemDef.execute!(eventTarget),
+            {
+              once: true,
+            };
         });
       }
     }

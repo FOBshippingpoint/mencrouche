@@ -45,7 +45,7 @@ just
 - [ ] Layout Managing
     - easy: fixed layouts.
     - moderate: adjusting size
-- [ ] (WIP) WYSIWYG text editor
+- [ ] (WIPP::complete the element lifecycle) WYSIWYG text editor
     - Idk I think user won't like/know markdown, they just want an easy-to-use ui for editing rich text. Candidates:
     - [TipTap](https://tiptap.dev/docs/editor/getting-started/install/vanilla-javascript)
     - [Quill](https://quilljs.com/)
