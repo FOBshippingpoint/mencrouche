@@ -218,10 +218,10 @@ async function main() {
 
   const menuItems = [
     {
-      name: "addMarkdownSticky",
+      name: "addNoteSticky",
       icon: "lucide-plus",
       execute() {
-        executeCommand("addMarkdownSticky");
+        executeCommand("addNoteSticky");
       },
     },
     {
@@ -242,10 +242,10 @@ async function main() {
           },
         },
         {
-          name: "addNoteSticky",
-          icon: "lucide-notebook-text",
+          name: "addMarkdownSticky",
+          icon: "lucide-sticky-note",
           execute() {
-            executeCommand("addNoteSticky");
+            executeCommand("addMarkdownSticky");
           },
         },
       ],

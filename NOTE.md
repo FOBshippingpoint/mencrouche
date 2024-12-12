@@ -45,18 +45,21 @@ just
 - [ ] Layout Managing
     - easy: fixed layouts.
     - moderate: adjusting size
-- [ ] (WIPP::complete the element lifecycle) WYSIWYG text editor
+- [x] WYSIWYG text editor
     - Idk I think user won't like/know markdown, they just want an easy-to-use ui for editing rich text. Candidates:
-    - [TipTap](https://tiptap.dev/docs/editor/getting-started/install/vanilla-javascript)
-    - [Quill](https://quilljs.com/)
-    - [Editor.js](https://editorjs.io/)
-    - [manigandham/rich-text-html-editors.md](https://gist.github.com/manigandham/65543a0bc2bf7006a487)
+        - [TipTap](https://tiptap.dev/docs/editor/getting-started/install/vanilla-javascript)
+        - [Quill](https://quilljs.com/)
+        - [Editor.js](https://editorjs.io/)
+        - [manigandham/rich-text-html-editors.md](https://gist.github.com/manigandham/65543a0bc2bf7006a487)
+- [ ] Toggle quilljs toolbar
 - [ ] A11y
 - [ ] (WIP) Grant user permission for custom js and css
 - [ ] Create intro video and tutorial for end user.
 
 ## BUGS
 
+- [ ] Using navbar add sticky, the sticky position should at center instead of top-right.
+- [ ] (WIPP) Quill Editor undo should not trigger mencrouche undo.
 - [x] The background image cannot restore from localstorage.
 - [x] The sticky blob image cannot restore from localstorage.
 - [x] sticky out of bound when resizing window.

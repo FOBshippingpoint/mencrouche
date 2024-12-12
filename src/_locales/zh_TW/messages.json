@@ -487,8 +487,16 @@
 		"message": "啟用雲端同步",
 		"description": "Checkbox label for enabling cloud sync."
 	},
-	"addMarkdownStickyBtnTitle": {
-		"message": "Markdown便利貼",
+	"addMarkdownStickyBtn": {
+		"message": "Markdown",
 		"description": "Button title for markdown sticky."
+	},
+	"addNoteStickyBtnTitle": {
+		"message": "新增便利貼",
+		"description": "Button title for note sticky."
+	},
+	"addNoteSticky": {
+    "message": "新增便利貼",
+    "description": "Command description for adding a new note sticky."
 	}
 }
