@@ -132,7 +132,9 @@ shortcutManager.on(
   "undo",
   "C-z",
   (e) => {
-    if (!(e.target as Element).matches("input,textarea")) {
+    if (
+      !(e.target as Element).matches('input,textarea,[contenteditable="true"]')
+    ) {
       apocalypse.undo();
     }
   },
@@ -142,7 +144,9 @@ shortcutManager.on(
   "redo",
   "C-y",
   (e) => {
-    if (!(e.target as Element).matches("input,textarea")) {
+    if (
+      !(e.target as Element).matches('input,textarea,[contenteditable="true"]')
+    ) {
       apocalypse.redo();
     }
   },

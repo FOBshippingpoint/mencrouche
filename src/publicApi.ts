@@ -14,7 +14,7 @@ import {
   getCustomSticky,
   registerSticky,
   stickyWorkspace,
-} from "./sticky";
+} from "./sticky/sticky";
 import { n81i } from "./utils/n81i";
 import { registerContextMenu } from "./contextMenu";
 import { apocalypse } from "./apocalypse";

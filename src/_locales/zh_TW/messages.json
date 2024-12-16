@@ -498,5 +498,17 @@
 	"addNoteSticky": {
     "message": "新增便利貼",
     "description": "Command description for adding a new note sticky."
-	}
+	},
+  "zoomIn": {
+    "message": "放大",
+    "description": "Command description for zoom in workspace."
+	},
+  "zoomOut": {
+    "message": "縮小",
+    "description": "Command description for zoom out workspace."
+	},
+  "zoomReset": {
+    "message": "重置縮放",
+    "description": "Command description for reset workspace zoom."
+  }
 }

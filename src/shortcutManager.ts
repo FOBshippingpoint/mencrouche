@@ -1,4 +1,4 @@
-import { createKikey, parseBinding } from "kikey";
+import { createKikey, parseBinding, type KeyBinding } from "kikey";
 import { dataset } from "./dataWizard";
 
 interface Action {
@@ -26,7 +26,7 @@ interface ShortcutManager {
   ): void;
   update(
     actionName: string,
-    newSequence: string | ReturnType<typeof parseBinding>[],
+    newSequence: string | KeyBinding[],
   ): void;
   restore(actionName: string): void;
   getKeySequence(actionName: string): string;
@@ -148,7 +148,7 @@ export const shortcutManager: ShortcutManager = {
 };
 
 function keyBindingToString(
-  binding: ReturnType<typeof parseBinding>,
+  binding: KeyBinding,
   isMac = false,
 ): string {
   const modifiers = [
@@ -159,7 +159,7 @@ function keyBindingToString(
   ];
 
   const parts = modifiers
-    .filter((mod) => binding[mod.key as keyof ReturnType<typeof parseBinding>])
+    .filter((mod) => binding[mod.key as keyof KeyBinding])
     .map((mod) => (isMac ? mod.mac : mod.default));
 
   let key = binding.key;
@@ -177,9 +177,9 @@ function keyBindingToString(
 }
 
 export function keySequenceToString(
-  sequence: string | ReturnType<typeof parseBinding>[],
+  sequence: string | KeyBinding[],
 ) {
-  let s: ReturnType<typeof parseBinding>[];
+  let s: KeyBinding[];
   if (typeof sequence === "string") {
     s = sequence.split(" ").map(parseBinding);
   } else {

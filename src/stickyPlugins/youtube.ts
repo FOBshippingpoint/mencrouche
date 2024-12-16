@@ -4,7 +4,7 @@ import {
   type Sticky,
   type StickyPlugin,
   registerSticky,
-} from "../sticky";
+} from "../sticky/sticky";
 import { n81i } from "../utils/n81i";
 import { $ } from "../utils/dollars";
 import { formToObject } from "../utils/formToObject";

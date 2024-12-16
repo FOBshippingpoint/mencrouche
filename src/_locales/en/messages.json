@@ -494,5 +494,17 @@
 	"addNoteSticky": {
     "message": "Note Sticky",
     "description": "Command description for adding a new note sticky."
-	}
+	},
+  "zoomIn": {
+    "message": "Zoom In",
+    "description": "Command description for zoom in workspace."
+	},
+  "zoomOut": {
+    "message": "Zoom Out",
+    "description": "Command description for zoom out workspace."
+	},
+  "zoomReset": {
+    "message": "Reset Zoom",
+    "description": "Command description for reset workspace zoom."
+  }
 }

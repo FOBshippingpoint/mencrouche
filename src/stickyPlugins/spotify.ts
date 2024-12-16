@@ -4,7 +4,7 @@ import {
   type Sticky,
   type StickyPlugin,
   registerSticky,
-} from "../sticky";
+} from "../sticky/sticky";
 import { n81i } from "../utils/n81i";
 import { $ } from "../utils/dollars";
 import { formToObject } from "../utils/formToObject";
@@ -18,9 +18,7 @@ interface SpotifyConfig extends CustomStickyConfig {
 
 const dialog = $<HTMLDialogElement>("#spotifyDialog")!;
 const form = dialog.$<HTMLFormElement>("form")!;
-const cancelBtn = dialog.$<HTMLButtonElement>(
-  '[data-i18n="cancelSubmitBtn"]',
-)!;
+const cancelBtn = dialog.$<HTMLButtonElement>('[data-i18n="cancelSubmitBtn"]')!;
 const linkInput = dialog.$<HTMLInputElement>('[name="link"]')!;
 let current: Sticky;
 
@@ -87,7 +85,7 @@ form.on("submit", (e) => {
   dialog.close();
 });
 
-const spotifySticky: CustomStickyComposer = {
+const spotifySticky: CustomStickyComposer<SpotifyPlugin, SpotifyConfig> = {
   type: "spotify",
   onCreate(sticky: Sticky<SpotifyPlugin>) {
     sticky.classList.add("none");
@@ -116,7 +114,7 @@ const spotifySticky: CustomStickyComposer = {
     dialog.showModal();
     linkInput.select();
   },
-  onSave(sticky): SpotifyConfig {
+  onSave(sticky) {
     const iframe = sticky.$<HTMLIFrameElement>("iframe")!;
     return {
       iframeHeight: iframe.height,
@@ -124,11 +122,13 @@ const spotifySticky: CustomStickyComposer = {
     };
   },
   onDelete() {},
-  onRestore(sticky, config: SpotifyConfig) {
+  onRestore(sticky, config) {
     enable(sticky);
     const iframe = sticky.$<HTMLIFrameElement>("iframe")!;
-    iframe.src = config.iframeSrc;
-    iframe.height = config.iframeHeight;
+    if (config) {
+      iframe.src = config.iframeSrc;
+      iframe.height = config.iframeHeight;
+    }
   },
 };
 

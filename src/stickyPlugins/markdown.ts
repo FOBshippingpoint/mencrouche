@@ -5,7 +5,7 @@ import {
   type Sticky,
   type StickyPlugin,
   registerSticky,
-} from "../sticky";
+} from "../sticky/sticky";
 import { registerContextMenu, type MenuItem } from "../contextMenu";
 import { blobToDataUrl } from "../utils/toDataUrl";
 import { getTemplateWidgets } from "../utils/getTemplateWidgets";
@@ -13,7 +13,7 @@ import DOMPurify from "dompurify";
 import { markDirtyAndSaveDocument } from "../lifesaver";
 // import hljs from "highlight.js/lib/core";
 
-declare module "../sticky" {
+declare module "../sticky/sticky" {
   interface StickyPluginRegistryMap {
     markdown: MarkdownPlugin;
   }
@@ -35,7 +35,7 @@ type BlobUrlDataUrl = [string, string];
 const globalBlobUrlDataUrlMap = new Map<Sticky, BlobUrlDataUrl[]>();
 
 function handleTextAreaPaste(
-  sticky: Sticky<MarkdownPlugin>,
+  sticky: Sticky<MarkdownPlugin, MarkdownConfig>,
   textarea: HTMLTextAreaElement,
 ) {
   textarea.on("paste", async (e) => {
@@ -97,7 +97,7 @@ function paste(textarea: HTMLTextAreaElement, toPaste: string) {
   textarea.selectionStart = textarea.selectionEnd = start + toPaste.length;
 }
 
-const markdownSticky: CustomStickyComposer = {
+const markdownSticky: CustomStickyComposer<MarkdownPlugin, MarkdownConfig> = {
   type: "markdown",
   onCreate(sticky: Sticky<MarkdownPlugin>) {
     enable(sticky);
@@ -109,13 +109,13 @@ const markdownSticky: CustomStickyComposer = {
     const textarea = sticky.$<HTMLTextAreaElement>("textarea")!;
     return {
       prevInput: textarea.value,
-      blobUrlDataUrlMap: globalBlobUrlDataUrlMap.get(sticky),
+      blobUrlDataUrlMap: globalBlobUrlDataUrlMap.get(sticky)!,
     };
   },
-  onDelete(sticky: Sticky<MarkdownPlugin>) {
+  onDelete(sticky) {
     globalBlobUrlDataUrlMap.delete(sticky);
   },
-  onRestore(sticky: Sticky<MarkdownPlugin>, pluginConfig: MarkdownConfig) {
+  onRestore(sticky, pluginConfig) {
     enable(sticky);
 
     const textarea = sticky.$<HTMLTextAreaElement>("textarea")!;
@@ -145,13 +145,9 @@ const markdownSticky: CustomStickyComposer = {
         sticky.plugin.updatePreview();
       }
     }
-
-    // Adjust to correct hidden states
-    if (!sticky.classList.contains("editMode")) {
-      sticky.$$("textarea,.preview").do((el) => (el.hidden = !el.hidden));
-    }
   },
 };
+
 const markdownStickyMenuItems: MenuItem[] = [
   (sticky: Sticky<MarkdownPlugin>) => ({
     name:
@@ -182,6 +178,7 @@ function enable(sticky: Sticky<MarkdownPlugin>) {
   const widgets = getTemplateWidgets("markdownStickyWidgets");
   const editModeToggleLbl = widgets.$<HTMLLabelElement>(".editModeToggleLbl")!;
   const textarea = widgets.$<HTMLTextAreaElement>("textarea")!;
+  const divider = widgets.$<HTMLTextAreaElement>(".divider")!;
   const preview = widgets.$<HTMLDivElement>(".preview")!;
 
   function updatePreview() {
@@ -207,7 +204,7 @@ function enable(sticky: Sticky<MarkdownPlugin>) {
   }
 
   sticky.dataset.contextMenu = "markdown basic";
-  sticky.replaceBody(textarea, preview);
+  sticky.replaceBody(textarea, divider, preview);
   sticky.addControlWidget(editModeToggleLbl);
 
   handleTextAreaPaste(sticky, textarea);
@@ -230,13 +227,62 @@ function enable(sticky: Sticky<MarkdownPlugin>) {
       sticky.focus();
     }
     textarea.disabled = !textarea.disabled;
-    textarea.hidden = !textarea.hidden;
     sticky.dataset.prevInput = textarea.value;
-    preview.hidden = !preview.hidden;
 
     // Idk why we need setTimeout to let focus work...
     setTimeout(() => textarea.focus(), 0);
   });
+
+  // Split view drag to adjust size
+  function setupDivider(
+    container: HTMLElement,
+    leftPanel: HTMLElement,
+    rightPanel: HTMLElement,
+  ) {
+    let isResizing = false;
+
+    divider.on("pointerdown", () => {
+      isResizing = true;
+      document.body.style.cursor = "col-resize";
+    });
+    document.on("pointermove", (e) => {
+      if (!isResizing) return;
+
+      const containerWidth = container.offsetWidth;
+      const mouseX = e.clientX;
+      const containerRect = container.getBoundingClientRect();
+      const percentPosition = (mouseX - containerRect.left) / containerWidth;
+
+      // Limit resizing between 10% and 90%
+      const clampedPercent = Math.max(0.1, Math.min(0.9, percentPosition));
+
+      leftPanel.style.width = `${clampedPercent * 100}%`;
+      rightPanel.style.width = `${(1 - clampedPercent) * 100}%`;
+    });
+    document.on("pointerup", () => {
+      isResizing = false;
+      document.body.style.removeProperty("cursor");
+    });
+
+    if (sticky.classList.contains("splitView")) {
+      leftPanel.style.width = "50%";
+      rightPanel.style.width = "50%";
+    } else {
+      const abortController = new AbortController();
+      sticky.on(
+        "classchange",
+        () => {
+          if (sticky.classList.contains("splitView")) {
+            leftPanel.style.width = "50%";
+            rightPanel.style.width = "50%";
+            abortController.abort();
+          }
+        },
+        { signal: abortController.signal },
+      );
+    }
+  }
+  setupDivider(sticky, textarea, preview);
 
   function toggleDisable(disable: boolean) {
     sticky

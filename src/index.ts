@@ -1,4 +1,4 @@
-import { stickyWorkspace } from "./sticky";
+import { stickyWorkspace } from "./sticky/sticky";
 import { $ } from "./utils/dollars";
 import { createShortcutItem, toggleSettingsPage } from "./settings";
 import { addPublicApi } from "./publicApi";
@@ -83,7 +83,7 @@ const defaultCommands: Command[] = [
     execute() {
       stickyWorkspace.create({ type: "markdown" });
     },
-    defaultShortcut: "C-q",
+    defaultShortcut: "C-A-m",
   },
   {
     name: "addYoutubeSticky",
@@ -104,7 +104,7 @@ const defaultCommands: Command[] = [
     execute() {
       stickyWorkspace.create({ type: "note" });
     },
-    defaultShortcut: "C-A-n",
+    defaultShortcut: "C-q",
   },
   {
     name: "deleteSticky",
@@ -164,8 +164,24 @@ const defaultCommands: Command[] = [
   },
   {
     name: "zoomIn",
-    execute() {},
-    defaultShortcut: "C-+",
+    execute() {
+      stickyWorkspace.zoomable.zoomIn();
+    },
+    defaultShortcut: "C-=", // C + plus key
+  },
+  {
+    name: "zoomOut",
+    execute() {
+      stickyWorkspace.zoomable.zoomOut();
+    },
+    defaultShortcut: "C-dash", // `-` is `dash` in kikey lib
+  },
+  {
+    name: "zoomReset",
+    execute() {
+      stickyWorkspace.zoomable.zoomReset();
+    },
+    defaultShortcut: "C-0",
   },
 ];
 
