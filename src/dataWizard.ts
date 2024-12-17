@@ -61,6 +61,7 @@ export async function finishLoad() {
 export async function saveToSources(...sources: Source[]) {
   await prepareSave();
   const mcObj = toObject.call(_dataset) as MencroucheFileFormat;
+  console.log(mcObj)
   for (const source of sources) {
     source.save(mcObj);
   }

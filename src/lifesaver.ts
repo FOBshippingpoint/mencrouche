@@ -77,12 +77,15 @@ interface SyncInfo {
 let urlFragSyncInfo: SyncInfo;
 
 function parseSyncInfoFromUrlFragment() {
-  const b64 = window.location.hash.slice(1);
-  try {
-    const json = window.atob(b64);
-    return JSON.parse(json);
-  } catch (error) {
-    console.log("Cannot parse from URL fragment, got error: ", error);
+  // Parse only if url has hash (aka #)
+  if (window.location.hash.length) {
+    const b64 = window.location.hash.slice(1);
+    try {
+      const json = window.atob(b64);
+      return JSON.parse(json);
+    } catch (error) {
+      console.log("Cannot parse from URL fragment, got error: ", error);
+    }
   }
 }
 

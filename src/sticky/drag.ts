@@ -104,4 +104,21 @@ export class Draggable extends ZoomAware {
   destroy() {
     this.interactEl.off("pointerdown", this.dragStart.bind(this));
   }
+
+  setOffset(offset: Offset) {
+    this.element.style.left = `${offset.offsetLeft}px`;
+    this.element.style.top = `${offset.offsetTop}px`;
+  }
+
+  getOffset(): Offset {
+    return {
+      offsetLeft: this.element.offsetLeft,
+      offsetTop: this.element.offsetTop,
+    };
+  }
+}
+
+export interface Offset {
+  offsetLeft: number;
+  offsetTop: number;
 }

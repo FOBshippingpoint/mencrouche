@@ -5,9 +5,9 @@ import { getTemplateWidgets } from "../utils/getTemplateWidgets";
 import { n81i } from "../utils/n81i";
 import { BinPacker } from "../utils/packer";
 import { markDirtyAndSaveDocument } from "../lifesaver";
-import { Zoomable } from "./zoom";
+import { Zoomable, type Transform } from "./zoom";
 import { Resizable } from "./resize";
-import { Draggable } from "./drag";
+import { Draggable, type Offset } from "./drag";
 import { $, $$$, type Allowance } from "../utils/dollars";
 
 function onEventOrTimeout<K extends keyof HTMLElementEventMap>(
@@ -32,7 +32,7 @@ function onEventOrTimeout<K extends keyof HTMLElementEventMap>(
 }
 
 export interface StickyPlugin {}
-interface StickyConfig<C extends CustomStickyConfig = CustomStickyConfig>
+export interface StickyConfig<C extends CustomStickyConfig = CustomStickyConfig>
   extends Record<string, unknown> {
   pluginConfig?: C;
 }
@@ -112,18 +112,33 @@ registerContextMenu("basic", [
   }),
 ]);
 
+export interface WorkspaceConfig {
+  /** CSS transform for stickyContainer. */
+  transform: Transform;
+  /** Offset left and offset top for stickyContainer. */
+  offset: Offset;
+  /** All stickies inside workspace. */
+  stickies: StickyConfig[];
+}
 class StickyWorkspace {
+  /** Contains stickies. */
   stickyContainer: Allowance<HTMLDivElement>;
+  /**
+   * Contains stickyContainer.
+   * A simple html element wrapper, so that we can use
+   * css transform without worrying outer layout.
+   */
   workspaceContainer: Allowance<HTMLDivElement>;
   zoomable: Zoomable;
-  #highestZIndex: number = 0;
-  /** An array for tracking the sticky order `[lowest, ..., topest]` */
-  #stickies: Sticky[] = [];
-  #apocalypse: Apocalypse;
+  draggable: Draggable;
   buildSticky: ReturnType<typeof buildBuildSticky>;
+  private highestZIndex: number = 0;
+  /** An array for tracking the sticky order `[lowest, ..., topest]` */
+  private stickies: Sticky[] = [];
+  private apocalypse: Apocalypse;
 
   constructor(apocalypse: Apocalypse) {
-    this.#apocalypse = apocalypse;
+    this.apocalypse = apocalypse;
 
     this.workspaceContainer = $$$("div");
     this.workspaceContainer.className = "workspace";
@@ -135,13 +150,15 @@ class StickyWorkspace {
 
     this.zoomable = new Zoomable(this.stickyContainer, {
       interactEl: this.workspaceContainer,
+      onZoom: () => markDirtyAndSaveDocument()
     });
 
-    new Draggable(this.stickyContainer, {
+    this.draggable = new Draggable(this.stickyContainer, {
       interactEl: this.workspaceContainer,
       acceptMouseButton: 1, // Only accept middle button drag.
       onDragStart: () => (this.workspaceContainer.style.cursor = "grab"),
       onDragEnd: () => this.workspaceContainer.style.removeProperty("cursor"),
+      onDrag: () => markDirtyAndSaveDocument(),
     });
 
     // Peak hidden border when pressing ctrl key.
@@ -168,11 +185,11 @@ class StickyWorkspace {
 
   refreshHighestZIndex() {
     // Find and set the highestZIndex when initialize from existing document.
-    this.#highestZIndex = 0;
+    this.highestZIndex = 0;
     for (const sticky of this.workspaceContainer.$$(".sticky")) {
       const zIndex = parseInt(sticky.style.zIndex);
-      if (zIndex > this.#highestZIndex) {
-        this.#highestZIndex = zIndex;
+      if (zIndex > this.highestZIndex) {
+        this.highestZIndex = zIndex;
       }
     }
   }
@@ -180,20 +197,20 @@ class StickyWorkspace {
   restoreAndReplaceAll(stickies: BuildStickyOptions[]) {
     this.forceDeleteAll();
     for (const sticky of stickies) {
-      this.#restoreSticky(sticky);
+      this.restoreSticky(sticky);
     }
     this.refreshHighestZIndex();
   }
 
   delete(sticky: Sticky) {
-    const obj = this.save(sticky);
-    this.#apocalypse.write({
+    const obj = this.saveSticky(sticky);
+    this.apocalypse.write({
       execute: () => {
-        this.#deleteSticky(sticky);
+        this.deleteSticky(sticky);
         markDirtyAndSaveDocument();
       },
       undo: () => {
-        this.#restoreSticky(obj);
+        this.restoreSticky(obj);
         markDirtyAndSaveDocument();
       },
     });
@@ -208,38 +225,38 @@ class StickyWorkspace {
   }
 
   forceDelete(sticky: Sticky) {
-    this.#stickies.splice(this.#stickies.indexOf(sticky), 1);
+    this.stickies.splice(this.stickies.indexOf(sticky), 1);
     sticky.remove();
     markDirtyAndSaveDocument();
   }
 
   forceDeleteAll() {
-    for (const sticky of this.#stickies) {
+    for (const sticky of this.stickies) {
       sticky.remove();
     }
-    this.#stickies.length = 0;
+    this.stickies.length = 0;
     markDirtyAndSaveDocument();
   }
 
   deleteAll() {
-    const backup = this.saveAll();
-    this.#apocalypse.write({
+    const backup = this.saveAllStickies();
+    this.apocalypse.write({
       execute: () => {
-        while (this.#stickies.length) {
-          this.#deleteSticky(this.#stickies.at(-1)!);
+        while (this.stickies.length) {
+          this.deleteSticky(this.stickies.at(-1)!);
         }
         markDirtyAndSaveDocument();
       },
       undo: () => {
         for (const sticky of backup) {
-          this.#restoreSticky(sticky);
+          this.restoreSticky(sticky);
         }
         markDirtyAndSaveDocument();
       },
     });
   }
 
-  save(sticky: Sticky) {
+  saveSticky(sticky: Sticky) {
     const config = sticky.save();
     config.pluginConfig = {};
     const customSticky = getCustomSticky(sticky);
@@ -257,18 +274,30 @@ class StickyWorkspace {
     return config;
   }
 
-  saveAll() {
-    return this.#stickies.map(this.save);
+  saveAllStickies() {
+    return this.stickies.map(this.saveSticky);
+  }
+
+  /**
+   * Save stickies and workspace attributes.
+   * Use when serializing workspace.
+   */
+  saveWork(): WorkspaceConfig {
+    return {
+      stickies: this.saveAllStickies(),
+      transform: this.zoomable.getTransform(),
+      offset: this.draggable.getOffset(),
+    };
   }
 
   duplicate(sticky: Sticky) {
-    const config = this.save(sticky);
+    const config = this.saveSticky(sticky);
     const duplicated = this.buildSticky("restore", config);
     duplicated.style.left = `${duplicated.offsetLeft + 20}px`;
     duplicated.style.top = `${duplicated.offsetTop + 20}px`;
-    this.#apocalypse.write({
+    this.apocalypse.write({
       execute: () => {
-        this.#addToTop(duplicated);
+        this.addToTop(duplicated);
         duplicated.focus();
         markDirtyAndSaveDocument();
       },
@@ -287,20 +316,20 @@ class StickyWorkspace {
   }
 
   moveToTop(sticky: Sticky) {
-    this.#highestZIndex++;
-    sticky.style.zIndex = this.#highestZIndex.toString();
-    sticky.style.order = this.#highestZIndex.toString();
-    let idx = this.#stickies.indexOf(sticky);
+    this.highestZIndex++;
+    sticky.style.zIndex = this.highestZIndex.toString();
+    sticky.style.order = this.highestZIndex.toString();
+    let idx = this.stickies.indexOf(sticky);
     if (idx !== -1) {
-      this.#stickies.splice(idx, 1);
-      this.#stickies.push(sticky);
+      this.stickies.splice(idx, 1);
+      this.stickies.push(sticky);
       markDirtyAndSaveDocument();
     }
   }
 
   arrange() {
     const stickies: Sticky[] = [];
-    for (const sticky of this.#stickies) {
+    for (const sticky of this.stickies) {
       if (!sticky.classList.contains("pin")) {
         stickies.push(sticky);
       }
@@ -372,19 +401,19 @@ class StickyWorkspace {
   }
 
   getLatestSticky() {
-    return this.#stickies.at(-1);
+    return this.stickies.at(-1);
   }
 
   getAllStickies(): readonly Sticky[] {
-    return this.#stickies;
+    return this.stickies;
   }
 
-  #deleteSticky(sticky: Sticky) {
-    const idx = this.#stickies.indexOf(sticky);
+  private deleteSticky(sticky: Sticky) {
+    const idx = this.stickies.indexOf(sticky);
     if (idx !== -1) {
-      this.#stickies.splice(idx, 1);
+      this.stickies.splice(idx, 1);
     }
-    this.#stickies.at(-1)?.focus();
+    this.stickies.at(-1)?.focus();
 
     const custom = getCustomSticky(sticky);
     if (custom) {
@@ -395,14 +424,14 @@ class StickyWorkspace {
     sticky.classList.add("deleted");
   }
 
-  #restoreSticky(options: BuildStickyOptions) {
+  private restoreSticky(options: BuildStickyOptions) {
     const sticky = this.buildSticky("restore", options);
-    this.#stickies.push(sticky);
+    this.stickies.push(sticky);
     this.stickyContainer.appendChild(sticky);
   }
 
-  #addToTop(sticky: Sticky) {
-    this.#stickies.push(sticky);
+  private addToTop(sticky: Sticky) {
+    this.stickies.push(sticky);
     this.moveToTop(sticky);
     this.stickyContainer.appendChild(sticky);
   }
@@ -411,10 +440,10 @@ class StickyWorkspace {
     let backupOptions: Record<string, unknown>;
     let sticky: Sticky;
 
-    this.#apocalypse.write({
+    this.apocalypse.write({
       execute: () => {
         sticky = this.buildSticky("create", backupOptions ?? options);
-        this.#addToTop(sticky);
+        this.addToTop(sticky);
         backupOptions = sticky.save();
       },
       undo: () => {
@@ -429,7 +458,7 @@ class StickyWorkspace {
     return (type: "drag" | "resize") => {
       const currRect = extractRectangle(sticky);
 
-      this.#apocalypse.write({
+      this.apocalypse.write({
         toString() {
           return prevRect.toString() + type;
         },
@@ -470,7 +499,7 @@ class StickyWorkspace {
   }
 
   getById(id: string) {
-    for (const sticky of this.#stickies) {
+    for (const sticky of this.stickies) {
       if (sticky.id === id) {
         return sticky;
       }
@@ -832,9 +861,13 @@ export function getWidgets(sticky: Sticky, widgetTemplateId: string) {
 }
 
 addTodoBeforeSave(() => {
-  dataset.setItem("stickies", stickyWorkspace.saveAll());
+  dataset.setItem("workspace", stickyWorkspace.saveWork());
 });
 addTodoAfterLoad(() => {
-  const stickies = dataset.getOrSetItem<BuildStickyOptions[]>("stickies", []);
-  stickyWorkspace.restoreAndReplaceAll(stickies);
+  const config = dataset.getItem<WorkspaceConfig>("workspace");
+  if (config) {
+    stickyWorkspace.zoomable.setTransform(config.transform);
+    stickyWorkspace.draggable.setOffset(config.offset);
+    stickyWorkspace.restoreAndReplaceAll(config.stickies);
+  }
 });

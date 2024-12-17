@@ -31,6 +31,7 @@ export class Zoomable implements ZoomContext {
       minScale?: number;
       maxScale?: number;
       interactEl?: HTMLElement;
+      onZoom?: () => void;
     } = {},
   ) {
     this.el = targetEl;
@@ -63,6 +64,7 @@ export class Zoomable implements ZoomContext {
         this.translateX = newX;
         this.translateY = newY;
         this.applyTransform();
+        options.onZoom?.();
       }
     });
   }
@@ -85,6 +87,27 @@ export class Zoomable implements ZoomContext {
   private applyTransform() {
     this.el.style.transform = `translate(${this.translateX}px, ${this.translateY}px) scale(${this.scale})`;
   }
+
+  setTransform(transform: Transform) {
+    this.translateX = transform.translateX;
+    this.translateY = transform.translateY;
+    this.scale = transform.scale;
+    this.applyTransform();
+  }
+
+  getTransform(): Transform {
+    return {
+      translateX: this.translateX,
+      translateY: this.translateY,
+      scale: this.scale,
+    };
+  }
+}
+
+export interface Transform {
+  translateX: number;
+  translateY: number;
+  scale: number;
 }
 
 function clamp(min: number, value: number, max: number) {

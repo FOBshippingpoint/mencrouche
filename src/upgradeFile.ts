@@ -1,3 +1,7 @@
+import type { Offset } from "./sticky/drag";
+import type { StickyConfig, WorkspaceConfig } from "./sticky/sticky";
+import type { Transform } from "./sticky/zoom";
+
 export function upgradeFileToLatest(
   mcFile: MencroucheFileFormat,
 ): MencroucheFileFormat {
@@ -38,9 +42,13 @@ interface V1 extends MencroucheFileFormat {
   locale: string;
   availableLocales: string[];
   isGhostMode: boolean;
-  backgroundImageUrl: string; // base64 url or other like imgur url.
+  /**
+   * base64 url or other like imgur url.
+   */
+  backgroundImageUrl: string;
   paletteHue: string;
   theme: "light" | "dark";
+  workspace: WorkspaceConfig;
 }
 
 interface VersionRegistry extends Record<number, MencroucheFileFormat> {
