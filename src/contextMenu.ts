@@ -151,20 +151,23 @@ function buildMenuItems(menuItems: MenuItem[], eventTarget: EventTarget) {
       const menuItemDef = menuItem as MenuItemDefinition;
       const template = getTemplateWidgets("menuItem");
       const btn = template.$<HTMLButtonElement>("button")!;
+      const iconL = template.$<HTMLElement>(".icon.left")!;
       const span = template.$<HTMLSpanElement>("span")!;
+      const iconR = template.$<HTMLElement>(".icon.right")!;
       span.dataset.i18n = menuItemDef.name;
 
-      const icon =
-        (menuItemDef.subItems ? "lucide-chevron-right" : null) ??
-        menuItemDef.icon;
-      if (icon) {
-        const iconEl = $$$("i");
-        iconEl.classList.add("icon");
+      function setIconProperty(iconEl: HTMLElement, iconName: string) {
+        iconEl.classList.add("used");
         iconEl.style.setProperty(
           "--icon",
-          `url("https://api.iconify.design/${icon}.svg?color=${theme === "dark" ? "%23ffffff" : "%23000000"}")`,
+          `url("https://api.iconify.design/${iconName}.svg?color=${theme === "dark" ? "%23ffffff" : "%23000000"}")`,
         );
-        btn.insertAdjacentElement("beforeend", iconEl);
+      }
+      if (menuItemDef.icon) {
+        setIconProperty(iconL, menuItemDef.icon);
+      }
+      if (menuItemDef.subItems) {
+        setIconProperty(iconR, "lucide-chevron-right");
       }
 
       frag.appendChild(btn);

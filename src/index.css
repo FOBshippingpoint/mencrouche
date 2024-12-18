@@ -857,7 +857,7 @@ h6 {
 .icon {
   background-repeat: no-repeat;
   background-image: var(--icon);
-  background-position: calc(100% - 0.5ch);
+  background-position: 50%;
   background-size: auto, 2.25ch;
   min-block-size: 1lh;
   min-inline-size: 1lh;
@@ -878,9 +878,12 @@ h6 {
     box-shadow: unset;
     block-size: unset;
     border: none;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: grid;
+    gap: var(--size-1);
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: "iconL text iconR";
+    justify-content: stretch;
+    align-items: stretch;
     border-radius: var(--radius-conditional-1);
     background: unset;
     font-size: 0.9rem;
@@ -890,6 +893,24 @@ h6 {
     padding-block-end: calc(
       var(--size-1) + 0.052em
     ); /* 0.052em is the myth value from https://tonsky.me/blog/centering/ */
+
+    .icon.right:not(.used) {
+      min-block-size: unset;
+      min-inline-size: unset;
+    }
+
+    .icon.left {
+      grid-area: iconL;
+    }
+
+    span {
+      grid-area: text;
+      text-align: left;
+    }
+
+    .icon.right {
+      grid-area: iconR;
+    }
   }
   .menuItem:hover,
   .menuItem[data-sub-item-active="on"] {

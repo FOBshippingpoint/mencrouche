@@ -32,9 +32,16 @@ function onEventOrTimeout<K extends keyof HTMLElementEventMap>(
 }
 
 export interface StickyPlugin {}
-export interface StickyConfig<C extends CustomStickyConfig = CustomStickyConfig>
-  extends Record<string, unknown> {
+export interface StickyConfig<
+  C extends CustomStickyConfig = CustomStickyConfig,
+> {
+  id?: string;
+  type?: string;
+  rect?: Rectangle;
+  zIndex?: number;
+  className?: string;
   pluginConfig?: C;
+  dataset?: Record<string, unknown>;
 }
 export interface Sticky<
   T extends StickyPlugin = StickyPlugin,
@@ -150,7 +157,7 @@ class StickyWorkspace {
 
     this.zoomable = new Zoomable(this.stickyContainer, {
       interactEl: this.workspaceContainer,
-      onZoom: () => markDirtyAndSaveDocument()
+      onZoom: () => markDirtyAndSaveDocument(),
     });
 
     this.draggable = new Draggable(this.stickyContainer, {
@@ -194,7 +201,7 @@ class StickyWorkspace {
     }
   }
 
-  restoreAndReplaceAll(stickies: BuildStickyOptions[]) {
+  restoreAndReplaceAll(stickies: StickyConfig[]) {
     this.forceDeleteAll();
     for (const sticky of stickies) {
       this.restoreSticky(sticky);
@@ -424,7 +431,7 @@ class StickyWorkspace {
     sticky.classList.add("deleted");
   }
 
-  private restoreSticky(options: BuildStickyOptions) {
+  private restoreSticky(options: StickyConfig) {
     const sticky = this.buildSticky("restore", options);
     this.stickies.push(sticky);
     this.stickyContainer.appendChild(sticky);
@@ -436,8 +443,8 @@ class StickyWorkspace {
     this.stickyContainer.appendChild(sticky);
   }
 
-  create(options: BuildStickyOptions) {
-    let backupOptions: Record<string, unknown>;
+  create(options: StickyConfig) {
+    let backupOptions: StickyConfig;
     let sticky: Sticky;
 
     this.apocalypse.write({
@@ -535,8 +542,9 @@ function buildBuildSticky(
       rect,
       zIndex,
       className,
+      dataset,
       pluginConfig,
-    }: BuildStickyOptions = {},
+    }: StickyConfig = {},
   ) {
     const sticky = $<HTMLDivElement>(
       getTemplateWidgets("sticky").firstElementChild as any,
@@ -585,6 +593,11 @@ function buildBuildSticky(
     }
     if (className) {
       sticky.className = className;
+    }
+    if (dataset) {
+      for (const [key, value] of Object.entries(dataset)) {
+        sticky.dataset[key] = value as string;
+      }
     }
 
     function enableStickyFunctionality(): Sticky {
@@ -696,18 +709,14 @@ function buildBuildSticky(
         },
         plugin: {},
         save() {
-          const config: {
-            id: string;
-            type: string;
-            className: string;
-            rect?: Rectangle;
-            zIndex?: number;
-          } = {
+          const config: StickyConfig = {
             id: extendedSticky.id,
             type: extendedSticky.type,
             className: sticky.className,
           };
           config.rect = extractRectangle(sticky);
+          // Convert DOMStringMap to plain js object.
+          config.dataset = Object.fromEntries(Object.entries(sticky.dataset));
           const zIndex = sticky.style.zIndex;
           if (zIndex !== "") {
             config.zIndex = parseInt(zIndex);
@@ -799,17 +808,6 @@ function parseRectangleFromString(rect: string): Rectangle {
   }
 }
 
-export interface BuildStickyOptions {
-  id?: string;
-  type?: string;
-  rect?: Rectangle;
-  zIndex?: number;
-  className?: string;
-  pluginConfig?: CustomStickyConfig;
-  pointerX?: number;
-  pointerY?: number;
-}
-
 export interface CustomStickyConfig extends Record<string, unknown> {}
 export interface CustomStickyComposer<
   S extends StickyPlugin,
@@ -820,7 +818,7 @@ export interface CustomStickyComposer<
   onSave(sticky: Sticky<S, C>): C | void;
   onDelete(sticky: Sticky<S, C>): void;
   onRestore(sticky: Sticky<S, C>, config?: C): void;
-  options: {
+  options?: {
     // TODO: add something like no padding, menu items etc.
   };
 }

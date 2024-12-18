@@ -55,11 +55,14 @@ just
 - [ ] A11y
 - [ ] (WIP) Grant user permission for custom js and css
 - [ ] Create intro video and tutorial for end user.
-- [ ] (WIPP) Persist zoom and canvas position, also the original size of maximized sticky.
+- [x] Persist zoom and canvas position, also the original size of maximized sticky.
+- [x] Context menu two-side icon to match browser convention.
 
 ## BUGS
 
 - [ ] Using navbar add sticky, the sticky position should at center instead of top-right.
+- [ ] When moved viewport, create/copy sticky from command will not be center in user's point of view.
+- [x] If save maximized sticky, when restore from saved document, the original size will not available.
 - [x] Fix maximize not working as expected bug due to stickyContainer didn't have w and h
 - [x] Quill Editor undo should not trigger mencrouche undo.
 - [x] The background image cannot restore from localstorage.
