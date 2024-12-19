@@ -419,35 +419,35 @@
 		"message": "同步密鑰",
 		"description": "Input label for syncing service authorization key."
 	},
-	"trustThridPartyContent": {
-		"message": "信任第三方內容",
-		"description": "Dialog title that asking user to grant permission for trusting third party content."
+	"allowScriptExecution": {
+		"message": "啟用程式碼執行",
+		"description": "Dialog title that asking user to grant permission for allowing JavaScript and CSS injection."
 	},
-	"trustThridPartyContentMessage": {
-		"message": "是否要信任第三方內容並啟用程式碼執行？",
-		"description": "Dialog message that asking user to grant permission for trusting third party content and execution any JavaScript."
+	"allowScriptExecutionMessage": {
+		"message": "是否要啟用自訂程式碼和樣式表？",
+		"description": "Dialog message that asking user to grant permission for allowing JavaScript and CSS injection."
 	},
-	"doNotTrustBtn": {
+	"doNotAllowScriptExecutionBtn": {
 		"message": "僅載入標準內容",
-		"description": "Dialog button label to load standard content only (without JavaScript)."
+		"description": "Dialog button label to load standard content only (without JavaScript and CSS)."
 	},
-	"trustBtn": {
+	"allowScriptExecutionBtn": {
 		"message": "信任",
-		"description": "Dialog button label to load all third party content, including JavaScript."
+		"description": "Dialog button label to load JavaScript and CSS."
 	},
 	"settingsAdvancedSection": {
 		"message": "進階",
 		"description": "Title for the advanced settings section."
   },
-	"customJavascriptLabel": {
+	"customJavaScriptLabel": {
 		"message": "自訂JavaScript程式碼",
 		"description": "Label for custom JavaScript code textarea."
   },
-	"customJavascriptHelp": {
+	"customJavaScriptHelp": {
 		"message": "JavaScript程式碼可用於擴展/修改Mencrouche，為了您的安全，切勿貼上來源不明的程式碼。",
 		"description": "Help message for the usage and warning for custom JavaScript."
 	},
-	"customJavascriptPlaceholder": {
+	"customJavaScriptPlaceholder": {
 		"message": "請僅輸入您信任的程式碼",
 		"description": "Placeholder for custom JavaScript textarea warning user do not enter unknown code."
   },
@@ -492,7 +492,7 @@
 		"description": "Button title for markdown sticky."
 	},
 	"addNoteStickyBtnTitle": {
-		"message": "新增便利貼",
+		"message": "新增Markdown便利貼",
 		"description": "Button title for note sticky."
 	},
 	"addNoteSticky": {

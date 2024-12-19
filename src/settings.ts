@@ -645,7 +645,8 @@ customCssTextArea.on("input", () => {
 
 let isFirstJsLoad = true;
 dataset.on<string>("customJs", (_, js) => {
-  if (isFirstJsLoad) {
+  // Inject JavaScript
+  if (isFirstJsLoad && isScriptExecutionAllowed()) {
     isFirstJsLoad = false;
     const frag = document
       .createRange()
@@ -679,6 +680,48 @@ customJsTextArea.on("input", () => {
     });
   });
 });
+
+export async function grantScriptPermission() {
+  const isScriptExecutionAllowed = await new Promise<boolean>((resolve) => {
+    const allowScriptExecutionDialog = createDialog({
+      title: "allowScriptExecution",
+      message: "allowScriptExecutionMessage",
+      buttons: [
+        {
+          "data-i18n": "doNotAllowScriptExecutionBtn",
+          onClick() {
+            allowScriptExecutionDialog.close();
+            resolve(false);
+          },
+        },
+        {
+          "data-i18n": "allowScriptExecutionBtn",
+          onClick() {
+            allowScriptExecutionDialog.close();
+            resolve(true);
+          },
+          type: "reset",
+        },
+      ],
+      onClose() {
+        resolve(false);
+      },
+    });
+    allowScriptExecutionDialog.open();
+  });
+  localStorage.setItem(
+    "isScriptExecutionAllowed",
+    isScriptExecutionAllowed ? "true" : "false",
+  );
+}
+export function isScriptExecutionAllowed() {
+  return localStorage.getItem("isScriptExecutionAllowed") === "true";
+}
+export function allowScriptExecutionIfNotYetSet() {
+  if (localStorage.getItem("isScriptExecutionAllowed") === null) {
+    localStorage.setItem("isScriptExecutionAllowed", "true");
+  }
+}
 
 addTodoBeforeSave(async () => {
   const url = dataset.getItem<string>("backgroundImageUrl");

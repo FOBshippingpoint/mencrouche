@@ -11,6 +11,8 @@ import { blobToDataUrl } from "../utils/toDataUrl";
 import { getTemplateWidgets } from "../utils/getTemplateWidgets";
 import DOMPurify from "dompurify";
 import { markDirtyAndSaveDocument } from "../lifesaver";
+import { dataset } from "../dataWizard";
+import { isScriptExecutionAllowed } from "../settings";
 // import hljs from "highlight.js/lib/core";
 
 declare module "../sticky/sticky" {
@@ -174,7 +176,7 @@ const markdownStickyMenuItems: MenuItem[] = [
   "hr",
 ];
 
-function enable(sticky: Sticky<MarkdownPlugin>) {
+function enable(sticky: Sticky<MarkdownPlugin, MarkdownConfig>) {
   const widgets = getTemplateWidgets("markdownStickyWidgets");
   const editModeToggleLbl = widgets.$<HTMLLabelElement>(".editModeToggleLbl")!;
   const textarea = widgets.$<HTMLTextAreaElement>("textarea")!;
@@ -184,7 +186,7 @@ function enable(sticky: Sticky<MarkdownPlugin>) {
   function updatePreview() {
     const dirtyHtml = marked.parse(textarea.value) as string;
     let html: string;
-    if (localStorage.getItem("isThirdPartyContentTrusted") === "true") {
+    if (isScriptExecutionAllowed()) {
       html = dirtyHtml;
     } else {
       // Sanitize the HTML content before parse.

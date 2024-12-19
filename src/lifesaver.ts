@@ -6,7 +6,6 @@
 
 import { switchDocumentStatus } from "./documentStatus";
 import { generateEncryptionKey } from "./utils/encryption";
-import { createDialog } from "./generalDialog";
 import { debounce } from "./utils/debounce";
 import {
   IndexedDbSource,
@@ -39,36 +38,6 @@ function getOrCreateSyncResourceId(): string {
   return syncResourceId;
 }
 
-function grantTrustThirdPartyContentPermission() {
-  return new Promise<boolean>((resolve) => {
-    const trustThridPartyContentDialog = createDialog({
-      title: "trustThridPartyContent",
-      message: "trustThridPartyContentMessage",
-      buttons: [
-        {
-          "data-i18n": "doNotTrustBtn",
-          onClick() {
-            trustThridPartyContentDialog.close();
-            resolve(false);
-          },
-        },
-        {
-          "data-i18n": "trustBtn",
-          onClick() {
-            trustThridPartyContentDialog.close();
-            resolve(true);
-          },
-          type: "reset",
-        },
-      ],
-      onClose() {
-        resolve(false);
-      },
-    });
-    trustThridPartyContentDialog.open();
-  });
-}
-
 interface SyncInfo {
   syncUrl: string;
   syncResourceId: string;
@@ -89,10 +58,18 @@ function parseSyncInfoFromUrlFragment() {
   }
 }
 
-export async function loadDocument() {
+export type DocumentSourceOrigin =
+  | "HashEncodedRemoteSource"
+  | "SyncRemoteSource"
+  | "IndexedDbSource";
+
+// TODO: maybe we should return Source directly??
+export async function loadDocument(): Promise<DocumentSourceOrigin> {
   urlFragSyncInfo = parseSyncInfoFromUrlFragment();
   if (urlFragSyncInfo) {
+    // Load from remote url
     await new RemoteSource(urlFragSyncInfo).load();
+    return "HashEncodedRemoteSource";
   } else {
     // TODO: dup code
     const isCloudSyncEnabled =
@@ -105,8 +82,10 @@ export async function loadDocument() {
         // syncRemoteAuthKey: getLocalStorageItem("syncRemoteAuthKey"),
       };
       await new RemoteSource(syncInfo).load();
+      return "SyncRemoteSource";
     } else {
       await new IndexedDbSource().load();
+      return "IndexedDbSource";
     }
   }
 }

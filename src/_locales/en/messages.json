@@ -415,35 +415,35 @@
 		"message": "Cloud Sync Secret Key",
 		"description": "Input label for syncing service authorization key."
 	},
-  "trustThirdPartyContent": {
-    "message": "Trust Third-Party Content",
-    "description": "Dialog title asking the user to grant permission for trusting third-party content."
-  },
-  "trustThirdPartyContentMessage": {
-    "message": "Do you want to trust third-party content and enable code execution?",
-    "description": "Dialog message asking the user to grant permission for trusting third-party content and executing any JavaScript."
-  },
-  "doNotTrustBtn": {
-    "message": "Load Standard Content Only",
-    "description": "Dialog button label to load standard content only (without JavaScript)."
-  },
-  "trustBtn": {
-    "message": "Trust",
-    "description": "Dialog button label to load all third-party content, including JavaScript."
-  },
+	"allowScriptExecution": {
+		"message": "Allow Script",
+		"description": "Dialog title that asking user to grant permission for allowing JavaScript and CSS injection."
+	},
+	"allowScriptExecutionMessage": {
+		"message": "Allow JavaScript and CSS execution?",
+		"description": "Dialog message that asking user to grant permission for allowing JavaScript and CSS injection."
+	},
+	"doNotAllowScriptExecutionBtn": {
+		"message": "僅載入標準內容",
+		"description": "Dialog button label to load standard content only (without JavaScript and CSS)."
+	},
+	"allowScriptExecutionBtn": {
+		"message": "信任",
+		"description": "Dialog button label to load JavaScript and CSS."
+	},
   "settingsAdvancedSection": {
     "message": "Advanced",
     "description": "Title for the advanced settings section."
   },
-  "customJavascriptLabel": {
+  "customJavaScriptLabel": {
     "message": "Custom JavaScript Code",
     "description": "Label for custom JavaScript code textarea."
   },
-  "customJavascriptHelp": {
+  "customJavaScriptHelp": {
     "message": "JavaScript code can be used to extend/modify Mencrouche. For your safety, do not paste code from unknown sources.",
     "description": "Help message for the usage and warning for custom JavaScript."
   },
-  "customJavascriptPlaceholder": {
+  "customJavaScriptPlaceholder": {
     "message": "Only enter code you trust",
     "description": "Placeholder for custom JavaScript textarea warning the user not to enter unknown code."
   },

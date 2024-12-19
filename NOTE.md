@@ -53,13 +53,15 @@ just
         - [manigandham/rich-text-html-editors.md](https://gist.github.com/manigandham/65543a0bc2bf7006a487)
 - [ ] Toggle quilljs toolbar
 - [ ] A11y
-- [ ] (WIP) Grant user permission for custom js and css
 - [ ] Create intro video and tutorial for end user.
+- [x] Grant user permission for custom js and css
 - [x] Persist zoom and canvas position, also the original size of maximized sticky.
 - [x] Context menu two-side icon to match browser convention.
+- [ ] (WIPP) Add setting option for disabling script execution.
 
 ## BUGS
 
+- [ ] Auto arrange not working as expected, the container setting seems weird.
 - [ ] Using navbar add sticky, the sticky position should at center instead of top-right.
 - [ ] When moved viewport, create/copy sticky from command will not be center in user's point of view.
 - [x] If save maximized sticky, when restore from saved document, the original size will not available.

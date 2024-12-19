@@ -1,6 +1,12 @@
 import { stickyWorkspace } from "./sticky/sticky";
 import { $ } from "./utils/dollars";
-import { createShortcutItem, toggleSettingsPage } from "./settings";
+import {
+    allowScriptExecutionIfNotYetSet,
+  createShortcutItem,
+  grantScriptPermission,
+  isScriptExecutionAllowed,
+  toggleSettingsPage,
+} from "./settings";
 import { addPublicApi } from "./publicApi";
 import { initMarkdownSticky } from "./stickyPlugins/markdown";
 import { initSpotifySticky } from "./stickyPlugins/spotify";
@@ -217,7 +223,12 @@ n81i.translatePage();
 
 async function main() {
   try {
-    await loadDocument();
+    const origin = await loadDocument();
+    allowScriptExecutionIfNotYetSet();
+    if (isScriptExecutionAllowed() && origin === "HashEncodedRemoteSource") {
+      // Make sure user want to execute script from third party.
+      await grantScriptPermission();
+    }
   } catch (error) {
     console.log(error);
   }
