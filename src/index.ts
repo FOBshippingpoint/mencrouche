@@ -270,7 +270,7 @@ async function main() {
         },
         {
           name: "addMarkdownSticky",
-          icon: "lucide-sticky-note",
+          icon: "ri:markdown-fill",
           execute() {
             executeCommand("addMarkdownSticky");
           },

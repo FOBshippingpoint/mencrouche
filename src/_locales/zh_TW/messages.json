@@ -92,7 +92,7 @@
 		"description": "Command description for adding a new bookmark sticky."
 	},
 	"addMarkdownSticky": {
-		"message": "新增便利貼",
+		"message": "新增Markdown便利貼",
 		"description": "Command description for adding a new sticky note."
 	},
 	"addYoutubeSticky": {

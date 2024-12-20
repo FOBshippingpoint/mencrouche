@@ -61,6 +61,11 @@ just
 
 ## BUGS
 
+- [ ] Markdown extra whitespace
+- [ ] Tab not working in markdown sticky
+- [ ] Script and html not work as expected if use tab
+- [ ] Bookmak looks inconsist for different title length
+- [ ] Custom bookmark image bot working
 - [ ] Auto arrange not working as expected, the container setting seems weird.
 - [ ] Using navbar add sticky, the sticky position should at center instead of top-right.
 - [ ] When moved viewport, create/copy sticky from command will not be center in user's point of view.
