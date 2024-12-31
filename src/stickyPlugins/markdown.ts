@@ -1,17 +1,16 @@
 import { marked } from "marked";
 import {
+  registerSticky,
   type CustomStickyComposer,
   type CustomStickyConfig,
   type Sticky,
   type StickyPlugin,
-  registerSticky,
 } from "../sticky/sticky";
 import { registerContextMenu, type MenuItem } from "../contextMenu";
 import { blobToDataUrl } from "../utils/toDataUrl";
 import { getTemplateWidgets } from "../utils/getTemplateWidgets";
 import DOMPurify from "dompurify";
 import { markDirtyAndSaveDocument } from "../lifesaver";
-import { dataset } from "../dataWizard";
 import { isScriptExecutionAllowed } from "../settings";
 // import hljs from "highlight.js/lib/core";
 
@@ -101,7 +100,7 @@ function paste(textarea: HTMLTextAreaElement, toPaste: string) {
 
 const markdownSticky: CustomStickyComposer<MarkdownPlugin, MarkdownConfig> = {
   type: "markdown",
-  onCreate(sticky: Sticky<MarkdownPlugin>) {
+  onCreate(sticky) {
     enable(sticky);
     // Default set to edit mode.
     sticky.classList.add("editMode");
@@ -148,6 +147,9 @@ const markdownSticky: CustomStickyComposer<MarkdownPlugin, MarkdownConfig> = {
       }
     }
   },
+  options: {
+    noPadding: true,
+  },
 };
 
 const markdownStickyMenuItems: MenuItem[] = [
@@ -182,6 +184,33 @@ function enable(sticky: Sticky<MarkdownPlugin, MarkdownConfig>) {
   const textarea = widgets.$<HTMLTextAreaElement>("textarea")!;
   const divider = widgets.$<HTMLTextAreaElement>(".divider")!;
   const preview = widgets.$<HTMLDivElement>(".preview")!;
+
+  textarea.on("keydown", (e) => {
+    if (e.key === "Tab") {
+      e.preventDefault();
+
+      if (e.shiftKey) {
+        // Unindent
+        for (let i = textarea.selectionStart - 1; i >= 0; i--) {
+          const chRight = textarea.value[i];
+          const chLeft = textarea.value[i - 1];
+          if ((chLeft === "\n" || i === 0) && chRight === "\t") {
+            // Remove this tab character.
+            textarea.setRangeText("", i, i + 1);
+            return;
+          }
+        }
+      } else {
+        // Indent
+        textarea.setRangeText(
+          "\t",
+          textarea.selectionStart,
+          textarea.selectionStart,
+          "end",
+        );
+      }
+    }
+  });
 
   function updatePreview() {
     const dirtyHtml = marked.parse(textarea.value) as string;
@@ -289,7 +318,7 @@ function enable(sticky: Sticky<MarkdownPlugin, MarkdownConfig>) {
   function toggleDisable(disable: boolean) {
     sticky
       .$$("textarea,input,button")
-      .do((el) => ((el as any).disabled = disable));
+      .forEach((el) => ((el as any).disabled = disable));
   }
   sticky.on("classchange", () => {
     if (sticky.classList.contains("pin")) {

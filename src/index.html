@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta
       name="generator"
@@ -166,40 +166,27 @@
       </nav>
       <section id="mainSection">
         <div id="viewport">
+          <slot id="dockSlot"></slot>
+          <slot id="workspaceSlot"></slot>
+        </div>
+        <template id="dockWidgets">
           <div
             class="dock flex rounded padding surface shadow alwaysOnTop"
             data-context-menu="dock"
-            data-position="right"
+            data-placement="right"
             data-icon-size="48"
             data-always-on-top="on"
             data-show-add-btn="on"
             data-show-label="on"
           >
             <slot></slot>
-            <button class="addBookmarkBtn dockItem rounded">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="48"
-                height="48"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide lucide-plus"
-              >
-                <path d="M5 12h14" />
-                <path d="M12 5v14" />
-              </svg>
-            </button>
           </div>
-          <slot id="workspaceSlot"></slot>
-          <div id="editorjs"></div>
-        </div>
-        <template id="dockBookmark">
-          <a class="dockBookmark dockItem rounded square" draggable="true">
-            <img />
+        </template>
+        <template id="dockBookmarkWidgets">
+          <a class="dockBookmark dockItem rounded" draggable="true">
+            <div>
+              <img />
+            </div>
             <p class="text-xs"></p>
           </a>
         </template>
@@ -475,8 +462,7 @@
                 ></a>
               </li>
               <li>
-                <a href="#storagePref" data-i18n="settingsStorageSection">
-                </a>
+                <a href="#storagePref" data-i18n="settingsStorageSection"> </a>
               </li>
               <li>
                 <a href="#shortcutsPref" data-i18n="settingsShortcutsSection">
@@ -677,64 +663,77 @@
               <header>
                 <h2 data-i18n="settingsAdvancedSection"></h2>
               </header>
-              <details>
-                <summary data-i18n="clickToExpand"></summary>
-                <label for="customJsTextArea">
-                  <span data-i18n="customJavaScriptLabel"></span>
-                  <div
-                    data-i18n="customJavaScriptHelp"
-                    data-i18n-for="data-tooltip"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      class="lucide lucide-circle-help"
+              <div class="grid">
+                <label>
+                  <input
+                    checked
+                    type="checkbox"
+                    name="isScriptExecutionAllowed"
+                  />
+                  <span
+                    data-i18n="isScriptExecutionAllowedCheckboxLabel"
+                  ></span>
+                </label>
+                <div>
+                  <label for="customJsTextArea">
+                    <span data-i18n="customJavaScriptLabel"></span>
+                    <div
+                      data-i18n="customJavaScriptHelp"
+                      data-i18n-for="data-tooltip"
                     >
-                      <circle cx="12" cy="12" r="10" />
-                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-                      <path d="M12 17h.01" />
-                    </svg></div
-                ></label>
-                <textarea
-                  id="customJsTextArea"
-                  spellcheck="false"
-                  data-i18n="customJavaScriptPlaceholder"
-                  data-i18n-for="placeholder"
-                ></textarea>
-                <label for="customCssTextArea">
-                  <span data-i18n="customCssLabel"></span>
-                  <div data-i18n="customCssHelp" data-i18n-for="data-tooltip">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      class="lucide lucide-circle-help"
-                    >
-                      <circle cx="12" cy="12" r="10" />
-                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-                      <path d="M12 17h.01" />
-                    </svg></div
-                ></label>
-                <textarea
-                  id="customCssTextArea"
-                  spellcheck="false"
-                  data-i18n="customCssPlaceholder"
-                  data-i18n-for="placeholder"
-                ></textarea>
-              </details>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-circle-help"
+                      >
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                        <path d="M12 17h.01" />
+                      </svg></div
+                  ></label>
+                  <textarea
+                    id="customJsTextArea"
+                    spellcheck="false"
+                    data-i18n="customJavaScriptPlaceholder"
+                    data-i18n-for="placeholder"
+                  ></textarea>
+                </div>
+                <div>
+                  <label for="customCssTextArea">
+                    <span data-i18n="customCssLabel"></span>
+                    <div data-i18n="customCssHelp" data-i18n-for="data-tooltip">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-circle-help"
+                      >
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                        <path d="M12 17h.01" />
+                      </svg></div
+                  ></label>
+                  <textarea
+                    id="customCssTextArea"
+                    spellcheck="false"
+                    data-i18n="customCssPlaceholder"
+                    data-i18n-for="placeholder"
+                  ></textarea>
+                </div>
+              </div>
             </section>
             <hr />
             <section id="settingsBtnGroup" class="formGroupHorizontal">
@@ -772,35 +771,30 @@
         <div class="gaInput">
           <label>
             <span data-i18n="bookmarkHrefLabel"></span>
-            <input name="hrefLike" required />
+            <input name="urlLike" autofocus required />
           </label>
           <label>
             <span data-i18n="bookmarkLabelLabel"></span>
             <input name="label" />
           </label>
-          <details>
-            <summary data-i18n="bookmarkMoreOptions"></summary>
-            <div class="grid">
-              <label>
-                <span data-i18n="bookmarkTargetLabel"></span>
-                <select name="target">
-                  <option
-                    selected
-                    value="_self"
-                    data-i18n="openBookmarkInCurrentTabMenuItem"
-                  ></option>
-                  <option
-                    value="_blank"
-                    data-i18n="openBookmarkInAddTabMenuItem"
-                  ></option>
-                </select>
-              </label>
-              <label>
-                <span data-i18n="bookmarkIconLabel"></span>
-                <input name="icon" />
-              </label>
-            </div>
-          </details>
+          <label>
+            <span data-i18n="bookmarkIconLabel"></span>
+            <input name="icon" />
+          </label>
+          <label>
+            <span data-i18n="bookmarkTargetLabel"></span>
+            <select name="target">
+              <option
+                selected
+                value="_self"
+                data-i18n="openBookmarkInCurrentTabOption"
+              ></option>
+              <option
+                value="_blank"
+                data-i18n="openBookmarkInNewTabOption"
+              ></option>
+            </select>
+          </label>
         </div>
         <div class="gaPreview flex-center"></div>
         <div class="gaButtonGroup">
@@ -816,10 +810,10 @@
     <dialog id="dockAppearanceDialog">
       <form class="grid">
         <label>
-          <span data-i18n="iconSizeInputLabel"></span>
+          <span data-i18n="sizeInputLabel"></span>
           <input
             type="range"
-            name="iconSize"
+            name="size"
             step="16"
             min="16"
             max="64"
@@ -861,28 +855,28 @@
             <div class="dummyScreen rounded surface">
               <div class="dummyDock dock-right"></div>
             </div>
-            <input type="radio" name="position" value="right" />
+            <input type="radio" name="placement" value="right" />
             <span data-i18n="dockPositionRightRadioLabel"></span>
           </label>
           <label class="radioOption">
             <div class="dummyScreen rounded surface">
               <div class="dummyDock dock-bottom"></div>
             </div>
-            <input type="radio" name="position" value="bottom" />
+            <input type="radio" name="placement" value="bottom" />
             <span data-i18n="dockPositionBottomRadioLabel"></span>
           </label>
           <label class="radioOption">
             <div class="dummyScreen rounded surface">
               <div class="dummyDock dock-top"></div>
             </div>
-            <input type="radio" name="position" value="top" />
+            <input type="radio" name="placement" value="top" />
             <span data-i18n="dockPositionTopRadioLabel"></span>
           </label>
           <label class="radioOption">
             <div class="dummyScreen rounded surface">
               <div class="dummyDock dock-left"></div>
             </div>
-            <input type="radio" name="position" value="left" />
+            <input type="radio" name="placement" value="left" />
             <span data-i18n="dockPositionLeftRadioLabel"></span>
           </label>
         </div>
@@ -949,5 +943,44 @@
       </div>
     </dialog>
     <slot id="customJsSlot"></slot>
+
+    <template id="clockWidgets">
+      <div class="clock">
+        <time class="time"></time>
+        <time class="date"></time>
+      </div>
+    </template>
+
+    <template id="bookmarkDockWidgets">
+      <div class="bookmarkDock">
+        <div></div>
+        <button class="addBookmarkBtn dockItem rounded">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="48"
+            height="48"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-plus"
+          >
+            <path d="M5 12h14" />
+            <path d="M12 5v14" />
+          </svg>
+        </button>
+      </div>
+    </template>
+
+    <template id="bookmarkWidgets">
+      <a href="#" class="bookmark">
+        <div class="bookmarkIcon">
+          <img />
+        </div>
+        <div class="bookmarkLabel"></div>
+      </a>
+    </template>
   </body>
 </html>

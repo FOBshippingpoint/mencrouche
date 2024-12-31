@@ -6,115 +6,6 @@
  * attaching event listeners.
  */
 
-export type Allowance<T extends HTMLElement> = T & {
-  $: <K extends HTMLElement>(selectors: string) => Allowance<K> | null;
-  $$: <K extends HTMLElement>(selectors: string) => AllowanceList<K>;
-};
-
-export type AllowanceList<T extends HTMLElement> = Allowance<T>[] & {
-  do: (func: (el: Allowance<T>) => void) => void;
-  kill: () => void;
-};
-
-/**
- * Add $ and $$ for selecting element(s) in this element's scope.
- * @param element - element to wrap.
- */
-function wrap<T extends HTMLElement>(element: T): Allowance<T> {
-  const dollars = {
-    $<K extends HTMLElement>(selectors: string) {
-      const el = element.querySelector<K>(selectors);
-      return el ? wrap<K>(el) : null;
-    },
-    $$<K extends HTMLElement>(selectors: string) {
-      return wrapList<K>(
-        ([...element.querySelectorAll<K>(selectors)] as K[]).map(wrap),
-      );
-    },
-  };
-  return Object.assign(element, dollars);
-}
-
-/**
- * Enhances an array of EnhancedHTMLElements with additional methods
- * @param arr
- * @returns Enahanced list.
- */
-function wrapList<T extends HTMLElement>(
-  arr: Allowance<T>[],
-): AllowanceList<T> {
-  return Object.assign(arr, {
-    do(func: (el: Allowance<T>) => void) {
-      arr.forEach(func);
-    },
-    kill() {
-      arr.forEach((el) => el.remove());
-    },
-  });
-}
-
-/**
- * Selects a single element from the DOM.
- *
- * @param selectors - Either a CSS selector string or an existing DOM element.
- * @returns The selected element or null if not found.
- */
-function $<T extends HTMLElement>(selectors: string | T): Allowance<T> | null {
-  if (typeof selectors === "string") {
-    const element = document.querySelector<T>(selectors);
-    return element ? wrap(element) : null;
-  }
-  return wrap(selectors);
-}
-// TODO: plugin system.
-// Object.assign($, {
-//   fn: new Proxy(
-//     {
-//       // Standard functions.
-//       left() {
-//         parseInt
-//       }
-//     },
-//     {
-//       set(target: any, prop: string | symbol, val: any) {
-//         if (typeof val === "function") {
-//           target[prop] = val;
-//           return true;
-//         } else {
-//           return false;
-//         }
-//       },
-//     },
-//   ),
-// });
-export { $ };
-
-/**
- * Selects multiple elements from the DOM and returns them as an array.
- *
- * @param selectors - Either a CSS selector string or an existing DOM element.
- * @returns An array of the selected elements with additional methods.
- */
-export function $$<T extends HTMLElement>(selectors: string): AllowanceList<T> {
-  return wrapList([...document.querySelectorAll<T>(selectors)].map(wrap));
-}
-
-/**
- * Creates a new HTML element with the specified tag name and optional attributes.
- *
- * This is an alias for `document.createElement`.
- *
- * @param tagName - The name of the HTML element to create.
- * @param options - Optional attributes for the element.
- * @returns The created HTML element.
- */
-export function $$$<K extends keyof HTMLElementTagNameMap>(
-  tagName: K,
-  options?: ElementCreationOptions,
-): Allowance<HTMLElementTagNameMap[K]> {
-  return wrap(document.createElement(tagName, options));
-}
-
 // Add type declarations for the prototype additions
 declare global {
   interface EventTarget {
@@ -125,11 +16,81 @@ declare global {
     on: typeof HTMLElement.prototype.addEventListener;
     off: typeof HTMLElement.prototype.removeEventListener;
   }
-  interface Document {
-    on: typeof Document.prototype.addEventListener;
-    off: typeof Document.prototype.removeEventListener;
+  interface Element {
+    $: typeof Element.prototype.querySelector;
+    $$<K extends keyof HTMLElementTagNameMap>(
+      selectors: K,
+    ): HTMLElementTagNameMap[K][];
+    $$<K extends keyof SVGElementTagNameMap>(
+      selectors: K,
+    ): SVGElementTagNameMap[K][];
+    $$<K extends keyof MathMLElementTagNameMap>(
+      selectors: K,
+    ): MathMLElementTagNameMap[K][];
+    /** @deprecated */
+    $$<K extends keyof HTMLElementDeprecatedTagNameMap>(
+      selectors: K,
+    ): HTMLElementDeprecatedTagNameMap[K][];
+    $$<E extends Element = Element>(selectors: string): E[];
+  }
+  interface DocumentFragment {
+    $: typeof DocumentFragment.prototype.querySelector;
+    $$<K extends keyof HTMLElementTagNameMap>(
+      selectors: K,
+    ): HTMLElementTagNameMap[K][];
+    $$<K extends keyof SVGElementTagNameMap>(
+      selectors: K,
+    ): SVGElementTagNameMap[K][];
+    $$<K extends keyof MathMLElementTagNameMap>(
+      selectors: K,
+    ): MathMLElementTagNameMap[K][];
+    /** @deprecated */
+    $$<K extends keyof HTMLElementDeprecatedTagNameMap>(
+      selectors: K,
+    ): HTMLElementDeprecatedTagNameMap[K][];
+    $$<E extends Element = Element>(selectors: string): E[];
   }
 }
 
 EventTarget.prototype.on = EventTarget.prototype.addEventListener;
 EventTarget.prototype.off = EventTarget.prototype.removeEventListener;
+
+Element.prototype.$ = Element.prototype.querySelector;
+Element.prototype.$$ = function <T extends Element>(selector: string): T[] {
+  return [...this.querySelectorAll<T>(selector)];
+};
+DocumentFragment.prototype.$ = DocumentFragment.prototype.querySelector;
+DocumentFragment.prototype.$$ = function <T extends Element>(selector: string): T[] {
+  return [...this.querySelectorAll<T>(selector)];
+};
+
+/**
+ * Selects a single element from the DOM.
+ *
+ * @param selectors - Either a CSS selector string or an existing DOM element.
+ * @returns The selected element or null if not found.
+ */
+const $ = document.querySelector.bind(document);
+
+/**
+ * Selects multiple elements from the DOM and returns them as an array.
+ *
+ * @param selectors - Either a CSS selector string or an existing DOM element.
+ * @returns An array of the selected elements with additional methods.
+ */
+const $$ = <T extends Element>(selector: string) => [
+  ...document.querySelectorAll<T>(selector),
+];
+
+/**
+ * Creates a new HTML element with the specified tag name and optional attributes.
+ *
+ * This is an alias for `document.createElement`.
+ *
+ * @param tagName - The name of the HTML element to create.
+ * @param options - Optional attributes for the element.
+ * @returns The created HTML element.
+ */
+const $$$ = document.createElement.bind(document);
+
+export { $, $$, $$$ };

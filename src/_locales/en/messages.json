@@ -103,11 +103,11 @@
     "message": "New Spotify Sticky",
     "description": "Command description for adding a new spotify sticky note."
   },
-  "openBookmarkInCurrentTabMenuItem": {
+  "openBookmarkInCurrentTabOption": {
     "message": "Open in current tab",
     "description": "Context menu item label text for opening bookmark link in current tab."
   },
-  "openBookmarkInAddTabMenuItem": {
+  "openBookmarkInNewTabOption": {
     "message": "Open in new tab",
     "description": "Context menu item label text for opening bookmark link in a new tab."
   },
@@ -247,9 +247,9 @@
     "message": "Show Add Shortcut Button",
     "description": "Checkbox label for showing or hiding the add bookmark button."
   },
-  "iconSizeInputLabel": {
-    "message": "Icon Size",
-    "description": "Label for adjusting the bookmark icon size."
+  "sizeInputLabel": {
+    "message": "Bookmark Size",
+    "description": "Label for adjusting the bookmark size."
   },
   "showLabelCheckboxLabel": {
     "message": "Show Shortcut Label",
@@ -482,6 +482,10 @@
 	"isCloudSyncEnabledCheckboxLabel": {
 		"message": "Enable Cloud Sync",
 		"description": "Checkbox label for enabling cloud sync."
+	},
+	"isScriptExecutionAllowedCheckboxLabel": {
+		"message": "Allow Script Execution",
+		"description": "Checkbox label for allowing script execution."
 	},
 	"addMarkdownStickyBtn": {
 		"message": "Markdown",

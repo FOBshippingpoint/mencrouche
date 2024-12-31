@@ -33,6 +33,11 @@ function showContextMenu(e: MouseEvent | CustomEvent) {
   const frag = document.createDocumentFragment();
   for (const key of keys ?? []) {
     const menuItems = registry.get(key);
+    if (menuItems === undefined) {
+      throw Error(
+        `Context menu '${key}' not found. Please registery context menu first via 'registerContextMenu'.`,
+      );
+    }
     frag.appendChild(buildMenuItems(menuItems, target));
   }
   contextMenu.replaceChildren(frag);
@@ -60,7 +65,8 @@ function showContextMenu(e: MouseEvent | CustomEvent) {
 document.on("contextmenu", (e) => {
   if (e.shiftKey) return;
   if (!$("#settings")!.classList.contains("none")) return;
-  if ((e.target as Element).matches("input,textarea")) return;
+  if ((e.target as Element).matches("input,textarea,[contenteditable='true']"))
+    return;
 
   showContextMenu(e);
 });
@@ -149,7 +155,7 @@ function buildMenuItems(menuItems: MenuItem[], eventTarget: EventTarget) {
       frag.appendChild($$$("hr"));
     } else {
       const menuItemDef = menuItem as MenuItemDefinition;
-      const template = getTemplateWidgets("menuItem");
+      const template = getTemplateWidgets("menuItem") as DocumentFragment;
       const btn = template.$<HTMLButtonElement>("button")!;
       const iconL = template.$<HTMLElement>(".icon.left")!;
       const span = template.$<HTMLSpanElement>("span")!;
@@ -179,11 +185,13 @@ function buildMenuItems(menuItems: MenuItem[], eventTarget: EventTarget) {
         btn.dataset.subItemActive = "off";
 
         function showSubItems() {
-          contextMenu.$$('[data-sub-item-active="on"]').do((el) => {
-            if (!el.contains(subItem)) {
-              el.dataset.subItemActive = "off";
-            }
-          });
+          contextMenu
+            .$$<HTMLDivElement>('[data-sub-item-active="on"]')
+            .forEach((el) => {
+              if (!el.contains(subItem)) {
+                el.dataset.subItemActive = "off";
+              }
+            });
           btn.dataset.subItemActive = "on";
           if (
             document.body.getBoundingClientRect().right <

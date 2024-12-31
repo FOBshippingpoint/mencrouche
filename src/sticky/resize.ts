@@ -101,6 +101,7 @@ export class Resizable extends ZoomAware {
   }
 
   private resizeEnd(e: PointerEvent) {
+    if (!this.isResizing) return;
     this.isResizing = false;
     this.currentHandle = null;
     document.off("pointermove", this.resize.bind(this));

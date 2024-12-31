@@ -68,6 +68,9 @@ const deleteDocumentBtn = $<HTMLButtonElement>("#deleteDocumentBtn")!;
 const exportDocumentBtn = $<HTMLButtonElement>("#exportDocumentBtn")!;
 const importDocumentBtn = $<HTMLButtonElement>("#importDocumentBtn")!;
 const resetPaletteHueBtn = $<HTMLDivElement>("#setPaletteHueToDefaultBtn")!;
+const isScriptExecutionAllowedCheckbox = $<HTMLInputElement>(
+  '[name="isScriptExecutionAllowed"]',
+)!;
 const customJsTextArea = $<HTMLTextAreaElement>("#customJsTextArea")!;
 const customJsSlot = $<HTMLSlotElement>("#customJsSlot")!;
 const customCssTextArea = $<HTMLTextAreaElement>("#customCssTextArea")!;
@@ -382,14 +385,15 @@ uiOpacityInput.on("input", () => {
 
 function openSettingsPage() {
   settings.classList.remove("none");
-  $(".stickyContainer")!.classList.add("none");
 
   // Backup attributes.
   const uiOpacity = dataset.getOrSetItem("uiOpacity", 1);
   const paletteHue = dataset.getItem("paletteHue") as string;
+  console.log(paletteHue);
   const backgroundImageUrl = dataset.getItem("backgroundImageUrl");
   const locale = dataset.getItem("locale") as string;
   changesManager.onRevert = () => {
+    console.log("on revert");
     dataset.setItem("uiOpacity", uiOpacity);
     dataset.setItem("paletteHue", paletteHue);
     dataset.setItem("backgroundImageUrl", backgroundImageUrl);
@@ -402,10 +406,10 @@ function closeSettingsPage() {
   settings.classList.add("none");
   backgroundImageDropzone.style.backgroundImage = "unset";
   backgroundImageUrlInput.value = "";
-  $(".stickyContainer")!.classList.remove("none");
 }
 
 export function toggleSettingsPage() {
+  debugger;
   if (settings.classList.contains("none")) {
     openSettingsPage();
   } else {
@@ -567,9 +571,7 @@ dataset.on<number>("uiOpacity", (_, uiOpacity) => {
 
 // Initialize palette hue
 dataset.on<string>("paletteHue", (_, paletteHue) => {
-  if (paletteHue) {
-    setCssProperty("--palette-hue", paletteHue);
-  }
+  setCssProperty("--palette-hue", paletteHue);
 });
 hueWheel.on("pointerdown", () => hueWheel.on("pointermove", adjustPaletteHue));
 hueWheel.on("pointerup", () => hueWheel.off("pointermove", adjustPaletteHue));
@@ -624,8 +626,8 @@ document.body.on("click", (e) => {
   }
 });
 
-function setCssProperty(name: string, value: string | null) {
-  if (value === null) {
+function setCssProperty(name: string, value: string | null | undefined) {
+  if (value === null || value === undefined) {
     document.documentElement.style.removeProperty(name);
   } else {
     document.documentElement.style.setProperty(name, value);
@@ -681,6 +683,16 @@ customJsTextArea.on("input", () => {
   });
 });
 
+isScriptExecutionAllowedCheckbox.checked =
+  localStorage.getItem("isScriptExecutionAllowed") === "on";
+isScriptExecutionAllowedCheckbox.on("input", () => {
+  changesManager.setChange("setIsScriptExecutionAllowed", () => {
+    localStorage.setItem(
+      "isScriptExecutionAllowed",
+      isScriptExecutionAllowedCheckbox.value,
+    );
+  });
+});
 export async function grantScriptPermission() {
   const isScriptExecutionAllowed = await new Promise<boolean>((resolve) => {
     const allowScriptExecutionDialog = createDialog({
@@ -711,15 +723,15 @@ export async function grantScriptPermission() {
   });
   localStorage.setItem(
     "isScriptExecutionAllowed",
-    isScriptExecutionAllowed ? "true" : "false",
+    isScriptExecutionAllowed ? "on" : "off",
   );
 }
 export function isScriptExecutionAllowed() {
-  return localStorage.getItem("isScriptExecutionAllowed") === "true";
+  return localStorage.getItem("isScriptExecutionAllowed") === "on";
 }
 export function allowScriptExecutionIfNotYetSet() {
   if (localStorage.getItem("isScriptExecutionAllowed") === null) {
-    localStorage.setItem("isScriptExecutionAllowed", "true");
+    localStorage.setItem("isScriptExecutionAllowed", "on");
   }
 }
 

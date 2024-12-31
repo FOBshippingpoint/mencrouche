@@ -8,7 +8,7 @@ import { markDirtyAndSaveDocument } from "../lifesaver";
 import { Zoomable, type Transform } from "./zoom";
 import { Resizable } from "./resize";
 import { Draggable, type Offset } from "./drag";
-import { $, $$$, type Allowance } from "../utils/dollars";
+import { $, $$$ } from "../utils/dollars";
 
 function onEventOrTimeout<K extends keyof HTMLElementEventMap>(
   el: HTMLElement,
@@ -46,7 +46,7 @@ export interface StickyConfig<
 export interface Sticky<
   T extends StickyPlugin = StickyPlugin,
   C extends CustomStickyConfig = CustomStickyConfig,
-> extends Allowance<HTMLDivElement> {
+> extends HTMLDivElement {
   type: string;
   delete: () => void;
   forceDelete: () => void;
@@ -129,13 +129,13 @@ export interface WorkspaceConfig {
 }
 class StickyWorkspace {
   /** Contains stickies. */
-  stickyContainer: Allowance<HTMLDivElement>;
+  stickyContainer: HTMLDivElement;
   /**
    * Contains stickyContainer.
    * A simple html element wrapper, so that we can use
    * css transform without worrying outer layout.
    */
-  workspaceContainer: Allowance<HTMLDivElement>;
+  workspaceContainer: HTMLDivElement;
   zoomable: Zoomable;
   draggable: Draggable;
   buildSticky: ReturnType<typeof buildBuildSticky>;
@@ -193,7 +193,9 @@ class StickyWorkspace {
   refreshHighestZIndex() {
     // Find and set the highestZIndex when initialize from existing document.
     this.highestZIndex = 0;
-    for (const sticky of this.workspaceContainer.$$(".sticky")) {
+    for (const sticky of this.workspaceContainer.$$<HTMLDivElement>(
+      ".sticky",
+    )) {
       const zIndex = parseInt(sticky.style.zIndex);
       if (zIndex > this.highestZIndex) {
         this.highestZIndex = zIndex;
@@ -546,9 +548,8 @@ function buildBuildSticky(
       pluginConfig,
     }: StickyConfig = {},
   ) {
-    const sticky = $<HTMLDivElement>(
-      getTemplateWidgets("sticky").firstElementChild as any,
-    )!;
+    const sticky = (getTemplateWidgets("sticky") as HTMLDivElement)
+      .firstElementChild! as HTMLDivElement;
 
     sticky.id = id ?? crypto.randomUUID();
 
@@ -601,7 +602,7 @@ function buildBuildSticky(
     }
 
     function enableStickyFunctionality(): Sticky {
-      const stickyHeader = sticky.$(".stickyHeader")!;
+      const stickyHeader = sticky.$<HTMLDivElement>(".stickyHeader")!;
       const deleteBtn = sticky.$<HTMLButtonElement>(".deleteBtn")!;
       const maximizeToggleLbl =
         sticky.$<HTMLLabelElement>(".maximizeToggleLbl")!;
@@ -703,6 +704,7 @@ function buildBuildSticky(
         },
         addControlWidget(element: HTMLElement) {
           sticky.$<HTMLDivElement>(".controls slot")!.appendChild(element);
+          return extendedSticky;
         },
         replaceBody(...nodes: (Node | string)[]) {
           sticky.$(".stickyBody")!.replaceChildren(...nodes);
@@ -753,6 +755,9 @@ function buildBuildSticky(
     if (type) {
       const custom = customStickiComposers.get(type);
       if (custom) {
+        const options: CustomStickyOptions = custom.options ?? {};
+        options.noPadding ??= false;
+        basicSticky.classList.toggle("noPadding", options.noPadding);
         if (buildType === "create") {
           custom.onCreate(basicSticky);
           basicSticky.classList.add(type);
@@ -818,9 +823,11 @@ export interface CustomStickyComposer<
   onSave(sticky: Sticky<S, C>): C | void;
   onDelete(sticky: Sticky<S, C>): void;
   onRestore(sticky: Sticky<S, C>, config?: C): void;
-  options?: {
-    // TODO: add something like no padding, menu items etc.
-  };
+  options?: CustomStickyOptions;
+}
+
+interface CustomStickyOptions {
+  noPadding?: boolean;
 }
 
 export function registerSticky<
@@ -836,7 +843,7 @@ export function registerSticky<
   customStickiComposers.set(customSticky.type, customSticky);
 }
 
-export function getCustomSticky(sticky: Allowance<HTMLDivElement> | Sticky) {
+export function getCustomSticky(sticky: HTMLDivElement | Sticky) {
   for (const className of sticky.classList.values()) {
     const custom = customStickiComposers.get(className);
     if (custom) {

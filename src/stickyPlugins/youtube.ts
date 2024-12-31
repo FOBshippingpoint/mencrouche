@@ -84,9 +84,9 @@ form.on("submit", (e) => {
   dialog.close();
 });
 
-const youtubeSticky: CustomStickyComposer = {
+const youtubeSticky: CustomStickyComposer<YouTubePlugin, YouTubeConfig> = {
   type: "youtube",
-  onCreate(sticky: Sticky<YouTubePlugin>) {
+  onCreate(sticky) {
     sticky.classList.add("none");
     enable(sticky, () => {
       if (sticky.dataset.autoplay === "on") {
@@ -129,7 +129,7 @@ const youtubeSticky: CustomStickyComposer = {
     dialog.showModal();
     linkInput.focus();
   },
-  onSave(sticky: Sticky<YouTubePlugin>) {
+  onSave(sticky) {
     // Save current player state and time.
     if (sticky.plugin.player) {
       const pluginConfig: YouTubeConfig = {
@@ -142,7 +142,7 @@ const youtubeSticky: CustomStickyComposer = {
     }
   },
   onDelete() {},
-  onRestore(sticky: Sticky<YouTubePlugin>, pluginConfig: YouTubeConfig) {
+  onRestore(sticky, pluginConfig) {
     enable(sticky, () => {
       if (pluginConfig.currentTime) {
         sticky.plugin.player?.seekTo(pluginConfig.currentTime, true);
@@ -154,6 +154,9 @@ const youtubeSticky: CustomStickyComposer = {
     sticky.$<HTMLIFrameElement>("iframe")!.src = pluginConfig.iframeSrc;
     sticky.plugin.initPlayer();
   },
+  options: {
+    noPadding: true
+  }
 };
 
 function enable(sticky: Sticky<YouTubePlugin>, onScriptLoad: () => void) {

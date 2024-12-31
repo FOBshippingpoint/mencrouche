@@ -1,4 +1,4 @@
-export function formToObject(form: HTMLFormElement) {
+export function formToObject<T>(form: HTMLFormElement) {
   const obj = Object.fromEntries(new FormData(form).entries()) as Record<
     string,
     any
@@ -13,5 +13,5 @@ export function formToObject(form: HTMLFormElement) {
     }
   }
 
-  return obj;
+  return obj as T;
 }

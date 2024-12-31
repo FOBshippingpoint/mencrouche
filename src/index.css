@@ -454,15 +454,16 @@ h6 {
   }
 }
 
+.sticky.noPadding .stickyBody {
+  padding: 0;
+}
+
 .markdown.editMode.splitView .stickyBody {
   display: flex;
   overflow: auto;
 
   .preview {
     display: initial;
-  }
-  .preview:not(:has(iframe)) {
-    padding-inline: var(--size-4);
   }
   .divider {
     width: var(--size-1);
@@ -493,26 +494,19 @@ h6 {
   textarea {
     display: none;
   }
-  .preview {
-    display: initial;
-  }
 }
 
 .markdown {
   .stickyBody:has(.preview:not([hidden])) {
     overflow: auto;
   }
-  .stickyBody:has(iframe) {
+  .preview:has(iframe) {
     padding: 0;
-    .preview {
-      padding: 0;
-    }
   }
   .stickyBody textarea {
     border: none;
     background-color: inherit;
     color: inherit;
-    padding: 0;
     border-radius: 0;
     width: 100%;
     height: 100%;
@@ -527,12 +521,6 @@ h6 {
   }
 }
 
-.youtube,
-.spotify {
-  .stickyBody {
-    padding: 0;
-  }
-}
 .ghost.youtube iframe {
   border-radius: 12px;
 }
@@ -832,17 +820,6 @@ h6 {
     gap: var(--size-1);
   }
 }
-#advancedPref {
-  textarea:first-of-type {
-    margin-block-end: var(--size-3);
-  }
-  details {
-    max-inline-size: var(--size-content-3);
-  }
-  details[open] {
-    padding-block-end: var(--size-3);
-  }
-}
 #customJsTextArea,
 #customCssTextArea {
   resize: both;
@@ -1001,19 +978,6 @@ ul {
   }
 }
 
-.bookmarkPreview {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  cursor: move;
-
-  div {
-    display: flex;
-    gap: var(--size-1);
-  }
-}
-
 .pureBtn {
   box-shadow: unset;
   --_icon-size: unset;
@@ -1078,17 +1042,27 @@ hr {
   }
 }
 .dockBookmark {
+  aspect-ratio: 1 / 1;
   color: var(--text-1);
   text-decoration: none;
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-1);
 
-  img {
-    justify-self: center;
-    align-self: center;
+  div {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
   }
 
   p {
-    align-self: end;
+    align-self: center;
     text-overflow: ellipsis;
     overflow-wrap: break-word;
     text-align: center;
@@ -1313,7 +1287,6 @@ dialog {
 }
 
 .note .stickyBody {
-  padding: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -1364,4 +1337,89 @@ dialog {
     opacity: 0.5;
     font-size: var(--font-size-2);
   }
+}
+
+.clock {
+  text-align: right;
+  font-size: var(--font-size-0);
+  .time {
+    color: var(--text-1);
+    display: block;
+  }
+  .date {
+    color: var(--text-2);
+  }
+}
+
+.bookmarkDock {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-2);
+  }
+
+  .addBookmarkBtn {
+    margin-block-start: var(--size-2);
+  }
+}
+
+.bookmark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: var(--text-1);
+  transition: transform 0.2s;
+
+  .bookmarkIcon {
+    width: var(--size-8);
+    height: var(--size-8);
+    border-radius: var(--radius-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--size-1);
+    box-shadow: 0 2px 4px oklch(0 0 0 / 0.1);
+    position: relative;
+  }
+
+  .letter {
+    font-size: 24px;
+    font-weight: bold;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    line-height: 1;
+  }
+
+  .bookmarkLabel {
+    font-size: var(--font-size-0);
+    text-align: center;
+    max-width: var(--size-8);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+  }
+
+  .letter.singleChar {
+    font-size: 24px;
+  }
+
+  .letter.multiChar {
+    font-size: 20px;
+  }
+}
+
+.bookmark:hover {
+  transform: scale(1.1, 1.1);
 }

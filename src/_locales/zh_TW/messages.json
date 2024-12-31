@@ -103,11 +103,11 @@
     "message": "新增Spotify便利貼",
     "description": "Command description for adding a new spotify sticky note."
   },
-	"openBookmarkInCurrentTabMenuItem": {
+	"openBookmarkInCurrentTabOption": {
 		"message": "在此分頁開啟",
 		"description": "Context menu item label text for opening bookmark link in current tab."
 	},
-	"openBookmarkInAddTabMenuItem": {
+	"openBookmarkInNewTabOption": {
 		"message": "用新分頁開啟",
 		"description": "Context menu item label text for opening bookmark link in a new tab."
 	},
@@ -243,9 +243,9 @@
 		"message": "顯示新增捷徑按鈕",
 		"description": "Checkbox label for showing/not showing add bookmark button."
 	},
-	"iconSizeInputLabel": {
-		"message": "圖示大小",
-		"description": "Label for adjusting bookmark icon size."
+	"sizeInputLabel": {
+		"message": "書籤大小",
+		"description": "Label for adjusting bookmark size."
 	},
 	"showLabelCheckboxLabel": {
 		"message": "顯示捷徑標題",
@@ -486,6 +486,10 @@
 	"isCloudSyncEnabledCheckboxLabel": {
 		"message": "啟用雲端同步",
 		"description": "Checkbox label for enabling cloud sync."
+	},
+	"isScriptExecutionAllowedCheckboxLabel": {
+		"message": "啟用程式碼執行",
+		"description": "Checkbox label for allowing script execution."
 	},
 	"addMarkdownStickyBtn": {
 		"message": "Markdown",

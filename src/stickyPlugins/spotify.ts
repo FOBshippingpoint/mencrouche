@@ -69,7 +69,7 @@ form.on("submit", (e) => {
   current.dataset.height = height;
 
   // Adjust height
-  current.style.height = `${parseInt(height, 10) + 28}px`;
+  current.style.height = `${parseInt(height) + 28}px`;
 
   // Adjust width
   if (window.matchMedia("(min-width: 1536px)").matches) {
@@ -129,6 +129,9 @@ const spotifySticky: CustomStickyComposer<SpotifyPlugin, SpotifyConfig> = {
       iframe.src = config.iframeSrc;
       iframe.height = config.iframeHeight;
     }
+  },
+  options: {
+    noPadding: true,
   },
 };
 

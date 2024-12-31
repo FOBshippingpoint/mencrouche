@@ -93,6 +93,7 @@ export class Draggable extends ZoomAware {
   }
 
   private dragEnd(e: PointerEvent) {
+    if (!this.isDragging) return;
     this.isDragging = false;
 
     document.off("pointermove", this.drag.bind(this));
