@@ -442,6 +442,7 @@ h6 {
   .preview {
     height: 100%;
     padding-inline: var(--size-2);
+    padding-block: var(--size-1);
 
     pre {
       width: 100%;
@@ -1004,17 +1005,6 @@ hr {
 
 .dock {
   position: absolute;
-
-  [draggable="true"] {
-    will-change: transform;
-    cursor: move;
-    transition: all 200ms;
-    user-select: none;
-  }
-  [draggable="true"].dragOver,
-  [draggable="true"]:has(.dragOver) {
-    transform: scale(1.1, 1.1);
-  }
 }
 .alwaysOnTop {
   z-index: var(--layer-important);
@@ -1386,6 +1376,16 @@ dialog {
   .addBookmarkBtn {
     block-size: var(--size-7);
     inline-size: var(--size-7);
+  }
+
+  [draggable="true"] {
+    will-change: transform;
+    transition: all 200ms;
+    user-select: none;
+  }
+  [draggable="true"].dragOver,
+  [draggable="true"]:has(.dragOver) {
+    transform: scale(1.2, 1.2);
   }
 }
 

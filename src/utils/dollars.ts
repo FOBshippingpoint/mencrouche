@@ -60,7 +60,9 @@ Element.prototype.$$ = function <T extends Element>(selector: string): T[] {
   return [...this.querySelectorAll<T>(selector)];
 };
 DocumentFragment.prototype.$ = DocumentFragment.prototype.querySelector;
-DocumentFragment.prototype.$$ = function <T extends Element>(selector: string): T[] {
+DocumentFragment.prototype.$$ = function <T extends Element>(
+  selector: string,
+): T[] {
   return [...this.querySelectorAll<T>(selector)];
 };
 
@@ -93,4 +95,32 @@ const $$ = <T extends Element>(selector: string) => [
  */
 const $$$ = document.createElement.bind(document);
 
-export { $, $$, $$$ };
+/**
+ * Converts an HTML string into either a single Element or DocumentFragment
+ *
+ * @param html - The HTML string to be converted
+ * @returns A single Element if the HTML contains one root element, otherwise returns a DocumentFragment containing all elements
+ *
+ * @example
+ * // Returns a strongly-typed HTMLDivElement
+ * const div = h<HTMLDivElement>('<div>Hello</div>');
+ *
+ * @example
+ * // Returns a strongly-typed SVGSVGElement
+ * const svg = h<SVGSVGElement>('<svg viewBox="0 0 100 100"></svg>');
+ *
+ * @example
+ * // Returns a DocumentFragment containing multiple elements
+ * const fragment = h('<div>First</div><div>Second</div>');
+ */
+function h<E extends Element = Element>(html: string): E | DocumentFragment {
+  const template = $$$("template");
+  template.innerHTML = html;
+  if (template.content.childElementCount === 1) {
+    return template.content.firstElementChild! as E;
+  } else {
+    return template.content;
+  }
+}
+
+export { $, $$, $$$, h };

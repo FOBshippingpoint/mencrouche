@@ -67,7 +67,7 @@ mc.registerSticky({
   onDelete() {},
   onRestore() {},
 });
-mc.stickyManager.create({ type: "clock" });
+mc.stickyWorkspace.create({ type: "clock" });
 ```
 
 After executing the code, you should see a sticky appended to the workspace:
@@ -101,7 +101,7 @@ mc.registerSticky({
   },
   onRestore() {},
 });
-mc.stickyManager.create({ type: "clock" });
+mc.stickyWorkspace.create({ type: "clock" });
 ```
 
 In this version, "update time" is printed every 100ms. After closing the sticky, the message will no longer appear.
@@ -145,7 +145,7 @@ mc.registerSticky({
     sticky.querySelector("span").style.color = pluginConfig.color;
   },
 });
-mc.stickyManager.create({ type: "clock" });
+mc.stickyWorkspace.create({ type: "clock" });
 ```
 
 Ta-da!
@@ -154,9 +154,22 @@ Ta-da!
 
 The new version refactored the DOM elements initialization, and established interactivity into one `enableClock` function. The `onSave` function returns an object containing the color property, which is stored in a JSON file. During `onRestore`, we retrieve and apply this saved color using the pluginConfig parameter.
 
-## Dollars API ($ $$ $$$)
+## Dollars API ($ $$ $$$ h)
 
-In my opinion, the JQuery API is more intuitive than the native DOM API, but we didn’t want to include JQuery due to its package size. So, we created our own lightweight JQuery-like tool for Mencrouche, called *Dollars*.
+In my opinion, the JQuery API is more intuitive than the native DOM API, but we didn’t want to include JQuery due to its package size. So, we created our own lightweight JQuery-like tool/alias for Mencrouche, called *Dollars*.
+
+### Summary
+
+| Function/Alias | Syntax | Purpose | Returns | Example |
+|-------------|---------|---------|----------|---------|
+| `$` | `$("selector")` | Select first matching element | Single element | `$("a").href = "url"` |
+| `$$` | `$$("selector")` | Select all matching elements | Array of elements | `$$("a").forEach(el => ...)` |
+| `$$$` | `$$$("tagName")` | Create new element | New element | `$$$("div")` |
+| Element.`$` | `element.$("selector")` | Select first match within element | Single element | `myDiv.$(".item").value = "text"` |
+| Element.`$$` | `element.$$("selector")` | Select all matches within element | Array of elements | `myDiv.$$(".item").forEach(...)` |
+| `on` | `element.on("event", handler)` | Add event listener | - | `button.on("click", () => ...)` |
+| `off` | `element.off("event", handler)` | Remove event listener | - | `button.off("click", handler)` |
+| `h` | `h("html string")` | Convert HTML string to element | New element | `h("<div>Hello</div>")` |
 
 ### From JQuery to Dollars
 
@@ -168,7 +181,7 @@ In my opinion, the JQuery API is more intuitive than the native DOM API, but we 
     // Dollars
     mc.$("a").href = "https://youtube.com";
     ```
-- Double dollar signs return an array of selected elements. There are no helper functions:
+- Double dollar signs return an *array* of selected elements. There are no helper functions:
     ```javascript
     // JQuery
     $("a").addClass("link");
@@ -190,9 +203,73 @@ In my opinion, the JQuery API is more intuitive than the native DOM API, but we 
     $(pureDomElement, ".comment").value("Start typing");
 
     // Dollars
-    mc.$(pureDomElement).$(".comment").value = "Start typing";
-    mc.$(pureDomElement).$$(".comment").forEach((el) => el.value = "Start typing");
+    pureDomElement.$(".comment").value = "Start typing";
+    pureDomElement.$$(".comment").forEach((el) => el.value = "Start typing");
     ```
+- `on`, `off` for add or remove event listeners:
+    ```javascript
+    // JQuery
+    $(button).click(function() { alert("hello"); });
+
+    // Dollars
+    button.on("click", function() { alert("hello"); });
+    ```
+- `h` are a HTML string to Element constructor:
+    ```javascript
+    // JQuery
+    $.parseHTML("<div></div>");
+
+    // Dollars
+    mc.h("<div></div>");
+    ```
+
+### Practical Example
+
+We can combine previous [clock example](#adding-color-to-the-clock) with Dollars API:
+
+```javascript
+function enableClock(sticky, color) {
+  const clockBody = mc.h(`
+                      <span ${color ? `style="color: ${color}` : ""}></span>
+                      <button type="button">
+                        Change Color
+                      </button>
+                      `);
+  const timeElement = clockBody.$("time");
+  const randomColorBtn = clockBody.$("button");
+  sticky.replaceBody(clockBody);
+
+  randomColorBtn.on("click", () => {
+    const color = "#" + (~~(Math.random() * (1 << 24))).toString(16);
+    timeElement.style.color = color;
+    sticky.plugin.color = color;
+  });
+
+  sticky.plugin.intervalId = setInterval(() => {
+    timeElement.textContent = new Date().toLocaleString();
+  }, 100);
+}
+mc.registerSticky({
+  type: "clock",
+  onCreate(sticky) {
+    enableClock(sticky);
+  },
+  onSave(sticky) {
+    // Save the color to use later in `onRestore`
+    return {
+      color: sticky.plugin.color,
+    };
+  },
+  onDelete(sticky) {
+    clearInterval(sticky.plugin.intervalId);
+  },
+  onRestore(sticky, pluginConfig) {
+    enableClock(sticky, pluginConfig.color);
+  },
+});
+mc.stickyWorkspace.create({ type: "clock" });
+```
+
 
 ## Internationalization API (n81i)
 

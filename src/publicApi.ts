@@ -2,13 +2,14 @@
  * publicApi.ts
  *
  * Exposing functions, classes for end-user/developer to use.
- * Simple usage:
+ *
+ * @example
  * ```javascript
  * window.mc.$(".selectSomeClass");
  * ```
  */
-import { registerCommand, executeCommand, } from "./commands";
-import { $, $$, $$$ } from "./utils/dollars";
+import { registerCommand, executeCommand } from "./commands";
+import { $, $$, $$$, h } from "./utils/dollars";
 import {
   getCustomStickyTypes,
   getCustomSticky,
@@ -19,6 +20,7 @@ import { n81i } from "./utils/n81i";
 import { registerContextMenu } from "./contextMenu";
 import { apocalypse } from "./apocalypse";
 import { dataset } from "./dataWizard";
+import { createDock } from "./dock/dock";
 
 declare global {
   interface Window {
@@ -27,13 +29,15 @@ declare global {
 }
 
 const mc = {
+  h,
   $,
   $$,
   $$$,
   n81i,
   dataset,
+  createDock,
   apocalypse,
-  stickyManager: stickyWorkspace,
+  stickyWorkspace,
   registerSticky,
   executeCommand,
   registerCommand,

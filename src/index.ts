@@ -16,7 +16,6 @@ import { registerContextMenu } from "./contextMenu";
 import { shortcutManager } from "./shortcutManager";
 import { loadDocument, saveDocument } from "./lifesaver";
 import { addTodoAfterLoad, dataset, finishLoad } from "./dataWizard";
-import "./dock";
 // The `url:` prefix is a custom prefix defined in `.parcelrc`.
 // Which aims to get the url of transformed resource, in raw format.
 // see https://github.com/parcel-bundler/parcel/issues/1080#issuecomment-557240449
@@ -31,6 +30,8 @@ import en from "url:./_locales/en/messages.json";
 import zh_TW from "url:./_locales/zh_TW/messages.json";
 import { executeCommand, registerCommand, type Command } from "./commands";
 import { initNoteSticky } from "./stickyPlugins/note";
+import { initClockDock } from "./dockPlugins/clock";
+import { initBookmarkDock } from "./dockPlugins/bookmark";
 
 const urls = { en, zh_TW };
 
@@ -286,6 +287,10 @@ async function main() {
   initSpotifySticky();
   initYouTubeSticky();
   initNoteSticky();
+
+  // Create docks.
+  initClockDock();
+  initBookmarkDock();
 
   await finishLoad();
 }

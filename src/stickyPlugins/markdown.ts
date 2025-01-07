@@ -179,11 +179,15 @@ const markdownStickyMenuItems: MenuItem[] = [
 ];
 
 function enable(sticky: Sticky<MarkdownPlugin, MarkdownConfig>) {
-  const widgets = getTemplateWidgets("markdownStickyWidgets");
-  const editModeToggleLbl = widgets.$<HTMLLabelElement>(".editModeToggleLbl")!;
-  const textarea = widgets.$<HTMLTextAreaElement>("textarea")!;
-  const divider = widgets.$<HTMLTextAreaElement>(".divider")!;
-  const preview = widgets.$<HTMLDivElement>(".preview")!;
+  const widgets = getTemplateWidgets(
+    "markdownStickyWidgets",
+  ) as DocumentFragment;
+  const editModeToggleLbl = widgets.$(
+    ".editModeToggleLbl",
+  )! as HTMLLabelElement;
+  const textarea = widgets.$("textarea")!;
+  const divider = widgets.$(".divider")!;
+  const preview = widgets.$(".preview")! as HTMLDivElement;
 
   textarea.on("keydown", (e) => {
     if (e.key === "Tab") {
@@ -249,12 +253,14 @@ function enable(sticky: Sticky<MarkdownPlugin, MarkdownConfig>) {
     }
   });
   editModeToggleLbl.on("change", () => {
-    editModeToggleLbl.$$("svg").do((el) => el.classList.toggle("none"));
+    editModeToggleLbl.$$("svg").forEach((el) => el.classList.toggle("none"));
     sticky.classList.toggle("editMode");
     if (!sticky.classList.contains("editMode") /* Change to view mode */) {
       if (sticky.dataset.prevInput !== textarea.value) {
         updatePreview();
       }
+      textarea.style.removeProperty("width");
+      preview.style.removeProperty("width");
       sticky.focus();
     }
     textarea.disabled = !textarea.disabled;
@@ -280,7 +286,7 @@ function enable(sticky: Sticky<MarkdownPlugin, MarkdownConfig>) {
       if (!isResizing) return;
 
       const containerWidth = container.offsetWidth;
-      const mouseX = e.clientX;
+      const mouseX = (e as PointerEvent).clientX;
       const containerRect = container.getBoundingClientRect();
       const percentPosition = (mouseX - containerRect.left) / containerWidth;
 
@@ -295,23 +301,15 @@ function enable(sticky: Sticky<MarkdownPlugin, MarkdownConfig>) {
       document.body.style.removeProperty("cursor");
     });
 
-    if (sticky.classList.contains("splitView")) {
-      leftPanel.style.width = "50%";
-      rightPanel.style.width = "50%";
-    } else {
-      const abortController = new AbortController();
-      sticky.on(
-        "classchange",
-        () => {
-          if (sticky.classList.contains("splitView")) {
-            leftPanel.style.width = "50%";
-            rightPanel.style.width = "50%";
-            abortController.abort();
-          }
-        },
-        { signal: abortController.signal },
-      );
-    }
+    sticky.on("classchange", () => {
+      if (
+        sticky.classList.contains("splitView") &&
+        sticky.classList.contains("editMode")
+      ) {
+        leftPanel.style.width = "50%";
+        rightPanel.style.width = "50%";
+      }
+    });
   }
   setupDivider(sticky, textarea, preview);
 
