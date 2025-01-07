@@ -35,7 +35,7 @@ function showContextMenu(e: MouseEvent | CustomEvent) {
     const menuItems = registry.get(key);
     if (menuItems === undefined) {
       throw Error(
-        `Context menu '${key}' not found. Please registery context menu first via 'registerContextMenu'.`,
+        `Context menu '${key}' not found. Please register context menu first via 'registerContextMenu'.`,
       );
     }
     frag.appendChild(buildMenuItems(menuItems, target));

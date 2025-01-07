@@ -16,7 +16,7 @@
 		"description": "Label text for the bookmark link input."
 	},
 	"bookmarkIconLabel": {
-		"message": "圖示 (svg或dataurl)",
+		"message": "圖示",
 		"description": "Label text for the bookmark link input."
 	},
 	"bookmarkLabelLabel": {
@@ -31,6 +31,18 @@
 		"message": "開啟方式",
 		"description": "Label text for the bookmark anchor target."
 	},
+  "bookmarkBackgroundColorLabel": {
+		"message": "背景顏色",
+		"description": "Label text for the bookmark background color."
+  },
+  "getRandomBookmarkColorBtn": {
+    "message": "隨機顏色",
+    "description": "Button title for getting random color for bookmark background."
+  },
+  "removeBookmarkBackgroundBtn": {
+    "message": "移除背景",
+    "description": "Button title for removing bookmark background."
+  },
 	"cancelSettingsBtn": {
 		"message": "取消",
 		"description": "Text for the cancel settings button."

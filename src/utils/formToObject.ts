@@ -1,4 +1,7 @@
-export function formToObject<T>(form: HTMLFormElement) {
+export function formToObject<T>(
+  form: HTMLFormElement,
+  defaultObject?: Record<string, any>,
+) {
   const obj = Object.fromEntries(new FormData(form).entries()) as Record<
     string,
     any
@@ -10,6 +13,12 @@ export function formToObject<T>(form: HTMLFormElement) {
     } else if (!isNaN(obj[key])) {
       // Converts number string into number.
       obj[key] = Number(obj[key]);
+    }
+  }
+
+  if (defaultObject) {
+    for (const key of Object.keys(defaultObject)) {
+      obj[key] ??= defaultObject[key];
     }
   }
 

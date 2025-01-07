@@ -293,27 +293,22 @@ backgroundImageUrlInput.on("paste", async (e) => {
 
   for (const clipboardItem of clipboardItems) {
     let blob;
-    if (clipboardItem.type?.startsWith("image/")) {
-      blob = clipboardItem;
+    const imageTypes = clipboardItem.types.filter((type) =>
+      type.startsWith("image/"),
+    );
+    for (const imageType of imageTypes) {
+      blob = await clipboardItem.getType(imageType);
       handleBlob(blob);
-    } else {
-      const imageTypes = clipboardItem.types?.filter((type) =>
-        type.startsWith("image/"),
-      );
-      for (const imageType of imageTypes) {
-        blob = await clipboardItem.getType(imageType);
-        handleBlob(blob);
-        return;
-      }
-      try {
-        const url = await (await clipboardItem.getType("text/plain")).text();
-        new URL(url);
-        backgroundImageDropzone.style.background = `url(${url}) center center / cover no-repeat`;
-        dataset.setItem("backgroundImageUrl", url);
-        changesManager.markDirty();
-      } catch (_) {
-        alert(n81i.t("imageUrlIsNotValidAlert"));
-      }
+      return;
+    }
+    try {
+      const url = await (await clipboardItem.getType("text/plain")).text();
+      new URL(url);
+      backgroundImageDropzone.style.background = `url(${url}) center center / cover no-repeat`;
+      dataset.setItem("backgroundImageUrl", url);
+      changesManager.markDirty();
+    } catch (_) {
+      alert(n81i.t("imageUrlIsNotValidAlert"));
     }
   }
 });

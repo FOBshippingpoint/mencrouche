@@ -16,7 +16,7 @@
     "description": "Label text for the bookmark link input."
   },
   "bookmarkIconLabel": {
-    "message": "Icon (svg or dataurl)",
+    "message": "Icon",
     "description": "Label text for the bookmark link input."
   },
   "bookmarkLabelLabel": {
@@ -31,6 +31,18 @@
 		"message": "Opening Preference",
 		"description": "Label text for the bookmark anchor target."
 	},
+  "bookmarkBackgroundColorLabel": {
+		"message": "Background Color",
+		"description": "Label text for the bookmark background color."
+	},
+  "getRandomBookmarkColorBtn": {
+    "message": "Random color",
+    "description": "Button title for getting random color for bookmark background."
+  },
+  "removeBookmarkBackgroundBtn": {
+    "message": "Remove background",
+    "description": "Button title for removing bookmark background."
+  },
 	"cancelSettingsBtn": {
     "message": "Cancel",
     "description": "Text for the cancel settings button."

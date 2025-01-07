@@ -963,7 +963,7 @@ ul {
       gap: var(--size-2);
       align-items: stretch;
 
-      label {
+      label:not(:has([type="checkbox"])) {
         display: flex;
         gap: var(--size-1);
         flex-direction: column;
@@ -974,6 +974,19 @@ ul {
     }
     .gaPreview {
       grid-area: preview;
+    }
+
+    .colorInputBox {
+      display: flex;
+      justify-content: start;
+      input[type="color"] {
+        inline-size: var(--size-11);
+        block-size: 90%;
+        border-radius: var(--radius-2);
+      }
+      button {
+        padding-inline: 1ex;
+      }
     }
   }
 }
@@ -1356,15 +1369,23 @@ dialog {
   height: 100%;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-items: center;
 
-  > div {
+  .box {
     display: flex;
     flex-direction: column;
     gap: var(--size-2);
+    flex-wrap: wrap;
+  }
+
+  .box:not(:empty) + .addBookmarkBtn {
+    margin-block-start: var(--size-2);
   }
 
   .addBookmarkBtn {
-    margin-block-start: var(--size-2);
+    block-size: var(--size-7);
+    inline-size: var(--size-7);
   }
 }
 
@@ -1376,32 +1397,38 @@ dialog {
   color: var(--text-1);
   transition: transform 0.2s;
 
-  .bookmarkIcon {
+  .iconBox {
     width: var(--size-8);
     height: var(--size-8);
     border-radius: var(--radius-2);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: var(--size-1);
-    box-shadow: 0 2px 4px oklch(0 0 0 / 0.1);
+    margin-bottom: 3px;
+    padding: 0.2em;
     position: relative;
   }
 
+  .iconBox.noBackground {
+    background-color: transparent !important;
+  }
+
+  .iconBox:not(.noBackground) {
+    box-shadow: 0 2px 4px oklch(0 0 0 / 0.1);
+  }
+
   .letter {
-    font-size: 24px;
     font-weight: bold;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    line-height: 1;
   }
 
-  .bookmarkLabel {
+  .label {
     font-size: var(--font-size-0);
     text-align: center;
-    max-width: var(--size-8);
+    max-width: var(--size-10);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1412,11 +1439,11 @@ dialog {
   }
 
   .letter.singleChar {
-    font-size: 24px;
+    font-size: var(--font-size-5);
   }
 
   .letter.multiChar {
-    font-size: 20px;
+    font-size: var(--font-size-4);
   }
 }
 

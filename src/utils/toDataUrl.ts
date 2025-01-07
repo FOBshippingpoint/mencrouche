@@ -15,3 +15,18 @@ export async function blobToDataUrl(blob: Blob): Promise<string> {
     reader.readAsDataURL(blob);
   });
 }
+
+export async function clipboardImageItemToDataUrl(
+  clipboardItems: ClipboardItems,
+) {
+  for (const clipboardItem of clipboardItems) {
+    let blob: Blob;
+    const imageTypes = clipboardItem.types.filter((type) =>
+      type.startsWith("image/"),
+    );
+    for (const imageType of imageTypes) {
+      blob = await clipboardItem.getType(imageType);
+      return blobToDataUrl(blob);
+    }
+  }
+}
