@@ -391,10 +391,6 @@
 		"message": "Spotify",
 		"description": "Button label for adding Spotify sticky."
 	},
-	"syncUrlInputLabel": {
-		"message": "雲端同步連結",
-		"description": "Input label for syncing service url."
-	},
 	"shareDataLinkBtn": {
 		"message": "分享連結",
 		"description": "Input label for sharing data link."

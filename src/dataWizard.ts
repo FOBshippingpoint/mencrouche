@@ -233,3 +233,4 @@ async function decryptBlob(blob: Blob, encryptionKey: string): Promise<string> {
   const decryptedData = await decryptData(iv, encryptedBuffer, encryptionKey);
   return new TextDecoder().decode(decryptedData);
 }
+

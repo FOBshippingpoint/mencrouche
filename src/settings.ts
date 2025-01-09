@@ -55,7 +55,6 @@ const hueWheel = $<HTMLDivElement>("#hueWheel")!;
 const settings = $<HTMLElement>("#settings")!;
 const cancelBtn = $<HTMLButtonElement>("#cancelSettingsBtn")!;
 const settingsBtn = $<HTMLButtonElement>("#settingsBtn")!;
-const syncUrlInput = $<HTMLInputElement>('[name="syncUrl"]')!;
 const isCloudSyncEnabledCheckbox = $<HTMLInputElement>(
   '[name="isCloudSyncEnabled"]',
 )!;
@@ -133,12 +132,6 @@ isCloudSyncEnabledCheckbox.on("input", () => {
     );
   });
 });
-syncUrlInput.value = localStorage.getItem("syncUrl") ?? "";
-syncUrlInput.on("input", () => {
-  changesManager.setChange("setStorageSyncUrl", () => {
-    localStorage.setItem("syncUrl", syncUrlInput.value);
-  });
-});
 // syncRemoteAuthKeyInput.value = localStorage.getItem("syncRemoteAuthKey") ?? "";
 // syncRemoteAuthKeyInput.on("input", () => {
 //   changesManager.setChange("setStorageSyncRemoteAuthKey", () => {
@@ -159,7 +152,7 @@ shareDataLinkBtn.on("click", () => {
       }),
     );
     navigator.clipboard
-      .writeText(url.toString())
+      .writeText(url.href)
       .then(() => {
         shareDataLinkBtn.textContent = n81i.t("copied");
         shareDataLinkBtn.on(

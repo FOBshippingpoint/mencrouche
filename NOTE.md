@@ -57,18 +57,19 @@ just
 - [x] Grant user permission for custom js and css
 - [x] Persist zoom and canvas position, also the original size of maximized sticky.
 - [x] Context menu two-side icon to match browser convention.
+- [x] Redesign dock api.
 - [ ] Add setting option for disabling script execution.
-- [ ] Redesign dock api.
+- [ ] Add ability to configure dock appearance (hide/show, placement, grow).
 
 ## BUGS
 
-- [ ] divider breaks markdown sticky preview.
 - [ ] It might overwrite the existing idb document if changed offline -> close tab -> back online, cuz we always read remote source first right now. We should compare two documents date.
-- [ ] Bookmak looks inconsist for different title length
-- [ ] Custom bookmark image bot working
 - [ ] Auto arrange not working as expected, the container setting seems weird.
 - [ ] Using navbar add sticky, the sticky position should at center instead of top-right.
 - [ ] In moved viewport, create/copy sticky from command will not be center in user's point of view.
+- [x] divider breaks markdown sticky preview.
+- [x] Bookmak looks inconsist for different title length
+- [x] Custom bookmark image bot working
 - [x] Palette hue not reset when leaving without saving.
 - [x] Sometimes toggle the settings page, some stickies will reset position.
 - [x] Markdown extra whitespace

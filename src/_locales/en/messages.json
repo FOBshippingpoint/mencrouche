@@ -395,10 +395,6 @@
 		"message": "Spotify",
 		"description": "Button label for adding Spotify sticky."
 	},
-	"syncUrlInputLabel": {
-		"message": "Cloud Sync URL",
-		"description": "Input label for syncing service url."
-	},
 	"shareDataLinkBtn": {
 		"message": "Sharing Document",
 		"description": "Input label for sharing data link."
