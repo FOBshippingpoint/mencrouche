@@ -9,107 +9,113 @@ import { generateEncryptionKey } from "./utils/encryption";
 import { debounce } from "./utils/debounce";
 import {
   IndexedDbSource,
+  loadFromSources,
   RemoteSource,
   saveToSources,
+  type RemoteConfig,
   type Source,
 } from "./dataWizard";
 
-function getLocalStorageItem(key: string): string {
-  const value = localStorage.getItem(key);
-  if (!value) throw new Error(`${key} not found in localStorage.`);
-  return value;
+const storage = {
+  get: (key: string): string | null => localStorage.getItem(key),
+  set: (key: string, value: string): void => {
+    localStorage.setItem(key, value);
+  },
+  getRequired: (key: string): string => {
+    const value = localStorage.getItem(key);
+    if (!value) throw new Error(`${key} not found in localStorage`);
+    return value;
+  },
+};
+
+if (process.env.CLOUD_SYNC_URL && storage.get("url") === null) {
+  storage.set("url", process.env.CLOUD_SYNC_URL);
 }
 
-async function getOrGenerateEncryptionKey(): Promise<string> {
-  let key = localStorage.getItem("encryptionKey");
-  if (!key) {
-    key = await generateEncryptionKey();
-    localStorage.setItem("encryptionKey", key);
-  }
-  return key;
-}
+// Config management
+const sourcer = {
+  async getRemoteConfig(): Promise<RemoteConfig | null> {
+    if (!isCloudSyncEnabled() || !storage.get("url")) {
+      return null;
+    }
 
-function getOrCreateSyncResourceId(): string {
-  let syncResourceId = localStorage.getItem("syncResourceId");
-  if (!syncResourceId) {
-    syncResourceId = crypto.randomUUID();
-    localStorage.setItem("syncResourceId", syncResourceId);
-  }
-  return syncResourceId;
-}
+    return {
+      url: storage.getRequired("url"),
+      resourceId: await this.getOrCreateResourceId(),
+      encryptionKey: await this.getOrCreateEncryptionKey(),
+    };
+  },
+  async getOrCreateEncryptionKey() {
+    let key = storage.get("encryptionKey");
+    if (!key) {
+      key = await generateEncryptionKey();
+      storage.set("encryptionKey", key);
+    }
+    return key;
+  },
+  async getOrCreateResourceId() {
+    let resourceId = storage.get("resourceId");
+    if (!resourceId) {
+      const response = await fetch(storage.getRequired("url"), {
+        method: "PUT",
+        body: "",
+      });
+      const json = await response.json();
+      resourceId = json.resourceId;
+      storage.set("resourceId", json.resourceId);
+    }
+    return resourceId!;
+  },
+  parseRemoteConfigFromUrl(): RemoteConfig | null {
+    if (!window.location.hash) return null;
 
-interface SyncInfo {
-  syncUrl: string;
-  syncResourceId: string;
-  encryptionKey: string;
-}
-let urlFragSyncInfo: SyncInfo;
-
-function parseSyncInfoFromUrlFragment() {
-  // Parse only if url has hash (aka #)
-  if (window.location.hash.length) {
-    const b64 = window.location.hash.slice(1);
     try {
-      const json = window.atob(b64);
+      const json = window.atob(window.location.hash.slice(1));
       return JSON.parse(json);
     } catch (error) {
-      console.log("Cannot parse from URL fragment, got error: ", error);
+      console.log("Failed to parse URL fragment:", error);
+      return null;
     }
+  },
+};
+
+export function isCloudSyncEnabled() {
+  let isCloudSyncEnabled = storage.get("isCloudSyncEnabled");
+  if (isCloudSyncEnabled === null) {
+    setIsCloudSyncEnabled(true);
+    return true;
   }
+  return isCloudSyncEnabled === "true";
+}
+export function setIsCloudSyncEnabled(isEnabled: boolean) {
+  storage.set("isCloudSyncEnabled", isEnabled ? "true" : "false");
 }
 
-export type DocumentSourceOrigin =
-  | "HashEncodedRemoteSource"
-  | "SyncRemoteSource"
-  | "IndexedDbSource";
-
-// TODO: maybe we should return Source directly??
-export async function loadDocument(): Promise<DocumentSourceOrigin> {
-  urlFragSyncInfo = parseSyncInfoFromUrlFragment();
-  if (urlFragSyncInfo) {
-    // Load from remote url
-    await new RemoteSource(urlFragSyncInfo).load();
-    return "HashEncodedRemoteSource";
-  } else {
-    // TODO: dup code
-    const isCloudSyncEnabled =
-      localStorage.getItem("isCloudSyncEnabled") === "on";
-    if (isCloudSyncEnabled && localStorage.getItem("syncUrl")) {
-      const syncInfo = {
-        syncUrl: getLocalStorageItem("syncUrl"),
-        syncResourceId: getOrCreateSyncResourceId(),
-        encryptionKey: await getOrGenerateEncryptionKey(),
-        // syncRemoteAuthKey: getLocalStorageItem("syncRemoteAuthKey"),
-      };
-      await new RemoteSource(syncInfo).load();
-      return "SyncRemoteSource";
-    } else {
-      await new IndexedDbSource().load();
-      return "IndexedDbSource";
-    }
+export async function loadDocument() {
+  // If is share url, then load based on the hash info.
+  const shareConfig = sourcer.parseRemoteConfigFromUrl();
+  if (shareConfig) {
+    await loadFromSources([new RemoteSource(shareConfig)]);
+    return;
   }
+
+  // If not, load local => remote.
+  const sources: Source[] = [new IndexedDbSource()];
+  const localConfig = await sourcer.getRemoteConfig();
+  if (localConfig) {
+    sources.push(new RemoteSource(localConfig));
+  }
+  // WIP
+  await loadFromSources(sources);
+  return;
 }
 
 export async function saveDocument() {
-  const sources: Source[] = [new IndexedDbSource()];
-  const isCloudSyncEnabled =
-    localStorage.getItem("isCloudSyncEnabled") === "on";
-  if (isCloudSyncEnabled && localStorage.getItem("syncUrl")) {
-    const syncInfo = urlFragSyncInfo ?? {
-      syncUrl: getLocalStorageItem("syncUrl"),
-      syncResourceId: getOrCreateSyncResourceId(),
-      encryptionKey: await getOrGenerateEncryptionKey(),
-      // syncRemoteAuthKey: getLocalStorageItem("syncRemoteAuthKey"),
-    };
-    const remoteSource = new RemoteSource(syncInfo);
-    sources.push(remoteSource);
-  }
   await saveToSources(...sources);
   switchDocumentStatus("saved");
 }
 
-const saveDocumentDebounced = debounce(saveDocument);
-export function markDirtyAndSaveDocument() {
+export const markDirtyAndSaveDocument = () => {
   switchDocumentStatus("saving");
-  saveDocumentDebounced();
-}
+  debounce(saveDocument)();
+};

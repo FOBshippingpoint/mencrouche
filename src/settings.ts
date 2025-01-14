@@ -10,12 +10,12 @@ import {
   addTodoAfterLoad,
   addTodoBeforeSave,
   dataset,
-  finishLoad,
   JsonFileSource,
+  loadFromSources,
   saveToSources,
 } from "./dataWizard";
 import { openDB } from "idb";
-import { markDirtyAndSaveDocument } from "./lifesaver";
+import { isCloudSyncEnabled, markDirtyAndSaveDocument, setIsCloudSyncEnabled } from "./lifesaver";
 
 const changesManager = (() => {
   type Todo = () => void;
@@ -116,20 +116,10 @@ settingsBtn.on("click", () => {
   }
 });
 
-if (process.env.CLOUD_SYNC_URL && localStorage.getItem("syncUrl") === null) {
-  localStorage.setItem("syncUrl", process.env.CLOUD_SYNC_URL);
-}
-if (localStorage.getItem("isCloudSyncEnabled") === null) {
-  localStorage.setItem("isCloudSyncEnabled", "on");
-}
-isCloudSyncEnabledCheckbox.checked =
-  localStorage.getItem("isCloudSyncEnabled") === "on";
+isCloudSyncEnabledCheckbox.checked = isCloudSyncEnabled();
 isCloudSyncEnabledCheckbox.on("input", () => {
   changesManager.setChange("setIsCloudSyncEnabled", () => {
-    localStorage.setItem(
-      "isCloudSyncEnabled",
-      isCloudSyncEnabledCheckbox.value,
-    );
+    setIsCloudSyncEnabled(isCloudSyncEnabledCheckbox.checked);
   });
 });
 // syncRemoteAuthKeyInput.value = localStorage.getItem("syncRemoteAuthKey") ?? "";
@@ -182,59 +172,7 @@ deleteDocumentBtn.on("click", async () => {
   }
 });
 
-// TODO: IDK, this api looks really bad.
-// maybe we should separate the logic of save and load.
-let fileReadyForImport: File;
-const jsonFileSource = new JsonFileSource(
-  (savedMcJsonFile) => {
-    saveFile(savedMcJsonFile, savedMcJsonFile.name);
-  },
-  () => {
-    return new Promise<File>((resolve) => {
-      resolve(fileReadyForImport);
-    });
-  },
-);
-// Copied from web.dev: https://web.dev/patterns/files/save-a-file#progressive_enhancement
-async function saveFile(blob: Blob, suggestedName: string) {
-  const supportsFileSystemAccess =
-    "showSaveFilePicker" in window &&
-    (() => {
-      try {
-        return window.self === window.top;
-      } catch {
-        return false;
-      }
-    })();
-  if (supportsFileSystemAccess) {
-    try {
-      const handle = await (window as any).showSaveFilePicker({
-        suggestedName,
-      });
-      const writable = await handle.createWritable();
-      await writable.write(blob);
-      await writable.close();
-      return;
-    } catch (err: any) {
-      if (err.name !== "AbortError") {
-        console.error(err.name, err.message);
-        return;
-      }
-    }
-  }
-  const blobUrl = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = blobUrl;
-  a.download = suggestedName;
-  a.hidden = true;
-  document.body.append(a);
-  a.click();
-  setTimeout(() => {
-    URL.revokeObjectURL(blobUrl);
-    a.remove();
-  }, 1000);
-}
-exportDocumentBtn.on("click", () => saveToSources(jsonFileSource));
+exportDocumentBtn.on("click", () => saveToSources(new JsonFileSource()));
 importDocumentBtn.on("click", () => {
   importDocumentFileInput.click();
 });
@@ -254,9 +192,7 @@ importDocumentFileInput.on("change", () => {
         "data-i18n": "discardBtn",
         async onClick() {
           if (file) {
-            fileReadyForImport = file;
-            await jsonFileSource.load();
-            await finishLoad();
+            loadFromSources(new JsonFileSource(file));
             closeSettingsPage();
           }
           discardCurrentChangesDialog.close();

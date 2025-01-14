@@ -15,7 +15,7 @@ import { n81i } from "./utils/n81i";
 import { registerContextMenu } from "./contextMenu";
 import { shortcutManager } from "./shortcutManager";
 import { loadDocument, saveDocument } from "./lifesaver";
-import { addTodoAfterLoad, dataset, finishLoad } from "./dataWizard";
+import { addTodoAfterLoad, dataset } from "./dataWizard";
 // The `url:` prefix is a custom prefix defined in `.parcelrc`.
 // Which aims to get the url of transformed resource, in raw format.
 // see https://github.com/parcel-bundler/parcel/issues/1080#issuecomment-557240449
@@ -291,8 +291,6 @@ async function main() {
   // Create docks.
   initClockDock();
   initBookmarkDock();
-
-  await finishLoad();
 }
 
 addPublicApi();

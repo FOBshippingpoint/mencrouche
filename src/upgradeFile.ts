@@ -1,6 +1,4 @@
-import type { Offset } from "./sticky/drag";
-import type { StickyConfig, WorkspaceConfig } from "./sticky/sticky";
-import type { Transform } from "./sticky/zoom";
+import type { WorkspaceConfig } from "./sticky/sticky";
 
 export function upgradeFileToLatest(
   mcFile: MencroucheFileFormat,
@@ -34,11 +32,11 @@ const migrations = [
 
 export interface MencroucheFileFormat extends Record<string, unknown> {
   mencroucheFileFormatVersion: number;
+  timestamp: string;
 }
 
 interface V1 extends MencroucheFileFormat {
   mencroucheFileFormatVersion: 1;
-  timestamp: string;
   locale: string;
   availableLocales: string[];
   isGhostMode: boolean;
