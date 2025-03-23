@@ -39,7 +39,6 @@ export class Zoomable implements ZoomContext {
     this.minScale = options.minScale ?? 0.125;
     this.maxScale = options.maxScale ?? 4;
 
-    // Setup wheel listener
     this.interactEl.on("wheel", (e) => {
       // Ctrl + wheel scroll to zoom.
       if (!e.ctrlKey) return;
@@ -81,6 +80,12 @@ export class Zoomable implements ZoomContext {
 
   zoomReset() {
     this.scale = 1;
+    this.applyTransform();
+  }
+
+  transformReset() {
+    this.translateX = 0;
+    this.translateY = 0;
     this.applyTransform();
   }
 

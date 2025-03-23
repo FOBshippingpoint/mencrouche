@@ -111,6 +111,10 @@ export class Draggable extends ZoomAware {
     this.element.style.top = `${offset.offsetTop}px`;
   }
 
+  offsetReset() {
+    this.setOffset({ offsetLeft: 0, offsetTop: 0 });
+  }
+
   getOffset(): Offset {
     return {
       offsetLeft: this.element.offsetLeft,

@@ -3,7 +3,7 @@ import { registerContextMenu } from "../contextMenu";
 import { dataset, addTodoAfterLoad, addTodoBeforeSave } from "../dataWizard";
 import { getTemplateWidgets } from "../utils/getTemplateWidgets";
 import { n81i } from "../utils/n81i";
-import { BinPacker } from "../utils/packer";
+import { BinPacker, pack } from "../utils/packer";
 import { markDirtyAndSaveDocument } from "../lifesaver";
 import { Zoomable, type Transform } from "./zoom";
 import { Resizable } from "./resize";
@@ -214,6 +214,7 @@ class StickyWorkspace {
   delete(sticky: Sticky) {
     const obj = this.saveSticky(sticky);
     this.apocalypse.write({
+      toString: () => `Delete sticky #[ ${sticky.id} ]`,
       execute: () => {
         this.deleteSticky(sticky);
         markDirtyAndSaveDocument();
@@ -305,6 +306,7 @@ class StickyWorkspace {
     duplicated.style.left = `${duplicated.offsetLeft + 20}px`;
     duplicated.style.top = `${duplicated.offsetTop + 20}px`;
     this.apocalypse.write({
+      toString: () => `Duplicate sticky #[ ${sticky.id} ]`,
       execute: () => {
         this.addToTop(duplicated);
         duplicated.focus();
@@ -337,6 +339,7 @@ class StickyWorkspace {
   }
 
   arrange() {
+    // Filter out pinned stickies.
     const stickies: Sticky[] = [];
     for (const sticky of this.stickies) {
       if (!sticky.classList.contains("pin")) {
@@ -344,32 +347,24 @@ class StickyWorkspace {
       }
     }
 
-    const GAP = 10;
+    const GAP = 0;
     const stickyContainer = this.stickyContainer;
     const workspaceContainer = this.workspaceContainer;
+    const transform = stickyWorkspace.zoomable.getTransform();
+    const offset = stickyWorkspace.draggable.getOffset();
+    const blocks = stickies.map((sticky) => ({
+      left: sticky.offsetLeft,
+      top: sticky.offsetTop,
+      width: sticky.offsetWidth + GAP,
+      height: sticky.offsetHeight + GAP,
+    }));
     apocalypse.write({
+      toString: () => "Arrange stickies",
       execute() {
-        const blocks = stickies.map((sticky) => {
-          // Backup original position for undo.
-          sticky.dataset.left = sticky.style.left;
-          sticky.dataset.top = sticky.style.top;
-
-          const block = {
-            x: sticky.offsetLeft + GAP,
-            y: sticky.offsetTop + GAP,
-            w: sticky.offsetWidth + GAP,
-            h: sticky.offsetHeight + GAP,
-          };
-          return block;
-        });
-
-        const packer = new BinPacker(
-          workspaceContainer.offsetWidth / stickyWorkspace.zoomable.scale -
-            GAP * 2,
-          workspaceContainer.offsetHeight / stickyWorkspace.zoomable.scale -
-            GAP * 2,
+        const fittedBlocks = pack(
+          workspaceContainer.offsetWidth / stickyWorkspace.zoomable.scale,
+          blocks,
         );
-        const fittedBlocks = packer.fit(blocks);
 
         onEventOrTimeout(
           stickyContainer,
@@ -383,10 +378,12 @@ class StickyWorkspace {
           const sticky = stickies[i]!;
           const fitted = fittedBlocks[i];
           if (fitted) {
-            sticky.style.left = `${fitted.x + GAP}px`;
-            sticky.style.top = `${fitted.y + GAP}px`;
+            sticky.style.left = `${fitted.left + GAP}px`;
+            sticky.style.top = `${fitted.top + GAP}px`;
           }
         }
+        stickyWorkspace.zoomable.transformReset();
+        stickyWorkspace.draggable.offsetReset();
         stickyContainer.classList.add("arranging");
       },
       undo() {
@@ -398,13 +395,15 @@ class StickyWorkspace {
           },
           "transitionend",
         );
-        for (const sticky of stickies) {
-          sticky.style.left = sticky.dataset.left!;
-          sticky.style.top = sticky.dataset.top!;
-          delete sticky.dataset.left;
-          delete sticky.dataset.top;
+        stickyWorkspace.zoomable.setTransform(transform);
+        stickyWorkspace.draggable.setOffset(offset);
+        for (let i = 0; i < blocks.length; i++) {
+          const sticky = stickies[i]!;
+          const block = blocks[i]!;
+          sticky.style.left = `${block.left}px`;
+          sticky.style.top = `${block.top}px`;
         }
-        stickyContainer.classList.add("arranging");
+        stickyContainer.classList.remove("arranging");
       },
     });
   }
@@ -450,6 +449,7 @@ class StickyWorkspace {
     let sticky: Sticky;
 
     this.apocalypse.write({
+      toString:() => "Create sticky",
       execute: () => {
         sticky = this.buildSticky("create", backupOptions ?? options);
         this.addToTop(sticky);
@@ -468,9 +468,7 @@ class StickyWorkspace {
       const currRect = extractRectangle(sticky);
 
       this.apocalypse.write({
-        toString() {
-          return prevRect.toString() + type;
-        },
+        toString: () => prevRect.toString() + type,
         execute: () => {
           const s = sticky;
           if (type === "drag") {
@@ -528,7 +526,7 @@ class StickyWorkspace {
  * Since we need stickyContainer to be append first to get the width and height.
  * TODO: We use this ugly approach to judge whether the point is ready for use.
  *
- * :: (number | null) will cause more type issue, but current approach is inconsist.
+ * :: I avoid (number | null) since it will cause more type issue. However, current approach is inconsist.
  * e.g. the Rectangle type accept null.
  */
 type CursorPoint = [number, number];
@@ -703,7 +701,9 @@ function buildBuildSticky(
           }
         },
         addControlWidget(element: HTMLElement) {
-          sticky.$<HTMLDivElement>(".controls slot")!.appendChild(element);
+          sticky
+            .$<HTMLDivElement>(".stickyControls slot")!
+            .appendChild(element);
           return extendedSticky;
         },
         replaceBody(...nodes: (Node | string)[]) {
@@ -835,8 +835,8 @@ export function registerSticky<
   C extends CustomStickyConfig,
 >(customSticky: CustomStickyComposer<S, C>) {
   if (customStickiComposers.has(customSticky.type)) {
-    throw Error(
-      `Custom sticky '${customSticky.type}' already exists. Please try another name.`,
+    console.warn(
+      `Overwriting existing custom sticky '${customSticky.type}'. You should only overwrite definition during test.`,
     );
   }
 

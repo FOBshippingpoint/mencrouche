@@ -54,10 +54,8 @@ function updateFilteredCommands() {
 
   const frag = document.createDocumentFragment();
   for (const { name } of filteredCommands) {
-    const li = $(
-      (commandListItemTemplate.content.cloneNode(true) as any)
-        .firstElementChild,
-    );
+    const li =
+      commandListItemTemplate.content.cloneNode(true).firstElementChild;
     li.dataset.commandName = name;
     li.$("span").textContent = n81i.t(name);
     if (shortcutManager.has(name)) {

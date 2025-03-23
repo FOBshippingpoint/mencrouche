@@ -388,7 +388,7 @@ h6 {
   .resizeHandle {
     pointer-events: none;
   }
-  .controls label {
+  .stickyControls label {
     opacity: 0.5;
   }
 }
@@ -407,6 +407,10 @@ h6 {
   padding-bottom: var(--border-size-1);
   cursor: grab;
   user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: var(--size-1);
 }
 .stickyHeader,
 .resizeHandle {
@@ -414,13 +418,12 @@ h6 {
 }
 
 /* TODO: inconsist naming */
-.controls {
+.stickyControls {
   float: right;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: var(--size-1);
-  padding-inline: var(--size-1);
 
   button,
   label {
@@ -537,6 +540,7 @@ h6 {
   overflow: hidden;
   width: 100%;
   height: 100%;
+  position: absolute;
 }
 
 #mainSection:has(#settings:not(.none)) {

@@ -63,10 +63,11 @@ just
 
 ## BUGS
 
-- [ ] It might overwrite the existing idb document if changed offline -> close tab -> back online, cuz we always read remote source first right now. We should compare two documents date.
-- [ ] Auto arrange not working as expected, the container setting seems weird.
 - [ ] Using navbar add sticky, the sticky position should at center instead of top-right.
 - [ ] In moved viewport, create/copy sticky from command will not be center in user's point of view.
+- [ ] When drag maximized sticky, header are not centered at cursor.
+- [x] It might overwrite the existing idb document if changed offline -> close tab -> back online, cuz we always read remote source first right now. We should compare two documents date.
+- [x] Auto arrange not working as expected, the container setting seems weird.
 - [x] divider breaks markdown sticky preview.
 - [x] Bookmak looks inconsist for different title length
 - [x] Custom bookmark image bot working

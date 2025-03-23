@@ -223,7 +223,10 @@ function enable(sticky: Sticky<MarkdownPlugin, MarkdownConfig>) {
       html = dirtyHtml;
     } else {
       // Sanitize the HTML content before parse.
-      html = DOMPurify.sanitize(dirtyHtml);
+      html = DOMPurify.sanitize(dirtyHtml, {
+        ALLOWED_URI_REGEXP:
+          /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|xxx):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+      });
     }
     const fragment = document.createRange().createContextualFragment(html);
     // for (const el of fragment.querySelectorAll("pre code")) {

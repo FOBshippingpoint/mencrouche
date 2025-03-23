@@ -23,25 +23,25 @@
     "@parcel/config-webextension": "^2.13.3",
     "@parcel/core": "^2.13.3",
     "@parcel/reporter-bundle-analyzer": "^2.13.3",
-    "@types/chrome": "^0.0.289",
+    "@types/chrome": "^0.0.309",
     "@types/dompurify": "^3.2.0",
     "@types/firefox-webext-browser": "^120.0.4",
     "@types/fs-extra": "^11.0.4",
     "@types/markdown-it": "^14.1.2",
-    "@types/webextension-polyfill": "^0.12.1",
+    "@types/webextension-polyfill": "^0.12.3",
     "@types/youtube": "^0.1.0",
-    "dompurify": "^3.2.3",
-    "happy-dom": "^16.3.0",
+    "dompurify": "^3.2.4",
+    "happy-dom": "^17.4.4",
     "highlight.js": "^11.11.1",
-    "idb": "^8.0.1",
+    "idb": "^8.0.2",
     "kikey": "^3.1.0",
-    "open-props": "2.0.0-beta.5",
     "parcel": "^2.13.3",
     "quill": "^2.0.3",
-    "typescript": "^5.7.2",
-    "vitest": "^2.1.8",
-    "web-ext": "^8.3.0",
-    "zx": "^8.3.0"
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.8",
+    "web-ext": "^8.4.0",
+    "open-props": "2.0.0-beta.5",
+    "zx": "^8.4.1"
   },
   "targets": {
     "website": {
@@ -61,8 +61,8 @@
   },
   "dependencies": {
     "asciidoctor": "^3.0.4",
-    "caniuse-lite": "^1.0.30001690",
-    "marked": "^15.0.5",
+    "caniuse-lite": "^1.0.30001704",
+    "marked": "^15.0.7",
     "svgo": "^3.3.2",
     "tweakpane": "^4.0.5"
   }
