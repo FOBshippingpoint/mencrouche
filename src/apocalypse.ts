@@ -1,39 +1,65 @@
 export interface Undoable {
   execute: () => void;
   undo: () => void;
-  toString?: () => string;
+  toString?: () => string; // Useful when debugging
 }
 
-// Cuz 'history' already exists in Web API.
+interface ArgumentedUndoable<T> {
+  execute: (state: T) => void;
+  undo: (state: T) => void;
+  toString?: () => string; // Useful when debugging
+}
+
+export type Overwrite<T> = (state: ArgumentedUndoable<T>) => void;
+
+// I name it Apocalypse because 'history' is a Web API.
 export class Apocalypse {
-  private arr: Undoable[] = [];
-  private cur: number = -1;
+  private history: Undoable[] = [];
+  private pointer: number = -1;
 
   redo() {
-    if (this.cur < this.arr.length - 1) {
-      this.cur++;
-      this.arr[this.cur]!.execute();
+    if (this.pointer < this.history.length - 1) {
+      this.pointer++;
+      this.history[this.pointer]!.execute();
     }
   }
   undo() {
-    if (this.cur >= 0) {
-      this.arr[this.cur]!.undo();
-      this.cur--;
+    if (this.pointer >= 0) {
+      this.history[this.pointer]!.undo();
+      this.pointer--;
     }
   }
   write(undoable: Undoable) {
     // If we're in the middle of the stack, remove all "future" commands
-    if (this.cur < this.arr.length - 1) {
-      this.arr.splice(this.cur + 1);
+    if (this.pointer < this.history.length - 1) {
+      this.history.splice(this.pointer + 1);
     }
-
-    this.arr.push(undoable);
-    this.cur++;
+    this.history.push(undoable);
+    this.pointer++;
     undoable.execute();
   }
   listAll(): readonly Undoable[] {
-    return this.arr;
+    return this.history;
+  }
+  checkpoint<T>(state: T): Overwrite<T> {
+    let isFirstRun = true;
+    let pointer: number;
+    return (undoable: ArgumentedUndoable<T>) => {
+      const wrappedUndoable = {
+        execute: () => undoable.execute(state),
+        undo: () => undoable.undo(state),
+      };
+      if (isFirstRun) {
+        pointer = this.pointer;
+        isFirstRun = false;
+        this.write(wrappedUndoable);
+      } else {
+        // Replace current action. History length remains the same.
+        this.history[pointer] = wrappedUndoable;
+        wrappedUndoable.execute();
+      }
+    };
   }
 }
 
-export const apocalypse: Apocalypse = new Apocalypse();
+export const apocalypse = new Apocalypse();

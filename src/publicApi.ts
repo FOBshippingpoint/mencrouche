@@ -14,7 +14,7 @@ import {
   getCustomStickyTypes,
   getCustomSticky,
   registerSticky,
-  stickyWorkspace,
+  workspace,
 } from "./sticky/sticky";
 import { n81i } from "./utils/n81i";
 import { registerContextMenu } from "./contextMenu";
@@ -37,7 +37,7 @@ const mc = {
   dataset,
   createDock,
   apocalypse,
-  stickyWorkspace,
+  workspace,
   registerSticky,
   executeCommand,
   registerCommand,

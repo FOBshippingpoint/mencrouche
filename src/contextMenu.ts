@@ -5,7 +5,7 @@ import { n81i } from "./utils/n81i";
 const contextMenu = $<HTMLDivElement>("#contextMenu")!;
 const registry = new Map();
 
-function isIos() {
+function isIOS() {
   return (
     [
       "iPad Simulator",
@@ -35,7 +35,7 @@ function showContextMenu(e: MouseEvent | CustomEvent) {
     const menuItems = registry.get(key);
     if (menuItems === undefined) {
       throw Error(
-        `Context menu '${key}' not found. Please register context menu first via 'registerContextMenu'.`,
+        `Context menu [ ${key} ] not found. Please register context menu first via 'registerContextMenu'.`,
       );
     }
     frag.appendChild(buildMenuItems(menuItems, target));
@@ -62,7 +62,7 @@ function showContextMenu(e: MouseEvent | CustomEvent) {
   contextMenu.style.left = `${Math.min(x, docRect.width - menuRect.width)}px`;
 }
 
-document.on("contextmenu", (e) => {
+document.body.on("contextmenu", (e) => {
   if (e.shiftKey) return;
   if (!$("#settings")!.classList.contains("none")) return;
   if ((e.target as Element).matches("input,textarea,[contenteditable='true']"))
@@ -71,9 +71,9 @@ document.on("contextmenu", (e) => {
   showContextMenu(e);
 });
 
-if (isIos()) {
+if (isIOS()) {
   document.on("longpress", (e) => {
-    showContextMenu(e);
+    showContextMenu(e as CustomEvent);
   });
 }
 
@@ -106,10 +106,10 @@ function endLongPress(event: PointerEvent) {
   isLongPress = false;
 }
 
-document.on("pointerdown", startLongPress);
-document.on("pointerup", endLongPress);
-document.on("pointercancel", endLongPress);
-document.on("pointerleave", endLongPress);
+document.body.on("pointerdown", startLongPress);
+document.body.on("pointerup", endLongPress);
+document.body.on("pointercancel", endLongPress);
+document.body.on("pointerleave", endLongPress);
 
 type MenuItemBuilder = (
   eventTarget: EventTarget,
@@ -126,7 +126,7 @@ export type MenuItem = MenuItemDefinition | MenuItemBuilder | "hr";
 
 /**
  * Register a context menu (right-click menu) for element with
- * data-contextmenu="{name}" attribute.
+ * data-contextmenu="{name}" attribute. You can register multiple context menus with whitespace seperater.
  *
  * ```typescript
  *

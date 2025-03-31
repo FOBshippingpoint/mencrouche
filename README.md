@@ -67,7 +67,7 @@ mc.registerSticky({
   onDelete() {},
   onRestore() {},
 });
-mc.stickyWorkspace.create({ type: "clock" });
+mc.workspace.create({ type: "clock" });
 ```
 
 After executing the code, you should see a sticky appended to the workspace:
@@ -101,7 +101,7 @@ mc.registerSticky({
   },
   onRestore() {},
 });
-mc.stickyWorkspace.create({ type: "clock" });
+mc.workspace.create({ type: "clock" });
 ```
 
 In this version, "update time" is printed every 100ms. After closing the sticky, the message will no longer appear.
@@ -145,7 +145,7 @@ mc.registerSticky({
     sticky.querySelector("span").style.color = pluginConfig.color;
   },
 });
-mc.stickyWorkspace.create({ type: "clock" });
+mc.workspace.create({ type: "clock" });
 ```
 
 Ta-da!
@@ -200,7 +200,7 @@ In my opinion, the JQuery API is more intuitive than the native DOM API, but we 
 - Trailing `$` and `$$` are used for selecting elements within a subtree:
     ```javascript
     // JQuery
-    $(pureDomElement, ".comment").value("Start typing");
+    $(pureDomElement, ".comment").val("Start typing");
 
     // Dollars
     pureDomElement.$(".comment").value = "Start typing";
@@ -267,7 +267,7 @@ mc.registerSticky({
     enableClock(sticky, pluginConfig.color);
   },
 });
-mc.stickyWorkspace.create({ type: "clock" });
+mc.workspace.create({ type: "clock" });
 ```
 
 

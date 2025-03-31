@@ -31,6 +31,9 @@ const noteSticky: CustomStickyComposer<NotePlugin, NoteConfig> = {
       sticky.plugin.quill.setContents(pluginConfig.contents);
     }
   },
+  options: {
+    noPadding: true
+  }
 };
 
 const toolbarOptions = [

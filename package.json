@@ -35,12 +35,14 @@
     "highlight.js": "^11.11.1",
     "idb": "^8.0.2",
     "kikey": "^3.1.0",
+    "open-props": "2.0.0-beta.5",
     "parcel": "^2.13.3",
+    "prismjs": "^1.30.0",
     "quill": "^2.0.3",
+    "shiki": "^3.2.1",
     "typescript": "^5.8.2",
     "vitest": "^3.0.8",
     "web-ext": "^8.4.0",
-    "open-props": "2.0.0-beta.5",
     "zx": "^8.4.1"
   },
   "targets": {
@@ -65,5 +67,6 @@
     "marked": "^15.0.7",
     "svgo": "^3.3.2",
     "tweakpane": "^4.0.5"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

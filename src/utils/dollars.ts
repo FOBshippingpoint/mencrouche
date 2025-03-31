@@ -15,6 +15,12 @@ declare global {
   interface HTMLElement {
     on: typeof HTMLElement.prototype.addEventListener;
     off: typeof HTMLElement.prototype.removeEventListener;
+    setRect: (
+      left: number | null | undefined,
+      top: number | null | undefined,
+      width?: number | null | undefined,
+      height?: number | null | undefined,
+    ) => void;
   }
   interface Element {
     $: typeof Element.prototype.querySelector;
@@ -56,14 +62,26 @@ EventTarget.prototype.on = EventTarget.prototype.addEventListener;
 EventTarget.prototype.off = EventTarget.prototype.removeEventListener;
 
 Element.prototype.$ = Element.prototype.querySelector;
-Element.prototype.$$ = function <T extends Element>(selector: string): T[] {
-  return [...this.querySelectorAll<T>(selector)];
+Element.prototype.$$ = function (selector: string) {
+  return [...this.querySelectorAll(selector)];
 };
 DocumentFragment.prototype.$ = DocumentFragment.prototype.querySelector;
-DocumentFragment.prototype.$$ = function <T extends Element>(
-  selector: string,
-): T[] {
-  return [...this.querySelectorAll<T>(selector)];
+DocumentFragment.prototype.$$ = function (selector: string) {
+  return [...this.querySelectorAll(selector)];
+};
+HTMLElement.prototype.setRect = function (left, top, width, height) {
+  if (left !== null && left !== undefined) {
+    this.style.left = `${Math.round(left)}px`;
+  }
+  if (top !== null && top !== undefined) {
+    this.style.top = `${Math.round(top)}px`;
+  }
+  if (width !== null && width !== undefined) {
+    this.style.width = `${Math.round(width)}px`;
+  }
+  if (height !== null && height !== undefined) {
+    this.style.height = `${Math.round(height)}px`;
+  }
 };
 
 /**
@@ -104,10 +122,6 @@ const $$$ = document.createElement.bind(document);
  * @example
  * // Returns a strongly-typed HTMLDivElement
  * const div = h<HTMLDivElement>('<div>Hello</div>');
- *
- * @example
- * // Returns a strongly-typed SVGSVGElement
- * const svg = h<SVGSVGElement>('<svg viewBox="0 0 100 100"></svg>');
  *
  * @example
  * // Returns a DocumentFragment containing multiple elements

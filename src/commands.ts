@@ -157,7 +157,7 @@ export function executeCommand(commandName: string) {
   const command = commands.find(({ name }) => name === commandName);
   if (!command) {
     throw Error(
-      `Command '${commandName}' not found. Please call 'registerCommand' first.`,
+      `Command [ ${commandName} ] not found. Please call 'registerCommand' first.`,
     );
   }
   command.execute();
@@ -166,7 +166,7 @@ export function executeCommand(commandName: string) {
 export function registerCommand(command: Command) {
   if (commands.find(({ name }) => command.name === name)) {
     throw Error(
-      `Command '${command.name}' already exists. Please try another name.`,
+      `Command [ ${command.name} ] already exists. Please try another name.`,
     );
   }
 

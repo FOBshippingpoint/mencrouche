@@ -520,7 +520,7 @@ function adjustPaletteHue(e: MouseEvent) {
 
 // Reflecting to global ghost mode configuration.
 dataset.on("isGhostMode", (_, isGhostMode) => {
-  $(".stickyContainer")!.classList.toggle("ghost", !!isGhostMode);
+  $(".crate")!.classList.toggle("ghost", !!isGhostMode);
 });
 
 // Initialize add sticky dropdown buttons at navbar.

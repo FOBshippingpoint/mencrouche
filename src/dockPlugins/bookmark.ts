@@ -413,7 +413,7 @@ function getFirstChar(text: string) {
       isSingle: firstChar.length === 1,
     };
   } else {
-    throw Error(`text '${text}' should not be empty.`);
+    throw Error(`text [ ${text} ] should not be empty.`);
   }
 }
 

@@ -12,7 +12,7 @@ import { getTemplateWidgets } from "../utils/getTemplateWidgets";
 import DOMPurify from "dompurify";
 import { markDirtyAndSaveDocument } from "../lifesaver";
 import { isScriptExecutionAllowed } from "../settings";
-// import hljs from "highlight.js/lib/core";
+import Prism from "prismjs";
 
 declare module "../sticky/sticky" {
   interface StickyPluginRegistryMap {
@@ -224,20 +224,16 @@ function enable(sticky: Sticky<MarkdownPlugin, MarkdownConfig>) {
     } else {
       // Sanitize the HTML content before parse.
       html = DOMPurify.sanitize(dirtyHtml, {
+        // allow showing image
         ALLOWED_URI_REGEXP:
           /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|xxx):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
       });
     }
     const fragment = document.createRange().createContextualFragment(html);
-    // for (const el of fragment.querySelectorAll("pre code")) {
-    //   const language = el.className.slice(9); // "language-javascript" => "javascript"
-    //   import("highlight.js/lib/languages/javascript").then((module) => {
-    //     hljs.registerLanguage(language, javascript);
-    //   });
-    //   hljs.highlightElement(el as HTMLElement);
-    //   // import(`highlight.js/lib/languages/${language}`).then((module) => {
-    //   // });
-    // }
+    for (const el of fragment.querySelectorAll("pre code")) {
+      const language = el.className.slice(9)
+      el.innerHTML = Prism.highlight((el as HTMLElement).innerText, Prism.languages[language], language);
+    }
     preview.replaceChildren(fragment);
   }
 

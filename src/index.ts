@@ -1,4 +1,4 @@
-import { stickyWorkspace } from "./sticky/sticky";
+import { workspace } from "./sticky/sticky";
 import { $ } from "./utils/dollars";
 import {
     allowScriptExecutionIfNotYetSet,
@@ -81,112 +81,112 @@ const defaultCommands: Command[] = [
   {
     name: "deleteAllStickies",
     execute() {
-      stickyWorkspace.deleteAll();
+      workspace.deleteAll();
     },
     defaultShortcut: "C-A-x",
   },
   {
     name: "addMarkdownSticky",
     execute() {
-      stickyWorkspace.create({ type: "markdown" });
+      workspace.create({ type: "markdown" });
     },
     defaultShortcut: "C-A-m",
   },
   {
     name: "addYoutubeSticky",
     execute() {
-      stickyWorkspace.create({ type: "youtube" });
+      workspace.create({ type: "youtube" });
     },
     defaultShortcut: "C-A-y",
   },
   {
     name: "addSpotifySticky",
     execute() {
-      stickyWorkspace.create({ type: "spotify" });
+      workspace.create({ type: "spotify" });
     },
     defaultShortcut: "C-A-s",
   },
   {
     name: "addNoteSticky",
     execute() {
-      stickyWorkspace.create({ type: "note" });
+      workspace.create({ type: "note" });
     },
     defaultShortcut: "C-q",
   },
   {
     name: "deleteSticky",
     execute() {
-      stickyWorkspace.deleteLatest();
+      workspace.deleteLatest();
     },
     defaultShortcut: "A-x",
   },
   {
     name: "toggleAutoArrange",
     execute() {
-      stickyWorkspace.arrange();
+      workspace.arrange();
     },
     defaultShortcut: "A-r",
   },
   {
     name: "toggleSplitView",
     execute() {
-      stickyWorkspace.getLatestSticky()?.plugin.toggleSplitView?.();
+      workspace.getLatestSticky()?.plugin.toggleSplitView?.();
     },
     defaultShortcut: "A-v",
   },
   {
     name: "toggleMaximizeSticky",
     execute() {
-      stickyWorkspace.getLatestSticky()?.toggleMaximize();
+      workspace.getLatestSticky()?.toggleMaximize();
     },
     defaultShortcut: "A-m",
   },
   {
     name: "toggleStickyEditMode",
     execute() {
-      stickyWorkspace.getLatestSticky()?.plugin.toggleEditMode?.();
+      workspace.getLatestSticky()?.plugin.toggleEditMode?.();
     },
     defaultShortcut: "A-e",
   },
   {
     name: "toggleStickyPinMode",
     execute() {
-      stickyWorkspace.getLatestSticky()?.togglePin();
+      workspace.getLatestSticky()?.togglePin();
     },
     defaultShortcut: "A-p",
   },
   {
     name: "toggleGhostMode",
     execute() {
-      stickyWorkspace.getLatestSticky()?.toggleGhostMode();
+      workspace.getLatestSticky()?.toggleGhostMode();
     },
     defaultShortcut: "A-g",
   },
   {
     name: "duplicateSticky",
     execute() {
-      stickyWorkspace.duplicateLatest();
+      workspace.duplicateLatest();
     },
     defaultShortcut: "C-d",
   },
   {
     name: "zoomIn",
     execute() {
-      stickyWorkspace.zoomable.zoomIn();
+      workspace.zoomable.zoomIn();
     },
     defaultShortcut: "C-=", // C + plus key
   },
   {
     name: "zoomOut",
     execute() {
-      stickyWorkspace.zoomable.zoomOut();
+      workspace.zoomable.zoomOut();
     },
     defaultShortcut: "C-dash", // `-` is `dash` in kikey lib
   },
   {
     name: "zoomReset",
     execute() {
-      stickyWorkspace.zoomable.zoomReset();
+      workspace.zoomable.zoomReset();
     },
     defaultShortcut: "C-0",
   },
@@ -233,7 +233,7 @@ async function main() {
   } catch (error) {
     console.log(error);
   }
-  $("#workspaceSlot")!.appendChild(stickyWorkspace.workspaceContainer);
+  $("#workspaceSlot")!.appendChild(workspace.crateMom);
 
   // Register default commands.
   for (const command of defaultCommands) {
@@ -279,7 +279,7 @@ async function main() {
       ],
     },
   ];
-  stickyWorkspace.workspaceContainer.dataset.contextMenu = "main";
+  workspace.crateMom.dataset.contextMenu = "main";
   registerContextMenu("main", menuItems);
 
   // Register custom stickies.

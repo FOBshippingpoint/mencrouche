@@ -66,6 +66,7 @@ just
 - [ ] Using navbar add sticky, the sticky position should at center instead of top-right.
 - [ ] In moved viewport, create/copy sticky from command will not be center in user's point of view.
 - [ ] When drag maximized sticky, header are not centered at cursor.
+- [x] Remove note sticky padding.
 - [x] It might overwrite the existing idb document if changed offline -> close tab -> back online, cuz we always read remote source first right now. We should compare two documents date.
 - [x] Auto arrange not working as expected, the container setting seems weird.
 - [x] divider breaks markdown sticky preview.
@@ -77,7 +78,7 @@ just
 - [x] Tab not working in markdown sticky
 - [x] Script and html not work as expected if use tab :: cannot reproduce :(
 - [x] If save maximized sticky, when restore from saved document, the original size will not available.
-- [x] Fix maximize not working as expected bug due to stickyContainer didn't have w and h
+- [x] Fix maximize not working as expected bug due to crate didn't have w and h
 - [x] Quill Editor undo should not trigger mencrouche undo.
 - [x] The background image cannot restore from localstorage.
 - [x] The sticky blob image cannot restore from localstorage.

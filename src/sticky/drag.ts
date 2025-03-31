@@ -78,7 +78,7 @@ export class Draggable extends ZoomAware {
     this.initialX = e.clientX;
     this.initialY = e.clientY;
 
-    // TODO: fix min, max boundary
+    // FIXME: legacy implementation for dragging boundary
     // const minX = -this.element.offsetWidth + this.padding;
     // const minY = 0;
     // const maxX = this.container.offsetWidth - this.padding;
@@ -86,8 +86,9 @@ export class Draggable extends ZoomAware {
     // this.currentX = Math.min(Math.max(this.currentX, minX), maxX);
     // this.currentY = Math.min(Math.max(this.currentY, minY), maxY);
 
-    this.element.style.left = `${this.element.offsetLeft + this.dx / this.scale}px`;
-    this.element.style.top = `${this.element.offsetTop + this.dy / this.scale}px`;
+    const offsetLeft = this.element.offsetLeft + this.dx / this.scale;
+    const offsetTop = this.element.offsetTop + this.dy / this.scale;
+    this.setOffset({ offsetLeft, offsetTop });
 
     this.options.onDrag?.(e);
   }
@@ -107,8 +108,7 @@ export class Draggable extends ZoomAware {
   }
 
   setOffset(offset: Offset) {
-    this.element.style.left = `${offset.offsetLeft}px`;
-    this.element.style.top = `${offset.offsetTop}px`;
+    this.element.setRect(offset.offsetLeft, offset.offsetTop);
   }
 
   offsetReset() {

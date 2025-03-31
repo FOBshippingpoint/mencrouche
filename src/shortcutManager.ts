@@ -54,7 +54,7 @@ const globalKikey = createKikey();
 function getCurrent(actionName: string) {
   if (!actions.has(actionName)) {
     throw Error(
-      `Action name '${actionName}' not found. Maybe you want to register the action? You can try to call 'on' or 'once'.`,
+      `Action name [ ${actionName} ] not found. Maybe you want to register the action? You can try to call 'on' or 'once'.`,
     );
   }
   const action = actions.get(actionName)!;
@@ -70,7 +70,7 @@ function registerAction(
 ) {
   if (actions.has(actionName)) {
     throw Error(
-      `Action name '${actionName}' already exists. Please try another name. Or maybe you want to 'update' instead?`,
+      `Action name [ ${actionName} ] already exists. Please try another name. Or maybe you want to 'update' instead?`,
     );
   }
   actions.set(actionName, { default: keySequence });

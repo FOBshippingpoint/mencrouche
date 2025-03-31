@@ -50,7 +50,7 @@ linkInput.on("input", () => {
 });
 form.on("submit", (e) => {
   e.preventDefault();
-  const { height, link } = formToObject(form);
+  const { height, link } = formToObject<{ height: string; link: string }>(form);
 
   const url = new URL(link);
   if (!url.pathname.startsWith("/embed")) {
@@ -136,7 +136,7 @@ const spotifySticky: CustomStickyComposer<SpotifyPlugin, SpotifyConfig> = {
 };
 
 function enable(sticky: Sticky) {
-  const widgets = getTemplateWidgets("spotifyStickyWidgets");
+  const widgets = getTemplateWidgets("spotifyStickyWidgets") as HTMLElement;
   const editLinkBtn = widgets.$<HTMLButtonElement>(".editLinkBtn")!;
   const ghostBtn = widgets.$<HTMLButtonElement>(".ghostBtn")!;
   const iframe = widgets.$<HTMLIFrameElement>("iframe")!;
@@ -150,7 +150,7 @@ function enable(sticky: Sticky) {
   editLinkBtn.on("click", () => {
     current = sticky;
     linkInput.value = sticky.dataset.link ?? "";
-    form.$$<HTMLOptionElement>("option").do((el) => {
+    form.$$<HTMLOptionElement>("option").forEach((el) => {
       if (current.dataset.height) {
         el.selected = current.dataset.height === el.value;
       }

@@ -1,9 +1,9 @@
-import { Apocalypse, apocalypse } from "../apocalypse";
+import { Apocalypse, apocalypse, type Overwrite } from "../apocalypse";
 import { registerContextMenu } from "../contextMenu";
 import { dataset, addTodoAfterLoad, addTodoBeforeSave } from "../dataWizard";
 import { getTemplateWidgets } from "../utils/getTemplateWidgets";
 import { n81i } from "../utils/n81i";
-import { BinPacker, pack } from "../utils/packer";
+import { pack } from "../utils/packer";
 import { markDirtyAndSaveDocument } from "../lifesaver";
 import { Zoomable, type Transform } from "./zoom";
 import { Resizable } from "./resize";
@@ -63,7 +63,7 @@ export interface Sticky<
 /**
  * `var(--size-fluid-9)` in pixels.
  *
- * Enable us to set centering sticky position
+ * Enable us to center sticky on screen
  * even if user hasn't move the cursor yet.
  */
 const defaultWidth = $<HTMLDivElement>("#stickySizeDummy")!.offsetWidth;
@@ -90,9 +90,9 @@ registerContextMenu("basic", [
     },
   }),
   (sticky: Sticky) => ({
-    name:
-      (sticky.classList.contains("maximized") ? "minimize" : "maximize") +
-      "Sticky",
+    name: sticky.classList.contains("maximized")
+      ? "minimizeSticky"
+      : "maximizeSticky",
     icon: sticky.classList.contains("maximized")
       ? "lucide-minimize-2"
       : "lucide-maximize-2",
@@ -101,15 +101,16 @@ registerContextMenu("basic", [
     },
   }),
   (sticky: Sticky) => ({
-    name: (sticky.classList.contains("pin") ? "unpin" : "pin") + "Sticky",
+    name: sticky.classList.contains("pin") ? "unpinSticky" : "pinSticky",
     icon: sticky.classList.contains("pin") ? "lucide-pin-off" : "lucide-pin",
     execute() {
       sticky.togglePin();
     },
   }),
   (sticky: Sticky) => ({
-    name:
-      "stickyGhostMode" + (sticky.classList.contains("ghost") ? "Off" : "On"),
+    name: sticky.classList.contains("ghost")
+      ? "stickyGhostModeOff"
+      : "stickyGhostModeOn",
     icon: sticky.classList.contains("ghost")
       ? "lucide-square"
       : "lucide-box-select",
@@ -120,82 +121,94 @@ registerContextMenu("basic", [
 ]);
 
 export interface WorkspaceConfig {
-  /** CSS transform for stickyContainer. */
+  /** CSS transform for crate. */
   transform: Transform;
-  /** Offset left and offset top for stickyContainer. */
+  /** Offset left and offset top for crate. */
   offset: Offset;
   /** All stickies inside workspace. */
   stickies: StickyConfig[];
 }
-class StickyWorkspace {
+class Workspace extends EventTarget {
   /** Contains stickies. */
-  stickyContainer: HTMLDivElement;
+  crate: HTMLDivElement;
   /**
-   * Contains stickyContainer.
+   * Contains crate.
    * A simple html element wrapper, so that we can use
    * css transform without worrying outer layout.
    */
-  workspaceContainer: HTMLDivElement;
+  crateMom: HTMLDivElement;
   zoomable: Zoomable;
   draggable: Draggable;
+  cursorPoint: CursorPoint;
   buildSticky: ReturnType<typeof buildBuildSticky>;
   private highestZIndex: number = 0;
-  /** An array for tracking the sticky order `[lowest, ..., topest]` */
+  /** An array for tracking the sticky order `[lowest layer, ..., topest layer]` */
   private stickies: Sticky[] = [];
-  private apocalypse: Apocalypse;
+  apocalypse: Apocalypse;
 
   constructor(apocalypse: Apocalypse) {
+    super();
     this.apocalypse = apocalypse;
 
-    this.workspaceContainer = $$$("div");
-    this.workspaceContainer.className = "workspace";
+    this.crateMom = $$$("div");
+    this.crateMom.className = "workspace";
 
-    this.stickyContainer = $$$("div");
-    this.stickyContainer.className = "stickyContainer";
+    this.crate = $$$("div");
+    this.crate.className = "crate debug";
 
-    this.workspaceContainer.appendChild(this.stickyContainer);
+    this.crateMom.appendChild(this.crate);
 
-    this.zoomable = new Zoomable(this.stickyContainer, {
-      interactEl: this.workspaceContainer,
+    this.zoomable = new Zoomable(this.crate, {
+      interactEl: this.crateMom,
       onZoom: () => markDirtyAndSaveDocument(),
     });
 
-    this.draggable = new Draggable(this.stickyContainer, {
-      interactEl: this.workspaceContainer,
+    this.draggable = new Draggable(this.crate, {
+      interactEl: this.crateMom,
       acceptMouseButton: 1, // Only accept middle button drag.
-      onDragStart: () => (this.workspaceContainer.style.cursor = "grab"),
-      onDragEnd: () => this.workspaceContainer.style.removeProperty("cursor"),
+      onDragStart: () => (this.crateMom.style.cursor = "grab"),
+      onDragEnd: () => this.crateMom.style.removeProperty("cursor"),
       onDrag: () => markDirtyAndSaveDocument(),
     });
 
     // Peak hidden border when pressing ctrl key.
     document.body.on("keydown", (e) => {
-      this.stickyContainer.classList.toggle("peakGhost", e.ctrlKey);
+      this.crate.classList.toggle("peakGhost", e.ctrlKey);
     });
     document.body.on("keyup", (e) => {
-      this.stickyContainer.classList.toggle("peakGhost", e.ctrlKey);
+      this.crate.classList.toggle("peakGhost", e.ctrlKey);
     });
 
     // Continuosly track the cursor position.
-    const cursorPoint: CursorPoint = [NaN, NaN];
-    this.workspaceContainer.on("pointermove", (e) => {
-      const rect = this.stickyContainer.getBoundingClientRect();
-      cursorPoint[0] = (e.clientX - rect.x) / this.zoomable.scale;
-      cursorPoint[1] = (e.clientY - rect.y) / this.zoomable.scale;
+    this.cursorPoint = [NaN, NaN];
+    this.crateMom.on("pointermove", (e) => {
+      const rect = this.crate.getBoundingClientRect();
+      this.cursorPoint[0] = (e.clientX - rect.x) / this.zoomable.scale;
+      this.cursorPoint[1] = (e.clientY - rect.y) / this.zoomable.scale;
     });
 
     // Build buildSticky function that has wrap with dynamic cursor point.
-    this.buildSticky = buildBuildSticky(cursorPoint, this);
+    this.buildSticky = buildBuildSticky(this.cursorPoint, this);
 
     this.refreshHighestZIndex();
+
+    this.on("dragminimize", (event) => {
+      // When user drag maximized sticky
+      // We will adjust sticky position to cursor
+      // And keep the original width/height.
+      const e = event as CustomEvent<Sticky>;
+      const sticky = e.detail;
+      const rect = parseRect(sticky.dataset.rect!);
+      rect[0] = this.cursorPoint[0] - (rect[2] ?? 0) / 2;
+      rect[1] = this.cursorPoint[1];
+      this.minimize(sticky, rect);
+    });
   }
 
   refreshHighestZIndex() {
     // Find and set the highestZIndex when initialize from existing document.
     this.highestZIndex = 0;
-    for (const sticky of this.workspaceContainer.$$<HTMLDivElement>(
-      ".sticky",
-    )) {
+    for (const sticky of this.crateMom.$$<HTMLDivElement>(".sticky")) {
       const zIndex = parseInt(sticky.style.zIndex);
       if (zIndex > this.highestZIndex) {
         this.highestZIndex = zIndex;
@@ -216,7 +229,7 @@ class StickyWorkspace {
     this.apocalypse.write({
       toString: () => `Delete sticky #[ ${sticky.id} ]`,
       execute: () => {
-        this.deleteSticky(sticky);
+        this._delete(sticky);
         markDirtyAndSaveDocument();
       },
       undo: () => {
@@ -253,7 +266,7 @@ class StickyWorkspace {
     this.apocalypse.write({
       execute: () => {
         while (this.stickies.length) {
-          this.deleteSticky(this.stickies.at(-1)!);
+          this._delete(this.stickies.at(-1)!);
         }
         markDirtyAndSaveDocument();
       },
@@ -303,8 +316,7 @@ class StickyWorkspace {
   duplicate(sticky: Sticky) {
     const config = this.saveSticky(sticky);
     const duplicated = this.buildSticky("restore", config);
-    duplicated.style.left = `${duplicated.offsetLeft + 20}px`;
-    duplicated.style.top = `${duplicated.offsetTop + 20}px`;
+    duplicated.setRect(duplicated.offsetLeft + 20, duplicated.offsetTop + 20);
     this.apocalypse.write({
       toString: () => `Duplicate sticky #[ ${sticky.id} ]`,
       execute: () => {
@@ -317,6 +329,44 @@ class StickyWorkspace {
         markDirtyAndSaveDocument();
       },
     });
+  }
+
+  toggleMaximize(sticky: Sticky) {
+    if (!sticky.classList.contains("maximized")) {
+      const prevRect = sticky.dataset.rect;
+      const currRect = extractRect(sticky);
+      // Original size => Maximize
+      apocalypse.write({
+        execute: () => {
+          sticky.dataset.rect = currRect.toString();
+          this.maximize(sticky);
+        },
+        undo: () => {
+          sticky.dataset.rect = prevRect;
+          this.minimize(sticky, currRect);
+        },
+      });
+    } else {
+      const prevRect = sticky.dataset.rect;
+      const maximizedRect = extractRect(sticky);
+      // Maximized => Original size
+      apocalypse.write({
+        execute: () => {
+          sticky.dataset.rect = maximizedRect.toString();
+          this.minimize(sticky, parseRect(prevRect!));
+        },
+        undo: () => {
+          sticky.dataset.rect = prevRect;
+          this.maximize(sticky);
+        },
+      });
+    }
+
+    sticky.dispatchEvent(
+      new CustomEvent(
+        sticky.classList.contains("maximized") ? "minimize" : "maximize",
+      ),
+    );
   }
 
   duplicateLatest() {
@@ -347,11 +397,11 @@ class StickyWorkspace {
       }
     }
 
-    const GAP = 0;
-    const stickyContainer = this.stickyContainer;
-    const workspaceContainer = this.workspaceContainer;
-    const transform = stickyWorkspace.zoomable.getTransform();
-    const offset = stickyWorkspace.draggable.getOffset();
+    const GAP = 0; // TODO: remove this variable since this bin packing algo will add gap?
+    const crate = this.crate;
+    const crateMom = this.crateMom;
+    const transform = workspace.zoomable.getTransform();
+    const offset = workspace.draggable.getOffset();
     const blocks = stickies.map((sticky) => ({
       left: sticky.offsetLeft,
       top: sticky.offsetTop,
@@ -362,14 +412,14 @@ class StickyWorkspace {
       toString: () => "Arrange stickies",
       execute() {
         const fittedBlocks = pack(
-          workspaceContainer.offsetWidth / stickyWorkspace.zoomable.scale,
+          crateMom.offsetWidth / workspace.zoomable.scale,
           blocks,
         );
 
         onEventOrTimeout(
-          stickyContainer,
+          crate,
           () => {
-            stickyContainer.classList.remove("arranging");
+            crate.classList.remove("arranging");
             markDirtyAndSaveDocument();
           },
           "transitionend",
@@ -378,32 +428,30 @@ class StickyWorkspace {
           const sticky = stickies[i]!;
           const fitted = fittedBlocks[i];
           if (fitted) {
-            sticky.style.left = `${fitted.left + GAP}px`;
-            sticky.style.top = `${fitted.top + GAP}px`;
+            sticky.setRect(fitted.left + GAP, fitted.top + GAP);
           }
         }
-        stickyWorkspace.zoomable.transformReset();
-        stickyWorkspace.draggable.offsetReset();
-        stickyContainer.classList.add("arranging");
+        workspace.zoomable.transformReset();
+        workspace.draggable.offsetReset();
+        crate.classList.add("arranging");
       },
       undo() {
         onEventOrTimeout(
-          stickyContainer,
+          crate,
           () => {
-            stickyContainer.classList.remove("arranging");
+            crate.classList.remove("arranging");
             markDirtyAndSaveDocument();
           },
           "transitionend",
         );
-        stickyWorkspace.zoomable.setTransform(transform);
-        stickyWorkspace.draggable.setOffset(offset);
+        workspace.zoomable.setTransform(transform);
+        workspace.draggable.setOffset(offset);
         for (let i = 0; i < blocks.length; i++) {
           const sticky = stickies[i]!;
           const block = blocks[i]!;
-          sticky.style.left = `${block.left}px`;
-          sticky.style.top = `${block.top}px`;
+          sticky.setRect(block.left, block.top);
         }
-        stickyContainer.classList.remove("arranging");
+        crate.classList.remove("arranging");
       },
     });
   }
@@ -416,7 +464,7 @@ class StickyWorkspace {
     return this.stickies;
   }
 
-  private deleteSticky(sticky: Sticky) {
+  private _delete(sticky: Sticky) {
     const idx = this.stickies.indexOf(sticky);
     if (idx !== -1) {
       this.stickies.splice(idx, 1);
@@ -432,16 +480,36 @@ class StickyWorkspace {
     sticky.classList.add("deleted");
   }
 
+  private maximize(sticky: Sticky) {
+    const width = this.crateMom.offsetWidth / workspace.zoomable.scale;
+    const height = this.crateMom.offsetHeight / workspace.zoomable.scale;
+    const matrix = new DOMMatrixReadOnly(
+      getComputedStyle(this.crate).transform,
+    );
+    const translateX = matrix.m41;
+    const translateY = matrix.m42;
+    const scale = workspace.zoomable.scale;
+    const left = -this.crate.offsetLeft / scale - translateX / scale;
+    const top = -this.crate.offsetTop / scale - translateY / scale;
+    sticky.setRect(left, top, width, height);
+    sticky.classList.add("maximized");
+  }
+
+  private minimize(sticky: Sticky, rect: Rectangle) {
+    sticky.setRect(...rect);
+    sticky.classList.remove("maximized");
+  }
+
   private restoreSticky(options: StickyConfig) {
     const sticky = this.buildSticky("restore", options);
     this.stickies.push(sticky);
-    this.stickyContainer.appendChild(sticky);
+    this.crate.appendChild(sticky);
   }
 
   private addToTop(sticky: Sticky) {
     this.stickies.push(sticky);
     this.moveToTop(sticky);
-    this.stickyContainer.appendChild(sticky);
+    this.crate.appendChild(sticky);
   }
 
   create(options: StickyConfig) {
@@ -449,7 +517,7 @@ class StickyWorkspace {
     let sticky: Sticky;
 
     this.apocalypse.write({
-      toString:() => "Create sticky",
+      toString: () => "Create sticky",
       execute: () => {
         sticky = this.buildSticky("create", backupOptions ?? options);
         this.addToTop(sticky);
@@ -459,50 +527,6 @@ class StickyWorkspace {
         this.forceDelete(sticky);
       },
     });
-  }
-
-  pause(sticky: Sticky) {
-    const prevRect = extractRectangle(sticky);
-
-    return (type: "drag" | "resize") => {
-      const currRect = extractRectangle(sticky);
-
-      this.apocalypse.write({
-        toString: () => prevRect.toString() + type,
-        execute: () => {
-          const s = sticky;
-          if (type === "drag") {
-            s.style.left = `${currRect[0]}px`;
-            s.style.top = `${currRect[1]}px`;
-          } else if (type === "resize") {
-            s.style.width = `${currRect[2]}px`;
-            s.style.height = `${currRect[3]}px`;
-          }
-        },
-        undo: () => {
-          const s = sticky;
-          if (type === "drag") {
-            if (prevRect[0] !== null && prevRect[0] !== undefined) {
-              s.style.left = `${prevRect[0]}px`;
-            }
-            if (prevRect[1] !== null && prevRect[1] !== undefined) {
-              s.style.top = `${prevRect[1]}px`;
-            }
-          } else if (type === "resize") {
-            if (prevRect[2] !== undefined) {
-              s.style.width = `${
-                prevRect[2] === null ? defaultWidth : prevRect[2]
-              }px`;
-            }
-            if (prevRect[3] !== undefined) {
-              s.style.height = `${
-                prevRect[3] === null ? defaultWidth : prevRect[3]
-              }px`;
-            }
-          }
-        },
-      });
-    };
   }
 
   getById(id: string) {
@@ -515,25 +539,22 @@ class StickyWorkspace {
 
   getCentralPoint(): CursorPoint {
     return [
-      this.stickyContainer.offsetWidth / 2,
-      (this.stickyContainer.offsetHeight - defaultWidth) / 2,
+      this.crate.offsetWidth / 2,
+      (this.crate.offsetHeight - defaultWidth) / 2,
     ];
   }
 }
 
 /**
  * NaN means that there is the cursor point is not initialized.
- * Since we need stickyContainer to be append first to get the width and height.
+ * Since we need crate to be append first to get the width and height.
  * TODO: We use this ugly approach to judge whether the point is ready for use.
  *
  * :: I avoid (number | null) since it will cause more type issue. However, current approach is inconsist.
  * e.g. the Rectangle type accept null.
  */
 type CursorPoint = [number, number];
-function buildBuildSticky(
-  cursorPoint: CursorPoint,
-  stickyWorkspace: StickyWorkspace,
-) {
+function buildBuildSticky(cursorPoint: CursorPoint, workspace: Workspace) {
   return function buildSticky(
     buildType: "create" | "restore",
     {
@@ -554,7 +575,7 @@ function buildBuildSticky(
     let x: number;
     let y: number;
     if (isNaN(cursorPoint[0])) {
-      [x, y] = stickyWorkspace.getCentralPoint();
+      [x, y] = workspace.getCentralPoint();
     } else {
       [x, y] = cursorPoint;
     }
@@ -605,89 +626,84 @@ function buildBuildSticky(
       const maximizeToggleLbl =
         sticky.$<HTMLLabelElement>(".maximizeToggleLbl")!;
 
-      let resumeForDrag: (type: "drag" | "resize") => void;
-      let resumeForResize: (type: "drag" | "resize") => void;
-
       new Draggable(
         sticky,
-        {
-          interactEl: stickyHeader,
-          container: stickyWorkspace.workspaceContainer,
-          padding: 20,
-          onDragStart: (e) => {
-            if (sticky.classList.contains("maximized")) {
-              const topWhenMaximized = sticky.style.top;
-              (sticky as Sticky).toggleMaximize();
-              sticky.style.top = topWhenMaximized;
-              sticky.style.left = `${e.clientX - sticky.offsetWidth / 2}px`;
-            }
-            resumeForDrag = stickyWorkspace.pause(sticky as Sticky);
-          },
-          onDragEnd: () => resumeForDrag("drag"),
-        },
-        stickyWorkspace.zoomable,
+        (() => {
+          let write: Overwrite<Rectangle>;
+          return {
+            interactEl: stickyHeader,
+            container: workspace.crateMom,
+            padding: 20,
+            onDragStart: () => {
+              const rect = extractRect(sticky);
+              if (sticky.classList.contains("maximized")) {
+                workspace.dispatchEvent(
+                  new CustomEvent<Sticky>("dragminimize", {
+                    detail: sticky as Sticky,
+                  }),
+                );
+              } else {
+                // When we are doing normal dragging, do not restore width and height
+                // Only restore width and height when "drag to minimize".
+                rect[2] = null;
+                rect[3] = null;
+              }
+              write = workspace.apocalypse.checkpoint(rect);
+            },
+            onDragEnd: () => {
+              const currRect = extractRect(sticky);
+              write({
+                execute() {
+                  sticky.setRect(...currRect);
+                },
+                undo(rect) {
+                  sticky.setRect(...rect);
+                },
+              });
+            },
+          };
+        })(),
+        workspace.zoomable,
       );
       new Resizable(
         sticky,
-        {
-          onResizeStart: () => {
-            resumeForResize = stickyWorkspace.pause(sticky as Sticky);
-          },
-          onResizeEnd: () => {
-            resumeForResize("resize");
-          },
-        },
-        stickyWorkspace.zoomable,
+        (() => {
+          let write: Overwrite<Rectangle>;
+          return {
+            onResizeStart: () => {
+              const rect = extractRect(sticky);
+              write = workspace.apocalypse.checkpoint(rect);
+            },
+            onResizeEnd: () => {
+              const currRect = extractRect(sticky);
+              write({
+                execute() {
+                  sticky.setRect(...currRect);
+                },
+                undo(rect) {
+                  sticky.setRect(null, null, rect[2], rect[3]);
+                },
+              });
+            },
+          };
+        })(),
+        workspace.zoomable,
       );
 
       const extendedSticky = sticky as Sticky;
 
       Object.assign(sticky, {
         delete() {
-          stickyWorkspace.delete(extendedSticky);
+          workspace.delete(extendedSticky);
         },
         forceDelete() {
-          stickyWorkspace.forceDelete(extendedSticky);
+          workspace.forceDelete(extendedSticky);
         },
         duplicate() {
-          stickyWorkspace.duplicate(extendedSticky);
+          workspace.duplicate(extendedSticky);
         },
         toggleMaximize() {
-          sticky.classList.toggle("maximized");
-          if (sticky.classList.contains("maximized")) {
-            // minimize => maximized
-            sticky.dataset.rect = rectangleToString(extractRectangle(sticky));
-            sticky.style.width =
-              stickyWorkspace.workspaceContainer.offsetWidth /
-                stickyWorkspace.zoomable.scale +
-              "px";
-            sticky.style.height =
-              stickyWorkspace.workspaceContainer.offsetHeight /
-                stickyWorkspace.zoomable.scale +
-              "px";
-            const matrix = new DOMMatrixReadOnly(
-              getComputedStyle(stickyWorkspace.stickyContainer).transform,
-            );
-            // m41 = translateX
-            // m42 = translateY
-            const scale = stickyWorkspace.zoomable.scale;
-            sticky.style.left = `${-stickyWorkspace.stickyContainer.offsetLeft / scale - matrix.m41 / scale}px`;
-            sticky.style.top = `${-stickyWorkspace.stickyContainer.offsetTop / scale - matrix.m42 / scale}px`;
-          } else {
-            // maximized => minimize
-            // Recover previous position and size.
-            const rect = parseRectangleFromString(sticky.dataset.rect!);
-            sticky.style.left = `${rect[0]}px`;
-            sticky.style.top = `${rect[1]}px`;
-            sticky.style.width = `${rect[2]}px`;
-            sticky.style.height = `${rect[3]}px`;
-          }
-
-          sticky.dispatchEvent(
-            new CustomEvent(
-              sticky.classList.contains("maximized") ? "minimize" : "maximize",
-            ),
-          );
+          workspace.toggleMaximize(extendedSticky);
         },
         toggleGhostMode() {
           sticky.classList.toggle("ghost");
@@ -716,7 +732,7 @@ function buildBuildSticky(
             type: extendedSticky.type,
             className: sticky.className,
           };
-          config.rect = extractRectangle(sticky);
+          config.rect = extractRect(sticky);
           // Convert DOMStringMap to plain js object.
           config.dataset = Object.fromEntries(Object.entries(sticky.dataset));
           const zIndex = sticky.style.zIndex;
@@ -730,7 +746,7 @@ function buildBuildSticky(
 
       sticky.on("pointerdown", (e) => {
         if (e.button !== 2 /* NOT right-click */) {
-          stickyWorkspace.moveToTop(extendedSticky);
+          workspace.moveToTop(extendedSticky);
         }
       });
 
@@ -767,7 +783,7 @@ function buildBuildSticky(
         }
       } else {
         throw Error(
-          `Custom sticky type '${type}' not found. Please register sticky type first via 'registerSticky'.`,
+          `Custom sticky type [ ${type} ] not found. Please register sticky type first via 'registerSticky'.`,
         );
       }
     }
@@ -777,7 +793,7 @@ function buildBuildSticky(
   };
 }
 
-export const stickyWorkspace = new StickyWorkspace(apocalypse);
+export const workspace = new Workspace(apocalypse);
 
 const customStickiComposers = new Map<
   string,
@@ -791,7 +807,7 @@ type Rectangle = [
   height: number | null,
 ];
 
-function extractRectangle(element: HTMLElement): Rectangle {
+function extractRect(element: HTMLElement): Rectangle {
   return [
     element.offsetLeft,
     element.offsetTop,
@@ -799,16 +815,20 @@ function extractRectangle(element: HTMLElement): Rectangle {
     element.offsetHeight,
   ];
 }
-function rectangleToString(rect: Rectangle) {
-  return rect.join(",");
-}
-function parseRectangleFromString(rect: string): Rectangle {
+function parseRect(rect: string): Rectangle {
   const numbers = rect.split(",");
   if (numbers.length === 4) {
-    return numbers.map((n) => parseInt(n)) as Rectangle;
+    return numbers.map((n) => {
+      const num = parseInt(n);
+      if (isNaN(num)) {
+        return null;
+      } else {
+        return num;
+      }
+    }) as Rectangle;
   } else {
     throw Error(
-      `Rectangle string must have 4 value seperated with comma. '${rect}' has length '${numbers.length}'.`,
+      `Rectangle string must have 4 value seperated with comma. [ ${rect} ] has length [ ${numbers.length} ].`,
     );
   }
 }
@@ -836,7 +856,7 @@ export function registerSticky<
 >(customSticky: CustomStickyComposer<S, C>) {
   if (customStickiComposers.has(customSticky.type)) {
     console.warn(
-      `Overwriting existing custom sticky '${customSticky.type}'. You should only overwrite definition during test.`,
+      `Overwriting existing custom sticky '${customSticky.type}'. You should only do this while development.`,
     );
   }
 
@@ -866,13 +886,13 @@ export function getWidgets(sticky: Sticky, widgetTemplateId: string) {
 }
 
 addTodoBeforeSave(() => {
-  dataset.setItem("workspace", stickyWorkspace.saveWork());
+  dataset.setItem("workspace", workspace.saveWork());
 });
 addTodoAfterLoad(() => {
   const config = dataset.getItem<WorkspaceConfig>("workspace");
   if (config) {
-    stickyWorkspace.zoomable.setTransform(config.transform);
-    stickyWorkspace.draggable.setOffset(config.offset);
-    stickyWorkspace.restoreAndReplaceAll(config.stickies);
+    workspace.zoomable.setTransform(config.transform);
+    workspace.draggable.setOffset(config.offset);
+    workspace.restoreAndReplaceAll(config.stickies);
   }
 });
