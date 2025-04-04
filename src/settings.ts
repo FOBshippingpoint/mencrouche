@@ -4,49 +4,53 @@ import { $, $$$ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
 import { toDataUrl } from "./utils/toDataUrl";
 import { keySequenceToString, shortcutManager } from "./shortcutManager";
-import { getTemplateWidgets } from "./utils/getTemplateWidgets";
+import { getTemplate } from "./utils/getTemplate";
 import { executeCommand } from "./commands";
 import {
-  addTodoAfterLoad,
-  addTodoBeforeSave,
-  dataset,
-  JsonFileSource,
-  loadFromSources,
-  saveToSources,
+	addTodoAfterLoad,
+	addTodoBeforeSave,
+	dataset,
+	JsonFileSource,
+	loadFromSources,
+	saveToSources,
 } from "./dataWizard";
 import { openDB } from "idb";
-import { isCloudSyncEnabled, markDirtyAndSaveDocument, setIsCloudSyncEnabled } from "./lifesaver";
+import {
+	isCloudSyncEnabled,
+	markDirtyAndSaveDocument,
+	setIsCloudSyncEnabled,
+} from "./lifesaver";
 
 const changesManager = (() => {
-  type Todo = () => void;
-  const todos = new Map<string, Todo>();
-  let isDirty = false;
+	type Todo = () => void;
+	const todos = new Map<string, Todo>();
+	let isDirty = false;
 
-  return {
-    isDirty() {
-      return isDirty;
-    },
-    markDirty() {
-      isDirty = true;
-    },
-    setChange(key: string, todo: Todo) {
-      todos.set(key, todo);
-      isDirty = true;
-    },
-    onRevert() {},
-    save() {
-      for (const todo of todos.values()) {
-        todo();
-      }
-      markDirtyAndSaveDocument();
-      isDirty = false;
-    },
-    cancel() {
-      this.onRevert?.();
-      todos.clear();
-      isDirty = false;
-    },
-  };
+	return {
+		isDirty() {
+			return isDirty;
+		},
+		markDirty() {
+			isDirty = true;
+		},
+		setChange(key: string, todo: Todo) {
+			todos.set(key, todo);
+			isDirty = true;
+		},
+		onRevert() {},
+		save() {
+			for (const todo of todos.values()) {
+				todo();
+			}
+			markDirtyAndSaveDocument();
+			isDirty = false;
+		},
+		cancel() {
+			this.onRevert?.();
+			todos.clear();
+			isDirty = false;
+		},
+	};
 })();
 
 // awk '{ print length($2), $0 }' asdf | /usr/bin/sort -n | cut -d ' ' -f2- > asdfasdf
@@ -56,7 +60,7 @@ const settings = $<HTMLElement>("#settings")!;
 const cancelBtn = $<HTMLButtonElement>("#cancelSettingsBtn")!;
 const settingsBtn = $<HTMLButtonElement>("#settingsBtn")!;
 const isCloudSyncEnabledCheckbox = $<HTMLInputElement>(
-  '[name="isCloudSyncEnabled"]',
+	'[name="isCloudSyncEnabled"]',
 )!;
 // const syncRemoteAuthKeyInput = $<HTMLInputElement>( '[name="syncRemoteAuthKey"]',)!;
 const shortcutList = $<HTMLDivElement>("#shortcutList")!;
@@ -68,59 +72,59 @@ const exportDocumentBtn = $<HTMLButtonElement>("#exportDocumentBtn")!;
 const importDocumentBtn = $<HTMLButtonElement>("#importDocumentBtn")!;
 const resetPaletteHueBtn = $<HTMLDivElement>("#setPaletteHueToDefaultBtn")!;
 const isScriptExecutionAllowedCheckbox = $<HTMLInputElement>(
-  '[name="isScriptExecutionAllowed"]',
+	'[name="isScriptExecutionAllowed"]',
 )!;
 const customJsTextArea = $<HTMLTextAreaElement>("#customJsTextArea")!;
 const customJsSlot = $<HTMLSlotElement>("#customJsSlot")!;
 const customCssTextArea = $<HTMLTextAreaElement>("#customCssTextArea")!;
 const backgroundImageDropzone = $<HTMLDivElement>(".dropzone")!;
 const backgroundImageUrlInput = $<HTMLInputElement>(
-  "#backgroundImageUrlInput",
+	"#backgroundImageUrlInput",
 )!;
 const importDocumentFileInput = $<HTMLInputElement>(
-  "#importDocumentFileInput",
+	"#importDocumentFileInput",
 )!;
 const resetBackgroundImageBtn = $<HTMLButtonElement>(
-  "#setBackgroundImageToDefaultBtn",
+	"#setBackgroundImageToDefaultBtn",
 )!;
 const backgroundImageFileInput =
-  backgroundImageDropzone.$<HTMLInputElement>("input")!;
+	backgroundImageDropzone.$<HTMLInputElement>("input")!;
 
 const unsavedChangesAlertDialog = createDialog({
-  title: "unsavedChanges",
-  message: "unsavedChangesMessage",
-  buttons: [
-    {
-      "data-i18n": "cancelSubmitBtn",
-      onClick() {
-        unsavedChangesAlertDialog.close();
-      },
-    },
-    {
-      "data-i18n": "leaveSettingsPage",
-      onClick() {
-        changesManager.cancel();
-        closeSettingsPage();
-        unsavedChangesAlertDialog.close();
-      },
-      type: "reset",
-    },
-  ],
+	title: "unsavedChanges",
+	message: "unsavedChangesMessage",
+	buttons: [
+		{
+			"data-i18n": "cancelSubmitBtn",
+			onClick() {
+				unsavedChangesAlertDialog.close();
+			},
+		},
+		{
+			"data-i18n": "leaveSettingsPage",
+			onClick() {
+				changesManager.cancel();
+				closeSettingsPage();
+				unsavedChangesAlertDialog.close();
+			},
+			type: "reset",
+		},
+	],
 });
 
 settingsBtn.on("click", () => {
-  if (changesManager.isDirty()) {
-    unsavedChangesAlertDialog.open();
-  } else {
-    toggleSettingsPage();
-  }
+	if (changesManager.isDirty()) {
+		unsavedChangesAlertDialog.open();
+	} else {
+		toggleSettingsPage();
+	}
 });
 
 isCloudSyncEnabledCheckbox.checked = isCloudSyncEnabled();
 isCloudSyncEnabledCheckbox.on("input", () => {
-  changesManager.setChange("setIsCloudSyncEnabled", () => {
-    setIsCloudSyncEnabled(isCloudSyncEnabledCheckbox.checked);
-  });
+	changesManager.setChange("setIsCloudSyncEnabled", () => {
+		setIsCloudSyncEnabled(isCloudSyncEnabledCheckbox.checked);
+	});
 });
 // syncRemoteAuthKeyInput.value = localStorage.getItem("syncRemoteAuthKey") ?? "";
 // syncRemoteAuthKeyInput.on("input", () => {
@@ -129,281 +133,281 @@ isCloudSyncEnabledCheckbox.on("input", () => {
 //   });
 // });
 shareDataLinkBtn.on("click", () => {
-  const syncUrl = localStorage.getItem("syncUrl");
-  const syncResourceId = localStorage.getItem("syncResourceId");
-  const encryptionKey = localStorage.getItem("encryptionKey");
-  if (syncUrl && syncResourceId && encryptionKey) {
-    const url = new URL(window.location.origin);
-    url.hash = window.btoa(
-      JSON.stringify({
-        syncUrl,
-        syncResourceId,
-        encryptionKey,
-      }),
-    );
-    navigator.clipboard
-      .writeText(url.href)
-      .then(() => {
-        shareDataLinkBtn.textContent = n81i.t("copied");
-        shareDataLinkBtn.on(
-          "pointerleave",
-          () => n81i.translateElement(shareDataLinkBtn),
-          { once: true },
-        );
-      })
-      .catch((err) => console.error(err.name, err.message));
-  } else {
-    alert("Cannot share the data.");
-  }
+	const syncUrl = localStorage.getItem("syncUrl");
+	const syncResourceId = localStorage.getItem("syncResourceId");
+	const encryptionKey = localStorage.getItem("encryptionKey");
+	if (syncUrl && syncResourceId && encryptionKey) {
+		const url = new URL(window.location.origin);
+		url.hash = window.btoa(
+			JSON.stringify({
+				syncUrl,
+				syncResourceId,
+				encryptionKey,
+			}),
+		);
+		navigator.clipboard
+			.writeText(url.href)
+			.then(() => {
+				shareDataLinkBtn.textContent = n81i.t("copied");
+				shareDataLinkBtn.on(
+					"pointerleave",
+					() => n81i.translateElement(shareDataLinkBtn),
+					{ once: true },
+				);
+			})
+			.catch((err) => console.error(err.name, err.message));
+	} else {
+		alert("Cannot share the data.");
+	}
 });
 deleteDocumentBtn.on("click", async () => {
-  if (confirm(n81i.t("confirmDeleteDocument"))) {
-    localStorage.clear();
-    try {
-      // TODO: should use constant to avoid duplicates string.
-      // PS same in `/src/dataWizard.ts`
-      const db = await openDB("mencrouche");
-      db.deleteObjectStore("data");
-    } catch (error) {
-      console.log("An error occurred when deleting IndexedDB", error);
-      alert("Failed to delete data");
-    }
-    alert("Deleted! Please refresh the page.");
-  }
+	if (confirm(n81i.t("confirmDeleteDocument"))) {
+		localStorage.clear();
+		try {
+			// TODO: should use constant to avoid duplicates string.
+			// PS same in `/src/dataWizard.ts`
+			const db = await openDB("mencrouche");
+			db.deleteObjectStore("data");
+		} catch (error) {
+			console.log("An error occurred when deleting IndexedDB", error);
+			alert("Failed to delete data");
+		}
+		alert("Deleted! Please refresh the page.");
+	}
 });
 
 exportDocumentBtn.on("click", () => saveToSources(new JsonFileSource()));
 importDocumentBtn.on("click", () => {
-  importDocumentFileInput.click();
+	importDocumentFileInput.click();
 });
 importDocumentFileInput.on("change", () => {
-  const file = importDocumentFileInput.files?.[0];
-  const discardCurrentChangesDialog = createDialog({
-    title: "discardCurrentChanges",
-    message: "discardCurrentChangesAndLoadFileMessage",
-    buttons: [
-      {
-        "data-i18n": "cancelSubmitBtn",
-        onClick() {
-          discardCurrentChangesDialog.close();
-        },
-      },
-      {
-        "data-i18n": "discardBtn",
-        async onClick() {
-          if (file) {
-            loadFromSources(new JsonFileSource(file));
-            closeSettingsPage();
-          }
-          discardCurrentChangesDialog.close();
-        },
-        type: "reset",
-      },
-    ],
-  });
-  discardCurrentChangesDialog.open();
+	const file = importDocumentFileInput.files?.[0];
+	const discardCurrentChangesDialog = createDialog({
+		title: "discardCurrentChanges",
+		message: "discardCurrentChangesAndLoadFileMessage",
+		buttons: [
+			{
+				"data-i18n": "cancelSubmitBtn",
+				onClick() {
+					discardCurrentChangesDialog.close();
+				},
+			},
+			{
+				"data-i18n": "discardBtn",
+				async onClick() {
+					if (file) {
+						loadFromSources(new JsonFileSource(file));
+						closeSettingsPage();
+					}
+					discardCurrentChangesDialog.close();
+				},
+				type: "reset",
+			},
+		],
+	});
+	discardCurrentChangesDialog.open();
 });
 
 saveBtn.on("click", () => {
-  changesManager.save();
+	changesManager.save();
 });
 saveAndCloseBtn.on("click", () => {
-  changesManager.save();
-  closeSettingsPage();
+	changesManager.save();
+	closeSettingsPage();
 });
 cancelBtn.on("click", () => {
-  changesManager.cancel();
-  closeSettingsPage();
+	changesManager.cancel();
+	closeSettingsPage();
 });
 
 // Copy from web.dev: https://web.dev/patterns/clipboard/paste-images#js
 backgroundImageUrlInput.on("paste", async (e) => {
-  const clipboardItems = await navigator.clipboard.read();
+	const clipboardItems = await navigator.clipboard.read();
 
-  for (const clipboardItem of clipboardItems) {
-    let blob;
-    const imageTypes = clipboardItem.types.filter((type) =>
-      type.startsWith("image/"),
-    );
-    for (const imageType of imageTypes) {
-      blob = await clipboardItem.getType(imageType);
-      handleBlob(blob);
-      return;
-    }
-    try {
-      const url = await (await clipboardItem.getType("text/plain")).text();
-      new URL(url);
-      backgroundImageDropzone.style.background = `url(${url}) center center / cover no-repeat`;
-      dataset.setItem("backgroundImageUrl", url);
-      changesManager.markDirty();
-    } catch (_) {
-      alert(n81i.t("imageUrlIsNotValidAlert"));
-    }
-  }
+	for (const clipboardItem of clipboardItems) {
+		let blob;
+		const imageTypes = clipboardItem.types.filter((type) =>
+			type.startsWith("image/"),
+		);
+		for (const imageType of imageTypes) {
+			blob = await clipboardItem.getType(imageType);
+			handleBlob(blob);
+			return;
+		}
+		try {
+			const url = await (await clipboardItem.getType("text/plain")).text();
+			new URL(url);
+			backgroundImageDropzone.style.background = `url(${url}) center center / cover no-repeat`;
+			dataset.setItem("backgroundImageUrl", url);
+			changesManager.markDirty();
+		} catch (_) {
+			alert(n81i.t("imageUrlIsNotValidAlert"));
+		}
+	}
 });
 
 function handleBlob(blob: Blob | File) {
-  const url = URL.createObjectURL(blob);
-  if (!url.startsWith("blob")) {
-    backgroundImageUrlInput.value = url;
-  }
-  backgroundImageDropzone.style.background = `url(${url}) center center / cover no-repeat`;
-  dataset.setItem("backgroundImageUrl", url);
-  changesManager.markDirty();
+	const url = URL.createObjectURL(blob);
+	if (!url.startsWith("blob")) {
+		backgroundImageUrlInput.value = url;
+	}
+	backgroundImageDropzone.style.background = `url(${url}) center center / cover no-repeat`;
+	dataset.setItem("backgroundImageUrl", url);
+	changesManager.markDirty();
 }
 
 // Handle drag and drop events
 backgroundImageDropzone.on("dragover", (event) => {
-  event.preventDefault(); // Prevent default browser behavior (open file)
-  backgroundImageDropzone.setAttribute("active", "");
+	event.preventDefault(); // Prevent default browser behavior (open file)
+	backgroundImageDropzone.setAttribute("active", "");
 });
 backgroundImageDropzone.on("dragleave", () => {
-  backgroundImageDropzone.removeAttribute("active");
+	backgroundImageDropzone.removeAttribute("active");
 });
 
 backgroundImageDropzone.on("drop", (e) => {
-  e.preventDefault();
-  backgroundImageDropzone.removeAttribute("active");
-  if (e.dataTransfer?.items) {
-    // Use DataTransferItemList interface to access the file(s)
-    [...e.dataTransfer?.items].forEach((item, i) => {
-      // If dropped items aren't files, reject them
-      if (item.kind === "file") {
-        const file = item.getAsFile()!;
-        handleBlob(file);
-      }
-    });
-  } else {
-    // Use DataTransfer interface to access the file(s)
-    [...e.dataTransfer?.files].forEach((file) => {
-      handleBlob(file);
-    });
-  }
+	e.preventDefault();
+	backgroundImageDropzone.removeAttribute("active");
+	if (e.dataTransfer?.items) {
+		// Use DataTransferItemList interface to access the file(s)
+		[...e.dataTransfer?.items].forEach((item, i) => {
+			// If dropped items aren't files, reject them
+			if (item.kind === "file") {
+				const file = item.getAsFile()!;
+				handleBlob(file);
+			}
+		});
+	} else {
+		// Use DataTransfer interface to access the file(s)
+		[...e.dataTransfer?.files].forEach((file) => {
+			handleBlob(file);
+		});
+	}
 });
 
 // Handle click on dropzone to open file selection dialog
 backgroundImageDropzone.on("click", () => {
-  backgroundImageFileInput.click();
+	backgroundImageFileInput.click();
 });
 
 // Handle file selection from dialog
 backgroundImageFileInput.on("change", () => {
-  const selectedFile = backgroundImageFileInput.files?.[0];
-  if (selectedFile) {
-    handleBlob(selectedFile);
-  }
+	const selectedFile = backgroundImageFileInput.files?.[0];
+	if (selectedFile) {
+		handleBlob(selectedFile);
+	}
 });
 
 resetBackgroundImageBtn.on("click", () => {
-  backgroundImageDropzone.style.backgroundImage = "unset";
-  backgroundImageUrlInput.value = "";
-  dataset.setItem("backgroundImageUrl", null);
+	backgroundImageDropzone.style.backgroundImage = "unset";
+	backgroundImageUrlInput.value = "";
+	dataset.setItem("backgroundImageUrl", null);
 });
 
 // TODO: somehow laggy? maybe we need throttle?
 uiOpacityInput.on("input", () => {
-  const uiOpacity = uiOpacityInput.valueAsNumber / 100;
-  dataset.setItem("uiOpacity", uiOpacity);
-  changesManager.markDirty();
+	const uiOpacity = uiOpacityInput.valueAsNumber / 100;
+	dataset.setItem("uiOpacity", uiOpacity);
+	changesManager.markDirty();
 });
 
 function openSettingsPage() {
-  settings.classList.remove("none");
+	settings.classList.remove("none");
 
-  // Backup attributes.
-  const uiOpacity = dataset.getOrSetItem("uiOpacity", 1);
-  const paletteHue = dataset.getItem("paletteHue") as string;
-  console.log(paletteHue);
-  const backgroundImageUrl = dataset.getItem("backgroundImageUrl");
-  const locale = dataset.getItem("locale") as string;
-  changesManager.onRevert = () => {
-    console.log("on revert");
-    dataset.setItem("uiOpacity", uiOpacity);
-    dataset.setItem("paletteHue", paletteHue);
-    dataset.setItem("backgroundImageUrl", backgroundImageUrl);
-    dataset.setItem("locale", locale);
-    langDropdown.value = locale;
-  };
+	// Backup attributes.
+	const uiOpacity = dataset.getOrSetItem("uiOpacity", 1);
+	const paletteHue = dataset.getItem("paletteHue") as string;
+	console.log(paletteHue);
+	const backgroundImageUrl = dataset.getItem("backgroundImageUrl");
+	const locale = dataset.getItem("locale") as string;
+	changesManager.onRevert = () => {
+		console.log("on revert");
+		dataset.setItem("uiOpacity", uiOpacity);
+		dataset.setItem("paletteHue", paletteHue);
+		dataset.setItem("backgroundImageUrl", backgroundImageUrl);
+		dataset.setItem("locale", locale);
+		langDropdown.value = locale;
+	};
 }
 
 function closeSettingsPage() {
-  settings.classList.add("none");
-  backgroundImageDropzone.style.backgroundImage = "unset";
-  backgroundImageUrlInput.value = "";
+	settings.classList.add("none");
+	backgroundImageDropzone.style.backgroundImage = "unset";
+	backgroundImageUrlInput.value = "";
 }
 
 export function toggleSettingsPage() {
-  debugger;
-  if (settings.classList.contains("none")) {
-    openSettingsPage();
-  } else {
-    changesManager.cancel();
-    closeSettingsPage();
-  }
+	debugger;
+	if (settings.classList.contains("none")) {
+		openSettingsPage();
+	} else {
+		changesManager.cancel();
+		closeSettingsPage();
+	}
 }
 
 // Initialize background image.
 dataset.on<string>("backgroundImageUrl", (_, url) => {
-  changeBackgroundImage(url);
+	changeBackgroundImage(url);
 });
 async function changeBackgroundImage(url: string | undefined) {
-  if (url?.startsWith("blob")) {
-    url = await toDataUrl(url);
-  }
-  setCssProperty(
-    "--page-background",
-    url ? `url(${url}) no-repeat center center fixed` : "unset",
-  );
+	if (url?.startsWith("blob")) {
+		url = await toDataUrl(url);
+	}
+	setCssProperty(
+		"--page-background",
+		url ? `url(${url}) no-repeat center center fixed` : "unset",
+	);
 }
 
 // Initialize language dropdown.
 function toBCP47LangTag(chromeLocale: string) {
-  return chromeLocale.replaceAll("_", "-");
+	return chromeLocale.replaceAll("_", "-");
 }
 const langDropdown = $<HTMLSelectElement>("#langDropdown")!;
 dataset.on<string[]>("availableLocales", (_, locales) => {
-  if (locales) {
-    langDropdown.replaceChildren();
-    for (const locale of locales) {
-      const option = $$$("option");
-      if (dataset.getItem("locale") === locale) {
-        option.selected = true;
-      }
-      option.value = locale;
-      const bcp47 = toBCP47LangTag(locale);
-      const translatedLocaleName = new Intl.DisplayNames([bcp47], {
-        type: "language",
-      }).of(bcp47);
-      if (translatedLocaleName) {
-        option.textContent = `${translatedLocaleName} - ${locale}`;
-      } else {
-        option.textContent = locale;
-      }
-      langDropdown.append(option);
-    }
-    langDropdown.on("change", async () => {
-      n81i.loadLanguage(langDropdown.value);
-      dataset.setItem("locale", langDropdown.value);
-      changesManager.markDirty();
-      await n81i.changeLanguage(langDropdown.value);
-      n81i.translatePage();
-    });
-  }
+	if (locales) {
+		langDropdown.replaceChildren();
+		for (const locale of locales) {
+			const option = $$$("option");
+			if (dataset.getItem("locale") === locale) {
+				option.selected = true;
+			}
+			option.value = locale;
+			const bcp47 = toBCP47LangTag(locale);
+			const translatedLocaleName = new Intl.DisplayNames([bcp47], {
+				type: "language",
+			}).of(bcp47);
+			if (translatedLocaleName) {
+				option.textContent = `${translatedLocaleName} - ${locale}`;
+			} else {
+				option.textContent = locale;
+			}
+			langDropdown.append(option);
+		}
+		langDropdown.on("change", async () => {
+			n81i.loadLanguage(langDropdown.value);
+			dataset.setItem("locale", langDropdown.value);
+			changesManager.markDirty();
+			await n81i.changeLanguage(langDropdown.value);
+			n81i.translatePage();
+		});
+	}
 });
 
 // Initialize language
 dataset.on<string>("locale", async (_, locale) => {
-  if (!locale) return;
-  if (n81i.isInitialized()) {
-    await n81i.changeLanguage(locale);
-    n81i.translatePage();
-  }
+	if (!locale) return;
+	if (n81i.isInitialized()) {
+		await n81i.changeLanguage(locale);
+		n81i.translatePage();
+	}
 });
 
 function queryPrefersColorScheme() {
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
+	return window.matchMedia("(prefers-color-scheme: dark)").matches
+		? "dark"
+		: "light";
 }
 
 // Initialize theme.
@@ -413,260 +417,259 @@ changeTheme(theme);
 // true = light
 // false = dark
 function changeTheme(theme: "light" | "dark" | undefined) {
-  $("#lightIcon")!.hidden = theme !== "dark";
-  $("#darkIcon")!.hidden = theme === "dark";
-  themeToggle.checked = theme === "light";
-  document.documentElement.setAttribute("data-theme", theme as string);
+	$("#lightIcon")!.hidden = theme !== "dark";
+	$("#darkIcon")!.hidden = theme === "dark";
+	themeToggle.checked = theme === "light";
+	document.documentElement.setAttribute("data-theme", theme as string);
 }
 dataset.on<"light" | "dark">("theme", (_, theme) => changeTheme(theme));
 themeToggle.on("change", (e) => {
-  const value = (e.target as any).checked ? "light" : "dark";
-  dataset.setItem("theme", value);
+	const value = (e.target as any).checked ? "light" : "dark";
+	dataset.setItem("theme", value);
 });
 
 export function createShortcutItem({
-  actionName,
-  keySequence,
+	actionName,
+	keySequence,
 }: {
-  actionName: string;
-  keySequence: string;
+	actionName: string;
+	keySequence: string;
 }) {
-  const widgets = getTemplateWidgets("shortcutListItem");
-  const label = widgets.$<HTMLLabelElement>("label")!;
-  const input = label.$<HTMLInputElement>("input")!;
-  const span = label.$<HTMLInputElement>("span")!;
-  const recordBtn = label.$<HTMLInputElement>(".recordBtn")!;
-  const resetBtn = label.$<HTMLInputElement>(".resetBtn")!;
-  label.htmlFor = actionName;
-  span.dataset.i18n = actionName;
-  input.value = keySequence;
-  input.dataset.actionName = actionName;
-  recordBtn.dataset.i18n = "recordShortcutBtn";
-  resetBtn.dataset.i18n = "resetBtn";
+	const label = getTemplate<HTMLLabelElement>("shortcutListItem");
+	const input = label.$("input")!;
+	const span = label.$("span")!;
+	const recordBtn = label.$<HTMLButtonElement>(".recordBtn")!;
+	const resetBtn = label.$<HTMLButtonElement>(".resetBtn")!;
+	label.htmlFor = actionName;
+	span.dataset.i18n = actionName;
+	input.value = keySequence;
+	input.dataset.actionName = actionName;
+	recordBtn.dataset.i18n = "recordShortcutBtn";
+	resetBtn.dataset.i18n = "resetBtn";
 
-  n81i.translateElement(label);
-  shortcutList.appendChild(label);
+	n81i.translateElement(label);
+	shortcutList.appendChild(label);
 }
 
 const recordingKikey = createKikey();
 shortcutList.on("click", (e) => {
-  if ((e.target as HTMLElement).matches("button")) {
-    const btn = e.target as HTMLButtonElement;
-    const input = btn.closest("label")!.querySelector("input")!;
-    const actionName = input.dataset.actionName!;
+	if ((e.target as HTMLElement).matches("button")) {
+		const btn = e.target as HTMLButtonElement;
+		const input = btn.closest("label")!.querySelector("input")!;
+		const actionName = input.dataset.actionName!;
 
-    if (btn.classList.contains("recordBtn")) {
-      if (!btn.classList.contains("recording")) {
-        // Start
-        btn.textContent = n81i.t("stopRecordShortcutBtn");
-        recordingKikey.startRecord();
-        input.value = "...";
-      } else {
-        // Stop
-        btn.textContent = n81i.t("recordShortcutBtn");
-        const newSequence = recordingKikey.stopRecord();
-        if (newSequence) {
-          changesManager.setChange(actionName, () => {
-            shortcutManager.update(actionName, newSequence);
-          });
-          input.value = keySequenceToString(newSequence);
-        } else {
-          input.value = shortcutManager.getKeySequence(actionName);
-        }
-      }
-      btn.classList.toggle("recording");
-    } else if (btn.classList.contains("resetBtn")) {
-      changesManager.setChange(actionName, () =>
-        shortcutManager.restore(actionName),
-      );
-      input.value = shortcutManager.getDefaultKeySequence(actionName);
-    }
-  }
+		if (btn.classList.contains("recordBtn")) {
+			if (!btn.classList.contains("recording")) {
+				// Start
+				btn.textContent = n81i.t("stopRecordShortcutBtn");
+				recordingKikey.startRecord();
+				input.value = "...";
+			} else {
+				// Stop
+				btn.textContent = n81i.t("recordShortcutBtn");
+				const newSequence = recordingKikey.stopRecord();
+				if (newSequence) {
+					changesManager.setChange(actionName, () => {
+						shortcutManager.update(actionName, newSequence);
+					});
+					input.value = keySequenceToString(newSequence);
+				} else {
+					input.value = shortcutManager.getKeySequence(actionName);
+				}
+			}
+			btn.classList.toggle("recording");
+		} else if (btn.classList.contains("resetBtn")) {
+			changesManager.setChange(actionName, () =>
+				shortcutManager.restore(actionName),
+			);
+			input.value = shortcutManager.getDefaultKeySequence(actionName);
+		}
+	}
 });
 
 // initialize ui opacity
 dataset.on<number>("uiOpacity", (_, uiOpacity) => {
-  if (uiOpacity !== undefined) {
-    setCssProperty("--ui-opacity", uiOpacity.toString());
-    uiOpacityInput.style.opacity = uiOpacity.toString();
-    uiOpacityInput.value = (uiOpacity * 100).toString();
-  }
+	if (uiOpacity !== undefined) {
+		setCssProperty("--ui-opacity", uiOpacity.toString());
+		uiOpacityInput.style.opacity = uiOpacity.toString();
+		uiOpacityInput.value = (uiOpacity * 100).toString();
+	}
 });
 
 // Initialize palette hue
 dataset.on<string>("paletteHue", (_, paletteHue) => {
-  setCssProperty("--palette-hue", paletteHue);
+	setCssProperty("--palette-hue", paletteHue);
 });
 hueWheel.on("pointerdown", () => hueWheel.on("pointermove", adjustPaletteHue));
 hueWheel.on("pointerup", () => hueWheel.off("pointermove", adjustPaletteHue));
 resetPaletteHueBtn.on("click", () => {
-  setCssProperty("--palette-hue", null);
+	setCssProperty("--palette-hue", null);
 });
 function adjustPaletteHue(e: MouseEvent) {
-  const rect = hueWheel.getBoundingClientRect();
-  const centerX = rect.left + rect.width / 2;
-  const centerY = rect.top + rect.height / 2;
+	const rect = hueWheel.getBoundingClientRect();
+	const centerX = rect.left + rect.width / 2;
+	const centerY = rect.top + rect.height / 2;
 
-  const x = e.clientX - centerX;
-  const y = e.clientY - centerY;
+	const x = e.clientX - centerX;
+	const y = e.clientY - centerY;
 
-  const angle = Math.atan2(y, x) * (180 / Math.PI);
-  const paletteHue = Math.round(angle).toString();
+	const angle = Math.atan2(y, x) * (180 / Math.PI);
+	const paletteHue = Math.round(angle).toString();
 
-  setCssProperty("--palette-hue", paletteHue);
-  dataset.setItem("paletteHue", paletteHue);
-  changesManager.markDirty();
+	setCssProperty("--palette-hue", paletteHue);
+	dataset.setItem("paletteHue", paletteHue);
+	changesManager.markDirty();
 }
 
 // Reflecting to global ghost mode configuration.
 dataset.on("isGhostMode", (_, isGhostMode) => {
-  $(".crate")!.classList.toggle("ghost", !!isGhostMode);
+	$(".crate")!.classList.toggle("ghost", !!isGhostMode);
 });
 
 // Initialize add sticky dropdown buttons at navbar.
 const addStickyDropdownContainer = $<HTMLButtonElement>(
-  "#addStickyDropdownContainer",
+	"#addStickyDropdownContainer",
 )!;
 const addOtherStickyBtn = $<HTMLButtonElement>(".addOtherStickyBtn")!;
 const otherStickyDropdown = $<HTMLDivElement>(".dropdownButtons")!;
 addOtherStickyBtn.on("click", () => {
-  otherStickyDropdown.classList.toggle("none");
+	otherStickyDropdown.classList.toggle("none");
 });
 addStickyDropdownContainer.on("click", (e) => {
-  const command = (
-    (e.target as Element)?.closest("[data-command]") as HTMLElement
-  ).dataset.command;
-  if (command) {
-    executeCommand(command);
-    otherStickyDropdown.classList.add("none");
-  }
+	const command = (
+		(e.target as Element)?.closest("[data-command]") as HTMLElement
+	).dataset.command;
+	if (command) {
+		executeCommand(command);
+		otherStickyDropdown.classList.add("none");
+	}
 });
 document.body.on("click", (e) => {
-  if (
-    !(e.target as Element).closest(".dropdownButtons") &&
-    !(e.target as Element).closest(".addOtherStickyBtn")
-  ) {
-    otherStickyDropdown.classList.add("none");
-  }
+	if (
+		!(e.target as Element).closest(".dropdownButtons") &&
+		!(e.target as Element).closest(".addOtherStickyBtn")
+	) {
+		otherStickyDropdown.classList.add("none");
+	}
 });
 
 function setCssProperty(name: string, value: string | null | undefined) {
-  if (value === null || value === undefined) {
-    document.documentElement.style.removeProperty(name);
-  } else {
-    document.documentElement.style.setProperty(name, value);
-  }
+	if (value === null || value === undefined) {
+		document.documentElement.style.removeProperty(name);
+	} else {
+		document.documentElement.style.setProperty(name, value);
+	}
 }
 
 const customCssStyleSheet = new CSSStyleSheet();
 document.adoptedStyleSheets.push(customCssStyleSheet);
 dataset.on<string>("customCss", (_, css) => {
-  customCssStyleSheet.replaceSync(css);
+	customCssStyleSheet.replaceSync(css);
 });
 customCssTextArea.on("input", () => {
-  changesManager.setChange("customCss", () => {
-    dataset.setItem("customCss", customCssTextArea.value);
-  });
+	changesManager.setChange("customCss", () => {
+		dataset.setItem("customCss", customCssTextArea.value);
+	});
 });
 
 let isFirstJsLoad = true;
 dataset.on<string>("customJs", (_, js) => {
-  // Inject JavaScript
-  if (isFirstJsLoad && isScriptExecutionAllowed()) {
-    isFirstJsLoad = false;
-    const frag = document
-      .createRange()
-      .createContextualFragment(`<script>${js}</script>`);
-    customJsSlot.replaceChildren(frag);
-  }
+	// Inject JavaScript
+	if (isFirstJsLoad && isScriptExecutionAllowed()) {
+		isFirstJsLoad = false;
+		const frag = document
+			.createRange()
+			.createContextualFragment(`<script>${js}</script>`);
+		customJsSlot.replaceChildren(frag);
+	}
 });
 customJsTextArea.on("input", () => {
-  changesManager.setChange("customJs", () => {
-    const customJs = customJsTextArea.value;
-    changesManager.setChange("setCustomJs", () => {
-      const confirmReloadDialog = createDialog({
-        title: "reloadNeeded",
-        message: "reloadNeededMessage",
-        buttons: [
-          {
-            "data-i18n": "okBtn",
-            onClick() {
-              changesManager.cancel();
-              isFirstJsLoad = false;
-              dataset.setItem("customJs", customJs);
-              confirmReloadDialog.close();
-            },
-          },
-        ],
-        onClose() {
-          confirmReloadDialog.close();
-        },
-      });
-      confirmReloadDialog.open();
-    });
-  });
+	changesManager.setChange("customJs", () => {
+		const customJs = customJsTextArea.value;
+		changesManager.setChange("setCustomJs", () => {
+			const confirmReloadDialog = createDialog({
+				title: "reloadNeeded",
+				message: "reloadNeededMessage",
+				buttons: [
+					{
+						"data-i18n": "okBtn",
+						onClick() {
+							changesManager.cancel();
+							isFirstJsLoad = false;
+							dataset.setItem("customJs", customJs);
+							confirmReloadDialog.close();
+						},
+					},
+				],
+				onClose() {
+					confirmReloadDialog.close();
+				},
+			});
+			confirmReloadDialog.open();
+		});
+	});
 });
 
 isScriptExecutionAllowedCheckbox.checked =
-  localStorage.getItem("isScriptExecutionAllowed") === "on";
+	localStorage.getItem("isScriptExecutionAllowed") === "on";
 isScriptExecutionAllowedCheckbox.on("input", () => {
-  changesManager.setChange("setIsScriptExecutionAllowed", () => {
-    localStorage.setItem(
-      "isScriptExecutionAllowed",
-      isScriptExecutionAllowedCheckbox.value,
-    );
-  });
+	changesManager.setChange("setIsScriptExecutionAllowed", () => {
+		localStorage.setItem(
+			"isScriptExecutionAllowed",
+			isScriptExecutionAllowedCheckbox.value,
+		);
+	});
 });
 export async function grantScriptPermission() {
-  const isScriptExecutionAllowed = await new Promise<boolean>((resolve) => {
-    const allowScriptExecutionDialog = createDialog({
-      title: "allowScriptExecution",
-      message: "allowScriptExecutionMessage",
-      buttons: [
-        {
-          "data-i18n": "doNotAllowScriptExecutionBtn",
-          onClick() {
-            allowScriptExecutionDialog.close();
-            resolve(false);
-          },
-        },
-        {
-          "data-i18n": "allowScriptExecutionBtn",
-          onClick() {
-            allowScriptExecutionDialog.close();
-            resolve(true);
-          },
-          type: "reset",
-        },
-      ],
-      onClose() {
-        resolve(false);
-      },
-    });
-    allowScriptExecutionDialog.open();
-  });
-  localStorage.setItem(
-    "isScriptExecutionAllowed",
-    isScriptExecutionAllowed ? "on" : "off",
-  );
+	const isScriptExecutionAllowed = await new Promise<boolean>((resolve) => {
+		const allowScriptExecutionDialog = createDialog({
+			title: "allowScriptExecution",
+			message: "allowScriptExecutionMessage",
+			buttons: [
+				{
+					"data-i18n": "doNotAllowScriptExecutionBtn",
+					onClick() {
+						allowScriptExecutionDialog.close();
+						resolve(false);
+					},
+				},
+				{
+					"data-i18n": "allowScriptExecutionBtn",
+					onClick() {
+						allowScriptExecutionDialog.close();
+						resolve(true);
+					},
+					type: "reset",
+				},
+			],
+			onClose() {
+				resolve(false);
+			},
+		});
+		allowScriptExecutionDialog.open();
+	});
+	localStorage.setItem(
+		"isScriptExecutionAllowed",
+		isScriptExecutionAllowed ? "on" : "off",
+	);
 }
 export function isScriptExecutionAllowed() {
-  return localStorage.getItem("isScriptExecutionAllowed") === "on";
+	return localStorage.getItem("isScriptExecutionAllowed") === "on";
 }
 export function allowScriptExecutionIfNotYetSet() {
-  if (localStorage.getItem("isScriptExecutionAllowed") === null) {
-    localStorage.setItem("isScriptExecutionAllowed", "on");
-  }
+	if (localStorage.getItem("isScriptExecutionAllowed") === null) {
+		localStorage.setItem("isScriptExecutionAllowed", "on");
+	}
 }
 
 addTodoBeforeSave(async () => {
-  const url = dataset.getItem<string>("backgroundImageUrl");
-  if (url?.startsWith("blob")) {
-    const dataUrl = await toDataUrl(url);
-    dataset.setItem("backgroundImageUrl", dataUrl);
-  }
+	const url = dataset.getItem<string>("backgroundImageUrl");
+	if (url?.startsWith("blob")) {
+		const dataUrl = await toDataUrl(url);
+		dataset.setItem("backgroundImageUrl", dataUrl);
+	}
 });
 addTodoAfterLoad(() => {
-  customCssTextArea.value = dataset.getItem("customCss") ?? "";
-  customJsTextArea.value = dataset.getItem("customJs") ?? "";
+	customCssTextArea.value = dataset.getItem("customCss") ?? "";
+	customJsTextArea.value = dataset.getItem("customJs") ?? "";
 });

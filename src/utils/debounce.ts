@@ -18,29 +18,29 @@
  * ```
  */
 export function debounce(
-  callback: Function,
-  { isLeadingEdge, waitMs }: { isLeadingEdge?: boolean; waitMs?: number } = {
-    isLeadingEdge: false,
-    waitMs: 3000, // 3 sec delay before saving
-  },
+	callback: Function,
+	{ isLeadingEdge, waitMs }: { isLeadingEdge?: boolean; waitMs?: number } = {
+		isLeadingEdge: false,
+		waitMs: 3000, // 3 sec delay before saving
+	},
 ) {
-  let timeoutId: number | undefined;
+	let timeoutId: number | undefined;
 
-  return (...args: unknown[]) => {
-    const isCallNow = isLeadingEdge && !timeoutId;
+	return (...args: unknown[]) => {
+		const isCallNow = isLeadingEdge && !timeoutId;
 
-    clearTimeout(timeoutId);
+		clearTimeout(timeoutId);
 
-    timeoutId = window.setTimeout(() => {
-      timeoutId = undefined;
+		timeoutId = window.setTimeout(() => {
+			timeoutId = undefined;
 
-      if (!isLeadingEdge) {
-        callback(...args);
-      }
-    }, waitMs);
+			if (!isLeadingEdge) {
+				callback(...args);
+			}
+		}, waitMs);
 
-    if (isCallNow) {
-      callback(...args);
-    }
-  };
+		if (isCallNow) {
+			callback(...args);
+		}
+	};
 }

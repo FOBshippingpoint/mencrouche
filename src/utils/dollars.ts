@@ -8,54 +8,54 @@
 
 // Add type declarations for the prototype additions
 declare global {
-  interface EventTarget {
-    on: typeof EventTarget.prototype.addEventListener;
-    off: typeof EventTarget.prototype.removeEventListener;
-  }
-  interface HTMLElement {
-    on: typeof HTMLElement.prototype.addEventListener;
-    off: typeof HTMLElement.prototype.removeEventListener;
-    setRect: (
-      left: number | null | undefined,
-      top: number | null | undefined,
-      width?: number | null | undefined,
-      height?: number | null | undefined,
-    ) => void;
-  }
-  interface Element {
-    $: typeof Element.prototype.querySelector;
-    $$<K extends keyof HTMLElementTagNameMap>(
-      selectors: K,
-    ): HTMLElementTagNameMap[K][];
-    $$<K extends keyof SVGElementTagNameMap>(
-      selectors: K,
-    ): SVGElementTagNameMap[K][];
-    $$<K extends keyof MathMLElementTagNameMap>(
-      selectors: K,
-    ): MathMLElementTagNameMap[K][];
-    /** @deprecated */
-    $$<K extends keyof HTMLElementDeprecatedTagNameMap>(
-      selectors: K,
-    ): HTMLElementDeprecatedTagNameMap[K][];
-    $$<E extends Element = Element>(selectors: string): E[];
-  }
-  interface DocumentFragment {
-    $: typeof DocumentFragment.prototype.querySelector;
-    $$<K extends keyof HTMLElementTagNameMap>(
-      selectors: K,
-    ): HTMLElementTagNameMap[K][];
-    $$<K extends keyof SVGElementTagNameMap>(
-      selectors: K,
-    ): SVGElementTagNameMap[K][];
-    $$<K extends keyof MathMLElementTagNameMap>(
-      selectors: K,
-    ): MathMLElementTagNameMap[K][];
-    /** @deprecated */
-    $$<K extends keyof HTMLElementDeprecatedTagNameMap>(
-      selectors: K,
-    ): HTMLElementDeprecatedTagNameMap[K][];
-    $$<E extends Element = Element>(selectors: string): E[];
-  }
+	interface EventTarget {
+		on: typeof EventTarget.prototype.addEventListener;
+		off: typeof EventTarget.prototype.removeEventListener;
+	}
+	interface HTMLElement {
+		on: typeof HTMLElement.prototype.addEventListener;
+		off: typeof HTMLElement.prototype.removeEventListener;
+		setRect: (
+			left: number | null | undefined,
+			top: number | null | undefined,
+			width?: number | null | undefined,
+			height?: number | null | undefined,
+		) => void;
+	}
+	interface Element {
+		$: typeof Element.prototype.querySelector;
+		$$<K extends keyof HTMLElementTagNameMap>(
+			selectors: K,
+		): HTMLElementTagNameMap[K][];
+		$$<K extends keyof SVGElementTagNameMap>(
+			selectors: K,
+		): SVGElementTagNameMap[K][];
+		$$<K extends keyof MathMLElementTagNameMap>(
+			selectors: K,
+		): MathMLElementTagNameMap[K][];
+		/** @deprecated */
+		$$<K extends keyof HTMLElementDeprecatedTagNameMap>(
+			selectors: K,
+		): HTMLElementDeprecatedTagNameMap[K][];
+		$$<E extends Element = Element>(selectors: string): E[];
+	}
+	interface DocumentFragment {
+		$: typeof DocumentFragment.prototype.querySelector;
+		$$<K extends keyof HTMLElementTagNameMap>(
+			selectors: K,
+		): HTMLElementTagNameMap[K][];
+		$$<K extends keyof SVGElementTagNameMap>(
+			selectors: K,
+		): SVGElementTagNameMap[K][];
+		$$<K extends keyof MathMLElementTagNameMap>(
+			selectors: K,
+		): MathMLElementTagNameMap[K][];
+		/** @deprecated */
+		$$<K extends keyof HTMLElementDeprecatedTagNameMap>(
+			selectors: K,
+		): HTMLElementDeprecatedTagNameMap[K][];
+		$$<E extends Element = Element>(selectors: string): E[];
+	}
 }
 
 EventTarget.prototype.on = EventTarget.prototype.addEventListener;
@@ -63,25 +63,25 @@ EventTarget.prototype.off = EventTarget.prototype.removeEventListener;
 
 Element.prototype.$ = Element.prototype.querySelector;
 Element.prototype.$$ = function (selector: string) {
-  return [...this.querySelectorAll(selector)];
+	return [...this.querySelectorAll(selector)];
 };
 DocumentFragment.prototype.$ = DocumentFragment.prototype.querySelector;
 DocumentFragment.prototype.$$ = function (selector: string) {
-  return [...this.querySelectorAll(selector)];
+	return [...this.querySelectorAll(selector)];
 };
 HTMLElement.prototype.setRect = function (left, top, width, height) {
-  if (left !== null && left !== undefined) {
-    this.style.left = `${Math.round(left)}px`;
-  }
-  if (top !== null && top !== undefined) {
-    this.style.top = `${Math.round(top)}px`;
-  }
-  if (width !== null && width !== undefined) {
-    this.style.width = `${Math.round(width)}px`;
-  }
-  if (height !== null && height !== undefined) {
-    this.style.height = `${Math.round(height)}px`;
-  }
+	if (left !== null && left !== undefined) {
+		this.style.left = `${Math.round(left)}px`;
+	}
+	if (top !== null && top !== undefined) {
+		this.style.top = `${Math.round(top)}px`;
+	}
+	if (width !== null && width !== undefined) {
+		this.style.width = `${Math.round(width)}px`;
+	}
+	if (height !== null && height !== undefined) {
+		this.style.height = `${Math.round(height)}px`;
+	}
 };
 
 /**
@@ -99,7 +99,7 @@ const $ = document.querySelector.bind(document);
  * @returns An array of the selected elements with additional methods.
  */
 const $$ = <T extends Element>(selector: string) => [
-  ...document.querySelectorAll<T>(selector),
+	...document.querySelectorAll<T>(selector),
 ];
 
 /**
@@ -128,13 +128,13 @@ const $$$ = document.createElement.bind(document);
  * const fragment = h('<div>First</div><div>Second</div>');
  */
 function h<E extends Element = Element>(html: string): E | DocumentFragment {
-  const template = $$$("template");
-  template.innerHTML = html;
-  if (template.content.childElementCount === 1) {
-    return template.content.firstElementChild! as E;
-  } else {
-    return template.content;
-  }
+	const template = $$$("template");
+	template.innerHTML = html;
+	if (template.content.childElementCount === 1) {
+		return template.content.firstElementChild! as E;
+	} else {
+		return template.content;
+	}
 }
 
 export { $, $$, $$$, h };

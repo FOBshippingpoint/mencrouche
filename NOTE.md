@@ -51,21 +51,20 @@ just
         - [Quill](https://quilljs.com/)
         - [Editor.js](https://editorjs.io/)
         - [manigandham/rich-text-html-editors.md](https://gist.github.com/manigandham/65543a0bc2bf7006a487)
-- [ ] Toggle quilljs toolbar
 - [ ] A11y
 - [ ] Create intro video and tutorial for end user.
 - [x] Grant user permission for custom js and css
 - [x] Persist zoom and canvas position, also the original size of maximized sticky.
 - [x] Context menu two-side icon to match browser convention.
 - [x] Redesign dock api.
-- [ ] Add setting option for disabling script execution.
+- [x] Add setting option for disabling script execution.
 - [ ] Add ability to configure dock appearance (hide/show, placement, grow).
 
 ## BUGS
 
-- [ ] Using navbar add sticky, the sticky position should at center instead of top-right.
-- [ ] In moved viewport, create/copy sticky from command will not be center in user's point of view.
-- [ ] When drag maximized sticky, header are not centered at cursor.
+- [x] Using navbar add sticky, the sticky position should at center instead of top-right.
+- [x] Copy sticky is not copying position.
+- [x] When drag maximized sticky, header are not centered at cursor.
 - [x] Remove note sticky padding.
 - [x] It might overwrite the existing idb document if changed offline -> close tab -> back online, cuz we always read remote source first right now. We should compare two documents date.
 - [x] Auto arrange not working as expected, the container setting seems weird.

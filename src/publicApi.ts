@@ -11,10 +11,10 @@
 import { registerCommand, executeCommand } from "./commands";
 import { $, $$, $$$, h } from "./utils/dollars";
 import {
-  getCustomStickyTypes,
-  getCustomSticky,
-  registerSticky,
-  workspace,
+	getPluginStickyTypes,
+	getPluginSticky,
+	registerSticky,
+	workspace,
 } from "./sticky/sticky";
 import { n81i } from "./utils/n81i";
 import { registerContextMenu } from "./contextMenu";
@@ -23,29 +23,29 @@ import { dataset } from "./dataWizard";
 import { createDock } from "./dock/dock";
 
 declare global {
-  interface Window {
-    mc: typeof mc;
-  }
+	interface Window {
+		mc: typeof mc;
+	}
 }
 
 const mc = {
-  h,
-  $,
-  $$,
-  $$$,
-  n81i,
-  dataset,
-  createDock,
-  apocalypse,
-  workspace,
-  registerSticky,
-  executeCommand,
-  registerCommand,
-  getCustomSticky,
-  registerContextMenu,
-  getCustomStickyTypes,
+	h,
+	$,
+	$$,
+	$$$,
+	n81i,
+	dataset,
+	createDock,
+	apocalypse,
+	workspace,
+	registerSticky,
+	executeCommand,
+	registerCommand,
+	getPluginSticky,
+	registerContextMenu,
+	getPluginStickyTypes,
 };
 
 export function addPublicApi() {
-  window.mc = mc;
+	window.mc = mc;
 }

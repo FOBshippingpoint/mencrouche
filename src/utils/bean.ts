@@ -16,7 +16,7 @@ import { h } from "./dollars";
  * console.log(bean); // { userId: "123", userName: "Alice" }
  */
 export function bakeBean(element: HTMLOrSVGElement): Record<string, string> {
-  return { ...element.dataset } as Record<string, string>;
+	return { ...element.dataset } as Record<string, string>;
 }
 
 /**
@@ -36,12 +36,12 @@ export function bakeBean(element: HTMLOrSVGElement): Record<string, string> {
  * console.log(div.dataset.userName); // "Alice"
  */
 export function soakBean(
-  element: HTMLOrSVGElement,
-  bean: Record<string, unknown>,
+	element: HTMLOrSVGElement,
+	bean: Record<string, unknown>,
 ): void {
-  Object.entries(bean).forEach(([key, value]) => {
-    if (value !== null && value !== undefined) {
-      element.dataset[key] = value.toString();
-    }
-  });
+	Object.entries(bean).forEach(([key, value]) => {
+		if (value !== null && value !== undefined) {
+			element.dataset[key] = value.toString();
+		}
+	});
 }

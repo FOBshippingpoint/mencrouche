@@ -1,28 +1,28 @@
 {
-  "addBookmarkBtn": {
-    "message": "Add Bookmark",
-    "description": "Button text for adding bookmark."
-  },
-  "backgroundImageLink": {
-    "message": "Background image URL",
-    "description": "Label for the background image URL input."
-  },
-  "backgroundImageUrlInputPlaceholder": {
-    "message": "Paste image URL here",
-    "description": "Placeholder text for the background image URL input."
-  },
-  "bookmarkHrefLabel": {
-    "message": "Link",
-    "description": "Label text for the bookmark link input."
-  },
-  "bookmarkIconLabel": {
-    "message": "Icon",
-    "description": "Label text for the bookmark link input."
-  },
-  "bookmarkLabelLabel": {
-    "message": "Label",
-    "description": "Label text for the bookmark label input."
-  },
+	"addBookmarkBtn": {
+		"message": "Add Bookmark",
+		"description": "Button text for adding bookmark."
+	},
+	"backgroundImageLink": {
+		"message": "Background image URL",
+		"description": "Label for the background image URL input."
+	},
+	"backgroundImageUrlInputPlaceholder": {
+		"message": "Paste image URL here",
+		"description": "Placeholder text for the background image URL input."
+	},
+	"bookmarkHrefLabel": {
+		"message": "Link",
+		"description": "Label text for the bookmark link input."
+	},
+	"bookmarkIconLabel": {
+		"message": "Icon",
+		"description": "Label text for the bookmark link input."
+	},
+	"bookmarkLabelLabel": {
+		"message": "Label",
+		"description": "Label text for the bookmark label input."
+	},
 	"bookmarkMoreOptions": {
 		"message": "More Options",
 		"description": "More options button for bookmark editing dialog."
@@ -31,274 +31,274 @@
 		"message": "Opening Preference",
 		"description": "Label text for the bookmark anchor target."
 	},
-  "bookmarkBackgroundColorLabel": {
+	"bookmarkBackgroundColorLabel": {
 		"message": "Background Color",
 		"description": "Label text for the bookmark background color."
 	},
-  "getRandomBookmarkColorBtn": {
-    "message": "Random color",
-    "description": "Button title for getting random color for bookmark background."
-  },
-  "removeBookmarkBackgroundBtn": {
-    "message": "Remove background",
-    "description": "Button title for removing bookmark background."
-  },
+	"getRandomBookmarkColorBtn": {
+		"message": "Random color",
+		"description": "Button title for getting random color for bookmark background."
+	},
+	"removeBookmarkBackgroundBtn": {
+		"message": "Remove background",
+		"description": "Button title for removing bookmark background."
+	},
 	"cancelSettingsBtn": {
-    "message": "Cancel",
-    "description": "Text for the cancel settings button."
-  },
+		"message": "Cancel",
+		"description": "Text for the cancel settings button."
+	},
 	"cancelSubmitBtn": {
 		"message": "Cancel",
 		"description": "Button text for submitting form."
 	},
-  "commandPaletteSearchPlaceholder": {
-    "message": "Search commands...",
-    "description": "Placeholder text for the command palette search bar."
-  },
-  "confirmDeleteDocument": {
-    "message": "Do you want to delete the document?",
-    "description": "Confirmation message while deleting document."
-  },
-  "deleteAllStickies": {
-    "message": "Delete all sticky notes",
-    "description": "Command description for deleting all sticky notes."
-  },
-  "deleteBookmarkMenuItem": {
-    "message": "Delete",
-    "description": "Context menu item label text for deleting bookmark."
-  },
-  "deleteDocumentBtn": {
-    "message": "Delete",
-    "description": "Text for the delete document button."
-  },
-  "deleteSticky": {
-    "message": "Delete sticky note",
-    "description": "Command description for deleting a sticky note."
-  },
-  "dndImageInstruction": {
-    "message": "Drag & drop an image here, or click to select a file",
-    "description": "Instructions for setting the background image via drag and drop."
-  },
-  "duplicateSticky": {
-    "message": "Duplicate sticky note",
-    "description": "Command description for duplicating a sticky note."
-  },
-  "editBookmarkMenuItem": {
-    "message": "Edit",
-    "description": "Context menu item label text for editing bookmark."
-  },
-  "exportDocumentBtn": {
-    "message": "Export",
-    "description": "Text for the export document button."
-  },
-  "extensionDescription": {
-    "message": "New tab",
-    "description": "Description of the extension."
-  },
-  "imageUrlIsNotValidAlert": {
-    "message": "Invalid image URL. Please try another link.",
-    "description": "Alert message for an invalid image URL."
-  },
-  "addBookmarkSticky": {
-    "message": "New bookmark sticky",
-    "description": "Command description for adding a new bookmark sticky."
-  },
-  "addMarkdownSticky": {
-    "message": "New sticky note",
-    "description": "Command description for adding a new sticky note."
-  },
-  "addYoutubeSticky": {
-    "message": "New YouTube Sticky",
-    "description": "Command description for adding a new youtube sticky note."
-  },
-  "addSpotifySticky": {
-    "message": "New Spotify Sticky",
-    "description": "Command description for adding a new spotify sticky note."
-  },
-  "openBookmarkInCurrentTabOption": {
-    "message": "Open in current tab",
-    "description": "Context menu item label text for opening bookmark link in current tab."
-  },
-  "openBookmarkInNewTabOption": {
-    "message": "Open in new tab",
-    "description": "Context menu item label text for opening bookmark link in a new tab."
-  },
-  "openYoutube": {
-    "message": "Open YouTube",
-    "description": "Command description for opening YouTube."
-  },
-  "recordShortcutBtn": {
-    "message": "Record",
-    "description": "Text for the record shortcut button."
-  },
-  "redo": {
-    "message": "Redo",
-    "description": "redo"
-  },
-  "resetBtn": {
-    "message": "Reset",
-    "description": "Text for the button to reset shortcut to default."
-  },
-  "saveAndCloseSettingsBtn": {
-    "message": "Save & close",
-    "description": "Text for the save and close settings button."
-  },
-  "saveDocument": {
-    "message": "Save document",
-    "description": "Command description for saving documents."
-  },
-  "saveSettingsBtn": {
-    "message": "Save",
-    "description": "Text for the save settings button."
-  },
-  "saved": {
-    "message": "Saved",
-    "description": "Status message for a saved document."
-  },
-  "saving": {
-    "message": "Saving...",
-    "description": "Status message while saving a document."
-  },
-  "setBackgroundImage": {
-    "message": "Set background image",
-    "description": "Command description for setting the background image."
-  },
-  "setToDefaultBtn": {
-    "message": "Reset to default",
-    "description": "Button text for resetting the background image to default."
-  },
-  "settingsAppearanceBackgroundSection": {
-    "message": "Background",
-    "description": "Title for the background subsection in appearance settings."
-  },
-  "settingsAppearanceSection": {
-    "message": "Appearance",
-    "description": "Title for the appearance section in settings."
-  },
-  "settingsLanguageSection": {
-    "message": "Language",
-    "description": "Title for the language section in settings."
-  },
-  "settingsShortcutsSection": {
-    "message": "Shortcuts",
-    "description": "Title for the shortcuts section in settings."
-  },
-  "settingsStorageSection": {
-    "message": "Storage",
-    "description": "Title for the shortcuts section in storage."
-  },
-  "stickyTextareaStartTypingPlaceholder": {
-    "message": "Start typing...",
-    "description": "Placeholder text for the sticky note textarea."
-  },
-  "stopRecordShortcutBtn": {
-    "message": "Stop",
-    "description": "Text for the stop recording shortcut button."
-  },
+	"commandPaletteSearchPlaceholder": {
+		"message": "Search commands...",
+		"description": "Placeholder text for the command palette search bar."
+	},
+	"confirmDeleteDocument": {
+		"message": "Do you want to delete the document?",
+		"description": "Confirmation message while deleting document."
+	},
+	"deleteAllStickies": {
+		"message": "Delete all sticky notes",
+		"description": "Command description for deleting all sticky notes."
+	},
+	"deleteBookmarkMenuItem": {
+		"message": "Delete",
+		"description": "Context menu item label text for deleting bookmark."
+	},
+	"deleteDocumentBtn": {
+		"message": "Delete",
+		"description": "Text for the delete document button."
+	},
+	"deleteSticky": {
+		"message": "Delete sticky note",
+		"description": "Command description for deleting a sticky note."
+	},
+	"dndImageInstruction": {
+		"message": "Drag & drop an image here, or click to select a file",
+		"description": "Instructions for setting the background image via drag and drop."
+	},
+	"duplicateSticky": {
+		"message": "Duplicate sticky note",
+		"description": "Command description for duplicating a sticky note."
+	},
+	"editBookmarkMenuItem": {
+		"message": "Edit",
+		"description": "Context menu item label text for editing bookmark."
+	},
+	"exportDocumentBtn": {
+		"message": "Export",
+		"description": "Text for the export document button."
+	},
+	"extensionDescription": {
+		"message": "New tab",
+		"description": "Description of the extension."
+	},
+	"imageUrlIsNotValidAlert": {
+		"message": "Invalid image URL. Please try another link.",
+		"description": "Alert message for an invalid image URL."
+	},
+	"addBookmarkSticky": {
+		"message": "New bookmark sticky",
+		"description": "Command description for adding a new bookmark sticky."
+	},
+	"addMarkdownSticky": {
+		"message": "New sticky note",
+		"description": "Command description for adding a new sticky note."
+	},
+	"addYoutubeSticky": {
+		"message": "New YouTube Sticky",
+		"description": "Command description for adding a new youtube sticky note."
+	},
+	"addSpotifySticky": {
+		"message": "New Spotify Sticky",
+		"description": "Command description for adding a new spotify sticky note."
+	},
+	"openBookmarkInCurrentTabOption": {
+		"message": "Open in current tab",
+		"description": "Context menu item label text for opening bookmark link in current tab."
+	},
+	"openBookmarkInNewTabOption": {
+		"message": "Open in new tab",
+		"description": "Context menu item label text for opening bookmark link in a new tab."
+	},
+	"openYoutube": {
+		"message": "Open YouTube",
+		"description": "Command description for opening YouTube."
+	},
+	"recordShortcutBtn": {
+		"message": "Record",
+		"description": "Text for the record shortcut button."
+	},
+	"redo": {
+		"message": "Redo",
+		"description": "redo"
+	},
+	"resetBtn": {
+		"message": "Reset",
+		"description": "Text for the button to reset shortcut to default."
+	},
+	"saveAndCloseSettingsBtn": {
+		"message": "Save & close",
+		"description": "Text for the save and close settings button."
+	},
+	"saveDocument": {
+		"message": "Save document",
+		"description": "Command description for saving documents."
+	},
+	"saveSettingsBtn": {
+		"message": "Save",
+		"description": "Text for the save settings button."
+	},
+	"saved": {
+		"message": "Saved",
+		"description": "Status message for a saved document."
+	},
+	"saving": {
+		"message": "Saving...",
+		"description": "Status message while saving a document."
+	},
+	"setBackgroundImage": {
+		"message": "Set background image",
+		"description": "Command description for setting the background image."
+	},
+	"setToDefaultBtn": {
+		"message": "Reset to default",
+		"description": "Button text for resetting the background image to default."
+	},
+	"settingsAppearanceBackgroundSection": {
+		"message": "Background",
+		"description": "Title for the background subsection in appearance settings."
+	},
+	"settingsAppearanceSection": {
+		"message": "Appearance",
+		"description": "Title for the appearance section in settings."
+	},
+	"settingsLanguageSection": {
+		"message": "Language",
+		"description": "Title for the language section in settings."
+	},
+	"settingsShortcutsSection": {
+		"message": "Shortcuts",
+		"description": "Title for the shortcuts section in settings."
+	},
+	"settingsStorageSection": {
+		"message": "Storage",
+		"description": "Title for the shortcuts section in storage."
+	},
+	"stickyTextareaStartTypingPlaceholder": {
+		"message": "Start typing...",
+		"description": "Placeholder text for the sticky note textarea."
+	},
+	"stopRecordShortcutBtn": {
+		"message": "Stop",
+		"description": "Text for the stop recording shortcut button."
+	},
 	"submitBtn": {
 		"message": "Confirm",
 		"description": "Button text for submitting form."
 	},
-  "submitBookmarkBtn": {
-    "message": "Submit",
-    "description": "Button text for submitting bookmark."
-  },
-  "toggleAutoArrange": {
-    "message": "Toggle arrange/free mode",
-    "description": "Command description for toggling between arrange and free mode for sticky notes."
-  },
-  "toggleCommandPalette": {
-    "message": "Toggle command palette",
-    "description": "Command description for toggling the command palette."
-  },
-  "toggleDarkMode": {
-    "message": "Toggle dark mode",
-    "description": "Command description for toggling dark mode on/off."
-  },
-  "toggleGhostMode": {
-    "message": "Toggle hidden border",
-    "description": "Command description for toggling ghost mode."
-  },
-  "toggleGlobalGhostMode": {
-    "message": "Toggle global hidden border",
-    "description": "Command description for toggling global ghost mode."
-  },
-  "toggleMaximizeSticky": {
-    "message": "Toggle maximize",
-    "description": "Command description for toggling maximize/minimize of a sticky note."
-  },
-  "toggleSettings": {
-    "message": "Toggle settings page",
-    "description": "Command description for toggling the settings page."
-  },
-  "toggleSplitView": {
-    "message": "Toggle split view",
-    "description": "Command description for toggling split view of sticky notes."
-  },
-  "toggleStickyEditMode": {
-    "message": "Toggle edit mode",
-    "description": "Command description for toggling edit/view mode for the current sticky note."
-  },
-  "toggleStickyPinMode": {
-    "message": "Toggle pin",
-    "description": "Command description for toggling pin mode of a sticky note."
-  },
-  "uiOpacity": {
-    "message": "UI Opacity",
-    "description": "Label for the UI opacity input."
-  },
-  "undo": {
-    "message": "Undo",
-    "description": "undo"
-  },
-  "unsaved": {
-    "message": "Unsaved changes",
-    "description": "Status message for unsaved changes in a document."
-  },
-  "showAddBookmarkBtnCheckboxLabel": {
-    "message": "Show Add Shortcut Button",
-    "description": "Checkbox label for showing or hiding the add bookmark button."
-  },
-  "sizeInputLabel": {
-    "message": "Bookmark Size",
-    "description": "Label for adjusting the bookmark size."
-  },
-  "showLabelCheckboxLabel": {
-    "message": "Show Shortcut Label",
-    "description": "Checkbox label for showing or hiding the bookmark label."
-  },
-  "addBookmarkMenuItem": {
-    "message": "Add Bookmark",
-    "description": "Menu item label for adding a bookmark."
-  },
-  "editDockAppearanceMenuItem": {
-    "message": "Edit Appearance",
-    "description": "Menu item label for editing dock appearance."
-  },
-  "dockPositionRightRadioLabel": {
-    "message": "Dock on Right",
-    "description": "Radio label for positioning the dock on the right side."
-  },
-  "dockPositionBottomRadioLabel": {
-    "message": "Dock on Bottom",
-    "description": "Radio label for positioning the dock at the bottom."
-  },
-  "dockPositionTopRadioLabel": {
-    "message": "Dock on Top",
-    "description": "Radio label for positioning the dock at the top."
-  },
-  "dockPositionLeftRadioLabel": {
-    "message": "Dock on Left",
-    "description": "Radio label for positioning the dock on the left side."
-  },
-  "youtubeLinkInputLabel": {
-    "message": "YouTube Video Link",
-    "description": "Input label for YouTube video link."
-  },
-  "youtubeAutoplayCheckboxLabel": {
-    "message": "Automatically Play Video",
-    "description": "Checkbox label for autoplay YouTube video."
-  },
+	"submitBookmarkBtn": {
+		"message": "Submit",
+		"description": "Button text for submitting bookmark."
+	},
+	"toggleAutoArrange": {
+		"message": "Toggle arrange/free mode",
+		"description": "Command description for toggling between arrange and free mode for sticky notes."
+	},
+	"toggleCommandPalette": {
+		"message": "Toggle command palette",
+		"description": "Command description for toggling the command palette."
+	},
+	"toggleDarkMode": {
+		"message": "Toggle dark mode",
+		"description": "Command description for toggling dark mode on/off."
+	},
+	"toggleGhostMode": {
+		"message": "Toggle hidden border",
+		"description": "Command description for toggling ghost mode."
+	},
+	"toggleGlobalGhostMode": {
+		"message": "Toggle global hidden border",
+		"description": "Command description for toggling global ghost mode."
+	},
+	"toggleMaximizeSticky": {
+		"message": "Toggle maximize",
+		"description": "Command description for toggling maximize/minimize of a sticky note."
+	},
+	"toggleSettings": {
+		"message": "Toggle settings page",
+		"description": "Command description for toggling the settings page."
+	},
+	"toggleSplitView": {
+		"message": "Toggle split view",
+		"description": "Command description for toggling split view of sticky notes."
+	},
+	"toggleStickyEditMode": {
+		"message": "Toggle edit mode",
+		"description": "Command description for toggling edit/view mode for the current sticky note."
+	},
+	"toggleStickyPinMode": {
+		"message": "Toggle pin",
+		"description": "Command description for toggling pin mode of a sticky note."
+	},
+	"uiOpacity": {
+		"message": "UI Opacity",
+		"description": "Label for the UI opacity input."
+	},
+	"undo": {
+		"message": "Undo",
+		"description": "undo"
+	},
+	"unsaved": {
+		"message": "Unsaved changes",
+		"description": "Status message for unsaved changes in a document."
+	},
+	"showAddBookmarkBtnCheckboxLabel": {
+		"message": "Show Add Shortcut Button",
+		"description": "Checkbox label for showing or hiding the add bookmark button."
+	},
+	"sizeInputLabel": {
+		"message": "Bookmark Size",
+		"description": "Label for adjusting the bookmark size."
+	},
+	"showLabelCheckboxLabel": {
+		"message": "Show Shortcut Label",
+		"description": "Checkbox label for showing or hiding the bookmark label."
+	},
+	"addBookmarkMenuItem": {
+		"message": "Add Bookmark",
+		"description": "Menu item label for adding a bookmark."
+	},
+	"editDockAppearanceMenuItem": {
+		"message": "Edit Appearance",
+		"description": "Menu item label for editing dock appearance."
+	},
+	"dockPositionRightRadioLabel": {
+		"message": "Dock on Right",
+		"description": "Radio label for positioning the dock on the right side."
+	},
+	"dockPositionBottomRadioLabel": {
+		"message": "Dock on Bottom",
+		"description": "Radio label for positioning the dock at the bottom."
+	},
+	"dockPositionTopRadioLabel": {
+		"message": "Dock on Top",
+		"description": "Radio label for positioning the dock at the top."
+	},
+	"dockPositionLeftRadioLabel": {
+		"message": "Dock on Left",
+		"description": "Radio label for positioning the dock on the left side."
+	},
+	"youtubeLinkInputLabel": {
+		"message": "YouTube Video Link",
+		"description": "Input label for YouTube video link."
+	},
+	"youtubeAutoplayCheckboxLabel": {
+		"message": "Automatically Play Video",
+		"description": "Checkbox label for autoplay YouTube video."
+	},
 	"cannotFoundYoutubeVideo": {
 		"message": "YouTube video link format is incorrect",
 		"description": "Error message displayed when the YouTube video ID cannot be found in the provided input."
@@ -323,7 +323,7 @@
 		"message": "Spotify track not found",
 		"description": "Error message displayed when the Spotify media cannot be found in the provided input."
 	},
-  "addOtherStickyGroup": {
+	"addOtherStickyGroup": {
 		"message": "Other Sticky Notes",
 		"description": "Context menu sub-menu name for other sticky group."
 	},
@@ -403,7 +403,7 @@
 		"message": "Settings",
 		"description": "Settings page header."
 	},
-  "importDocumentBtn": {
+	"importDocumentBtn": {
 		"message": "Import",
 		"description": "Button label for import file."
 	},
@@ -439,49 +439,49 @@
 		"message": "信任",
 		"description": "Dialog button label to load JavaScript and CSS."
 	},
-  "settingsAdvancedSection": {
-    "message": "Advanced",
-    "description": "Title for the advanced settings section."
-  },
-  "customJavaScriptLabel": {
-    "message": "Custom JavaScript Code",
-    "description": "Label for custom JavaScript code textarea."
-  },
-  "customJavaScriptHelp": {
-    "message": "JavaScript code can be used to extend/modify Mencrouche. For your safety, do not paste code from unknown sources.",
-    "description": "Help message for the usage and warning for custom JavaScript."
-  },
-  "customJavaScriptPlaceholder": {
-    "message": "Only enter code you trust",
-    "description": "Placeholder for custom JavaScript textarea warning the user not to enter unknown code."
-  },
-  "customCssLabel": {
-    "message": "Custom CSS",
-    "description": "Label for custom CSS textarea."
-  },
-  "customCssHelp": {
-    "message": "CSS can modify the appearance of the webpage. Pasting CSS from unknown sources may damage the functionality.",
-    "description": "Help message for the usage and warning for custom CSS."
-  },
-  "customCssPlaceholder": {
-    "message": "Only enter CSS you trust",
-    "description": "Placeholder for custom CSS textarea warning the user not to enter unknown styles."
-  },
-  "okBtn": {
-    "message": "OK",
-    "description": "Button label for OK."
-  },
-  "reloadNeeded": {
-    "message": "Reload Required",
-    "description": "Dialog title notifying the user that a page refresh is needed to apply custom JavaScript."
-  },
-  "reloadNeededMessage": {
-    "message": "Reload the page to apply custom JavaScript",
-    "description": "Dialog message notifying the user that a page refresh is needed to apply custom JavaScript."
-  },
-  "clickToExpand": {
-    "message": "Click to Expand",
-    "description": "Details summary message."
+	"settingsAdvancedSection": {
+		"message": "Advanced",
+		"description": "Title for the advanced settings section."
+	},
+	"customJavaScriptLabel": {
+		"message": "Custom JavaScript Code",
+		"description": "Label for custom JavaScript code textarea."
+	},
+	"customJavaScriptHelp": {
+		"message": "JavaScript code can be used to extend/modify Mencrouche. For your safety, do not paste code from unknown sources.",
+		"description": "Help message for the usage and warning for custom JavaScript."
+	},
+	"customJavaScriptPlaceholder": {
+		"message": "Only enter code you trust",
+		"description": "Placeholder for custom JavaScript textarea warning the user not to enter unknown code."
+	},
+	"customCssLabel": {
+		"message": "Custom CSS",
+		"description": "Label for custom CSS textarea."
+	},
+	"customCssHelp": {
+		"message": "CSS can modify the appearance of the webpage. Pasting CSS from unknown sources may damage the functionality.",
+		"description": "Help message for the usage and warning for custom CSS."
+	},
+	"customCssPlaceholder": {
+		"message": "Only enter CSS you trust",
+		"description": "Placeholder for custom CSS textarea warning the user not to enter unknown styles."
+	},
+	"okBtn": {
+		"message": "OK",
+		"description": "Button label for OK."
+	},
+	"reloadNeeded": {
+		"message": "Reload Required",
+		"description": "Dialog title notifying the user that a page refresh is needed to apply custom JavaScript."
+	},
+	"reloadNeededMessage": {
+		"message": "Reload the page to apply custom JavaScript",
+		"description": "Dialog message notifying the user that a page refresh is needed to apply custom JavaScript."
+	},
+	"clickToExpand": {
+		"message": "Click to Expand",
+		"description": "Details summary message."
 	},
 	"copied": {
 		"message": "Copied",
@@ -504,19 +504,19 @@
 		"description": "Button title for note sticky."
 	},
 	"addNoteSticky": {
-    "message": "Note Sticky",
-    "description": "Command description for adding a new note sticky."
+		"message": "Note Sticky",
+		"description": "Command description for adding a new note sticky."
 	},
-  "zoomIn": {
-    "message": "Zoom In",
-    "description": "Command description for zoom in workspace."
+	"zoomIn": {
+		"message": "Zoom In",
+		"description": "Command description for zoom in workspace."
 	},
-  "zoomOut": {
-    "message": "Zoom Out",
-    "description": "Command description for zoom out workspace."
+	"zoomOut": {
+		"message": "Zoom Out",
+		"description": "Command description for zoom out workspace."
 	},
-  "zoomReset": {
-    "message": "Reset Zoom",
-    "description": "Command description for reset workspace zoom."
-  }
+	"zoomReset": {
+		"message": "Reset Zoom",
+		"description": "Command description for reset workspace zoom."
+	}
 }

@@ -1,10 +1,9 @@
 import { createDock } from "../dock/dock";
-import { getTemplateWidgets } from "../utils/getTemplateWidgets";
+import { getTemplate } from "../utils/getTemplate";
 
 // TODO: sync with user locale
 export function initClockDock() {
-  const clockDock = (getTemplateWidgets("clockWidgets") as HTMLElement)
-    .firstElementChild!;
+  const clockDock = getTemplate("clockWidgets");
   const timeEl = clockDock.$(".time")!;
   const dateEl = clockDock.$(".date")!;
 

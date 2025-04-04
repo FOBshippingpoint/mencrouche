@@ -31,18 +31,18 @@
 		"message": "開啟方式",
 		"description": "Label text for the bookmark anchor target."
 	},
-  "bookmarkBackgroundColorLabel": {
+	"bookmarkBackgroundColorLabel": {
 		"message": "背景顏色",
 		"description": "Label text for the bookmark background color."
-  },
-  "getRandomBookmarkColorBtn": {
-    "message": "隨機顏色",
-    "description": "Button title for getting random color for bookmark background."
-  },
-  "removeBookmarkBackgroundBtn": {
-    "message": "移除背景",
-    "description": "Button title for removing bookmark background."
-  },
+	},
+	"getRandomBookmarkColorBtn": {
+		"message": "隨機顏色",
+		"description": "Button title for getting random color for bookmark background."
+	},
+	"removeBookmarkBackgroundBtn": {
+		"message": "移除背景",
+		"description": "Button title for removing bookmark background."
+	},
 	"cancelSettingsBtn": {
 		"message": "取消",
 		"description": "Text for the cancel settings button."
@@ -111,10 +111,10 @@
 		"message": "新增YouTube便利貼",
 		"description": "Command description for adding a new youtube sticky note."
 	},
-  "addSpotifySticky": {
-    "message": "新增Spotify便利貼",
-    "description": "Command description for adding a new spotify sticky note."
-  },
+	"addSpotifySticky": {
+		"message": "新增Spotify便利貼",
+		"description": "Command description for adding a new spotify sticky note."
+	},
 	"openBookmarkInCurrentTabOption": {
 		"message": "在此分頁開啟",
 		"description": "Context menu item label text for opening bookmark link in current tab."
@@ -339,7 +339,7 @@
 		"message": "單欄模式",
 		"description": "Context menu label for toggle off markdown sticky split view."
 	},
-  "maximizeSticky": {
+	"maximizeSticky": {
 		"message": "最大化便利貼",
 		"description": "Context menu option to maximize a sticky note."
 	},
@@ -399,7 +399,7 @@
 		"message": "設定",
 		"description": "Settings page header."
 	},
-  "importDocumentBtn": {
+	"importDocumentBtn": {
 		"message": "匯入",
 		"description": "Button label for import file."
 	},
@@ -446,11 +446,11 @@
 	"settingsAdvancedSection": {
 		"message": "進階",
 		"description": "Title for the advanced settings section."
-  },
+	},
 	"customJavaScriptLabel": {
 		"message": "自訂JavaScript程式碼",
 		"description": "Label for custom JavaScript code textarea."
-  },
+	},
 	"customJavaScriptHelp": {
 		"message": "JavaScript程式碼可用於擴展/修改Mencrouche，為了您的安全，切勿貼上來源不明的程式碼。",
 		"description": "Help message for the usage and warning for custom JavaScript."
@@ -458,11 +458,11 @@
 	"customJavaScriptPlaceholder": {
 		"message": "請僅輸入您信任的程式碼",
 		"description": "Placeholder for custom JavaScript textarea warning user do not enter unknown code."
-  },
+	},
 	"customCssLabel": {
 		"message": "自訂CSS",
 		"description": "Label for custom CSS textarea."
-  },
+	},
 	"customCssHelp": {
 		"message": "CSS可以修改網頁的外觀，貼上來源不明的CSS可能造成功能異常。",
 		"description": "Help message for the usage and warning for custom CSS."
@@ -508,19 +508,19 @@
 		"description": "Button title for note sticky."
 	},
 	"addNoteSticky": {
-    "message": "新增便利貼",
-    "description": "Command description for adding a new note sticky."
+		"message": "新增便利貼",
+		"description": "Command description for adding a new note sticky."
 	},
-  "zoomIn": {
-    "message": "放大",
-    "description": "Command description for zoom in workspace."
+	"zoomIn": {
+		"message": "放大",
+		"description": "Command description for zoom in workspace."
 	},
-  "zoomOut": {
-    "message": "縮小",
-    "description": "Command description for zoom out workspace."
+	"zoomOut": {
+		"message": "縮小",
+		"description": "Command description for zoom out workspace."
 	},
-  "zoomReset": {
-    "message": "重置縮放",
-    "description": "Command description for reset workspace zoom."
-  }
+	"zoomReset": {
+		"message": "重置縮放",
+		"description": "Command description for reset workspace zoom."
+	}
 }
