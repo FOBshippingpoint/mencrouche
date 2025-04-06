@@ -1,20 +1,13 @@
-# <img width="64" height="64" src="https://raw.githubusercontent.com/FOBshippingpoint/mencrouche/main/img/icon_design.svg" /> [Mencrouche](https://fobshippingpoint.github.io/mencrouche/) 
+# <img width="64" height="64" src="https://raw.githubusercontent.com/FOBshippingpoint/mencrouche/main/src/public/icon.svg" /> [Mencrouche](https://fobshippingpoint.github.io/mencrouche/) 
 
-> Your browser's new homepage.
+> Homepage for the browser.
 
-- Embed YT, Spotify, or web pages.
-- Customizable bookmark dock.
-- Markdown notes.
-- Dark/Light mode support.
-- Rich shortcuts with sensible defaults.
-- Extensible API for power user.
+- Highly customizable
+- YouTube, Spotify, web page integration
+- Sane defaults
+- Extensible API for power user
 
-![screenshot](https://i.imgur.com/OMGVxTd.png)
-
-- Artwork: https://www.pixiv.net/artworks/55632215
-- Website: http://abehiroshi.la.coocan.jp/
-- Video: https://www.youtube.com/watch?v=dkSeImiW1fQ
-- Song: https://open.spotify.com/track/6woV8uWxn7rcLZxJKYruS1
+![screenshot](https://i.imgur.com/r6lF4Ne.png)
 
 <!-- ## For Users -->
 <!---->
