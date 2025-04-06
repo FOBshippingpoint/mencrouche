@@ -62,6 +62,7 @@ just
 
 ## BUGS
 
+- [ ] Languages dropdown showing nothing.
 - [x] Using navbar add sticky, the sticky position should at center instead of top-right.
 - [x] Copy sticky is not copying position.
 - [x] When drag maximized sticky, header are not centered at cursor.
