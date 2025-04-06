@@ -1,13 +1,13 @@
-# <img width="64" height="64" src="https://raw.githubusercontent.com/FOBshippingpoint/mencrouche/main/src/public/icon.svg" /> [Mencrouche](https://fobshippingpoint.github.io/mencrouche/) 
+# [Mencrouche](https://mencrouche.com)
 
-> Homepage for the browser.
+![feature_image](https://github.com/user-attachments/assets/2ff6f50b-6183-4ff2-9411-e2f2e5e81c90)
+
+> Homepage for you.
 
 - Highly customizable
 - YouTube, Spotify, web page integration
 - Sane defaults
 - Extensible API for power user
-
-![screenshot](https://i.imgur.com/r6lF4Ne.png)
 
 <!-- ## For Users -->
 <!---->
