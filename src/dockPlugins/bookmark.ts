@@ -1,5 +1,12 @@
 import { apocalypse } from "../apocalypse";
-import { createDock, type DockConfig } from "../dock/dock";
+import {
+	createDock,
+	registerDock,
+	type Dock,
+	type PluginDock,
+	type PluginDockConfig,
+	type PluginDockModel,
+} from "../dock/dock";
 import { DragAndDropSorter } from "../dock/dragAndDropSorter";
 import { markDirtyAndSaveDocument } from "../lifesaver";
 import { getTemplate } from "../utils/getTemplate";
@@ -8,19 +15,7 @@ import { $, $$$ } from "../utils/dollars";
 import { dataset } from "../dataWizard";
 import { registerContextMenu } from "../contextMenu";
 import { clipboardImageItemToDataUrl } from "../utils/toDataUrl";
-
-interface BookmarkData {
-	id?: string;
-	urlLike: string;
-	icon?: string | null;
-	target: "_self" | "_blank";
-	backgroundColor: string;
-	label: string;
-}
-
-interface BookmarkDockConfig extends DockConfig {
-	bookmarks: BookmarkData[];
-}
+import { isSmallScreen } from "../utils/screenSize";
 
 class Bookmark {
 	readonly element: HTMLAnchorElement;
@@ -49,10 +44,7 @@ class Bookmark {
 		this.label = options.label;
 		this.url = parseUrl(this.urlLike);
 
-		// Initialize DOM elements
-		this.anchorEl = (
-			getTemplate("bookmarkWidgets") as HTMLElement
-		).firstElementChild!.cloneNode(true) as HTMLAnchorElement;
+		this.anchorEl = getTemplate<HTMLAnchorElement>("bookmarkWidgets");
 		this.element = this.anchorEl;
 		this.imgEl = this.anchorEl.$("img")!;
 		this.letterEl = this.anchorEl.$("span")!;
@@ -66,25 +58,17 @@ class Bookmark {
 	}
 
 	private initializeState(): void {
-		// Set URL and href
 		if (this.url) {
 			this.anchorEl.href = this.url.href;
 		}
-
-		// Set target
 		this.anchorEl.target = this.target;
-
-		// Set label
 		this.labelEl.textContent = this.label.length ? this.label : " ";
-
-		// Set background color
+		this.labelEl.title = this.label.length ? this.label : "";
 		if (this.backgroundColor === "transparent") {
 			this.iconBoxEl.classList.add("noBackground");
 		} else {
 			this.iconBoxEl.style.backgroundColor = this.backgroundColor;
 		}
-
-		// Set icon
 		if (this.icon) {
 			this.imgEl.src = this.icon;
 		} else {
@@ -150,12 +134,167 @@ class Bookmark {
 	}
 }
 
-export function initBookmarkDock() {
-	const bookmarkDock = (getTemplate("bookmarkDockWidgets") as HTMLElement)
-		.firstElementChild! as HTMLDivElement;
-	const addBookmarkBtn = bookmarkDock.$("button")!;
-	const bookmarkBox = bookmarkDock.$("div")!;
-	new DragAndDropSorter(bookmarkBox, (src, target) => {
+let editingBookmark: Bookmark | null = null;
+let previewBookmark = new Bookmark({
+	urlLike: "https://example.com",
+	label: "Example",
+	target: "_self",
+	backgroundColor: generateRandomColor(),
+});
+let currentDock: Dock<BookmarkerPlugin, BookmarkerConfig>;
+
+const dialog = $<HTMLDialogElement>("#bookmarkDialog")!;
+const form = dialog.$("form")!;
+const colorInput = form.$<HTMLInputElement>('[name="backgroundColor"]')!;
+const iconInput = form.$<HTMLInputElement>('[name="icon"]')!;
+const labelInput = form.$<HTMLInputElement>('[name="label"]')!;
+const urlLikeInput = form.$<HTMLInputElement>('[name="urlLike"]')!;
+
+dialog.$('[data-i18n="cancelSubmitBtn"]')!.on("click", () => dialog.close());
+form.on("submit", handleSubmit);
+
+// Debounce url for favicon fetching.
+const onUrlLikeInputDebounced = debounce(
+	() => updatePreview({ urlLike: urlLikeInput.value }),
+	{ waitMs: 500 },
+);
+urlLikeInput.on("input", () => onUrlLikeInputDebounced());
+labelInput.on("input", () => updatePreview({ label: labelInput.value }));
+colorInput.on("input", () =>
+	updatePreview({ backgroundColor: colorInput.value }),
+);
+
+form.$('[data-i18n="getRandomBookmarkColorBtn"]')!.on("click", () => {
+	const backgroundColor = cssColorToHexString(generateRandomColor());
+	colorInput.value = backgroundColor;
+	updatePreview({ backgroundColor });
+});
+
+form.$('[data-i18n="removeBookmarkBackgroundBtn"]')!.on("click", () => {
+	updatePreview({ backgroundColor: "transparent" });
+});
+
+iconInput.on("paste", async () => {
+	const clipboardItems = await navigator.clipboard.read();
+	const iconDataUrl = await clipboardImageItemToDataUrl(clipboardItems);
+	if (iconDataUrl) {
+		iconInput.value = iconDataUrl;
+		updatePreview({ icon: iconDataUrl });
+	}
+});
+
+iconInput.on("input", () => updatePreview({ icon: iconInput.value }));
+
+function updatePreview(changes: Partial<BookmarkData>): void {
+	const newPreview = previewBookmark.withChanges(changes);
+	previewBookmark.element.replaceWith(newPreview.element);
+	previewBookmark = newPreview;
+}
+
+function openDialog(bookmark?: Bookmark) {
+	editingBookmark = bookmark ?? null;
+
+	const initialData = bookmark?.toData() ?? {
+		urlLike: "",
+		label: "",
+		target: "_self",
+		backgroundColor: cssColorToHexString(generateRandomColor()),
+	};
+
+	Object.entries(initialData).forEach(([key, value]) => {
+		const input = form.$<HTMLInputElement>(`[name="${key}"]`);
+		if (input) {
+			input.value = value ?? "";
+		}
+	});
+
+	previewBookmark = new Bookmark(initialData);
+	dialog.$(".gaPreview")!.replaceChildren(previewBookmark.element);
+
+	dialog.showModal();
+}
+
+function handleAddBookmark() {
+	const bookmarkToAdd = previewBookmark.withChanges({});
+	apocalypse.write({
+		execute() {
+			currentDock.plugin.map.set(bookmarkToAdd.id, bookmarkToAdd);
+			currentDock.plugin.addBookmark(bookmarkToAdd);
+		},
+		undo() {
+			bookmarkToAdd.element.remove();
+			currentDock.plugin.map.delete(bookmarkToAdd.id);
+		},
+	});
+	markDirtyAndSaveDocument();
+}
+
+function handleEditBookmark(oldBookmark: Bookmark) {
+	const newBookmark = previewBookmark.withChanges({});
+	apocalypse.write({
+		execute() {
+			currentDock.plugin.map.set(newBookmark.id, newBookmark);
+			oldBookmark.element.replaceWith(newBookmark.element);
+		},
+		undo() {
+			newBookmark.element.replaceWith(oldBookmark.element);
+			currentDock.plugin.map.set(oldBookmark.id, oldBookmark);
+		},
+	});
+	markDirtyAndSaveDocument();
+}
+
+function handleSubmit(e: Event) {
+	e.preventDefault();
+
+	if (editingBookmark) {
+		handleEditBookmark(editingBookmark);
+	} else {
+		handleAddBookmark();
+	}
+
+	dialog.close();
+	editingBookmark = null;
+}
+
+function handleDeleteBookmark(bookmark: Bookmark) {
+	apocalypse.write({
+		execute() {
+			bookmark.element.remove();
+			currentDock.plugin.map.delete(bookmark.id);
+		},
+		undo() {
+			currentDock.plugin.map.set(bookmark.id, bookmark);
+			currentDock.plugin.addBookmark(bookmark);
+		},
+	});
+	markDirtyAndSaveDocument();
+}
+
+interface BookmarkData {
+	id?: string;
+	urlLike: string;
+	icon?: string | null;
+	target: "_self" | "_blank";
+	backgroundColor: string;
+	label: string;
+}
+
+interface BookmarkerPlugin extends PluginDock {
+	map: Map<string, Bookmark>;
+	takeSnapshot(): BookmarkData[];
+	restoreSnapshot(bookmarks: BookmarkData[]): void;
+	addBookmark(bookmark: Bookmark): void;
+}
+interface BookmarkerConfig extends PluginDockConfig {
+	bookmarks: BookmarkData[];
+}
+
+function enable(dock: Dock<BookmarkerPlugin, BookmarkerConfig>) {
+	const widgets = getTemplate("bookmarkDockWidgets");
+	const addBookmarkBtn = widgets.$("button")!;
+	const mom = widgets.$("div")!;
+	new DragAndDropSorter(mom, (src, target) => {
 		const bookmarks = takeSnapshot();
 		const srcIdx = bookmarks.findIndex((b) => b.id === src.id)!;
 		const targetIdx = bookmarks.findIndex((b) => b.id === target.id)!;
@@ -178,14 +317,18 @@ export function initBookmarkDock() {
 		markDirtyAndSaveDocument();
 	});
 
-	const dialog = $("#bookmarkDialog")! as HTMLDialogElement;
-	const form = dialog.$("form")!;
-	const bookmarkMap = new Map<string, Bookmark>();
+	addBookmarkBtn.on("click", () => {
+		currentDock = dock;
+		openDialog();
+	});
+	dock.replaceBody(widgets);
+
+	dock.plugin.map = new Map();
 
 	function takeSnapshot() {
 		const bookmarks: BookmarkData[] = [];
-		for (const bookmarkEl of bookmarkDock.$$(".bookmark")) {
-			const bookmark = bookmarkMap.get(bookmarkEl.id);
+		for (const bookmarkEl of dock.$$(".bookmark")) {
+			const bookmark = dock.plugin.map.get(bookmarkEl.id);
 			if (bookmark) {
 				bookmarks.push(bookmark.toData());
 			}
@@ -193,190 +336,78 @@ export function initBookmarkDock() {
 		return bookmarks;
 	}
 	function restoreSnapshot(bookmarks: BookmarkData[]) {
-		bookmarkMap.clear();
+		dock.plugin.map.clear();
 		const frag = document.createDocumentFragment();
 		for (const bookmark of bookmarks.map((data) => new Bookmark(data))) {
-			bookmarkMap.set(bookmark.id, bookmark);
+			dock.plugin.map.set(bookmark.id, bookmark);
 			frag.appendChild(bookmark.element);
 		}
-		bookmarkBox.replaceChildren(frag);
+		mom.replaceChildren(frag);
+	}
+	function addBookmark(bookmark: Bookmark) {
+		mom.appendChild(bookmark.element);
 	}
 
-	let previewBookmark = new Bookmark({
-		urlLike: "https://example.com",
-		label: "Example",
-		target: "_self",
-		backgroundColor: generateRandomColor(),
-	});
-	let editingBookmark: Bookmark | null = null;
-
-	function updatePreview(changes: Partial<BookmarkData>): void {
-		const newPreview = previewBookmark.withChanges(changes);
-		previewBookmark.element.replaceWith(newPreview.element);
-		previewBookmark = newPreview;
-	}
-
-	function handleAddBookmark() {
-		const bookmarkToAdd = previewBookmark;
-		apocalypse.write({
-			execute() {
-				bookmarkMap.set(bookmarkToAdd.id, bookmarkToAdd);
-				bookmarkBox.appendChild(bookmarkToAdd.element);
-			},
-			undo() {
-				bookmarkToAdd.element.remove();
-				bookmarkMap.delete(bookmarkToAdd.id);
-			},
-		});
-		markDirtyAndSaveDocument();
-	}
-
-	function handleEditBookmark(oldBookmark: Bookmark) {
-		const newBookmark = previewBookmark;
-		apocalypse.write({
-			execute() {
-				bookmarkMap.set(newBookmark.id, newBookmark);
-				oldBookmark.element.replaceWith(newBookmark.element);
-			},
-			undo() {
-				newBookmark.element.replaceWith(oldBookmark.element);
-				bookmarkMap.set(oldBookmark.id, oldBookmark);
-			},
-		});
-		markDirtyAndSaveDocument();
-	}
-
-	function handleSubmit(e: Event) {
-		e.preventDefault();
-
-		if (editingBookmark) {
-			handleEditBookmark(editingBookmark);
-		} else {
-			handleAddBookmark();
-		}
-
-		dialog.close();
-		editingBookmark = null;
-	}
-
-	function handleDeleteBookmark(bookmark: Bookmark) {
-		apocalypse.write({
-			execute() {
-				bookmark.element.remove();
-				bookmarkMap.delete(bookmark.id);
-			},
-			undo() {
-				bookmarkMap.set(bookmark.id, bookmark);
-				bookmarkBox.appendChild(bookmark.element);
-			},
-		});
-		markDirtyAndSaveDocument();
-	}
-
-	function openDialog(bookmark?: Bookmark) {
-		editingBookmark = bookmark ?? null;
-
-		const initialData = bookmark?.toData() ?? {
-			urlLike: "",
-			label: "",
-			target: "_self",
-			backgroundColor: cssColorToHexString(generateRandomColor()),
-		};
-
-		Object.entries(initialData).forEach(([key, value]) => {
-			const input = form.$(`[name="${key}"]`) as HTMLInputElement;
-			if (input) {
-				input.value = value ?? "";
-			}
-		});
-
-		previewBookmark = new Bookmark(initialData);
-		dialog.$(".gaPreview")!.replaceChildren(previewBookmark.element);
-
-		dialog.showModal();
-	}
-
-	function setupFormListeners() {
-		const colorInput = form.$('[name="backgroundColor"]')! as HTMLInputElement;
-		const iconInput = form.$('[name="icon"]')! as HTMLInputElement;
-		const labelInput = form.$('[name="label"]')! as HTMLInputElement;
-		const urlLikeInput = form.$('[name="urlLike"]')! as HTMLInputElement;
-
-		// Debounce url for favicon fetching.
-		const onUrlLikeInputDebounced = debounce(
-			() => updatePreview({ urlLike: urlLikeInput.value }),
-			{ waitMs: 500 },
-		);
-		urlLikeInput.on("input", () => onUrlLikeInputDebounced());
-		labelInput.on("input", () => updatePreview({ label: labelInput.value }));
-		colorInput.on("input", () =>
-			updatePreview({ backgroundColor: colorInput.value }),
-		);
-
-		form.$('[data-i18n="getRandomBookmarkColorBtn"]')!.on("click", () => {
-			const backgroundColor = cssColorToHexString(generateRandomColor());
-			colorInput.value = backgroundColor;
-			updatePreview({ backgroundColor });
-		});
-
-		form.$('[data-i18n="removeBookmarkBackgroundBtn"]')!.on("click", () => {
-			updatePreview({ backgroundColor: "transparent" });
-		});
-
-		iconInput.on("paste", async () => {
-			const clipboardItems = await navigator.clipboard.read();
-			const iconDataUrl = await clipboardImageItemToDataUrl(clipboardItems);
-			if (iconDataUrl) {
-				iconInput.value = iconDataUrl;
-				updatePreview({ icon: iconDataUrl });
-			}
-		});
-
-		iconInput.on("input", () => updatePreview({ icon: iconInput.value }));
-	}
-
-	addBookmarkBtn.on("click", () => openDialog());
-	dialog.$('[data-i18n="cancelSubmitBtn"]')!.on("click", () => dialog.close());
-	form.on("submit", handleSubmit);
-	setupFormListeners();
-
-	registerContextMenu("bookmark", [
-		(anchor: HTMLAnchorElement) => ({
-			name: "editBookmarkMenuItem",
-			icon: "lucide-pencil",
-			execute() {
-				const bookmark = bookmarkMap.get(anchor.id);
-				if (bookmark) {
-					openDialog(bookmark);
-				}
-			},
-		}),
-		(anchor: HTMLAnchorElement) => ({
-			name: "deleteBookmarkMenuItem",
-			icon: "lucide-trash-2",
-			execute() {
-				const bookmark = bookmarkMap.get(anchor.id);
-				if (bookmark) {
-					handleDeleteBookmark(bookmark);
-				}
-			},
-		}),
-	]);
-
-	createDock<BookmarkDockConfig>({
-		name: "bookmark",
-		placement: "right",
-		body: bookmarkDock,
-		edgePadding: "var(--size-2)",
-		grow: false,
-		onSave() {
-			return { bookmarks: takeSnapshot() };
-		},
-		onRestore(config) {
-			restoreSnapshot(config.bookmarks);
-		},
+	Object.assign(dock.plugin, {
+		takeSnapshot,
+		restoreSnapshot,
+		addBookmark,
 	});
 }
+
+const bookmarkDock: PluginDockModel<BookmarkerPlugin, BookmarkerConfig> = {
+	type: "bookmarker",
+	onCreate(dock) {
+		enable(dock);
+	},
+	onDelete() {},
+	onSave(dock) {
+		const bookmarks: BookmarkData[] = [];
+		for (const [_, bookmark] of dock.plugin.map.entries()) {
+			bookmarks.push(bookmark.toData());
+		}
+		return { bookmarks };
+	},
+	onRestore(dock, config) {
+		enable(dock);
+		if (config) {
+			dock.plugin.restoreSnapshot(config.bookmarks);
+		}
+	},
+};
+
+const bookmarkMenuItems = [
+	(anchor: HTMLAnchorElement) => ({
+		name: "editBookmarkMenuItem",
+		icon: "lucide-pencil",
+		execute() {
+			const dock = anchor.closest(".dock.bookmarker") as Dock<
+				BookmarkerPlugin,
+				BookmarkerConfig
+			>;
+			currentDock = dock;
+			const bookmark = dock.plugin.map.get(anchor.id);
+			if (bookmark) {
+				openDialog(bookmark);
+			}
+		},
+	}),
+	(anchor: HTMLAnchorElement) => ({
+		name: "deleteBookmarkMenuItem",
+		icon: "lucide-trash-2",
+		execute() {
+			const dock = anchor.closest(".dock.bookmarker") as Dock<
+				BookmarkerPlugin,
+				BookmarkerConfig
+			>;
+			currentDock = dock;
+			const bookmark = dock.plugin.map.get(anchor.id);
+			if (bookmark) {
+				handleDeleteBookmark(bookmark);
+			}
+		},
+	}),
+];
 
 function parseUrl(urlLike: string | null) {
 	if (urlLike) {
@@ -433,5 +464,10 @@ function cssColorToHexString(color: string) {
 }
 
 function getFaviconUrl(domainUrl: string) {
-	return `https://api.faviconkit.com/${domainUrl}`;
+	return `https://twenty-icons.com/${domainUrl}`;
+}
+
+export function initBookmarkDock() {
+	registerDock(bookmarkDock);
+	registerContextMenu("bookmark", bookmarkMenuItems);
 }

@@ -1,22 +1,34 @@
 import { getTemplate } from "../utils/getTemplate";
 import { dataset, addTodoAfterLoad, addTodoBeforeSave } from "../dataWizard";
-import { $ } from "../utils/dollars";
+import { $, addCss } from "../utils/dollars";
+import { Pane } from "tweakpane";
 
-const dockData: Record<string, unknown> = {};
+const dockSlot = $<HTMLSlotElement>("#dockSlot")!;
 
-interface DockCreationOptions<C extends DockConfig> {
-	name: string;
-	placement: Placement;
-	body: Node;
-	edgePadding: string;
-	grow: boolean;
-	onSave?: () => C;
-	onRestore?: (config: C) => void;
+export interface PluginDockConfig extends Record<string, unknown> {}
+
+export interface PluginDock {}
+export interface DockConfig<C extends PluginDockConfig = PluginDockConfig> {
+	type: string;
+	id?: string;
+	pluginConfig?: C;
+	placement?: Placement;
+	grow?: boolean;
 }
 
-export interface DockConfig extends Record<string, unknown> {}
+export interface Dock<
+	P extends PluginDock = PluginDock,
+	C extends PluginDockConfig = PluginDockConfig,
+> extends HTMLDivElement {
+	type: string;
+	replaceBody(...nodes: (Node | string)[]): void;
+	save(): DockConfig<C>;
+	plugin: P;
+	placeAt(placement: Placement, grow: boolean): void;
+}
 
 type Placement =
+	| "center"
 	| "topLeft"
 	| "top"
 	| "topRight"
@@ -26,107 +38,157 @@ type Placement =
 	| "bottomLeft"
 	| "left";
 
-const dockRegistry = new Set<string>();
+const pluginDockPool = new Map<string, PluginDockModel>();
+const docks: Dock[] = [];
 
-export function createDock<C extends DockConfig>({
-	name,
-	body,
-	placement = "right",
-	edgePadding = "var(--size-2)",
-	grow = false,
-	onSave,
-	onRestore,
-}: DockCreationOptions<C>) {
-	if (dockRegistry.has(name)) {
-		throw Error(`Dock '${name}' already exists. Try create with another name.`);
-	} else {
-		dockRegistry.add(name);
-	}
-	const dock = getTemplate<HTMLDivElement>("dockWidgets");
-
-	dock.$("slot")!.replaceWith(body);
-
-	dock.style.top = "";
-	dock.style.right = "";
-	dock.style.bottom = "";
-	dock.style.left = "";
-	dock.style.transform = "";
-	dock.style.width = "";
-	dock.style.height = "";
-
-	// Apply growing behavior if specified
-	if (grow) {
-		const isVertical = ["left", "right"].includes(placement);
-		if (isVertical) {
-			dock.style.height = `calc(100% - 2 * ${edgePadding})`;
-		} else {
-			dock.style.width = `calc(100% - 2 * ${edgePadding})`;
-		}
-	}
-
-	// Apply positioning based on specified placement
-	switch (placement) {
-		case "top":
-			dock.style.top = `${edgePadding}`;
-			dock.style.left = "50%";
-			dock.style.transform = "translateX(-50%)";
-			break;
-
-		case "right":
-			dock.style.right = `${edgePadding}`;
-			dock.style.top = "50%";
-			dock.style.transform = "translateY(-50%)";
-			break;
-
-		case "bottom":
-			dock.style.bottom = `${edgePadding}`;
-			dock.style.left = "50%";
-			dock.style.transform = "translateX(-50%)";
-			break;
-
-		case "left":
-			dock.style.left = `${edgePadding}`;
-			dock.style.top = "50%";
-			dock.style.transform = "translateY(-50%)";
-			break;
-
-		case "topLeft":
-			dock.style.left = `${edgePadding}`;
-			dock.style.top = `${edgePadding}`;
-			if (grow) dock.style.width = `calc(100% - 2 * ${edgePadding})`;
-			break;
-
-		case "topRight":
-			dock.style.right = `${edgePadding}`;
-			dock.style.top = `${edgePadding}`;
-			if (grow) dock.style.width = `calc(100% - 2 * ${edgePadding})`;
-			break;
-
-		case "bottomLeft":
-			dock.style.left = `${edgePadding}`;
-			dock.style.bottom = `${edgePadding}`;
-			if (grow) dock.style.width = `calc(100% - 2 * ${edgePadding})`;
-			break;
-
-		case "bottomRight":
-			dock.style.right = `${edgePadding}`;
-			dock.style.bottom = `${edgePadding}`;
-			if (grow) dock.style.width = `calc(100% - 2 * ${edgePadding})`;
-			break;
-	}
-
-	$("#dockSlot")!.appendChild(dock);
-
-	addTodoBeforeSave(() => {
-		if (typeof onSave === "function") {
-			dockData[name] = onSave();
-			dataset.setItem("dock", dockData);
-		}
-	});
-	addTodoAfterLoad(() => {
-		const dockData = dataset.getItem<Record<string, unknown>>("dock");
-		if (dockData && dockData[name]) {
-			onRestore?.(dockData[name] as C);
-		}
-	});
+export interface PluginDockModel<
+	P extends PluginDock = PluginDock,
+	C extends PluginDockConfig = PluginDockConfig,
+> {
+	type: string;
+	css?: string;
+	onCreate(dock: Dock<P, C>): void;
+	onSave(dock: Dock<P, C>): C | void;
+	onDelete(dock: Dock<P, C>): void;
+	onRestore(dock: Dock<P, C>, config?: C): void;
 }
+
+const sheetRegistry = new Map<string, CSSStyleSheet>();
+export function registerDock<P extends PluginDock, C extends PluginDockConfig>(
+	model: PluginDockModel<P, C>,
+) {
+	if (pluginDockPool.has(model.type)) {
+		console.warn(
+			`Overwriting existing plugin dock [ ${model.type} ]. You should only do this while development.`,
+		);
+	}
+
+	// TODO duplicate in sticky.ts
+	if (model.css) {
+		let css: string;
+		const validatorEl = document.createElement("i");
+		validatorEl.style.cssText = model.css;
+		if (validatorEl.style.cssText !== "") {
+			// Inline css
+			// Accepts "padding: 0" or "padding: 0; height: 10px", etc.
+			css = `.${model.type}{${validatorEl.style.cssText}}`;
+		} else {
+			// Non-inline css
+			// Trust user's css is valid
+			css = `.${model.type}{${model.css}}`;
+		}
+		if (sheetRegistry.has(model.type)) {
+			// Already exists, replace it.
+			sheetRegistry.get(model.type)?.replaceSync(css);
+		} else {
+			// Does not exists, add new one.
+			sheetRegistry.set(model.type, addCss(css));
+		}
+	}
+
+	pluginDockPool.set(model.type, model);
+}
+
+export function createDock(options: DockConfig) {
+	if (!pluginDockPool.has(options.type)) {
+		throw Error(
+			`Dock type [ ${options.type} ] not found. Please register dock type first via 'registerDock'.`,
+		);
+	}
+	const model = pluginDockPool.get(options.type)!;
+	const dock = getTemplate<HTMLDivElement>("dockWidgets");
+	const _dock = dock as Dock;
+	dock.id = options.id ?? crypto.randomUUID();
+	dock.classList.add(options.type);
+	placeElement(dock, options.placement ?? "center", options.grow ?? false);
+
+	Object.assign(dock, {
+		plugin: {},
+		placeAt(placement: Placement, grow: boolean) {
+			placeElement(dock, placement, grow);
+		},
+		replaceBody(...nodes: (Node | string)[]) {
+			dock.$("slot")!.replaceChildren(...nodes);
+		},
+		save() {
+			const pluginConfig = model.onSave(_dock);
+			const config: Partial<DockConfig> = {};
+			if (pluginConfig) {
+				config.pluginConfig = pluginConfig;
+			}
+			config.id = dock.id;
+			config.type = options.type;
+			config.placement = dock.dataset.placement! as Placement;
+			config.grow = dock.dataset.grow === "true";
+			return config;
+		},
+	});
+
+	model.onCreate(_dock);
+	dockSlot.appendChild(dock);
+	docks.push(_dock);
+
+	return _dock;
+}
+
+export function getPluginDockModel(dock: Dock | HTMLElement) {
+	for (const className of dock.classList.values()) {
+		const model = pluginDockPool.get(className);
+		if (model) {
+			return model;
+		}
+	}
+}
+
+export function getPluginDockTypes() {
+	return [...pluginDockPool.values()].map(({ type }) => type);
+}
+
+export function getAllDocks() {
+	return docks;
+}
+
+function placeElement(
+	element: HTMLElement,
+	placement: Placement,
+	grow: boolean,
+) {
+	element.classList.add("dock");
+	element.classList.add(placement);
+	element.dataset.placement = placement;
+	element.dataset.grow = grow ? "true" : "false";
+
+	if (grow) {
+		const isVertical = "left right".includes(placement);
+		element.classList.add(isVertical ? "growVertical" : "growHorizontal");
+		if ("topLeft topRight bottomLeft bottomRight".includes(placement)) {
+			element.classList.add("growHorizontal");
+		}
+	}
+}
+
+addTodoBeforeSave(() => {
+	dataset.setItem(
+		"docks",
+		docks.map((dock) => dock.save()),
+	);
+});
+addTodoAfterLoad(() => {
+	// Clear all docks
+	dockSlot.replaceChildren();
+	// Restore docks
+	const docks = dataset.getItem<DockConfig[]>("docks");
+	if (docks) {
+		for (const dockConfig of docks) {
+			const dock = createDock(dockConfig);
+			const model = pluginDockPool.get(dockConfig.type);
+			if (model) {
+				model.onRestore(dock, dockConfig.pluginConfig);
+			} else {
+				throw Error(
+					`Failed to restore dock type [ ${dockConfig.type} ]. Please register dock type first via 'registerDock'.`,
+				);
+			}
+		}
+	}
+});

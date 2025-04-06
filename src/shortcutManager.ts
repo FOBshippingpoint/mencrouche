@@ -73,11 +73,19 @@ function registerAction(
 	actions.set(actionName, { default: keySequence });
 	const kikey = option.el ? createKikey(option.el) : globalKikey;
 
-	let cb = callback;
+	let cb: (e: KeyboardEvent) => void;
 	if (option.shouldPreventDefault) {
 		cb = (e: KeyboardEvent) => {
-			e.preventDefault();
-			callback(e);
+			if (keySequence.includes("-") || !isUserTyping()) {
+				e.preventDefault();
+				callback(e);
+			}
+		};
+	} else {
+		cb = (e: KeyboardEvent) => {
+			if (keySequence.includes("-") || !isUserTyping()) {
+				callback(e);
+			}
 		};
 	}
 
@@ -179,4 +187,21 @@ export function keySequenceToString(sequence: string | KeyBinding[]) {
 	}
 
 	return s.map((b) => keyBindingToString(b)).join(", ");
+}
+
+function isUserTyping() {
+	const el = document.activeElement;
+	if (!el) return false;
+
+	const tag = el.tagName.toLowerCase();
+	const editable = (el as HTMLElement).isContentEditable;
+
+	const result =
+		(tag === "input" &&
+			"text search email number password tel url".includes(
+				(el as HTMLInputElement).type,
+			)) ||
+		tag === "textarea" ||
+		editable;
+	return result;
 }

@@ -12,7 +12,7 @@ import { registerCommand, executeCommand } from "./commands";
 import { $, $$, $$$, h } from "./utils/dollars";
 import {
 	getPluginStickyTypes,
-	getPluginSticky,
+	getPluginStickyModel,
 	registerSticky,
 	workspace,
 } from "./sticky/sticky";
@@ -25,6 +25,7 @@ import { createDock } from "./dock/dock";
 declare global {
 	interface Window {
 		mc: typeof mc;
+		Prism: any;
 	}
 }
 
@@ -41,7 +42,7 @@ const mc = {
 	registerSticky,
 	executeCommand,
 	registerCommand,
-	getPluginSticky,
+	getPluginStickyModel,
 	registerContextMenu,
 	getPluginStickyTypes,
 };

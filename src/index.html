@@ -8,13 +8,20 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>Mencrouche</title>
-		<link rel="icon" href="./public/favicon.ico" sizes="32x32" />
+		<!-- <link rel="icon" href="./public/favicon.ico" sizes="32x32" /> -->
 		<link rel="icon" href="./public/icon.svg" type="image/svg+xml" />
 		<link rel="stylesheet" href="index.css" />
 		<link
 			rel="stylesheet"
-			href="https://unpkg.com/prismjs@1.30.0/themes/prism-tomorrow.min.css"
+			href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/themes/prism-tomorrow.min.css"
 		/>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-core.min.js"
+			data-manual
+		></script>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/plugins/autoloader/prism-autoloader.min.js"
+		></script>
 		<script type="module" src="index.ts"></script>
 	</head>
 	<body>
@@ -179,11 +186,6 @@
 					<div
 						class="dock flex rounded padding surface shadow alwaysOnTop"
 						data-context-menu="dock"
-						data-placement="right"
-						data-icon-size="48"
-						data-always-on-top="on"
-						data-show-add-btn="on"
-						data-show-label="on"
 					>
 						<slot></slot>
 					</div>
@@ -283,9 +285,8 @@
 					></iframe>
 				</template>
 				<template id="markdownStickyWidgets">
-					<label class="editModeToggleLbl">
+					<label class="splitViewToggleLbl">
 						<svg
-							class="none"
 							xmlns="http://www.w3.org/2000/svg"
 							width="20"
 							height="20"
@@ -295,7 +296,41 @@
 							stroke-width="2"
 							stroke-linecap="round"
 							stroke-linejoin="round"
-							class="lucide lucide-pencil"
+							class="lucide lucide-square-equal-icon lucide-square-equal none"
+						>
+							<rect width="18" height="18" x="3" y="3" rx="2" />
+							<path d="M7 10h10" />
+							<path d="M7 14h10" />
+						</svg>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="lucide lucide-columns2-icon lucide-columns-2"
+						>
+							<rect width="18" height="18" x="3" y="3" rx="2" />
+							<path d="M12 3v18" />
+						</svg>
+						<input hidden="" type="checkbox" />
+					</label>
+					<label class="editModeToggleLbl">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="lucide lucide-pencil none"
 						>
 							<path
 								d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
@@ -304,8 +339,8 @@
 						</svg>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
-							width="22"
-							height="22"
+							width="20"
+							height="20"
 							viewBox="0 0 24 24"
 							fill="none"
 							stroke="currentColor"
@@ -658,7 +693,7 @@
 							</header>
 							<div id="shortcutList"></div>
 							<template id="shortcutListItem">
-								<labe>
+								<label>
 									<span></span>
 									<input type="text" disabled />
 									<button data-recording="false" class="btn recordBtn"></button>
@@ -1008,9 +1043,17 @@
 		<slot id="customJsSlot"></slot>
 
 		<template id="clockWidgets">
-			<div class="clock">
-				<time class="time"></time>
-				<time class="date"></time>
+			<div class="clockDock">
+				<div class="face">
+					<div class="hour hand"></div>
+					<div class="minute hand"></div>
+					<div class="second hand"></div>
+					<div class="centerDot"></div>
+				</div>
+				<div class="timeDisplay">
+					<time class="time"></time>
+					<time class="date"></time>
+				</div>
 			</div>
 		</template>
 

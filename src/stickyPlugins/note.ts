@@ -1,22 +1,28 @@
-import { $, $$$ } from "../utils/dollars";
+import { $$$ } from "../utils/dollars";
 import Quill, { Delta } from "quill";
 import {
 	registerSticky,
-	type CustomStickyComposer,
-	type CustomStickyConfig,
+	type PluginStickyModel,
+	type PluginStickyConfig,
 	type Sticky,
-	type StickyPlugin,
+	type PluginSticky,
 } from "../sticky/sticky";
 import { n81i } from "../utils/n81i";
 
-interface NotePlugin extends StickyPlugin {
+declare module "../sticky/sticky" {
+	interface PluginStickyPoolMap {
+		note: Sticky<NotePlugin, NoteConfig>;
+	}
+}
+
+interface NotePlugin extends PluginSticky {
 	quill: Quill;
 }
-interface NoteConfig extends CustomStickyConfig {
+interface NoteConfig extends PluginStickyConfig {
 	contents: Delta;
 }
 
-const noteSticky: CustomStickyComposer<NotePlugin, NoteConfig> = {
+const noteSticky: PluginStickyModel<NotePlugin, NoteConfig> = {
 	type: "note",
 	onCreate(sticky) {
 		enable(sticky);
@@ -31,9 +37,7 @@ const noteSticky: CustomStickyComposer<NotePlugin, NoteConfig> = {
 			sticky.plugin.quill.setContents(pluginConfig.contents);
 		}
 	},
-	options: {
-		noPadding: true,
-	},
+	css: `--sticky-padding: 0`,
 };
 
 const toolbarOptions = [
@@ -63,7 +67,6 @@ function enable(sticky: Sticky<NotePlugin>) {
 			},
 		},
 		theme: "snow",
-		placeholder: n81i.t("stickyTextareaStartTypingPlaceholder"),
 	});
 }
 

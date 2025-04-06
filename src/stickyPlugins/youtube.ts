@@ -1,20 +1,20 @@
 import {
-	type CustomStickyComposer,
-	type CustomStickyConfig,
+	type PluginStickyModel,
+	type PluginStickyConfig,
 	type Sticky,
-	type StickyPlugin,
+	type PluginSticky,
 	registerSticky,
 } from "../sticky/sticky";
 import { n81i } from "../utils/n81i";
 import { $ } from "../utils/dollars";
 import { formToObject } from "../utils/formToObject";
-import { getTemplate } from "../utils/getTemplate";
+import { getTemplateFragment } from "../utils/getTemplate";
 
-interface YouTubePlugin extends StickyPlugin {
+interface YouTubePlugin extends PluginSticky {
 	initPlayer: () => void;
 	player?: YT.Player;
 }
-interface YouTubeConfig extends CustomStickyConfig {
+interface YouTubeConfig extends PluginStickyConfig {
 	iframeSrc: string;
 	currentTime: number;
 	playerState: number;
@@ -82,7 +82,7 @@ form.on("submit", (e) => {
 	dialog.close();
 });
 
-const youtubeSticky: CustomStickyComposer<YouTubePlugin, YouTubeConfig> = {
+const youtubeSticky: PluginStickyModel<YouTubePlugin, YouTubeConfig> = {
 	type: "youtube",
 	onCreate(sticky) {
 		sticky.classList.add("none");
@@ -141,24 +141,24 @@ const youtubeSticky: CustomStickyComposer<YouTubePlugin, YouTubeConfig> = {
 	},
 	onDelete() {},
 	onRestore(sticky, pluginConfig) {
-		enable(sticky, () => {
-			if (pluginConfig.currentTime) {
-				sticky.plugin.player?.seekTo(pluginConfig.currentTime, true);
-			}
-			if (pluginConfig.playerState === YT.PlayerState.PLAYING) {
-				sticky.plugin.player?.playVideo();
-			}
-		});
-		sticky.$<HTMLIFrameElement>("iframe")!.src = pluginConfig.iframeSrc;
-		sticky.plugin.initPlayer();
+		if (pluginConfig) {
+			enable(sticky, () => {
+				if (pluginConfig.currentTime) {
+					sticky.plugin.player?.seekTo(pluginConfig.currentTime, true);
+				}
+				if (pluginConfig.playerState === YT.PlayerState.PLAYING) {
+					sticky.plugin.player?.playVideo();
+				}
+			});
+			sticky.$<HTMLIFrameElement>("iframe")!.src = pluginConfig.iframeSrc;
+			sticky.plugin.initPlayer();
+		}
 	},
-	options: {
-		noPadding: true,
-	},
+	css: `--sticky-padding: 0`,
 };
 
 function enable(sticky: Sticky<YouTubePlugin>, onScriptLoad: () => void) {
-	const widgets = getTemplate("youtubeStickyWidgets");
+	const widgets = getTemplateFragment("youtubeStickyWidgets");
 	const editLinkBtn = widgets.$<HTMLButtonElement>(".editLinkBtn")!;
 	const iframe = widgets.$("iframe")!;
 

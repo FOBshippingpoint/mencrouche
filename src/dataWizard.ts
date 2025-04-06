@@ -152,9 +152,10 @@ export async function loadFromSources(
 	} else {
 		mcObjToImport = conflictResolution(mcObjList);
 	}
-
+	const upgraded = upgradeFileToLatest(mcObjToImport);
+	console.log(upgraded);
 	// Apply the data and run post-load tasks
-	fromObject.call(_dataset, upgradeFileToLatest(mcObjToImport));
+	fromObject.call(_dataset, upgraded);
 	await finishLoad();
 }
 

@@ -1,31 +1,30 @@
 import { marked } from "marked";
 import {
 	registerSticky,
-	type CustomStickyComposer,
-	type CustomStickyConfig,
+	type PluginStickyModel,
+	type PluginStickyConfig,
 	type Sticky,
-	type StickyPlugin,
+	type PluginSticky,
 } from "../sticky/sticky";
 import { registerContextMenu, type MenuItem } from "../contextMenu";
 import { blobToDataUrl } from "../utils/toDataUrl";
-import { getTemplate } from "../utils/getTemplate";
+import { getTemplateFragment } from "../utils/getTemplate";
 import DOMPurify from "dompurify";
 import { markDirtyAndSaveDocument } from "../lifesaver";
 import { isScriptExecutionAllowed } from "../settings";
-import Prism from "prismjs";
 
 declare module "../sticky/sticky" {
-	interface StickyPluginRegistryMap {
-		markdown: MarkdownPlugin;
+	interface PluginStickyPoolMap {
+		markdown: Sticky<MarkdownPlugin, MarkdownConfig>;
 	}
 }
 
-interface MarkdownPlugin extends StickyPlugin {
+interface MarkdownPlugin extends PluginSticky {
 	toggleSplitView: () => void;
 	toggleEditMode: () => void;
 	updatePreview: () => void;
 }
-interface MarkdownConfig extends CustomStickyConfig {
+interface MarkdownConfig extends PluginStickyConfig {
 	prevInput: string;
 	blobUrlDataUrlMap: BlobUrlDataUrl[];
 }
@@ -98,7 +97,7 @@ function paste(textarea: HTMLTextAreaElement, toPaste: string) {
 	textarea.selectionStart = textarea.selectionEnd = start + toPaste.length;
 }
 
-const markdownSticky: CustomStickyComposer<MarkdownPlugin, MarkdownConfig> = {
+const markdownSticky: PluginStickyModel<MarkdownPlugin, MarkdownConfig> = {
 	type: "markdown",
 	onCreate(sticky) {
 		enable(sticky);
@@ -147,16 +146,14 @@ const markdownSticky: CustomStickyComposer<MarkdownPlugin, MarkdownConfig> = {
 			}
 		}
 	},
-	options: {
-		noPadding: true,
-	},
+	css: `--sticky-padding: 0`,
 };
 
 const markdownStickyMenuItems: MenuItem[] = [
 	(sticky: Sticky<MarkdownPlugin>) => ({
-		name:
-			"markdownStickyEditMode" +
-			(sticky.classList.contains("editMode") ? "Off" : "On"),
+		name: sticky.classList.contains("editMode")
+			? "markdownStickyEditModeOff"
+			: "markdownStickyEditModeOn",
 		icon: sticky.classList.contains("editMode")
 			? "lucide-sticky-note"
 			: "lucide-pencil",
@@ -165,9 +162,9 @@ const markdownStickyMenuItems: MenuItem[] = [
 		},
 	}),
 	(sticky: Sticky<MarkdownPlugin>) => ({
-		name:
-			"markdownStickySplitView" +
-			(sticky.classList.contains("splitView") ? "Off" : "On"),
+		name: sticky.classList.contains("splitView")
+			? "markdownStickySplitViewOff"
+			: "markdownStickySplitViewOn",
 		icon: sticky.classList.contains("splitView")
 			? "lucide-square-equal"
 			: "lucide-columns-2",
@@ -179,8 +176,11 @@ const markdownStickyMenuItems: MenuItem[] = [
 ];
 
 function enable(sticky: Sticky<MarkdownPlugin, MarkdownConfig>) {
-	const widgets = getTemplate("markdownStickyWidgets");
+	const widgets = getTemplateFragment("markdownStickyWidgets");
 	const editModeToggleLbl = widgets.$<HTMLLabelElement>(".editModeToggleLbl")!;
+	const splitViewToggleLbl = widgets.$<HTMLLabelElement>(
+		".splitViewToggleLbl",
+	)!;
 	const textarea = widgets.$("textarea")!;
 	const divider = widgets.$(".divider")!;
 	const preview = widgets.$<HTMLDivElement>(".preview")!;
@@ -228,10 +228,11 @@ function enable(sticky: Sticky<MarkdownPlugin, MarkdownConfig>) {
 		const fragment = document.createRange().createContextualFragment(html);
 		for (const el of fragment.querySelectorAll("pre code")) {
 			const language = el.className.slice(9);
-			el.innerHTML = Prism.highlight(
+			// Prism is load by cdn using script tag in index.html
+			window.Prism.plugins.autoloader.loadLanguages(language);
+			el.innerHTML = window.Prism.highlight(
 				(el as HTMLElement).innerText,
-				Prism.languages[language],
-				language,
+				window.Prism.languages[language],
 			);
 		}
 		preview.replaceChildren(fragment);
@@ -240,6 +241,7 @@ function enable(sticky: Sticky<MarkdownPlugin, MarkdownConfig>) {
 	sticky.dataset.contextMenu = "markdown basic";
 	sticky.replaceBody(textarea, divider, preview);
 	sticky.addControlWidget(editModeToggleLbl);
+	sticky.addControlWidget(splitViewToggleLbl);
 
 	handleTextAreaPaste(sticky, textarea);
 
@@ -267,6 +269,15 @@ function enable(sticky: Sticky<MarkdownPlugin, MarkdownConfig>) {
 
 		// Idk why we need setTimeout to let focus work...
 		setTimeout(() => textarea.focus(), 0);
+	});
+	splitViewToggleLbl.on("change", () => {
+		splitViewToggleLbl.$$("svg").forEach((el) => el.classList.toggle("none"));
+		if (!sticky.classList.contains("editMode")) {
+			editModeToggleLbl.click();
+		}
+		updatePreview();
+		sticky.classList.toggle("splitView");
+		textarea.focus();
 	});
 
 	// Split view drag to adjust size
@@ -307,6 +318,8 @@ function enable(sticky: Sticky<MarkdownPlugin, MarkdownConfig>) {
 			) {
 				leftPanel.style.width = "50%";
 				rightPanel.style.width = "50%";
+			} else {
+				leftPanel.style.width = "100%";
 			}
 		});
 	}
@@ -330,12 +343,7 @@ function enable(sticky: Sticky<MarkdownPlugin, MarkdownConfig>) {
 			editModeToggleLbl.click();
 		},
 		toggleSplitView() {
-			if (!sticky.classList.contains("editMode")) {
-				editModeToggleLbl.click();
-			}
-			updatePreview();
-			sticky.classList.toggle("splitView");
-			textarea.focus();
+			splitViewToggleLbl.click();
 		},
 		updatePreview,
 	};

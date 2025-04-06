@@ -155,11 +155,10 @@ function buildMenuItems(menuItems: MenuItem[], eventTarget: EventTarget) {
 			frag.appendChild($$$("hr"));
 		} else {
 			const menuItemDef = menuItem as MenuItemDefinition;
-			const template = getTemplate("menuItem");
-			const btn = template.$("button")!;
-			const iconL = template.$<HTMLElement>(".icon.left")!;
-			const span = template.$("span")!;
-			const iconR = template.$<HTMLElement>(".icon.right")!;
+			const btn = getTemplate<HTMLButtonElement>("menuItem");
+			const iconL = btn.$<HTMLElement>(".icon.left")!;
+			const span = btn.$("span")!;
+			const iconR = btn.$<HTMLElement>(".icon.right")!;
 			span.dataset.i18n = menuItemDef.name;
 
 			function setIconProperty(iconEl: HTMLElement, iconName: string) {

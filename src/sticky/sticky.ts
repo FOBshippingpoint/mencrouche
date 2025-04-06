@@ -8,7 +8,7 @@ import { markDirtyAndSaveDocument } from "../lifesaver";
 import { Zoomable, type Transform } from "./zoom";
 import { Resizable } from "./resize";
 import { Draggable, type Offset } from "./drag";
-import { $, $$$ } from "../utils/dollars";
+import { $, $$$, addCss } from "../utils/dollars";
 
 function onEventOrTimeout<K extends keyof HTMLElementEventMap>(
 	el: HTMLElement,
@@ -31,9 +31,10 @@ function onEventOrTimeout<K extends keyof HTMLElementEventMap>(
 	}, timeout);
 }
 
-export interface StickyPlugin {}
+export interface PluginStickyPoolMap {}
+export interface PluginSticky {}
 export interface StickyConfig<
-	C extends CustomStickyConfig = CustomStickyConfig,
+	C extends PluginStickyConfig = PluginStickyConfig,
 > {
 	id?: string;
 	type?: string;
@@ -44,8 +45,8 @@ export interface StickyConfig<
 	dataset?: Record<string, unknown>;
 }
 export interface Sticky<
-	T extends StickyPlugin = StickyPlugin,
-	C extends CustomStickyConfig = CustomStickyConfig,
+	T extends PluginSticky = PluginSticky,
+	C extends PluginStickyConfig = PluginStickyConfig,
 > extends HTMLDivElement {
 	type: string;
 	delete: () => void;
@@ -55,6 +56,7 @@ export interface Sticky<
 	toggleGhostMode: () => void;
 	togglePin: () => void;
 	addControlWidget: (element: HTMLElement) => void;
+	setTitle: (title: string) => void;
 	replaceBody: (...nodes: (Node | string)[]) => void;
 	save: () => StickyConfig<C>;
 	plugin: T;
@@ -140,9 +142,9 @@ class Workspace extends EventTarget {
 	zoomable: Zoomable;
 	draggable: Draggable;
 	buildSticky: ReturnType<typeof buildBuildSticky>;
-	private isCursorOutside: boolean = true;
+	cursorPoint: CursorPoint;
+	private _isCursorOutside: boolean = true;
 	private highestZIndex: number = 0;
-	private cursorPoint: CursorPoint;
 	/** An array for tracking the sticky order `[lowest layer, ..., topest layer]` */
 	private stickies: Sticky[] = [];
 	apocalypse: Apocalypse;
@@ -155,7 +157,7 @@ class Workspace extends EventTarget {
 		this.crateMom.className = "workspace";
 
 		this.crate = $$$("div");
-		this.crate.className = "crate debug";
+		this.crate.className = "crate";
 
 		this.crateMom.appendChild(this.crate);
 
@@ -187,8 +189,8 @@ class Workspace extends EventTarget {
 			this.cursorPoint[0] = (e.clientX - rect.x) / this.zoomable.scale;
 			this.cursorPoint[1] = (e.clientY - rect.y) / this.zoomable.scale;
 		});
-		this.crateMom.on("pointerenter", () => (this.isCursorOutside = false));
-		this.crateMom.on("pointerleave", () => (this.isCursorOutside = true));
+		this.crateMom.on("pointerenter", () => (this._isCursorOutside = false));
+		this.crateMom.on("pointerleave", () => (this._isCursorOutside = true));
 
 		// Build buildSticky function that has wrap with dynamic cursor point.
 		this.buildSticky = buildBuildSticky(this);
@@ -285,10 +287,10 @@ class Workspace extends EventTarget {
 	saveSticky(sticky: Sticky) {
 		const config = sticky.save();
 		config.pluginConfig = {};
-		const customSticky = getPluginSticky(sticky);
-		if (customSticky) {
-			config.type = customSticky.type;
-			Object.assign(config.pluginConfig, customSticky.onSave(sticky));
+		const pluginSticky = getPluginStickyModel(sticky);
+		if (pluginSticky) {
+			config.type = pluginSticky.type;
+			Object.assign(config.pluginConfig, pluginSticky.onSave(sticky));
 		}
 
 		// If pluginConfig has any content, return as is.
@@ -466,6 +468,15 @@ class Workspace extends EventTarget {
 		return this.stickies.at(-1);
 	}
 
+	getLatestStickyByType<K extends keyof PluginStickyPoolMap>(type: K) {
+		for (let i = this.stickies.length - 1; i >= 0; i--) {
+			if (this.stickies[i]?.type === type) {
+				return this.stickies[i] as PluginStickyPoolMap[K];
+			}
+		}
+		return null;
+	}
+
 	getAllStickies(): readonly Sticky[] {
 		return this.stickies;
 	}
@@ -477,9 +488,9 @@ class Workspace extends EventTarget {
 		}
 		this.stickies.at(-1)?.focus();
 
-		const custom = getPluginSticky(sticky);
-		if (custom) {
-			custom.onDelete(sticky);
+		const model = getPluginStickyModel(sticky);
+		if (model) {
+			model.onDelete(sticky);
 		}
 
 		onEventOrTimeout(sticky, () => sticky.remove(), "animationend");
@@ -543,22 +554,27 @@ class Workspace extends EventTarget {
 		}
 	}
 
-	getCursorPoint(): CursorPoint {
-		const isCursorNotReady = isNaN(this.cursorPoint[0]);
-		if (isCursorNotReady || this.isCursorOutside) {
-			// Return central point
-			const rect = this.crate.getBoundingClientRect();
-			const width = this.crateMom.offsetWidth / workspace.zoomable.scale;
-			const height = this.crateMom.offsetHeight / workspace.zoomable.scale;
-			return [
-				-rect.x / this.zoomable.scale + width / 2,
-				-rect.y / this.zoomable.scale + height / 2,
-			];
-		} else {
-			return this.cursorPoint;
-		}
+	isCursorOutside(): boolean {
+		return this._isCursorOutside;
+	}
+
+	getCenterPoint(): CursorPoint {
+		// Return central point
+		const rect = this.crate.getBoundingClientRect();
+		const width = this.crateMom.offsetWidth / workspace.zoomable.scale;
+		const height = this.crateMom.offsetHeight / workspace.zoomable.scale;
+		return [
+			-rect.x / this.zoomable.scale + width / 2,
+			-rect.y / this.zoomable.scale + height / 2,
+		];
 	}
 }
+
+let mouseTarget: HTMLElement;
+document.addEventListener(
+	"mouseover",
+	(e) => (mouseTarget = e.target as HTMLElement),
+);
 
 /**
  * NaN means that there is the cursor point is not initialized.
@@ -586,7 +602,12 @@ function buildBuildSticky(workspace: Workspace) {
 		sticky.id = id ?? crypto.randomUUID();
 
 		// x, y will be overwrite by rect (if defined)
-		const [x, y] = workspace.getCursorPoint();
+		let [x, y] = workspace.cursorPoint;
+		const isCursorNotReady = isNaN(x);
+		if (isCursorNotReady || mouseTarget?.closest("#navbar")) {
+			[x, y] = workspace.getCenterPoint();
+			y -= defaultWidth / 2;
+		}
 
 		if (rect) {
 			const [left, top, width, height] = rect;
@@ -730,6 +751,9 @@ function buildBuildSticky(workspace: Workspace) {
 						.appendChild(element);
 					return extendedSticky;
 				},
+				setTitle(title: string) {
+					sticky.$<HTMLDivElement>(".stickyTitle")!.textContent = title;
+				},
 				replaceBody(...nodes: (Node | string)[]) {
 					sticky.$(".stickyBody")!.replaceChildren(...nodes);
 				},
@@ -777,21 +801,18 @@ function buildBuildSticky(workspace: Workspace) {
 		const basicSticky = enableStickyFunctionality();
 		basicSticky.dataset.contextMenu = "basic";
 		if (type) {
-			const custom = pluginStickyPool.get(type);
-			if (custom) {
-				const options: CustomStickyOptions = custom.options ?? {};
-				options.noPadding ??= false;
-				basicSticky.classList.toggle("noPadding", options.noPadding);
+			const model = pluginStickyPool.get(type);
+			if (model) {
 				if (buildType === "create") {
-					custom.onCreate(basicSticky);
+					model.onCreate(basicSticky);
 					basicSticky.classList.add(type);
 					basicSticky.type = type;
 				} else if (buildType === "restore") {
-					custom.onRestore(basicSticky, pluginConfig);
+					model.onRestore(basicSticky, pluginConfig);
 				}
 			} else {
 				throw Error(
-					`Custom sticky type [ ${type} ] not found. Please register sticky type first via 'registerSticky'.`,
+					`Plugin sticky type [ ${type} ] not found. Please register sticky type first via 'registerSticky'.`,
 				);
 			}
 		}
@@ -805,7 +826,7 @@ export const workspace = new Workspace(apocalypse);
 
 const pluginStickyPool = new Map<
 	string,
-	CustomStickyComposer<StickyPlugin, CustomStickyConfig>
+	PluginStickyModel<PluginSticky, PluginStickyConfig>
 >();
 
 type Rectangle = [
@@ -841,56 +862,66 @@ function parseRect(rect: string): Rectangle {
 	}
 }
 
-export interface CustomStickyConfig extends Record<string, unknown> {}
-export interface CustomStickyComposer<
-	S extends StickyPlugin,
-	C extends CustomStickyConfig,
+export interface PluginStickyConfig extends Record<string, unknown> {}
+export interface PluginStickyModel<
+	S extends PluginSticky,
+	C extends PluginStickyConfig,
 > {
 	type: string;
+	css?: string;
 	onCreate(sticky: Sticky<S, C>): void;
 	onSave(sticky: Sticky<S, C>): C | void;
 	onDelete(sticky: Sticky<S, C>): void;
 	onRestore(sticky: Sticky<S, C>, config?: C): void;
-	options?: CustomStickyOptions;
 }
 
-interface CustomStickyOptions {
-	noPadding?: boolean;
-}
-
+const sheetRegistry = new Map<string, CSSStyleSheet>();
 export function registerSticky<
-	S extends StickyPlugin,
-	C extends CustomStickyConfig,
->(customSticky: CustomStickyComposer<S, C>) {
-	if (pluginStickyPool.has(customSticky.type)) {
+	S extends PluginSticky,
+	C extends PluginStickyConfig,
+>(model: PluginStickyModel<S, C>) {
+	if (pluginStickyPool.has(model.type)) {
 		console.warn(
-			`Overwriting existing custom sticky '${customSticky.type}'. You should only do this while development.`,
+			`Overwriting existing plugin sticky [ ${model.type} ]. You should only do this while development.`,
 		);
 	}
 
-	pluginStickyPool.set(customSticky.type, customSticky);
+	if (model.css) {
+		let css: string;
+		const validatorEl = document.createElement("i");
+		validatorEl.style.cssText = model.css;
+		if (validatorEl.style.cssText !== "") {
+			// Inline css
+			// Accepts "padding: 0" or "padding: 0; height: 10px", etc.
+			css = `.${model.type}{${validatorEl.style.cssText}}`;
+		} else {
+			// Non-inline css
+			// Trust user's css is valid
+			css = `.${model.type}{${model.css}}`;
+		}
+		if (sheetRegistry.has(model.type)) {
+			// Already exists, replace it.
+			sheetRegistry.get(model.type)?.replaceSync(css);
+		} else {
+			// Does not exists, add new one.
+			sheetRegistry.set(model.type, addCss(css));
+		}
+	}
+
+	pluginStickyPool.set(model.type, model);
 }
 
-export function getPluginSticky(sticky: HTMLDivElement | Sticky) {
+export function getPluginStickyModel(sticky: HTMLDivElement | Sticky) {
 	for (const className of sticky.classList.values()) {
-		const custom = pluginStickyPool.get(className);
-		if (custom) {
-			return custom;
+		const model = pluginStickyPool.get(className);
+		if (model) {
+			return model;
 		}
 	}
 }
 
 export function getPluginStickyTypes() {
 	return [...pluginStickyPool.values()].map(({ type }) => type);
-}
-
-export function getWidgets(sticky: Sticky, widgetTemplateId: string) {
-	for (const type of getPluginStickyTypes()) {
-		if (sticky.classList.contains(type)) {
-			return sticky;
-		}
-	}
-	return getTemplate(widgetTemplateId)!;
 }
 
 addTodoBeforeSave(() => {

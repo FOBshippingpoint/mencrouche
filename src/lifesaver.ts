@@ -32,7 +32,6 @@ if (process.env.CLOUD_SYNC_URL && storage.get("url") === null) {
 	storage.set("url", process.env.CLOUD_SYNC_URL);
 }
 
-// Config management
 const sourcer = {
 	async getRemoteConfig(): Promise<RemoteConfig | null> {
 		if (!isCloudSyncEnabled() || !storage.get("url")) {
@@ -107,10 +106,24 @@ export async function loadDocument() {
 	}
 	// WIP
 	await loadFromSources(sources);
-	return;
+}
+
+async function getDefaultSources() {
+	const sources: Source[] = [];
+	return await (async () => {
+		if (sources.length === 0) {
+			sources.push(new IndexedDbSource());
+			const localConfig = await sourcer.getRemoteConfig();
+			if (localConfig) {
+				sources.push(new RemoteSource(localConfig));
+			}
+		}
+		return sources;
+	})();
 }
 
 export async function saveDocument() {
+	const sources = await getDefaultSources();
 	await saveToSources(...sources);
 	switchDocumentStatus("saved");
 }

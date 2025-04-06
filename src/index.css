@@ -14,6 +14,24 @@
 
 :root {
 	--page-background: unset;
+	--sticky-padding: var(--size-2);
+	--dock-edge-padding: var(--size-4);
+	--second: 1s;
+	--minute: calc(var(--second) * 60);
+	--hour: calc(var(--minute) * 60);
+	--screen-size: "large";
+}
+
+@media (max-width: 768px) {
+	:root {
+		--screen-size: "medium";
+	}
+}
+
+@media (max-width: 576px) {
+	:root {
+		--screen-size: "small";
+	}
 }
 
 [data-theme="light"],
@@ -395,7 +413,7 @@ h6 {
 	.resizeHandle {
 		pointer-events: none;
 	}
-	.stickyControls label {
+	.stickyControls {
 		opacity: 0.5;
 	}
 }
@@ -446,7 +464,7 @@ h6 {
 
 .stickyBody {
 	flex-grow: 1;
-	padding: var(--size-2);
+	padding: var(--sticky-padding);
 
 	.preview {
 		height: 100%;
@@ -455,16 +473,13 @@ h6 {
 
 		pre {
 			max-inline-size: unset;
+			overflow: auto;
 
 			code {
 				border-radius: var(--radius-conditional-2);
 			}
 		}
 	}
-}
-
-.sticky.noPadding .stickyBody {
-	padding: 0;
 }
 
 .markdown.editMode.splitView .stickyBody {
@@ -559,6 +574,14 @@ h6 {
 	height: 100%;
 	position: relative;
 	overflow: hidden;
+}
+#viewport.patternBg {
+	background-image: radial-gradient(
+		color-mix(in oklab, white 10%, transparent) 1px,
+		transparent 0
+	);
+	background-size: 10px 10px;
+	background-repeat: repeat;
 }
 
 /* @commandPalette start */
@@ -1013,6 +1036,70 @@ hr {
 .dock {
 	position: absolute;
 }
+/* Base styles for all dockable elements */
+.dock {
+	position: absolute;
+	/* Default padding value that can be overridden */
+}
+
+.dock.center {
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.dock.top {
+	top: var(--dock-edge-padding);
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+.dock.right {
+	right: var(--dock-edge-padding);
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.dock.bottom {
+	bottom: var(--dock-edge-padding);
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+.dock.left {
+	left: var(--dock-edge-padding);
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.dock.topLeft {
+	top: var(--dock-edge-padding);
+	left: var(--dock-edge-padding);
+}
+
+.dock.topRight {
+	top: var(--dock-edge-padding);
+	right: var(--dock-edge-padding);
+}
+
+.dock.bottomLeft {
+	bottom: var(--dock-edge-padding);
+	left: var(--dock-edge-padding);
+}
+
+.dock.bottomRight {
+	bottom: var(--dock-edge-padding);
+	right: var(--dock-edge-padding);
+}
+
+.dock.growHorizontal {
+	width: calc(100% - 2 * var(--dock-edge-padding));
+}
+
+.dock.growVertical {
+	height: calc(100% - 2 * var(--dock-edge-padding));
+}
+
 .alwaysOnTop {
 	z-index: var(--layer-important);
 }
@@ -1350,15 +1437,21 @@ dialog {
 	}
 }
 
-.clock {
-	text-align: right;
-	font-size: var(--font-size-0);
-	.time {
-		color: var(--text-1);
-		display: block;
-	}
-	.date {
-		color: var(--text-2);
+.clockDock {
+	display: flex;
+	gap: var(--size-2);
+	.timeDisplay {
+		text-align: right;
+		align-self: center;
+		.time {
+			font-size: var(--font-size-3);
+			color: var(--text-1);
+			display: block;
+		}
+		.date {
+			font-size: var(--font-size-0);
+			color: var(--text-2);
+		}
 	}
 }
 
@@ -1412,7 +1505,6 @@ dialog {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		margin-bottom: 3px;
 		padding: 0.2em;
 		position: relative;
 	}
@@ -1440,7 +1532,6 @@ dialog {
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		font-family: system-ui, -apple-system, sans-serif;
 	}
 
 	.letter.singleChar {
@@ -1459,7 +1550,7 @@ dialog {
 pre:has(code) {
 	background: #2d2d2d;
 	border-radius: var(--radius-conditional-2);
-	padding-block: var(--size-2);
+	padding: var(--size-2);
 }
 
 .debug::before {
@@ -1476,4 +1567,78 @@ pre:has(code) {
 	background-size: 20px 20px;
 	background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
 	opacity: 0.3;
+}
+
+.face {
+	flex-grow: 1;
+	width: var(--size-10);
+	height: var(--size-10);
+	border-radius: 50%;
+	background-color: var(--well-1);
+	margin: 0 auto;
+	position: relative;
+	transform: rotate(180deg);
+
+	/* Clock hands */
+	.second {
+		--width: 2%;
+		--height: 48%;
+		--color: var(--surface-1);
+	}
+
+	.minute {
+		--width: 2%;
+		--height: 45%;
+		--color: var(--surface-2);
+	}
+
+	.hour {
+		--width: 4%;
+		--height: 30%;
+		--color: var(--surface-3);
+	}
+
+	.hand {
+		position: absolute;
+		top: 50%;
+		left: calc(50% - var(--width) / 2);
+		width: var(--width);
+		height: var(--height);
+		background-color: var(--color);
+		transform-origin: center 0;
+		border-radius: calc(var(--width) / 2);
+	}
+
+	/* Center dot */
+	.centerDot {
+		position: absolute;
+		width: 5%;
+		height: 5%;
+		background-color: var(--surface-1);
+		border-radius: 50%;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+	}
+
+	.second.hand {
+		animation: rotate steps(60) var(--minute) infinite;
+	}
+
+	.minute.hand {
+		animation: rotate linear var(--hour) infinite;
+	}
+
+	.hour.hand {
+		animation: rotate linear calc(var(--hour) * 12) infinite;
+	}
+}
+
+@keyframes rotate {
+	from {
+		transform: rotate(0);
+	}
+	to {
+		transform: rotate(1turn);
+	}
 }

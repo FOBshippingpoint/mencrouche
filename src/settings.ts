@@ -358,6 +358,11 @@ async function changeBackgroundImage(url: string | undefined) {
 		"--page-background",
 		url ? `url(${url}) no-repeat center center fixed` : "unset",
 	);
+	if (url) {
+		$("#viewport")!.classList.remove("patternBg");
+	} else {
+		$("#viewport")!.classList.add("patternBg");
+	}
 }
 
 // Initialize language dropdown.
@@ -564,7 +569,9 @@ function setCssProperty(name: string, value: string | null | undefined) {
 const customCssStyleSheet = new CSSStyleSheet();
 document.adoptedStyleSheets.push(customCssStyleSheet);
 dataset.on<string>("customCss", (_, css) => {
-	customCssStyleSheet.replaceSync(css);
+	if (typeof css === "string") {
+		customCssStyleSheet.replaceSync(css);
+	}
 });
 customCssTextArea.on("input", () => {
 	changesManager.setChange("customCss", () => {

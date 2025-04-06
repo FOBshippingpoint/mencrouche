@@ -1,17 +1,23 @@
 import {
-	type CustomStickyComposer,
-	type CustomStickyConfig,
+	type PluginStickyModel,
+	type PluginStickyConfig,
 	type Sticky,
-	type StickyPlugin,
+	type PluginSticky,
 	registerSticky,
 } from "../sticky/sticky";
 import { n81i } from "../utils/n81i";
 import { $ } from "../utils/dollars";
 import { formToObject } from "../utils/formToObject";
-import { getTemplate } from "../utils/getTemplate";
+import { getTemplateFragment } from "../utils/getTemplate";
 
-interface SpotifyPlugin extends StickyPlugin {}
-interface SpotifyConfig extends CustomStickyConfig {
+declare module "../sticky/sticky" {
+	interface PluginStickyPoolMap {
+		spotify: Sticky<SpotifyPlugin, SpotifyConfig>;
+	}
+}
+
+interface SpotifyPlugin extends PluginSticky {}
+interface SpotifyConfig extends PluginStickyConfig {
 	iframeHeight: string;
 	iframeSrc: string;
 }
@@ -85,7 +91,7 @@ form.on("submit", (e) => {
 	dialog.close();
 });
 
-const spotifySticky: CustomStickyComposer<SpotifyPlugin, SpotifyConfig> = {
+const spotifySticky: PluginStickyModel<SpotifyPlugin, SpotifyConfig> = {
 	type: "spotify",
 	onCreate(sticky: Sticky<SpotifyPlugin>) {
 		sticky.classList.add("none");
@@ -130,13 +136,11 @@ const spotifySticky: CustomStickyComposer<SpotifyPlugin, SpotifyConfig> = {
 			iframe.height = config.iframeHeight;
 		}
 	},
-	options: {
-		noPadding: true,
-	},
+	css: `--sticky-padding: 0`,
 };
 
 function enable(sticky: Sticky) {
-	const widgets = getTemplate("spotifyStickyWidgets") as HTMLElement;
+	const widgets = getTemplateFragment("spotifyStickyWidgets");
 	const editLinkBtn = widgets.$<HTMLButtonElement>(".editLinkBtn")!;
 	const ghostBtn = widgets.$<HTMLButtonElement>(".ghostBtn")!;
 	const iframe = widgets.$<HTMLIFrameElement>("iframe")!;

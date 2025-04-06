@@ -3,6 +3,8 @@ import { $ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
 import { apocalypse } from "./apocalypse";
 import { shortcutManager } from "./shortcutManager";
+import { getTemplate } from "./utils/getTemplate";
+import { Fuzzy } from "./utils/fuzzy";
 
 export interface Command {
 	name: string;
@@ -13,7 +15,6 @@ export interface Command {
 const commandPalette = $<HTMLDivElement>("#commandPalette")!;
 const searchInput = $<HTMLInputElement>("#searchInput")!;
 const commandList = $<HTMLUListElement>("#commandList")!;
-const commandListItemTemplate = $<HTMLTemplateElement>("#commandListItem")!;
 
 const commands: Command[] = [];
 
@@ -38,7 +39,7 @@ function toggleCommandPalette() {
 
 function updateFilteredCommands() {
 	keyboardSelectedCommandName = null;
-	commandList.innerHTML = "";
+	commandList.replaceChildren();
 
 	const query = searchInput.value.toLowerCase();
 
@@ -46,24 +47,21 @@ function updateFilteredCommands() {
 	if (query === "") {
 		filteredCommands = commands;
 	} else {
-		filteredCommands = commands.filter(({ name }) =>
-			// TODO: add multi language search
-			name
-				.toLowerCase()
-				.includes(query),
+		const fuzzy = new Fuzzy(
+			commands.map((command) => ({ text: command.name, command })),
 		);
+		filteredCommands = fuzzy.search(query).map((result) => result.item.command);
 	}
 
 	const frag = document.createDocumentFragment();
 	for (const { name } of filteredCommands) {
-		const li =
-			commandListItemTemplate.content.cloneNode(true).firstElementChild;
+		const li = getTemplate<HTMLLIElement>("commandListItem")!;
 		li.dataset.commandName = name;
-		li.$("span").textContent = n81i.t(name);
+		li.$("span")!.textContent = n81i.t(name);
 		if (shortcutManager.has(name)) {
-			li.$("kbd").textContent = shortcutManager.getKeySequence(name);
+			li.$("kbd")!.textContent = shortcutManager.getKeySequence(name);
 		} else {
-			li.$("kbd").remove();
+			li.$("kbd")!.remove();
 		}
 		li.on("click", () => {
 			closeCommandPalette();

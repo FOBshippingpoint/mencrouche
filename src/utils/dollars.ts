@@ -137,4 +137,17 @@ function h<E extends Element = Element>(html: string): E | DocumentFragment {
 	}
 }
 
-export { $, $$, $$$, h };
+/**
+ * Add CSS stylesheet to current document.
+ *
+ * @param {string} css - CSS stylesheet to adopt.
+ * @returns {CSSStyleSheet} stylesheet - injected CSS stylesheet.
+ */
+function addCss(css: string): CSSStyleSheet {
+	const extraSheet = new CSSStyleSheet();
+	extraSheet.replaceSync(css);
+	document.adoptedStyleSheets = [...document.adoptedStyleSheets, extraSheet];
+	return extraSheet;
+}
+
+export { $, $$, $$$, h, addCss };

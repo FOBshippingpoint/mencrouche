@@ -32,6 +32,8 @@ import { executeCommand, registerCommand, type Command } from "./commands";
 import { initNoteSticky } from "./stickyPlugins/note";
 import { initClockDock } from "./dockPlugins/clock";
 import { initBookmarkDock } from "./dockPlugins/bookmark";
+import { isSmallScreen } from "./utils/screenSize";
+import { createDock, getAllDocks } from "./dock/dock";
 
 const urls = { en, zh_TW };
 
@@ -130,7 +132,7 @@ const defaultCommands: Command[] = [
 	{
 		name: "toggleSplitView",
 		execute() {
-			workspace.getLatestSticky()?.plugin.toggleSplitView?.();
+			workspace.getLatestStickyByType("markdown")?.plugin.toggleSplitView();
 		},
 		defaultShortcut: "A-v",
 	},
@@ -144,7 +146,7 @@ const defaultCommands: Command[] = [
 	{
 		name: "toggleStickyEditMode",
 		execute() {
-			workspace.getLatestSticky()?.plugin.toggleEditMode?.();
+			workspace.getLatestStickyByType("markdown")?.plugin.toggleEditMode();
 		},
 		defaultShortcut: "A-e",
 	},
@@ -223,6 +225,16 @@ n81i.init({
 n81i.translatePage();
 
 async function main() {
+	// Register custom stickies.
+	initMarkdownSticky();
+	initSpotifySticky();
+	initYouTubeSticky();
+	initNoteSticky();
+
+	// Register custom docks.
+	initClockDock();
+	initBookmarkDock();
+
 	try {
 		const origin = await loadDocument();
 		allowScriptExecutionIfNotYetSet();
@@ -282,15 +294,16 @@ async function main() {
 	workspace.crateMom.dataset.contextMenu = "main";
 	registerContextMenu("main", menuItems);
 
-	// Register custom stickies.
-	initMarkdownSticky();
-	initSpotifySticky();
-	initYouTubeSticky();
-	initNoteSticky();
-
-	// Create docks.
-	initClockDock();
-	initBookmarkDock();
+	if (!$(".dock.bookmarker")) {
+		if (isSmallScreen()) {
+			createDock({ type: "bookmarker", placement: "bottom", grow: true });
+		} else {
+			createDock({ type: "bookmarker", placement: "right" });
+		}
+	}
+	if (!$(".dock.clock")) {
+		createDock({ type: "clock", placement: "bottomLeft" });
+	}
 }
 
 addPublicApi();
