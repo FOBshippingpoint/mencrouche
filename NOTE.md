@@ -59,10 +59,15 @@ just
 - [x] Redesign dock api.
 - [x] Add setting option for disabling script execution.
 - [ ] Add ability to configure dock appearance (hide/show, placement, grow).
+- [ ] (WIPP) add opengraph metadata.
+    - https://developers.facebook.com/tools/debug/?q=https%3A%2F%2Ftweakpane.github.io%2Fdocs%2Fix
+    - https://poker.line.naver.jp/
+    - https://www.freecodecamp.org/news/what-is-open-graph-and-how-can-i-use-it-for-my-website/
+    - https://ogp.me/
 
 ## BUGS
 
-- [ ] Languages dropdown showing nothing.
+- [x] Languages dropdown showing nothing.
 - [x] Using navbar add sticky, the sticky position should at center instead of top-right.
 - [x] Copy sticky is not copying position.
 - [x] When drag maximized sticky, header are not centered at cursor.
