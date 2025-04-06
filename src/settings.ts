@@ -317,11 +317,9 @@ function openSettingsPage() {
 	// Backup attributes.
 	const uiOpacity = dataset.getOrSetItem("uiOpacity", 1);
 	const paletteHue = dataset.getItem("paletteHue") as string;
-	console.log(paletteHue);
 	const backgroundImageUrl = dataset.getItem("backgroundImageUrl");
 	const locale = dataset.getItem("locale") as string;
 	changesManager.onRevert = () => {
-		console.log("on revert");
 		dataset.setItem("uiOpacity", uiOpacity);
 		dataset.setItem("paletteHue", paletteHue);
 		dataset.setItem("backgroundImageUrl", backgroundImageUrl);
