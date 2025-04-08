@@ -32,11 +32,11 @@
 
 ![2024-09-03_02-26](https://github.com/user-attachments/assets/a7e7d3b3-3a51-46e6-99c6-62773bcd5ea7)
 
-**Sticky** is the core feature of mencrouche, allowing you to drag, resize, pin, or hide the border of stickies. You can also extend sticky functionality to fit your needs, such as creating Markdown sticky, YouTube sticky, or Spotify sticky.
+**Sticky** is the core feature of mencrouche, allowing you to drag, resize, pin, or hide the border of stickies. You can also extend sticky functionality to fit your needs, such as creating RSS feed sticky, weather sticky, etc. 
 
 Mencrouche provides rich API for extensions:
 - [Sticky](#create-the-clock-sticky)
-- [Selector Shorthands](#dollars-api---)
+- [Selector Shorthands](#dollars-api----h)
 - [Internationalization](#internationalization-api-n81i)
 - [Undo/Repo](#undoredo-api-apocalypse)
 - [Context Menu](#context-menu-api)
@@ -67,13 +67,13 @@ After executing the code, you should see a sticky appended to the workspace:
 
 ![動畫](https://github.com/user-attachments/assets/7746b05e-caac-4572-88ba-3187183f0201)
 
-The `on` functions are sticky life cycles:
+Functions with `on` prefix are sticky life cycle hooks:
 
 ![圖片](https://github.com/user-attachments/assets/0211c6c0-6edc-490c-b24d-dd0735d90246)
 
 #### Improving the Clock Sticky
 
-The previous code snippet does not clean up the `setInterval` callback. If you close the sticky, the callback continues to run, leading to unnecessary calculations. Below is an improved version (remember to refresh the page before pasting):
+The previous code snippet does not clean up the `setInterval` callback. If you close the sticky, the callback continues to run, leading to unnecessary calculations. Below is an improved version:
 
 ```javascript
 mc.registerSticky({
@@ -97,7 +97,7 @@ mc.registerSticky({
 mc.workspace.create({ type: "clock" });
 ```
 
-In this version, "update time" is printed every 100ms. After closing the sticky, the message will no longer appear.
+In this version, "update time" is printed every 100ms. After closing the sticky, the `onDelete` will call, to clear interval callback.
 
 #### Adding Color to the Clock
 
@@ -149,7 +149,7 @@ The new version refactored the DOM elements initialization, and established inte
 
 ## Dollars API ($ $$ $$$ h)
 
-In my opinion, the JQuery API is more intuitive than the native DOM API, but we didn’t want to include JQuery due to its package size. So, we created our own lightweight JQuery-like tool/alias for Mencrouche, called *Dollars*.
+Dollars is a JQuery-like API, or more accurately, shorthands for most-used functions.
 
 ### Summary
 
@@ -196,6 +196,7 @@ In my opinion, the JQuery API is more intuitive than the native DOM API, but we 
     $(pureDomElement, ".comment").val("Start typing");
 
     // Dollars
+    // There is no need to wrap element with $() because $ and $$ are prototype functions.
     pureDomElement.$(".comment").value = "Start typing";
     pureDomElement.$$(".comment").forEach((el) => el.value = "Start typing");
     ```
@@ -289,6 +290,11 @@ mc.n81i.addTranslations({
 
 await mc.n81i.changeLanguage("zh_TW");
 console.log(mc.n81i.t("hello")); // prints "你好"
+
+// Use `translateLater` when n81i is not ready
+mc.n81i.translateLater("hello", (msg) => {
+  console.log(msg); // "你好"
+})
 ```
 
 #### Translating HTML Elements
@@ -307,7 +313,7 @@ mc.n81i.translateElement(input);
 
 ## Undo/Redo API (apocalypse)
 
-The apocalypse API allowing users to revert or reapply changes. Users can trigger undo/redo actions via `Ctrl + Z` and `Ctrl + Y`.
+Apocalypse API allowing users to revert or reapply changes. Users can trigger undo/redo actions via `Ctrl + Z` and `Ctrl + Y`.
 
 ```javascript
 let bookmark;
@@ -330,16 +336,15 @@ You can use `mc.registerContextMenu` to create custom context menus associated w
 
 ```javascript
 // Assign the data-context-menu attribute for DOM element as context menu target.
-youtubeSticky.dataset.contextMenu = "youtube";
+document.querySelectorAll(".youtubeSticky")
+        .forEach(s => s.dataset.contextMenu = "youtube");
+        // The dataset property will map to HTML data-context-menu
 mc.registerContextMenu("youtube", [
   {
     name: "pause_video",
     icon: "lucide-youtube",
     execute(target) {
-      // In this example, target === youtubeSticky.
-      // You may have multiple youtubeStickies. In that case, the target 
-      // indicates the sticky, from which the user triggers the context menu.
-
+      // target = the youtube sticky that user right-click on
       target.pauseVideo();
     },
   },
@@ -352,8 +357,8 @@ Use `mc.registerCommand` to register custom commands within Mencrouche. The comm
 
 ```javascript
 mc.registerCommand({
-    name: "say_hi", // This string will be the key of `n81i`,
-                    // you should add translations for this key.
+    name: "sayHi", // This string will be the key of `n81i`,
+                   // you should add translations for this key.
     execute() {
       alert("Hi");
     },
