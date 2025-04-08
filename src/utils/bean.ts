@@ -1,47 +1,60 @@
-import { h } from "./dollars";
-
 /**
- * Serializes the `data-*` attributes of an HTML or SVG element into a plain object.
+ * Serializes the attributes of an HTML or SVG element into an object with a nested `dataset` field.
  *
- * @param element - The HTML or SVG element from which to extract `data-*` attributes.
- * @returns A plain object where the keys correspond to the `data-*` attributes (in camelCase)
- *          and the values are their string values from the element.
- *
- * @example
- * const div = document.createElement('div');
- * div.dataset.userId = '123';
- * div.dataset.userName = 'Alice';
- *
- * const bean = bakeBean(div);
- * console.log(bean); // { userId: "123", userName: "Alice" }
+ * @param element - The element from which to extract attributes.
+ * @param extraAttrs - Optional list of regular attributes to include.
+ * @returns An object with `dataset` for data-* attributes, and other specified attributes at top level.
  */
-export function bakeBean(element: HTMLOrSVGElement): Record<string, string> {
-	return { ...element.dataset } as Record<string, string>;
+export function bakeBean(
+	element: HTMLElement,
+	...extraAttrs: string[]
+): Record<string, unknown> {
+	const result: Record<string, unknown> = {
+		dataset: { ...element.dataset },
+	};
+
+	for (const attr of extraAttrs) {
+		if (element.hasAttribute(attr)) {
+			result[attr] = element.getAttribute(attr);
+		}
+	}
+
+	return result;
 }
 
 /**
- * Populates the `data-*` attributes of an HTML or SVG element using a provided object.
+ * Populates an element’s attributes from a bean object with a nested `dataset` field.
  *
- * @param element - The HTML or SVG element to which `data-*` attributes will be added.
- * @param bean - A plain object containing key-value pairs to set as `data-*` attributes.
- *               Keys will be converted to `data-*` attributes in camelCase, and values
- *               will be stringified.
- *
- * @example
- * const div = document.createElement('div');
- * const bean = { userId: 123, userName: "Alice" };
- *
- * soakBean(div, bean);
- * console.log(div.dataset.userId); // "123"
- * console.log(div.dataset.userName); // "Alice"
+ * @param element - The element to apply attributes to.
+ * @param bean - The object to apply. `dataset` keys go to data-* attributes; others are regular.
  */
 export function soakBean(
-	element: HTMLOrSVGElement,
+	element: HTMLElement,
 	bean: Record<string, unknown>,
 ): void {
-	Object.entries(bean).forEach(([key, value]) => {
-		if (value !== null && value !== undefined) {
-			element.dataset[key] = value.toString();
+	const { dataset = {}, ...attrs } = bean;
+
+	for (const [key, value] of Object.entries(attrs)) {
+		if (value === null || value === undefined) continue;
+
+		if (key === "class" || key === "className") {
+			element.className = value.toString();
+		} else if (typeof value === "boolean") {
+			if (value) {
+				element.setAttribute(key, "");
+			} else {
+				element.removeAttribute(key);
+			}
+		} else {
+			element.setAttribute(key, value.toString());
 		}
-	});
+	}
+
+	if (typeof dataset === "object" && dataset !== null) {
+		for (const [key, value] of Object.entries(dataset)) {
+			if (value !== null && value !== undefined) {
+				element.dataset[key] = value.toString();
+			}
+		}
+	}
 }

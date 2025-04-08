@@ -1,9 +1,17 @@
 import { getTemplate } from "../utils/getTemplate";
 import { dataset, addTodoAfterLoad, addTodoBeforeSave } from "../dataWizard";
 import { $, addCss } from "../utils/dollars";
-import { Pane } from "tweakpane";
+import { registerContextMenu } from "../contextMenu";
+import { bakeBean, soakBean } from "../utils/bean";
 
 const dockSlot = $<HTMLSlotElement>("#dockSlot")!;
+const dockAppearanceDialog = $<HTMLDialogElement>("#dockAppearanceDialog")!;
+const alwaysOnTopChk = dockAppearanceDialog.$<HTMLInputElement>(
+	'[name="alwaysOnTop"]',
+)!;
+const placementBtns = dockAppearanceDialog.$$<HTMLButtonElement>(
+	".dockPlacementSelector button",
+);
 
 export interface PluginDockConfig extends Record<string, unknown> {}
 
@@ -21,8 +29,8 @@ export interface Dock<
 	C extends PluginDockConfig = PluginDockConfig,
 > extends HTMLDivElement {
 	type: string;
-	replaceBody(...nodes: (Node | string)[]): void;
-	save(): DockConfig<C>;
+	replaceBody: (...nodes: (Node | string)[]) => void;
+	save: () => DockConfig<C>;
 	plugin: P;
 	placeAt(placement: Placement, grow: boolean): void;
 }
@@ -154,17 +162,74 @@ function placeElement(
 	grow: boolean,
 ) {
 	element.classList.add("dock");
-	element.classList.add(placement);
 	element.dataset.placement = placement;
 	element.dataset.grow = grow ? "true" : "false";
 
 	if (grow) {
 		const isVertical = "left right".includes(placement);
-		element.classList.add(isVertical ? "growVertical" : "growHorizontal");
+		element.dataset.grow = isVertical ? "vertical" : "horizontal";
 		if ("topLeft topRight bottomLeft bottomRight".includes(placement)) {
-			element.classList.add("growHorizontal");
+			element.dataset.grow = "horizontal";
 		}
+	} else {
+		element.dataset.grow = "none";
 	}
+}
+
+let currentDock: Dock;
+let backup: Record<string, unknown>;
+let shouldRestore = true;
+dockAppearanceDialog.$('[data-i18n="cancelSubmitBtn"]')!.on("click", () => {
+	dockAppearanceDialog.close();
+});
+dockAppearanceDialog.$('[data-i18n="submitBtn"]')!.on("click", () => {
+	shouldRestore = false; // keep changes
+	dockAppearanceDialog.close();
+});
+dockAppearanceDialog.on("close", () => {
+	if (shouldRestore) {
+		soakBean(currentDock, backup);
+	}
+});
+registerContextMenu("dock", [
+	{
+		name: "editDockAppearanceMenuItem",
+		icon: "lucide-paintbrush",
+		execute(dock: Dock) {
+			currentDock = dock;
+			backup = bakeBean(dock, "class");
+			console.log("backup", backup);
+			placementBtns.forEach((btn) => (btn.className = ""));
+			dockAppearanceDialog.$(
+				`button[data-placement="${currentDock.dataset.placement}"]`,
+			)!.className = "active";
+			alwaysOnTopChk.checked = currentDock.classList.contains("alwaysOnTop");
+			dockAppearanceDialog.showModal();
+			shouldRestore = true;
+		},
+	},
+]);
+
+alwaysOnTopChk.on("change", () => {
+	currentDock.classList.toggle("alwaysOnTop");
+});
+
+for (const btn of placementBtns) {
+	btn.on("click", () => {
+		placementBtns.forEach((other) => {
+			if (other !== btn) {
+				other.className = "";
+			}
+		});
+
+		const placement = btn.dataset.placement as Placement;
+		if (btn.classList.contains("active")) {
+			btn.classList.toggle("grow");
+		}
+		btn.classList.add("active");
+		const grow = btn.classList.contains("grow");
+		placeElement(currentDock, placement, grow);
+	});
 }
 
 addTodoBeforeSave(() => {

@@ -1,6 +1,9 @@
 import { $, $$$ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
 
+// this implementation is using same dialog element
+// so it might have trouble when open new dialog on a dialog
+
 const dialog = $<HTMLDialogElement>("#generalDialog")!;
 const dialogTitle = dialog.$<HTMLHeadingElement>(".dialogTitle")!;
 const dialogMessage = dialog.$<HTMLParagraphElement>(".dialogMessage")!;

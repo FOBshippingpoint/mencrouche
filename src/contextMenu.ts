@@ -115,6 +115,13 @@ type MenuItemBuilder = (
 	eventTarget: EventTarget,
 ) => MenuItemDefinition | null | "hr";
 
+/**
+ * @interface MenuItemDefinition
+ * @property {string} name - The display name of the menu item, used as a n18i key.
+ * @property {string} [icon] - Optional icon name for the menu item (uses iconify format). You can go to https://icon-sets.iconify.design and copy "icon name" you like. (e.g., "ic:baseline-account-circle")
+ * @property {Function} [execute] - Optional callback function executed when the menu item is clicked.
+ * @property {MenuItem[]} [subItems] - Optional array of sub-menu items for nested menus.
+ */
 interface MenuItemDefinition {
 	name: string;
 	icon?: string;
@@ -125,14 +132,46 @@ interface MenuItemDefinition {
 export type MenuItem = MenuItemDefinition | MenuItemBuilder | "hr";
 
 /**
- * Register a context menu (right-click menu) for element with
- * data-contextmenu="{name}" attribute. You can register multiple context menus with whitespace seperater.
+ * Registers a context menu (right-click menu) for elements with the specified data attribute.
  *
+ * @param {string} name - The name identifier for the context menu. Elements with
+ * `data-contextmenu="{name}"` attribute will trigger this menu on right-click.
+ * Multiple context menus can be registered for the same element using whitespace separator.
+ *
+ * @param {MenuItem[]} menuItems - Array of menu items to display in the context menu.
+ * Menu items can be:
+ * - `MenuItemDefinition` objects (with name, icon, execute function, and/or subItems)
+ * - `MenuItemBuilder` functions that return a MenuItemDefinition or null (nothing)
+ * - "hr" string to insert a horizontal rule separator
+ *
+ * @example
  * ```typescript
+ * // Register a simple context menu
+ * registerContextMenu('imageMenu', [
+ *   { name: 'view', icon: 'lucide-eye', execute: (target) => viewImage(target) },
+ *   'hr', // Horizontal rule (<hr/>)
+ *   { name: 'copy', icon: 'lucide-copy', execute: (target) => copyImage(target) }
+ * ]);
  *
+ * // With a menu builder function for conditional items
+ * registerContextMenu('noteMenu', [
+ *   { name: 'edit', execute: (target) => editNote(target) },
+ *   (target) => {
+ *     // Only show delete option for non-protected notes
+ *     const note = target.closest('.note');
+ *     return note?.dataset.protected !== 'true'
+ *       ? { name: 'delete', execute: () => deleteNote(note) }
+ *       : null;
+ *   }
+ * ]);
  * ```
  */
 export function registerContextMenu(name: string, menuItems: MenuItem[]) {
+	if (registry.has(name)) {
+		console.warn(
+			`Overwriting existing context menu [ ${name} ]. You should only do this while development.`,
+		);
+	}
 	registry.set(name, menuItems);
 }
 

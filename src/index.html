@@ -1,1118 +1,1095 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta
-      name="generator"
-      content="HTML Tidy for HTML5 for Windows version 5.9.14"
-    />
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta property="og:url" content="https://mencrouche.com" />
-    <meta property="og:site_name" content="Mencrouche" />
-    <meta property="og:locale" content="en_US" />
-    <meta property="og:locale:alternate" content="zh_TW" />
-    <meta property="og:title" content="Mencrouche" />
-    <meta property="og:type" content="website" />
-    <meta
-      property="og:image"
-      content="https://mencrouche.com/public/og_image.png"
-    />
-    <meta
-      property="og:description"
-      content="A highly customizable homepage for organizing links and notes"
-    />
-    <meta
-      name="description"
-      content="A highly customizable homepage for organizing links and notes."
-    />
-    <!-- <link rel="icon" href="./public/favicon.ico" sizes="32x32" /> -->
-    <link rel="icon" href="./public/icon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="index.css" />
-    <link rel="canonical" href="https://mencrouche.com/" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/themes/prism-tomorrow.min.css"
-    />
-    <title>Mencrouche</title>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-core.min.js"
-      integrity="sha384-zLRFO4dwowZvh8kzutOb5AWhH7f39HeJp+N7PtHF1SQtTBnifRx0AtmvTYs3F4YV"
-      crossorigin="anonymous"
-      defer
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/plugins/autoloader/prism-autoloader.min.js"
-      integrity="sha384-Uq05+JLko69eOiPr39ta9bh7kld5PKZoU+fF7g0EXTAriEollhZ+DrN8Q/Oi8J2Q"
-      crossorigin="anonymous"
-      defer
-    ></script>
-    <script type="module" src="index.ts"></script>
-  </head>
-  <body>
-    <main>
-      <nav id="navbar">
-        <div id="documentStatus">
-          <button class="pureBtn">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-save"
-            >
-              <path
-                d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
-              />
-              <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7" />
-              <path d="M7 3v4a1 1 0 0 0 1 1h7" />
-            </svg>
-          </button>
-          <hr />
-          <div></div>
-          <span></span>
-        </div>
-        <div id="addStickyDropdownContainer">
-          <div>
-            <button
-              class="pureBtn addNoteStickyBtn"
-              data-command="addNoteSticky"
-              data-i18n="addNoteStickyBtnTitle"
-              data-i18n-for="title"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide lucide-plus"
-              >
-                <path d="M5 12h14" />
-                <path d="M12 5v14" />
-              </svg>
-            </button>
-            <button class="pureBtn addOtherStickyBtn">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide lucide-chevron-down"
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </button>
-          </div>
-          <div class="dropdownButtons shadow none">
-            <button class="pureBtn" data-command="addYoutubeSticky">
-              <span data-i18n="addYoutubeStickyBtn"></span>
-            </button>
-            <button class="pureBtn" data-command="addSpotifySticky">
-              <span data-i18n="addSpotifyStickyBtn"></span>
-            </button>
-            <button class="pureBtn" data-command="addMarkdownSticky">
-              <span data-i18n="addMarkdownStickyBtn"></span>
-            </button>
-          </div>
-        </div>
-        <label for="themeToggle" id="darkIcon" hidden="">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewbox="0 0 24 24"
-            fill="none"
-            stroke="currentcolor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-sun"
-          >
-            <circle cx="12" cy="12" r="4"></circle>
-            <path d="M12 2v2"></path>
-            <path d="M12 20v2"></path>
-            <path d="m4.93 4.93 1.41 1.41"></path>
-            <path d="m17.66 17.66 1.41 1.41"></path>
-            <path d="M2 12h2"></path>
-            <path d="M20 12h2"></path>
-            <path d="m6.34 17.66-1.41 1.41"></path>
-            <path d="m19.07 4.93-1.41 1.41"></path>
-          </svg>
-        </label>
-        <label for="themeToggle" id="lightIcon" hidden="">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewbox="0 0 24 24"
-            fill="none"
-            stroke="currentcolor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-moon"
-          >
-            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
-          </svg>
-        </label>
-        <input
-          id="themeToggle"
-          hidden=""
-          type="checkbox"
-          data-i18n-for="title"
-          data-i18n="toggleDarkMode"
-        />
-        <button
-          id="settingsBtn"
-          class="pureBtn"
-          data-i18n-for="title"
-          data-i18n="toggleSettings"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-settings"
-          >
-            <path
-              d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
-            />
-            <circle cx="12" cy="12" r="3" />
-          </svg>
-        </button>
-      </nav>
-      <section id="mainSection">
-        <div id="viewport" class="patternBg">
-          <slot id="dockSlot"></slot>
-          <slot id="workspaceSlot"></slot>
-        </div>
-        <template id="dockWidgets">
-          <div
-            class="dock flex rounded padding surface shadow alwaysOnTop"
-            data-context-menu="dock"
-          >
-            <slot></slot>
-          </div>
-        </template>
-        <template id="dockBookmarkWidgets">
-          <a class="dockBookmark dockItem rounded" draggable="true">
-            <div>
-              <img />
-            </div>
-            <p class="text-xs"></p>
-          </a>
-        </template>
-        <template id="youtubeStickyWidgets">
-          <button class="editLinkBtn pureBtn">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-pencil"
-            >
-              <path
-                d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
-              />
-              <path d="m15 5 4 4" />
-            </svg>
-          </button>
-          <iframe
-            width="100%"
-            height="100%"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerpolicy="strict-origin-when-cross-origin"
-            allowfullscreen
-          ></iframe>
-        </template>
-        <template id="spotifyStickyWidgets">
-          <button class="ghostBtn pureBtn">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-box-select"
-            >
-              <path d="M5 3a2 2 0 0 0-2 2" />
-              <path d="M19 3a2 2 0 0 1 2 2" />
-              <path d="M21 19a2 2 0 0 1-2 2" />
-              <path d="M5 21a2 2 0 0 1-2-2" />
-              <path d="M9 3h1" />
-              <path d="M9 21h1" />
-              <path d="M14 3h1" />
-              <path d="M14 21h1" />
-              <path d="M3 9v1" />
-              <path d="M21 9v1" />
-              <path d="M3 14v1" />
-              <path d="M21 14v1" />
-            </svg>
-          </button>
-          <button class="editLinkBtn pureBtn">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-pencil"
-            >
-              <path
-                d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
-              />
-              <path d="m15 5 4 4" />
-            </svg>
-          </button>
-          <iframe
-            class="shadow"
-            style="border-radius: 12px"
-            width="100%"
-            frameborder="0"
-            allowfullscreen=""
-            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-            loading="lazy"
-          ></iframe>
-        </template>
-        <template id="markdownStickyWidgets">
-          <label class="splitViewToggleLbl">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-square-equal-icon lucide-square-equal none"
-            >
-              <rect width="18" height="18" x="3" y="3" rx="2" />
-              <path d="M7 10h10" />
-              <path d="M7 14h10" />
-            </svg>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-columns2-icon lucide-columns-2"
-            >
-              <rect width="18" height="18" x="3" y="3" rx="2" />
-              <path d="M12 3v18" />
-            </svg>
-            <input hidden="" type="checkbox" />
-          </label>
-          <label class="editModeToggleLbl">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-pencil none"
-            >
-              <path
-                d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
-              />
-              <path d="m15 5 4 4" />
-            </svg>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-sticky-note"
-            >
-              <path
-                d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"
-              />
-              <path d="M15 3v4a2 2 0 0 0 2 2h4" />
-            </svg>
-            <input hidden="" type="checkbox" />
-          </label>
-          <textarea
-            data-i18n="stickyTextareaStartTypingPlaceholder"
-            data-i18n-for="placeholder"
-          ></textarea>
-          <div class="divider"></div>
-          <div class="preview"></div>
-        </template>
-        <template id="markdownStickyWidgets">
-          <label class="editModeToggleLbl">
-            <svg
-              class="none"
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-pencil"
-            >
-              <path
-                d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
-              />
-              <path d="m15 5 4 4" />
-            </svg>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-sticky-note"
-            >
-              <path
-                d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"
-              />
-              <path d="M15 3v4a2 2 0 0 0 2 2h4" />
-            </svg>
-            <input hidden="" type="checkbox" />
-          </label>
-          <textarea
-            data-i18n="stickyTextareaStartTypingPlaceholder"
-            data-i18n-for="placeholder"
-          ></textarea>
-          <div class="preview" hidden=""></div>
-        </template>
-        <template id="sticky">
-          <div class="sticky" tabindex="0">
-            <div class="stickyShell">
-              <div class="stickyHeader">
-                <div class="stickyTitle"></div>
-                <div class="stickyControls">
-                  <slot></slot>
-                  <label class="maximizeToggleLbl">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      class="lucide lucide-maximize-2"
-                    >
-                      <polyline points="15 3 21 3 21 9" />
-                      <polyline points="9 21 3 21 3 15" />
-                      <line x1="21" x2="14" y1="3" y2="10" />
-                      <line x1="3" x2="10" y1="21" y2="14" />
-                    </svg>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      class="lucide lucide-minimize-2"
-                    >
-                      <polyline points="4 14 10 14 10 20" />
-                      <polyline points="20 10 14 10 14 4" />
-                      <line x1="14" x2="21" y1="10" y2="3" />
-                      <line x1="3" x2="10" y1="21" y2="14" />
-                    </svg>
-                    <input hidden="" type="checkbox" />
-                  </label>
-                  <button class="deleteBtn pureBtn">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      class="lucide lucide-x"
-                    >
-                      <path d="M18 6 6 18" />
-                      <path d="m6 6 12 12" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              <div class="stickyBody"></div>
-            </div>
-          </div>
-        </template>
-        <div id="commandPalette" hidden="">
-          <input
-            type="search"
-            id="searchInput"
-            data-i18n="commandPaletteSearchPlaceholder"
-            data-i18n-for="placeholder"
-          />
-          <ul id="commandList"></ul>
-          <template id="commandListItem">
-            <li>
-              <span></span>
-              <kbd></kbd>
-            </li>
-          </template>
-        </div>
-        <section id="settings" class="none">
-          <nav>
-            <h2 data-i18n="settings"></h2>
-            <ul>
-              <li>
-                <a href="#langPref" data-i18n="settingsLanguageSection"></a>
-              </li>
-              <li>
-                <a
-                  href="#appearancePref"
-                  data-i18n="settingsAppearanceSection"
-                ></a>
-              </li>
-              <li>
-                <a href="#storagePref" data-i18n="settingsStorageSection"> </a>
-              </li>
-              <li>
-                <a href="#shortcutsPref" data-i18n="settingsShortcutsSection">
-                </a>
-              </li>
-              <li>
-                <a href="#advancedPref" data-i18n="settingsAdvancedSection">
-                </a>
-              </li>
-            </ul>
-          </nav>
-          <div>
-            <section id="langPref">
-              <header>
-                <h2 data-i18n="settingsLanguageSection"></h2>
-              </header>
-              <select id="langDropdown"></select>
-            </section>
-            <section id="appearancePref">
-              <header>
-                <h2 data-i18n="settingsAppearanceSection"></h2>
-              </header>
-              <label for="uiOpacityInput">
-                <span data-i18n="uiOpacity"></span>
-                <input
-                  id="uiOpacityInput"
-                  type="range"
-                  name="opacity"
-                  value="100"
-                  min="10"
-                  max="100"
-                />
-              </label>
-              <label>
-                <span data-i18n="paletteHue"></span>
-                <div class="huePreview">
-                  <button id="hueWheel" class="round pureBtn shadow"></button>
-                  <div>A</div>
-                  <div>a</div>
-                  <div>𝛼</div>
-                </div>
-                <button
-                  id="setPaletteHueToDefaultBtn"
-                  data-i18n="setToDefaultBtn"
-                ></button>
-              </label>
-              <h3 data-i18n="settingsAppearanceBackgroundSection"></h3>
-              <div class="formGroup">
-                <div class="dropzone">
-                  <p data-i18n="dndImageInstruction"></p>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="64"
-                    height="64"
-                    viewbox="0 0 24 24"
-                    fill="none"
-                    stroke="currentcolor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-image-up"
-                  >
-                    <path
-                      d="M10.3 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10l-3.1-3.1a2 2 0 0 0-2.814.014L6 21"
-                    ></path>
-                    <path d="m14 19.5 3-3 3 3"></path>
-                    <path d="M17 22v-5.5"></path>
-                    <circle cx="9" cy="9" r="2"></circle>
-                  </svg>
-                  <input type="file" accept="image/*" hidden="" />
-                </div>
-                <label for="backgroundImageUrlInput">
-                  <span data-i18n="backgroundImageLink"></span>
-                  <input
-                    id="backgroundImageUrlInput"
-                    data-i18n-for="placeholder"
-                    data-i18n="backgroundImageUrlInputPlaceholder"
-                    type="url"
-                  />
-                </label>
-                <button
-                  id="setBackgroundImageToDefaultBtn"
-                  class="btn"
-                  data-i18n="setToDefaultBtn"
-                ></button>
-              </div>
-            </section>
-            <section id="storagePref">
-              <header>
-                <h2 data-i18n="settingsStorageSection"></h2>
-              </header>
-              <div class="formGroupHorizontal">
-                <button id="importDocumentBtn" class="btn">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-folder-open"
-                  >
-                    <path
-                      d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"
-                    />
-                  </svg>
-                  <span data-i18n="importDocumentBtn"></span>
-                </button>
-                <button id="exportDocumentBtn" class="btn">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-folder-down"
-                  >
-                    <path
-                      d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"
-                    />
-                    <path d="M12 10v6" />
-                    <path d="m15 13-3 3-3-3" />
-                  </svg>
-                  <span data-i18n="exportDocumentBtn"></span>
-                </button>
-                <button
-                  id="deleteDocumentBtn"
-                  class="btn"
-                  data-i18n="deleteDocumentBtn"
-                  type="reset"
-                ></button>
-              </div>
-              <input
-                hidden
-                id="importDocumentFileInput"
-                type="file"
-                accept=".json, application/json"
-              />
-              <div class="formGroup">
-                <label>
-                  <input checked type="checkbox" name="isCloudSyncEnabled" />
-                  <span data-i18n="isCloudSyncEnabledCheckboxLabel"></span>
-                </label>
-                <!-- <label> -->
-                <!--   <span data-i18n="syncRemoteAuthKeyInputLabel"></span> -->
-                <!--   <input type="password" name="syncRemoteAuthKey" /> -->
-                <!-- </label> -->
-                <button id="shareDataLinkBtn" class="btn">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-link"
-                  >
-                    <path
-                      d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
-                    />
-                    <path
-                      d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
-                    />
-                  </svg>
-                  <span data-i18n="shareDataLinkBtn"></span>
-                </button>
-              </div>
-            </section>
-            <section id="shortcutsPref">
-              <header>
-                <h2 data-i18n="settingsShortcutsSection"></h2>
-              </header>
-              <div id="shortcutList"></div>
-              <template id="shortcutListItem">
-                <label>
-                  <span></span>
-                  <input type="text" disabled />
-                  <button data-recording="false" class="btn recordBtn"></button>
-                  <button type="reset" class="btn resetBtn"></button>
-                </label>
-              </template>
-            </section>
-            <section id="advancedPref">
-              <header>
-                <h2 data-i18n="settingsAdvancedSection"></h2>
-              </header>
-              <div class="grid">
-                <label>
-                  <input
-                    checked
-                    type="checkbox"
-                    name="isScriptExecutionAllowed"
-                  />
-                  <span
-                    data-i18n="isScriptExecutionAllowedCheckboxLabel"
-                  ></span>
-                </label>
-                <div>
-                  <label for="customJsTextArea">
-                    <span data-i18n="customJavaScriptLabel"></span>
-                    <div
-                      data-i18n="customJavaScriptHelp"
-                      data-i18n-for="data-tooltip"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="lucide lucide-circle-help"
-                      >
-                        <circle cx="12" cy="12" r="10" />
-                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-                        <path d="M12 17h.01" />
-                      </svg>
-                    </div>
-                  </label>
-                  <textarea
-                    id="customJsTextArea"
-                    spellcheck="false"
-                    data-i18n="customJavaScriptPlaceholder"
-                    data-i18n-for="placeholder"
-                  ></textarea>
-                </div>
-                <div>
-                  <label for="customCssTextArea">
-                    <span data-i18n="customCssLabel"></span>
-                    <div data-i18n="customCssHelp" data-i18n-for="data-tooltip">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="lucide lucide-circle-help"
-                      >
-                        <circle cx="12" cy="12" r="10" />
-                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-                        <path d="M12 17h.01" />
-                      </svg>
-                    </div>
-                  </label>
-                  <textarea
-                    id="customCssTextArea"
-                    spellcheck="false"
-                    data-i18n="customCssPlaceholder"
-                    data-i18n-for="placeholder"
-                  ></textarea>
-                </div>
-              </div>
-            </section>
-            <hr />
-            <section id="settingsBtnGroup" class="formGroupHorizontal">
-              <button
-                id="saveSettingsBtn"
-                data-i18n="saveSettingsBtn"
-                class="btn"
-              ></button>
-              <button
-                id="saveAndCloseSettingsBtn"
-                data-i18n="saveAndCloseSettingsBtn"
-                class="btn"
-              ></button>
-              <button
-                id="cancelSettingsBtn"
-                data-i18n="cancelSettingsBtn"
-                class="btn"
-              ></button>
-            </section>
-          </div>
-        </section>
-      </section>
-      <div id="stickySizeDummy"></div>
-      <div id="contextMenu" class="contextMenu none"></div>
-      <template id="menuItem">
-        <button class="menuItem pureBtn">
-          <i class="icon left"></i>
-          <span></span>
-          <i class="icon right"></i>
-        </button>
-      </template>
-    </main>
-    <dialog id="bookmarkDialog">
-      <form>
-        <input name="id" hidden />
-        <div class="gaInput">
-          <label>
-            <span data-i18n="bookmarkHrefLabel"></span>
-            <input name="urlLike" autofocus required />
-          </label>
-          <label>
-            <span data-i18n="bookmarkLabelLabel"></span>
-            <input name="label" />
-          </label>
-          <label>
-            <span data-i18n="bookmarkIconLabel"></span>
-            <input name="icon" />
-          </label>
-          <div data-i18n="bookmarkBackgroundColorLabel"></div>
-          <div class="colorInputBox flex-center">
-            <input type="color" name="backgroundColor" />
-            <button
-              type="button"
-              data-i18n-for="title"
-              data-i18n="getRandomBookmarkColorBtn"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide lucide-dices"
-              >
-                <rect width="12" height="12" x="2" y="10" rx="2" ry="2" />
-                <path
-                  d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"
-                />
-                <path d="M6 18h.01" />
-                <path d="M10 14h.01" />
-                <path d="M15 6h.01" />
-                <path d="M18 9h.01" />
-              </svg>
-            </button>
-            <button
-              type="button"
-              data-i18n-for="title"
-              data-i18n="removeBookmarkBackgroundBtn"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide lucide-square-x"
-              >
-                <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
-                <path d="m15 9-6 6" />
-                <path d="m9 9 6 6" />
-              </svg>
-            </button>
-          </div>
-          <label>
-            <span data-i18n="bookmarkTargetLabel"></span>
-            <select name="target">
-              <option
-                selected
-                value="_self"
-                data-i18n="openBookmarkInCurrentTabOption"
-              ></option>
-              <option
-                value="_blank"
-                data-i18n="openBookmarkInNewTabOption"
-              ></option>
-            </select>
-          </label>
-        </div>
-        <div class="gaPreview flex-center"></div>
-        <div class="gaButtonGroup">
-          <button
-            class="btn"
-            type="button"
-            data-i18n="cancelSubmitBtn"
-          ></button>
-          <button class="btn" type="submit" data-i18n="submitBtn"></button>
-        </div>
-      </form>
-    </dialog>
-    <dialog id="dockAppearanceDialog">
-      <form class="grid">
-        <label>
-          <span data-i18n="sizeInputLabel"></span>
-          <input
-            type="range"
-            name="size"
-            step="16"
-            min="16"
-            max="64"
-            required
-          />
-        </label>
-        <label>
-          <input type="checkbox" name="alwaysOnTop" />
-          <span data-i18n="alwaysOnTopCheckboxLabel"></span>
-          <div data-i18n="alwaysOnTopHelp" data-i18n-for="data-tooltip">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-circle-help"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-              <path d="M12 17h.01" />
-            </svg>
-          </div>
-        </label>
-        <label>
-          <input type="checkbox" name="showAddBtn" />
-          <span data-i18n="showAddBookmarkBtnCheckboxLabel"></span>
-        </label>
-        <label>
-          <input type="checkbox" name="showLabel" />
-          <span data-i18n="showLabelCheckboxLabel"></span>
-        </label>
-        <div class="grid radioGroup">
-          <label class="radioOption">
-            <div class="dummyScreen rounded surface">
-              <div class="dummyDock dock-right"></div>
-            </div>
-            <input type="radio" name="placement" value="right" />
-            <span data-i18n="dockPositionRightRadioLabel"></span>
-          </label>
-          <label class="radioOption">
-            <div class="dummyScreen rounded surface">
-              <div class="dummyDock dock-bottom"></div>
-            </div>
-            <input type="radio" name="placement" value="bottom" />
-            <span data-i18n="dockPositionBottomRadioLabel"></span>
-          </label>
-          <label class="radioOption">
-            <div class="dummyScreen rounded surface">
-              <div class="dummyDock dock-top"></div>
-            </div>
-            <input type="radio" name="placement" value="top" />
-            <span data-i18n="dockPositionTopRadioLabel"></span>
-          </label>
-          <label class="radioOption">
-            <div class="dummyScreen rounded surface">
-              <div class="dummyDock dock-left"></div>
-            </div>
-            <input type="radio" name="placement" value="left" />
-            <span data-i18n="dockPositionLeftRadioLabel"></span>
-          </label>
-        </div>
-        <div class="gaButtonGroup">
-          <button
-            class="btn"
-            type="button"
-            data-i18n="cancelSubmitBtn"
-          ></button>
-          <button class="btn" type="submit" data-i18n="submitBtn"></button>
-        </div>
-      </form>
-    </dialog>
-    <dialog id="youtubeDialog">
-      <form class="grid">
-        <label>
-          <span data-i18n="youtubeLinkInputLabel"></span>
-          <input name="link" required />
-        </label>
-        <label>
-          <input type="checkbox" name="autoplay" checked />
-          <span data-i18n="youtubeAutoplayCheckboxLabel"></span>
-        </label>
-        <input name="videoId" type="hidden" />
-        <div class="gaButtonGroup">
-          <button
-            class="btn"
-            type="button"
-            data-i18n="cancelSubmitBtn"
-          ></button>
-          <button class="btn" type="submit" data-i18n="submitBtn"></button>
-        </div>
-      </form>
-    </dialog>
-    <dialog id="spotifyDialog">
-      <form class="grid">
-        <label>
-          <span data-i18n="spotifyLinkInput"></span>
-          <input type="url" name="link" required />
-        </label>
-        <select name="height">
-          <option
-            selected
-            value="152px"
-            data-i18n="spotifyCompactHeight"
-          ></option>
-          <option value="352px" data-i18n="spotifyNormalHeight"></option>
-        </select>
-        <div class="gaButtonGroup">
-          <button
-            class="btn"
-            type="button"
-            data-i18n="cancelSubmitBtn"
-          ></button>
-          <button class="btn" type="submit" data-i18n="submitBtn"></button>
-        </div>
-      </form>
-    </dialog>
-    <dialog id="generalDialog">
-      <div class="grid">
-        <h4 class="dialogTitle"></h4>
-        <p class="dialogMessage"></p>
-        <div class="dialogButtonGroup"></div>
-      </div>
-    </dialog>
-    <slot id="customJsSlot"></slot>
+	<head>
+		<meta
+			name="generator"
+			content="HTML Tidy for HTML5 for Windows version 5.9.14"
+		/>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta property="og:url" content="https://mencrouche.com" />
+		<meta property="og:site_name" content="Mencrouche" />
+		<meta property="og:locale" content="en_US" />
+		<meta property="og:locale:alternate" content="zh_TW" />
+		<meta property="og:title" content="Mencrouche" />
+		<meta property="og:type" content="website" />
+		<meta
+			property="og:image"
+			content="https://mencrouche.com/public/og_image.png"
+		/>
+		<meta
+			property="og:description"
+			content="A highly customizable homepage for organizing links and notes"
+		/>
+		<meta
+			name="description"
+			content="A highly customizable homepage for organizing links and notes."
+		/>
+		<!-- <link rel="icon" href="./public/favicon.ico" sizes="32x32" /> -->
+		<link rel="icon" href="./public/icon.svg" type="image/svg+xml" />
+		<link rel="stylesheet" href="index.css" />
+		<link rel="canonical" href="https://mencrouche.com/" />
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/themes/prism-tomorrow.min.css"
+		/>
+		<title>Mencrouche</title>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-core.min.js"
+			integrity="sha384-zLRFO4dwowZvh8kzutOb5AWhH7f39HeJp+N7PtHF1SQtTBnifRx0AtmvTYs3F4YV"
+			crossorigin="anonymous"
+			defer
+		></script>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/plugins/autoloader/prism-autoloader.min.js"
+			integrity="sha384-Uq05+JLko69eOiPr39ta9bh7kld5PKZoU+fF7g0EXTAriEollhZ+DrN8Q/Oi8J2Q"
+			crossorigin="anonymous"
+			defer
+		></script>
+		<script type="module" src="index.ts"></script>
+	</head>
+	<body>
+		<main>
+			<nav id="navbar">
+				<div id="documentStatus">
+					<button class="pureBtn">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="lucide lucide-save"
+						>
+							<path
+								d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
+							/>
+							<path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7" />
+							<path d="M7 3v4a1 1 0 0 0 1 1h7" />
+						</svg>
+					</button>
+					<hr />
+					<div></div>
+					<span></span>
+				</div>
+				<div id="addStickyDropdownContainer">
+					<div>
+						<button
+							class="pureBtn addNoteStickyBtn"
+							data-command="addNoteSticky"
+							data-i18n="addNoteStickyBtnTitle"
+							data-i18n-for="title"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="24"
+								height="24"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								class="lucide lucide-plus"
+							>
+								<path d="M5 12h14" />
+								<path d="M12 5v14" />
+							</svg>
+						</button>
+						<button class="pureBtn addOtherStickyBtn">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="16"
+								height="16"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								class="lucide lucide-chevron-down"
+							>
+								<path d="m6 9 6 6 6-6" />
+							</svg>
+						</button>
+					</div>
+					<div class="dropdownButtons shadow none">
+						<button class="pureBtn" data-command="addYoutubeSticky">
+							<span data-i18n="addYoutubeStickyBtn"></span>
+						</button>
+						<button class="pureBtn" data-command="addSpotifySticky">
+							<span data-i18n="addSpotifyStickyBtn"></span>
+						</button>
+						<button class="pureBtn" data-command="addMarkdownSticky">
+							<span data-i18n="addMarkdownStickyBtn"></span>
+						</button>
+					</div>
+				</div>
+				<label for="themeToggle" id="darkIcon" hidden="">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewbox="0 0 24 24"
+						fill="none"
+						stroke="currentcolor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="lucide lucide-sun"
+					>
+						<circle cx="12" cy="12" r="4"></circle>
+						<path d="M12 2v2"></path>
+						<path d="M12 20v2"></path>
+						<path d="m4.93 4.93 1.41 1.41"></path>
+						<path d="m17.66 17.66 1.41 1.41"></path>
+						<path d="M2 12h2"></path>
+						<path d="M20 12h2"></path>
+						<path d="m6.34 17.66-1.41 1.41"></path>
+						<path d="m19.07 4.93-1.41 1.41"></path>
+					</svg>
+				</label>
+				<label for="themeToggle" id="lightIcon" hidden="">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewbox="0 0 24 24"
+						fill="none"
+						stroke="currentcolor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="lucide lucide-moon"
+					>
+						<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+					</svg>
+				</label>
+				<input
+					id="themeToggle"
+					hidden=""
+					type="checkbox"
+					data-i18n-for="title"
+					data-i18n="toggleDarkMode"
+				/>
+				<button
+					id="settingsBtn"
+					class="pureBtn"
+					data-i18n-for="title"
+					data-i18n="toggleSettings"
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="lucide lucide-settings"
+					>
+						<path
+							d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
+						/>
+						<circle cx="12" cy="12" r="3" />
+					</svg>
+				</button>
+			</nav>
+			<section id="mainSection">
+				<div id="viewport" class="patternBg">
+					<slot id="dockSlot"></slot>
+					<slot id="workspaceSlot"></slot>
+				</div>
+				<template id="dockWidgets">
+					<div
+						class="dock flex rounded padding surface shadow alwaysOnTop"
+						data-context-menu="dock"
+					>
+						<slot></slot>
+					</div>
+				</template>
+				<template id="youtubeStickyWidgets">
+					<button class="editLinkBtn pureBtn">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="lucide lucide-pencil"
+						>
+							<path
+								d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
+							/>
+							<path d="m15 5 4 4" />
+						</svg>
+					</button>
+					<iframe
+						width="100%"
+						height="100%"
+						frameborder="0"
+						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+						referrerpolicy="strict-origin-when-cross-origin"
+						allowfullscreen
+					></iframe>
+				</template>
+				<template id="spotifyStickyWidgets">
+					<button class="ghostBtn pureBtn">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="lucide lucide-box-select"
+						>
+							<path d="M5 3a2 2 0 0 0-2 2" />
+							<path d="M19 3a2 2 0 0 1 2 2" />
+							<path d="M21 19a2 2 0 0 1-2 2" />
+							<path d="M5 21a2 2 0 0 1-2-2" />
+							<path d="M9 3h1" />
+							<path d="M9 21h1" />
+							<path d="M14 3h1" />
+							<path d="M14 21h1" />
+							<path d="M3 9v1" />
+							<path d="M21 9v1" />
+							<path d="M3 14v1" />
+							<path d="M21 14v1" />
+						</svg>
+					</button>
+					<button class="editLinkBtn pureBtn">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="lucide lucide-pencil"
+						>
+							<path
+								d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
+							/>
+							<path d="m15 5 4 4" />
+						</svg>
+					</button>
+					<iframe
+						class="shadow"
+						style="border-radius: 12px"
+						width="100%"
+						frameborder="0"
+						allowfullscreen=""
+						allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+						loading="lazy"
+					></iframe>
+				</template>
+				<template id="markdownStickyWidgets">
+					<label class="splitViewToggleLbl">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="lucide lucide-square-equal-icon lucide-square-equal none"
+						>
+							<rect width="18" height="18" x="3" y="3" rx="2" />
+							<path d="M7 10h10" />
+							<path d="M7 14h10" />
+						</svg>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="lucide lucide-columns2-icon lucide-columns-2"
+						>
+							<rect width="18" height="18" x="3" y="3" rx="2" />
+							<path d="M12 3v18" />
+						</svg>
+						<input hidden="" type="checkbox" />
+					</label>
+					<label class="editModeToggleLbl">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="lucide lucide-pencil none"
+						>
+							<path
+								d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
+							/>
+							<path d="m15 5 4 4" />
+						</svg>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="lucide lucide-sticky-note"
+						>
+							<path
+								d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"
+							/>
+							<path d="M15 3v4a2 2 0 0 0 2 2h4" />
+						</svg>
+						<input hidden="" type="checkbox" />
+					</label>
+					<textarea
+						data-i18n="stickyTextareaStartTypingPlaceholder"
+						data-i18n-for="placeholder"
+					></textarea>
+					<div class="divider"></div>
+					<div class="preview"></div>
+				</template>
+				<template id="markdownStickyWidgets">
+					<label class="editModeToggleLbl">
+						<svg
+							class="none"
+							xmlns="http://www.w3.org/2000/svg"
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="lucide lucide-pencil"
+						>
+							<path
+								d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
+							/>
+							<path d="m15 5 4 4" />
+						</svg>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="22"
+							height="22"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="lucide lucide-sticky-note"
+						>
+							<path
+								d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"
+							/>
+							<path d="M15 3v4a2 2 0 0 0 2 2h4" />
+						</svg>
+						<input hidden="" type="checkbox" />
+					</label>
+					<textarea
+						data-i18n="stickyTextareaStartTypingPlaceholder"
+						data-i18n-for="placeholder"
+					></textarea>
+					<div class="preview" hidden=""></div>
+				</template>
+				<template id="sticky">
+					<div class="sticky" tabindex="0">
+						<div class="stickyShell">
+							<div class="stickyHeader">
+								<div class="stickyTitle"></div>
+								<div class="stickyControls">
+									<slot></slot>
+									<label class="maximizeToggleLbl">
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="20"
+											height="20"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											class="lucide lucide-maximize-2"
+										>
+											<polyline points="15 3 21 3 21 9" />
+											<polyline points="9 21 3 21 3 15" />
+											<line x1="21" x2="14" y1="3" y2="10" />
+											<line x1="3" x2="10" y1="21" y2="14" />
+										</svg>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="20"
+											height="20"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											class="lucide lucide-minimize-2"
+										>
+											<polyline points="4 14 10 14 10 20" />
+											<polyline points="20 10 14 10 14 4" />
+											<line x1="14" x2="21" y1="10" y2="3" />
+											<line x1="3" x2="10" y1="21" y2="14" />
+										</svg>
+										<input hidden="" type="checkbox" />
+									</label>
+									<button class="deleteBtn pureBtn">
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="24"
+											height="24"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											class="lucide lucide-x"
+										>
+											<path d="M18 6 6 18" />
+											<path d="m6 6 12 12" />
+										</svg>
+									</button>
+								</div>
+							</div>
+							<div class="stickyBody"></div>
+						</div>
+					</div>
+				</template>
+				<div id="commandPalette" hidden="">
+					<input
+						type="search"
+						id="searchInput"
+						data-i18n="commandPaletteSearchPlaceholder"
+						data-i18n-for="placeholder"
+					/>
+					<ul id="commandList"></ul>
+					<template id="commandListItem">
+						<li>
+							<span></span>
+							<kbd></kbd>
+						</li>
+					</template>
+				</div>
+				<section id="settings" class="none">
+					<nav>
+						<h2 data-i18n="settings"></h2>
+						<ul>
+							<li>
+								<a href="#langPref" data-i18n="settingsLanguageSection"></a>
+							</li>
+							<li>
+								<a
+									href="#appearancePref"
+									data-i18n="settingsAppearanceSection"
+								></a>
+							</li>
+							<li>
+								<a href="#storagePref" data-i18n="settingsStorageSection"> </a>
+							</li>
+							<li>
+								<a
+									href="#shortcutsPref"
+									data-i18n="settingsShortcutsSection"
+								> </a>
+							</li>
+							<li>
+								<a
+									href="#advancedPref"
+									data-i18n="settingsAdvancedSection"
+								> </a>
+							</li>
+						</ul>
+					</nav>
+					<div>
+						<section id="langPref">
+							<header>
+								<h2 data-i18n="settingsLanguageSection"></h2>
+							</header>
+							<select id="langDropdown"></select>
+						</section>
+						<section id="appearancePref">
+							<header>
+								<h2 data-i18n="settingsAppearanceSection"></h2>
+							</header>
+							<label for="uiOpacityInput">
+								<span data-i18n="uiOpacity"></span>
+								<input
+									id="uiOpacityInput"
+									type="range"
+									name="opacity"
+									value="100"
+									min="10"
+									max="100"
+								/>
+							</label>
+							<label>
+								<span data-i18n="paletteHue"></span>
+								<div class="huePreview">
+									<button id="hueWheel" class="round pureBtn shadow"></button>
+									<div>A</div>
+									<div>a</div>
+									<div>𝛼</div>
+								</div>
+								<button
+									id="setPaletteHueToDefaultBtn"
+									data-i18n="setToDefaultBtn"
+								></button>
+							</label>
+							<h3 data-i18n="settingsAppearanceBackgroundSection"></h3>
+							<div class="formGroup">
+								<div class="dropzone">
+									<p data-i18n="dndImageInstruction"></p>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="64"
+										height="64"
+										viewbox="0 0 24 24"
+										fill="none"
+										stroke="currentcolor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										class="lucide lucide-image-up"
+									>
+										<path
+											d="M10.3 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10l-3.1-3.1a2 2 0 0 0-2.814.014L6 21"
+										></path>
+										<path d="m14 19.5 3-3 3 3"></path>
+										<path d="M17 22v-5.5"></path>
+										<circle cx="9" cy="9" r="2"></circle>
+									</svg>
+									<input type="file" accept="image/*" hidden="" />
+								</div>
+								<label for="backgroundImageUrlInput">
+									<span data-i18n="backgroundImageLink"></span>
+									<input
+										id="backgroundImageUrlInput"
+										data-i18n-for="placeholder"
+										data-i18n="backgroundImageUrlInputPlaceholder"
+										type="url"
+									/>
+								</label>
+								<button
+									id="setBackgroundImageToDefaultBtn"
+									class="btn"
+									data-i18n="setToDefaultBtn"
+								></button>
+							</div>
+						</section>
+						<section id="storagePref">
+							<header>
+								<h2 data-i18n="settingsStorageSection"></h2>
+							</header>
+							<div class="formGroupHorizontal">
+								<button id="importDocumentBtn" class="btn">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="24"
+										height="24"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										class="lucide lucide-folder-open"
+									>
+										<path
+											d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"
+										/>
+									</svg>
+									<span data-i18n="importDocumentBtn"></span>
+								</button>
+								<button id="exportDocumentBtn" class="btn">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="24"
+										height="24"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										class="lucide lucide-folder-down"
+									>
+										<path
+											d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"
+										/>
+										<path d="M12 10v6" />
+										<path d="m15 13-3 3-3-3" />
+									</svg>
+									<span data-i18n="exportDocumentBtn"></span>
+								</button>
+								<button
+									id="deleteDocumentBtn"
+									class="btn"
+									data-i18n="deleteDocumentBtn"
+									type="reset"
+								></button>
+							</div>
+							<input
+								hidden
+								id="importDocumentFileInput"
+								type="file"
+								accept=".json, application/json"
+							/>
+							<div class="formGroup">
+								<label>
+									<input checked type="checkbox" name="isCloudSyncEnabled" />
+									<span data-i18n="isCloudSyncEnabledCheckboxLabel"></span>
+								</label>
+								<!-- <label> -->
+								<!--   <span data-i18n="syncRemoteAuthKeyInputLabel"></span> -->
+								<!--   <input type="password" name="syncRemoteAuthKey" /> -->
+								<!-- </label> -->
+								<button id="shareDataLinkBtn" class="btn">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="24"
+										height="24"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										class="lucide lucide-link"
+									>
+										<path
+											d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
+										/>
+										<path
+											d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
+										/>
+									</svg>
+									<span data-i18n="shareDataLinkBtn"></span>
+								</button>
+							</div>
+						</section>
+						<section id="shortcutsPref">
+							<header>
+								<h2 data-i18n="settingsShortcutsSection"></h2>
+							</header>
+							<div id="shortcutList"></div>
+							<template id="shortcutListItem">
+								<label>
+									<span></span>
+									<input type="text" disabled />
+									<button data-recording="false" class="btn recordBtn"></button>
+									<button type="reset" class="btn resetBtn"></button>
+								</label>
+							</template>
+						</section>
+						<section id="advancedPref">
+							<header>
+								<h2 data-i18n="settingsAdvancedSection"></h2>
+							</header>
+							<div class="grid">
+								<label>
+									<input
+										checked
+										type="checkbox"
+										name="isScriptExecutionAllowed"
+									/>
+									<span
+										data-i18n="isScriptExecutionAllowedCheckboxLabel"
+									></span>
+								</label>
+								<div>
+									<label for="customJsTextArea">
+										<span data-i18n="customJavaScriptLabel"></span>
+										<div
+											data-i18n="customJavaScriptHelp"
+											data-i18n-for="data-tooltip"
+										>
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												width="16"
+												height="16"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												class="lucide lucide-circle-help"
+											>
+												<circle cx="12" cy="12" r="10" />
+												<path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+												<path d="M12 17h.01" />
+											</svg>
+										</div>
+									</label>
+									<textarea
+										id="customJsTextArea"
+										spellcheck="false"
+										data-i18n="customJavaScriptPlaceholder"
+										data-i18n-for="placeholder"
+									></textarea>
+								</div>
+								<div>
+									<label for="customCssTextArea">
+										<span data-i18n="customCssLabel"></span>
+										<div data-i18n="customCssHelp" data-i18n-for="data-tooltip">
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												width="16"
+												height="16"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												class="lucide lucide-circle-help"
+											>
+												<circle cx="12" cy="12" r="10" />
+												<path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+												<path d="M12 17h.01" />
+											</svg>
+										</div>
+									</label>
+									<textarea
+										id="customCssTextArea"
+										spellcheck="false"
+										data-i18n="customCssPlaceholder"
+										data-i18n-for="placeholder"
+									></textarea>
+								</div>
+							</div>
+						</section>
+						<hr />
+						<section id="settingsBtnGroup" class="formGroupHorizontal">
+							<button
+								id="saveSettingsBtn"
+								data-i18n="saveSettingsBtn"
+								class="btn"
+							></button>
+							<button
+								id="saveAndCloseSettingsBtn"
+								data-i18n="saveAndCloseSettingsBtn"
+								class="btn"
+							></button>
+							<button
+								id="cancelSettingsBtn"
+								data-i18n="cancelSettingsBtn"
+								class="btn"
+							></button>
+						</section>
+					</div>
+				</section>
+			</section>
+			<div id="stickySizeDummy"></div>
+			<div id="contextMenu" class="contextMenu none"></div>
+			<template id="menuItem">
+				<button class="menuItem pureBtn">
+					<i class="icon left"></i>
+					<span></span>
+					<i class="icon right"></i>
+				</button>
+			</template>
+		</main>
+		<dialog id="bookmarkDialog">
+			<form>
+				<input name="id" hidden />
+				<div class="gaInput">
+					<label>
+						<span data-i18n="bookmarkHrefLabel"></span>
+						<input name="urlLike" autofocus required />
+					</label>
+					<label>
+						<span data-i18n="bookmarkLabelLabel"></span>
+						<input name="label" />
+					</label>
+					<label>
+						<span data-i18n="bookmarkIconLabel"></span>
+						<input name="icon" />
+					</label>
+					<div data-i18n="bookmarkBackgroundColorLabel"></div>
+					<div class="colorInputBox flex-center">
+						<input type="color" name="backgroundColor" />
+						<button
+							type="button"
+							data-i18n-for="title"
+							data-i18n="getRandomBookmarkColorBtn"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="24"
+								height="24"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								class="lucide lucide-dices"
+							>
+								<rect width="12" height="12" x="2" y="10" rx="2" ry="2" />
+								<path
+									d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"
+								/>
+								<path d="M6 18h.01" />
+								<path d="M10 14h.01" />
+								<path d="M15 6h.01" />
+								<path d="M18 9h.01" />
+							</svg>
+						</button>
+						<button
+							type="button"
+							data-i18n-for="title"
+							data-i18n="removeBookmarkBackgroundBtn"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="24"
+								height="24"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								class="lucide lucide-square-x"
+							>
+								<rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+								<path d="m15 9-6 6" />
+								<path d="m9 9 6 6" />
+							</svg>
+						</button>
+					</div>
+					<label>
+						<span data-i18n="bookmarkTargetLabel"></span>
+						<select name="target">
+							<option
+								selected
+								value="_self"
+								data-i18n="openBookmarkInCurrentTabOption"
+							></option>
+							<option
+								value="_blank"
+								data-i18n="openBookmarkInNewTabOption"
+							></option>
+						</select>
+					</label>
+				</div>
+				<div class="gaPreview flex-center"></div>
+				<div class="gaButtonGroup">
+					<button
+						class="btn"
+						type="button"
+						data-i18n="cancelSubmitBtn"
+					></button>
+					<button class="btn" type="submit" data-i18n="submitBtn"></button>
+				</div>
+			</form>
+		</dialog>
+		<dialog id="dockAppearanceDialog">
+			<form class="grid">
+				<label>
+					<span data-i18n="sizeInputLabel"></span>
+					<input
+						type="range"
+						name="size"
+						step="16"
+						min="16"
+						max="64"
+						required
+					/>
+				</label>
+				<label>
+					<input type="checkbox" name="alwaysOnTop" />
+					<span data-i18n="alwaysOnTopCheckboxLabel"></span>
+					<div data-i18n="alwaysOnTopHelp" data-i18n-for="data-tooltip">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="16"
+							height="16"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="lucide lucide-circle-help"
+						>
+							<circle cx="12" cy="12" r="10" />
+							<path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+							<path d="M12 17h.01" />
+						</svg>
+					</div>
+				</label>
+				<!-- <label> -->
+				<!--   <input type="checkbox" name="showAddBtn" /> -->
+				<!--   <span data-i18n="showAddBookmarkBtnCheckboxLabel"></span> -->
+				<!-- </label> -->
+				<!-- <label> -->
+				<!--   <input type="checkbox" name="showLabel" /> -->
+				<!--   <span data-i18n="showLabelCheckboxLabel"></span> -->
+				<!-- </label> -->
+				<div class="dockPlacementSelector">
+					<button type="button" data-placement="topLeft"></button>
+					<button type="button" data-placement="top"></button>
+					<button type="button" data-placement="topRight"></button>
+					<button type="button" data-placement="left"></button>
+					<button type="button" data-placement="center"></button>
+					<button type="button" data-placement="right"></button>
+					<button type="button" data-placement="bottomLeft"></button>
+					<button type="button" data-placement="bottom"></button>
+					<button type="button" data-placement="bottomRight"></button>
+				</div>
+				<div class="gaButtonGroup">
+					<button
+						class="btn"
+						type="button"
+						data-i18n="cancelSubmitBtn"
+					></button>
+					<button class="btn" type="button" data-i18n="submitBtn"></button>
+				</div>
+			</form>
+		</dialog>
+		<dialog id="youtubeDialog">
+			<form class="grid">
+				<label>
+					<span data-i18n="youtubeLinkInputLabel"></span>
+					<input name="link" required />
+				</label>
+				<label>
+					<input type="checkbox" name="autoplay" checked />
+					<span data-i18n="youtubeAutoplayCheckboxLabel"></span>
+				</label>
+				<input name="videoId" type="hidden" />
+				<div class="gaButtonGroup">
+					<button
+						class="btn"
+						type="button"
+						data-i18n="cancelSubmitBtn"
+					></button>
+					<button class="btn" type="submit" data-i18n="submitBtn"></button>
+				</div>
+			</form>
+		</dialog>
+		<dialog id="spotifyDialog">
+			<form class="grid">
+				<label>
+					<span data-i18n="spotifyLinkInput"></span>
+					<input type="url" name="link" required />
+				</label>
+				<select name="height">
+					<option
+						selected
+						value="152px"
+						data-i18n="spotifyCompactHeight"
+					></option>
+					<option value="352px" data-i18n="spotifyNormalHeight"></option>
+				</select>
+				<div class="gaButtonGroup">
+					<button
+						class="btn"
+						type="button"
+						data-i18n="cancelSubmitBtn"
+					></button>
+					<button class="btn" type="submit" data-i18n="submitBtn"></button>
+				</div>
+			</form>
+		</dialog>
+		<dialog id="generalDialog">
+			<div class="grid">
+				<h4 class="dialogTitle"></h4>
+				<p class="dialogMessage"></p>
+				<div class="dialogButtonGroup"></div>
+			</div>
+		</dialog>
+		<slot id="customJsSlot"></slot>
 
-    <template id="clockWidgets">
-      <div class="clockDock">
-        <div class="face">
-          <div class="hour hand"></div>
-          <div class="minute hand"></div>
-          <div class="second hand"></div>
-          <div class="centerDot"></div>
-        </div>
-        <div class="timeDisplay">
-          <time class="time"></time>
-          <time class="date"></time>
-        </div>
-      </div>
-    </template>
+		<template id="clockWidgets">
+			<div class="clockDock">
+				<div class="face">
+					<div class="hour hand"></div>
+					<div class="minute hand"></div>
+					<div class="second hand"></div>
+					<div class="centerDot"></div>
+				</div>
+				<div class="timeDisplay">
+					<time class="time"></time>
+					<time class="date"></time>
+				</div>
+			</div>
+		</template>
 
-    <template id="bookmarkDockWidgets">
-      <div class="bookmarkDock">
-        <div class="box"></div>
-        <button class="addBookmarkBtn dockItem rounded">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="48"
-            height="48"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-plus"
-          >
-            <path d="M5 12h14" />
-            <path d="M12 5v14" />
-          </svg>
-        </button>
-      </div>
-    </template>
+		<template id="bookmarkDockWidgets">
+			<div class="bookmarkDock">
+				<div class="box"></div>
+				<button class="addBookmarkBtn dockItem rounded">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="48"
+						height="48"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="lucide lucide-plus"
+					>
+						<path d="M5 12h14" />
+						<path d="M12 5v14" />
+					</svg>
+				</button>
+			</div>
+		</template>
 
-    <template id="bookmarkWidgets">
-      <a
-        href="#"
-        class="bookmark"
-        data-context-menu="bookmark"
-        draggable="true"
-      >
-        <div class="iconBox">
-          <img />
-          <span class="none letter"></span>
-        </div>
-        <div class="label"></div>
-      </a>
-    </template>
-  </body>
+		<template id="bookmarkWidgets">
+			<a
+				href="#"
+				class="bookmark"
+				data-context-menu="bookmark"
+				draggable="true"
+			>
+				<div class="iconBox">
+					<img />
+					<span class="none letter"></span>
+				</div>
+				<div class="label"></div>
+			</a>
+		</template>
+	</body>
 </html>
