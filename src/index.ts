@@ -1,11 +1,11 @@
 import { workspace } from "./sticky/sticky";
 import { $ } from "./utils/dollars";
 import {
-  allowScriptExecutionIfNotYetSet,
-  createShortcutItem,
-  grantScriptPermission,
-  isScriptExecutionAllowed,
-  toggleSettingsPage,
+	allowScriptExecutionIfNotYetSet,
+	createShortcutItem,
+	grantScriptPermission,
+	isScriptExecutionAllowed,
+	toggleSettingsPage,
 } from "./settings";
 import { addPublicApi } from "./publicApi";
 import { initMarkdownSticky } from "./stickyPlugins/markdown";
@@ -40,276 +40,276 @@ const urls = { en, zh_TW };
 const AVAILABLE_LOCALES = ["en", "zh_TW"];
 
 const defaultCommands: Command[] = [
-  {
-    name: "toggleSettings",
-    execute() {
-      toggleSettingsPage();
-    },
-    defaultShortcut: "C-,",
-  },
-  {
-    name: "toggleDarkMode",
-    execute() {
-      dataset.derivedSetItem("theme", (theme) =>
-        theme === "light" ? "dark" : "light",
-      );
-    },
-    defaultShortcut: "C-S-l",
-  },
-  {
-    name: "openYoutube",
-    execute() {
-      window.open("https://youtube.com", "_blank")!.focus();
-    },
-    defaultShortcut: "C-o",
-  },
-  {
-    name: "saveDocument",
-    execute() {
-      saveDocument();
-    },
-    defaultShortcut: "C-s",
-  },
-  {
-    name: "toggleGlobalGhostMode",
-    execute() {
-      dataset.derivedSetItem<boolean>(
-        "isGhostMode",
-        (isGhostMode) => !isGhostMode,
-      );
-    },
-    defaultShortcut: "C-A-g",
-  },
-  {
-    name: "deleteAllStickies",
-    execute() {
-      workspace.deleteAll();
-    },
-    defaultShortcut: "C-A-x",
-  },
-  {
-    name: "addMarkdownSticky",
-    execute() {
-      workspace.create({ type: "markdown" });
-    },
-    defaultShortcut: "C-A-m",
-  },
-  {
-    name: "addYoutubeSticky",
-    execute() {
-      workspace.create({ type: "youtube" });
-    },
-    defaultShortcut: "C-A-y",
-  },
-  {
-    name: "addSpotifySticky",
-    execute() {
-      workspace.create({ type: "spotify" });
-    },
-    defaultShortcut: "C-A-s",
-  },
-  {
-    name: "addNoteSticky",
-    execute() {
-      workspace.create({ type: "note" });
-    },
-    defaultShortcut: "C-q",
-  },
-  {
-    name: "deleteSticky",
-    execute() {
-      workspace.deleteLatest();
-    },
-    defaultShortcut: "A-x",
-  },
-  {
-    name: "toggleAutoArrange",
-    execute() {
-      workspace.arrange();
-    },
-    defaultShortcut: "A-r",
-  },
-  {
-    name: "toggleSplitView",
-    execute() {
-      workspace.getLatestStickyByType("markdown")?.plugin.toggleSplitView();
-    },
-    defaultShortcut: "A-v",
-  },
-  {
-    name: "toggleMaximizeSticky",
-    execute() {
-      workspace.getLatestSticky()?.toggleMaximize();
-    },
-    defaultShortcut: "A-m",
-  },
-  {
-    name: "toggleStickyEditMode",
-    execute() {
-      workspace.getLatestStickyByType("markdown")?.plugin.toggleEditMode();
-    },
-    defaultShortcut: "A-e",
-  },
-  {
-    name: "toggleStickyPinMode",
-    execute() {
-      workspace.getLatestSticky()?.togglePin();
-    },
-    defaultShortcut: "A-p",
-  },
-  {
-    name: "toggleGhostMode",
-    execute() {
-      workspace.getLatestSticky()?.toggleGhostMode();
-    },
-    defaultShortcut: "A-g",
-  },
-  {
-    name: "duplicateSticky",
-    execute() {
-      workspace.duplicateLatest();
-    },
-    defaultShortcut: "C-d",
-  },
-  {
-    name: "zoomIn",
-    execute() {
-      workspace.zoomable.zoomIn();
-    },
-    defaultShortcut: "C-=", // C + plus key
-  },
-  {
-    name: "zoomOut",
-    execute() {
-      workspace.zoomable.zoomOut();
-    },
-    defaultShortcut: "C-dash", // `-` is `dash` in kikey lib
-  },
-  {
-    name: "zoomReset",
-    execute() {
-      workspace.zoomable.zoomReset();
-    },
-    defaultShortcut: "C-0",
-  },
+	{
+		name: "toggleSettings",
+		execute() {
+			toggleSettingsPage();
+		},
+		defaultShortcut: "C-,",
+	},
+	{
+		name: "toggleDarkMode",
+		execute() {
+			dataset.derivedSetItem("theme", (theme) =>
+				theme === "light" ? "dark" : "light",
+			);
+		},
+		defaultShortcut: "C-S-l",
+	},
+	{
+		name: "openYoutube",
+		execute() {
+			window.open("https://youtube.com", "_blank")!.focus();
+		},
+		defaultShortcut: "C-o",
+	},
+	{
+		name: "saveDocument",
+		execute() {
+			saveDocument();
+		},
+		defaultShortcut: "C-s",
+	},
+	{
+		name: "toggleGlobalGhostMode",
+		execute() {
+			dataset.derivedSetItem<boolean>(
+				"isGhostMode",
+				(isGhostMode) => !isGhostMode,
+			);
+		},
+		defaultShortcut: "C-A-g",
+	},
+	{
+		name: "deleteAllStickies",
+		execute() {
+			workspace.deleteAll();
+		},
+		defaultShortcut: "C-A-x",
+	},
+	{
+		name: "addMarkdownSticky",
+		execute() {
+			workspace.create({ type: "markdown" });
+		},
+		defaultShortcut: "C-A-m",
+	},
+	{
+		name: "addYoutubeSticky",
+		execute() {
+			workspace.create({ type: "youtube" });
+		},
+		defaultShortcut: "C-A-y",
+	},
+	{
+		name: "addSpotifySticky",
+		execute() {
+			workspace.create({ type: "spotify" });
+		},
+		defaultShortcut: "C-A-s",
+	},
+	{
+		name: "addNoteSticky",
+		execute() {
+			workspace.create({ type: "note" });
+		},
+		defaultShortcut: "C-q",
+	},
+	{
+		name: "deleteSticky",
+		execute() {
+			workspace.deleteLatest();
+		},
+		defaultShortcut: "A-x",
+	},
+	{
+		name: "toggleAutoArrange",
+		execute() {
+			workspace.arrange();
+		},
+		defaultShortcut: "A-r",
+	},
+	{
+		name: "toggleSplitView",
+		execute() {
+			workspace.getLatestStickyByType("markdown")?.plugin.toggleSplitView();
+		},
+		defaultShortcut: "A-v",
+	},
+	{
+		name: "toggleMaximizeSticky",
+		execute() {
+			workspace.getLatestSticky()?.toggleMaximize();
+		},
+		defaultShortcut: "A-m",
+	},
+	{
+		name: "toggleStickyEditMode",
+		execute() {
+			workspace.getLatestStickyByType("markdown")?.plugin.toggleEditMode();
+		},
+		defaultShortcut: "A-e",
+	},
+	{
+		name: "toggleStickyPinMode",
+		execute() {
+			workspace.getLatestSticky()?.togglePin();
+		},
+		defaultShortcut: "A-p",
+	},
+	{
+		name: "toggleGhostMode",
+		execute() {
+			workspace.getLatestSticky()?.toggleGhostMode();
+		},
+		defaultShortcut: "A-g",
+	},
+	{
+		name: "duplicateSticky",
+		execute() {
+			workspace.duplicateLatest();
+		},
+		defaultShortcut: "C-d",
+	},
+	{
+		name: "zoomIn",
+		execute() {
+			workspace.zoomable.zoomIn();
+		},
+		defaultShortcut: "C-=", // C + plus key
+	},
+	{
+		name: "zoomOut",
+		execute() {
+			workspace.zoomable.zoomOut();
+		},
+		defaultShortcut: "C-dash", // `-` is `dash` in kikey lib
+	},
+	{
+		name: "zoomReset",
+		execute() {
+			workspace.zoomable.zoomReset();
+		},
+		defaultShortcut: "C-0",
+	},
 ];
 
 function getUserPreferredLanguage() {
-  // e.g. zh-TW => zh_TW to fit chrome webextension locales.
-  // See also: https://developer.chrome.com/docs/extensions/reference/api/i18n
-  const lang = navigator.language.replaceAll("-", "_");
-  if (
-    /* If supports user language */
-    AVAILABLE_LOCALES.includes(lang)
-  ) {
-    return lang;
-  } else {
-    return "en";
-  }
+	// e.g. zh-TW => zh_TW to fit chrome webextension locales.
+	// See also: https://developer.chrome.com/docs/extensions/reference/api/i18n
+	const lang = navigator.language.replaceAll("-", "_");
+	if (
+		/* If supports user language */
+		AVAILABLE_LOCALES.includes(lang)
+	) {
+		return lang;
+	} else {
+		return "en";
+	}
 }
 
 n81i.init({
-  locale: dataset.getOrSetItem<string>("locale", getUserPreferredLanguage()),
-  availableLocales: AVAILABLE_LOCALES,
-  resourceLoader: async (locale: string) => {
-    let url: string;
-    if (window.browser) {
-      url = `./_locales/${locale}/messages.json`;
-    } else {
-      url = (urls as any)[locale];
-    }
-    const response = await fetch(url);
-    return await response.json();
-  },
+	locale: dataset.getOrSetItem<string>("locale", getUserPreferredLanguage()),
+	availableLocales: AVAILABLE_LOCALES,
+	resourceLoader: async (locale: string) => {
+		let url: string;
+		if (window.browser) {
+			url = `./_locales/${locale}/messages.json`;
+		} else {
+			url = (urls as any)[locale];
+		}
+		const response = await fetch(url);
+		return await response.json();
+	},
 });
 n81i.translatePage();
 
 async function main() {
-  // Register custom stickies.
-  initMarkdownSticky();
-  initSpotifySticky();
-  initYouTubeSticky();
-  initNoteSticky();
+	// Register custom stickies.
+	initMarkdownSticky();
+	initSpotifySticky();
+	initYouTubeSticky();
+	initNoteSticky();
 
-  // Register custom docks.
-  initClockDock();
-  initBookmarkDock();
+	// Register custom docks.
+	initClockDock();
+	initBookmarkDock();
 
-  try {
-    const origin = await loadDocument();
-    allowScriptExecutionIfNotYetSet();
-    if (isScriptExecutionAllowed() && origin === "HashEncodedRemoteSource") {
-      // Make sure user want to execute script from third party.
-      await grantScriptPermission();
-    }
-  } catch (error) {
-    console.log(error);
-  }
-  $("#workspaceSlot")!.appendChild(workspace.crateMom);
+	try {
+		const origin = await loadDocument();
+		allowScriptExecutionIfNotYetSet();
+		if (isScriptExecutionAllowed() && origin === "HashEncodedRemoteSource") {
+			// Make sure user want to execute script from third party.
+			await grantScriptPermission();
+		}
+	} catch (error) {
+		console.log(error);
+	}
+	$("#workspaceSlot")!.appendChild(workspace.crateMom);
 
-  // Register default commands.
-  for (const command of defaultCommands) {
-    registerCommand(command);
-  }
-  // Create shortcut editor DOM
-  for (const action of shortcutManager.getAllActions()) {
-    createShortcutItem(action);
-  }
+	// Register default commands.
+	for (const command of defaultCommands) {
+		registerCommand(command);
+	}
+	// Create shortcut editor DOM
+	for (const action of shortcutManager.getAllActions()) {
+		createShortcutItem(action);
+	}
 
-  const menuItems = [
-    {
-      name: "addNoteSticky",
-      icon: "lucide-plus",
-      execute() {
-        executeCommand("addNoteSticky");
-      },
-    },
-    {
-      name: "addOtherStickyGroup",
-      subItems: [
-        {
-          name: "addYoutubeSticky",
-          icon: "lucide-youtube",
-          execute() {
-            executeCommand("addYoutubeSticky");
-          },
-        },
-        {
-          name: "addSpotifySticky",
-          icon: "mdi:spotify",
-          execute() {
-            executeCommand("addSpotifySticky");
-          },
-        },
-        {
-          name: "addMarkdownSticky",
-          icon: "ri:markdown-fill",
-          execute() {
-            executeCommand("addMarkdownSticky");
-          },
-        },
-      ],
-    },
-  ];
-  workspace.crateMom.dataset.contextMenu = "main";
-  registerContextMenu("main", menuItems);
+	const menuItems = [
+		{
+			name: "addNoteSticky",
+			icon: "lucide-plus",
+			execute() {
+				executeCommand("addNoteSticky");
+			},
+		},
+		{
+			name: "addOtherStickyGroup",
+			subItems: [
+				{
+					name: "addYoutubeSticky",
+					icon: "lucide-youtube",
+					execute() {
+						executeCommand("addYoutubeSticky");
+					},
+				},
+				{
+					name: "addSpotifySticky",
+					icon: "mdi:spotify",
+					execute() {
+						executeCommand("addSpotifySticky");
+					},
+				},
+				{
+					name: "addMarkdownSticky",
+					icon: "ri:markdown-fill",
+					execute() {
+						executeCommand("addMarkdownSticky");
+					},
+				},
+			],
+		},
+	];
+	workspace.crateMom.dataset.contextMenu = "main";
+	registerContextMenu("main", menuItems);
 
-  if (!$(".dock.bookmarker")) {
-    if (isSmallScreen()) {
-      createDock({ type: "bookmarker", placement: "bottom", grow: true });
-    } else {
-      createDock({ type: "bookmarker", placement: "right" });
-    }
-  }
-  if (!$(".dock.clock")) {
-    createDock({ type: "clock", placement: "bottomLeft" });
-  }
+	if (!$(".dock.bookmarker")) {
+		if (isSmallScreen()) {
+			createDock({ type: "bookmarker", placement: "bottom", grow: true });
+		} else {
+			createDock({ type: "bookmarker", placement: "right" });
+		}
+	}
+	if (!$(".dock.clock")) {
+		createDock({ type: "clock", placement: "bottomLeft" });
+	}
 }
 
 addPublicApi();
 main();
 
 addTodoAfterLoad(() => {
-  dataset.getOrSetItem("availableLocales", AVAILABLE_LOCALES);
+	dataset.getOrSetItem("availableLocales", AVAILABLE_LOCALES);
 });
 dataset.getOrSetItem("availableLocales", AVAILABLE_LOCALES);

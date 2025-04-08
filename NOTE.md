@@ -5,6 +5,8 @@
 just
 ```
 
+- .htmlnanorc setting will prevent parcel to strip svg viewBox attribute.
+
 ## TODOs
 
 - [x] Maximize
@@ -59,7 +61,7 @@ just
 - [x] Redesign dock api.
 - [x] Add setting option for disabling script execution.
 - [ ] Add ability to configure dock appearance (hide/show, placement, grow).
-- [ ] (WIPP) add opengraph metadata.
+- [x] Add opengraph metadata.
     - https://developers.facebook.com/tools/debug/?q=https%3A%2F%2Ftweakpane.github.io%2Fdocs%2Fix
     - https://poker.line.naver.jp/
     - https://www.freecodecamp.org/news/what-is-open-graph-and-how-can-i-use-it-for-my-website/
