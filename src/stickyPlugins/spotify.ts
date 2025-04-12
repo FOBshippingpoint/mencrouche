@@ -79,13 +79,13 @@ form.on("submit", (e) => {
 
 	// Adjust width
 	if (window.matchMedia("(min-width: 1536px)").matches) {
-		current.style.width = "900px";
+		current.style.width = "500px";
 	} else if (window.matchMedia("(min-width: 1024px)").matches) {
-		current.style.width = "800px";
-	} else if (window.matchMedia("(min-width: 768px)").matches) {
-		current.style.width = "600px";
-	} else {
 		current.style.width = "400px";
+	} else if (window.matchMedia("(min-width: 768px)").matches) {
+		current.style.width = "300px";
+	} else {
+		current.style.width = "200px";
 	}
 
 	dialog.close();

@@ -9,7 +9,7 @@
  * ```
  */
 import { registerCommand, executeCommand } from "./commands";
-import { $, $$, $$$, h } from "./utils/dollars";
+import { $, $$, $$$, addCss, h } from "./utils/dollars";
 import {
 	getPluginStickyTypes,
 	getPluginStickyModel,
@@ -35,6 +35,7 @@ const mc = {
 	$$,
 	$$$,
 	n81i,
+	addCss,
 	dataset,
 	createDock,
 	apocalypse,

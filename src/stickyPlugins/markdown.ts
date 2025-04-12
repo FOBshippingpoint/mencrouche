@@ -353,4 +353,10 @@ function enable(sticky: Sticky<MarkdownPlugin, MarkdownConfig>) {
 export function initMarkdownSticky() {
 	registerSticky(markdownSticky);
 	registerContextMenu("markdown", markdownStickyMenuItems);
+	let id = setInterval(() => {
+		if (window.Prism) {
+			window.Prism.highlightAll();
+			clearInterval(id);
+		}
+	}, 1000);
 }

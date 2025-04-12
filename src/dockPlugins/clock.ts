@@ -1,5 +1,4 @@
 import {
-	createDock,
 	registerDock,
 	type Dock,
 	type PluginDock,
@@ -55,20 +54,20 @@ export function enable(dock: Dock<ClockPlugin, ClockDockConfig>) {
 	minuteHand.style.animationDelay = `${minuteDelay}s`;
 	hourHand.style.animationDelay = `${hourDelay}s`;
 
-	if (isSmallScreen()) {
-		dock.classList.add("none");
-	}
+	dock.classList.toggle("none", isSmallScreen());
 	dock.replaceBody(clock);
 }
 
 const clockModel: PluginDockModel<ClockPlugin, ClockDockConfig> = {
 	type: "clock",
 	onCreate(dock) {
+		console.log("oncreate");
 		enable(dock);
 	},
 	onDelete() {},
 	onSave() {},
 	onRestore(dock) {
+		console.log("onrestore");
 		enable(dock);
 	},
 };
