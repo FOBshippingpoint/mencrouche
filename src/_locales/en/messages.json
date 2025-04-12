@@ -115,6 +115,10 @@
 		"message": "New Spotify Sticky",
 		"description": "Command description for adding a new spotify sticky note."
 	},
+	"addIFrameSticky": {
+		"message": "New Website Sticky",
+		"description": "Command description for adding a new iframe sticky note."
+	},
 	"openBookmarkInCurrentTabOption": {
 		"message": "Open in current tab",
 		"description": "Context menu item label text for opening bookmark link in current tab."
@@ -498,6 +502,10 @@
 	"addMarkdownStickyBtn": {
 		"message": "Markdown",
 		"description": "Button title for markdown sticky."
+	},
+	"addIFrameStickyBtn": {
+		"message": "Website",
+		"description": "Button title for iframe sticky."
 	},
 	"addNoteStickyBtnTitle": {
 		"message": "New Note",

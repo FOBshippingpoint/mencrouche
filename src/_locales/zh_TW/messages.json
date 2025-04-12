@@ -115,6 +115,10 @@
 		"message": "新增Spotify便利貼",
 		"description": "Command description for adding a new spotify sticky note."
 	},
+	"addIFrameSticky": {
+		"message": "新增嵌入式網站",
+		"description": "Command description for adding a new iframe sticky."
+	},
 	"openBookmarkInCurrentTabOption": {
 		"message": "在此分頁開啟",
 		"description": "Context menu item label text for opening bookmark link in current tab."
@@ -502,6 +506,10 @@
 	"addMarkdownStickyBtn": {
 		"message": "Markdown",
 		"description": "Button title for markdown sticky."
+	},
+	"addIFrameStickyBtn": {
+		"message": "嵌入網站",
+		"description": "Button title for iframe sticky."
 	},
 	"addNoteStickyBtnTitle": {
 		"message": "新增Markdown便利貼",

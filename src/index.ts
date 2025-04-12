@@ -110,6 +110,13 @@ const defaultCommands: Command[] = [
 		defaultShortcut: "C-A-s",
 	},
 	{
+		name: "addIFrameSticky",
+		execute() {
+			workspace.create({ type: "iframe" });
+		},
+		defaultShortcut: "C-A-w",
+	},
+	{
 		name: "addNoteSticky",
 		execute() {
 			workspace.create({ type: "note" });
@@ -288,6 +295,13 @@ async function main() {
 					icon: "ri:markdown-fill",
 					execute() {
 						executeCommand("addMarkdownSticky");
+					},
+				},
+				{
+					name: "addIFrameSticky",
+					icon: "lucide:globe",
+					execute() {
+						executeCommand("addIFrameSticky");
 					},
 				},
 			],

@@ -140,11 +140,3 @@ function enable(sticky: Sticky<IFramePlugin, IFrameConfig>) {
 export function initIFrameSticky() {
 	registerSticky(iframeSticky);
 }
-
-registerCommand({
-	name: "s",
-	defaultShortcut: "A-t",
-	execute() {
-		workspace.create({ type: "iframe" });
-	},
-});
