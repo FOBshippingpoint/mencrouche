@@ -3,15 +3,60 @@ import { dataset, addTodoAfterLoad, addTodoBeforeSave } from "../dataWizard";
 import { $, addCss } from "../utils/dollars";
 import { registerContextMenu } from "../contextMenu";
 import { bakeBean, soakBean } from "../utils/bean";
+import { markDirtyAndSaveDocument } from "../lifesaver";
 
 const dockSlot = $<HTMLSlotElement>("#dockSlot")!;
 const dockAppearanceDialog = $<HTMLDialogElement>("#dockAppearanceDialog")!;
 const alwaysOnTopChk = dockAppearanceDialog.$<HTMLInputElement>(
 	'[name="alwaysOnTop"]',
 )!;
+const transparentBackgroundChk = dockAppearanceDialog.$<HTMLInputElement>(
+	'[name="transparentBackground"]',
+)!;
 const placementBtns = dockAppearanceDialog.$$<HTMLButtonElement>(
-	".dockPlacementSelector button",
+	"#dockPlacementSelector button",
 );
+
+let currentDock: Dock;
+let backup: Record<string, unknown>;
+let shouldRestore = true;
+dockAppearanceDialog.$('[data-i18n="cancelSubmitBtn"]')!.on("click", () => {
+	dockAppearanceDialog.close();
+});
+dockAppearanceDialog.$('[data-i18n="submitBtn"]')!.on("click", () => {
+	shouldRestore = false; // keep changes
+	dockAppearanceDialog.close();
+	markDirtyAndSaveDocument();
+});
+dockAppearanceDialog.on("close", () => {
+	if (shouldRestore) {
+		soakBean(currentDock, backup);
+	}
+});
+alwaysOnTopChk.on("change", () => {
+	currentDock.classList.toggle("alwaysOnTop");
+});
+transparentBackgroundChk.on("change", () => {
+	currentDock.classList.toggle("surface");
+	currentDock.classList.toggle("shadow");
+});
+for (const btn of placementBtns) {
+	btn.on("click", () => {
+		placementBtns.forEach((other) => {
+			if (other !== btn) {
+				other.className = "";
+			}
+		});
+
+		const placement = btn.dataset.placement as Placement;
+		if (btn.classList.contains("active")) {
+			btn.classList.toggle("grow");
+		}
+		btn.classList.add("active");
+		const grow = btn.classList.contains("grow");
+		placeElement(currentDock, placement, grow);
+	});
+}
 
 export interface PluginDockConfig extends Record<string, unknown> {}
 
@@ -19,6 +64,7 @@ export interface PluginDock {}
 export interface DockConfig<C extends PluginDockConfig = PluginDockConfig> {
 	type: string;
 	id?: string;
+	className?: string;
 	pluginConfig?: C;
 	placement?: Placement;
 	grow?: boolean;
@@ -107,7 +153,7 @@ export function createDock(options: DockConfig) {
 	const dock = getTemplate<HTMLDivElement>("dockWidgets");
 	const _dock = dock as Dock;
 	dock.id = options.id ?? crypto.randomUUID();
-	dock.classList.add(options.type);
+	dock.className = options.className ?? options.type;
 	placeElement(dock, options.placement ?? "center", options.grow ?? false);
 
 	Object.assign(dock, {
@@ -126,6 +172,7 @@ export function createDock(options: DockConfig) {
 			}
 			config.id = dock.id;
 			config.type = options.type;
+			config.className = dock.className;
 			config.placement = dock.dataset.placement! as Placement;
 			config.grow = dock.dataset.grow === "true";
 			return config;
@@ -176,21 +223,6 @@ function placeElement(
 	}
 }
 
-let currentDock: Dock;
-let backup: Record<string, unknown>;
-let shouldRestore = true;
-dockAppearanceDialog.$('[data-i18n="cancelSubmitBtn"]')!.on("click", () => {
-	dockAppearanceDialog.close();
-});
-dockAppearanceDialog.$('[data-i18n="submitBtn"]')!.on("click", () => {
-	shouldRestore = false; // keep changes
-	dockAppearanceDialog.close();
-});
-dockAppearanceDialog.on("close", () => {
-	if (shouldRestore) {
-		soakBean(currentDock, backup);
-	}
-});
 registerContextMenu("dock", [
 	{
 		name: "editDockAppearanceMenuItem",
@@ -198,39 +230,18 @@ registerContextMenu("dock", [
 		execute(dock: Dock) {
 			currentDock = dock;
 			backup = bakeBean(dock, "class");
-			console.log("backup", backup);
 			placementBtns.forEach((btn) => (btn.className = ""));
 			dockAppearanceDialog.$(
 				`button[data-placement="${currentDock.dataset.placement}"]`,
 			)!.className = "active";
 			alwaysOnTopChk.checked = currentDock.classList.contains("alwaysOnTop");
+			transparentBackgroundChk.checked =
+				!currentDock.classList.contains("surface");
 			dockAppearanceDialog.showModal();
 			shouldRestore = true;
 		},
 	},
 ]);
-
-alwaysOnTopChk.on("change", () => {
-	currentDock.classList.toggle("alwaysOnTop");
-});
-
-for (const btn of placementBtns) {
-	btn.on("click", () => {
-		placementBtns.forEach((other) => {
-			if (other !== btn) {
-				other.className = "";
-			}
-		});
-
-		const placement = btn.dataset.placement as Placement;
-		if (btn.classList.contains("active")) {
-			btn.classList.toggle("grow");
-		}
-		btn.classList.add("active");
-		const grow = btn.classList.contains("grow");
-		placeElement(currentDock, placement, grow);
-	});
-}
 
 addTodoBeforeSave(() => {
 	dataset.setItem(

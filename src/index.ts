@@ -30,10 +30,11 @@ import en from "url:./_locales/en/messages.json";
 import zh_TW from "url:./_locales/zh_TW/messages.json";
 import { executeCommand, registerCommand, type Command } from "./commands";
 import { initNoteSticky } from "./stickyPlugins/note";
+import { initIFrameSticky } from "./stickyPlugins/iframe";
 import { initClockDock } from "./dockPlugins/clock";
 import { initBookmarkDock } from "./dockPlugins/bookmark";
 import { isSmallScreen } from "./utils/screenSize";
-import { createDock, getAllDocks } from "./dock/dock";
+import { createDock } from "./dock/dock";
 
 const urls = { en, zh_TW };
 
@@ -230,6 +231,7 @@ async function main() {
 	initSpotifySticky();
 	initYouTubeSticky();
 	initNoteSticky();
+	initIFrameSticky();
 
 	// Register custom docks.
 	initClockDock();

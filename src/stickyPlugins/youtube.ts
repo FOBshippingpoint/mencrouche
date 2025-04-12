@@ -154,7 +154,6 @@ const youtubeSticky: PluginStickyModel<YouTubePlugin, YouTubeConfig> = {
 			sticky.plugin.initPlayer();
 		}
 	},
-	css: `--sticky-padding: 0`,
 };
 
 function enable(sticky: Sticky<YouTubePlugin>, onScriptLoad: () => void) {
@@ -173,7 +172,7 @@ function enable(sticky: Sticky<YouTubePlugin>, onScriptLoad: () => void) {
 	editLinkBtn.on("click", () => {
 		current = sticky;
 		sticky.dataset.isPlaying =
-			current.plugin.player?.getPlayerState() === YT.PlayerState.PLAYING
+			current.plugin.player?.getPlayerState?.() === YT.PlayerState.PLAYING
 				? "on"
 				: "off";
 		sticky.plugin.player?.pauseVideo();

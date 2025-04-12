@@ -1,6 +1,5 @@
 import { apocalypse } from "../apocalypse";
 import {
-	createDock,
 	registerDock,
 	type Dock,
 	type PluginDock,
@@ -15,7 +14,7 @@ import { $, $$$ } from "../utils/dollars";
 import { dataset } from "../dataWizard";
 import { registerContextMenu } from "../contextMenu";
 import { clipboardImageItemToDataUrl } from "../utils/toDataUrl";
-import { isSmallScreen } from "../utils/screenSize";
+import { parseUrl } from "../utils/parseUrl";
 
 class Bookmark {
 	readonly element: HTMLAnchorElement;
@@ -408,24 +407,6 @@ const bookmarkMenuItems = [
 		},
 	}),
 ];
-
-function parseUrl(urlLike: string | null) {
-	if (urlLike) {
-		try {
-			try {
-				// Try to construct URL directly first
-				return new URL(urlLike);
-			} catch {
-				// If that fails, try adding https:// and construct again
-				return new URL(`https://${urlLike}`);
-			}
-		} catch (error) {
-			return null;
-		}
-	} else {
-		return null;
-	}
-}
 
 function stringCoalesce(...strList: (string | null | undefined)[]) {
 	for (const str of strList) {

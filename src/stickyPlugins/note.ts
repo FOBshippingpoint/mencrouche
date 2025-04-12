@@ -37,7 +37,6 @@ const noteSticky: PluginStickyModel<NotePlugin, NoteConfig> = {
 			sticky.plugin.quill.setContents(pluginConfig.contents);
 		}
 	},
-	css: `--sticky-padding: 0`,
 };
 
 const toolbarOptions = [

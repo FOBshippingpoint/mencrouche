@@ -518,5 +518,21 @@
 	"zoomReset": {
 		"message": "Reset Zoom",
 		"description": "Command description for reset workspace zoom."
+	},
+	"adjustDockPositionLabel": {
+		"message": "Adjust Dock Position",
+		"description": "Grid label for adjusting dock position."
+	},
+	"dockTransparentBackgroundCheckboxLabel": {
+		"message": "Transparent Background",
+		"description": "Checkbox label for enabling dock transparent background."
+	},
+	"invalidUrl": {
+		"message": "Invalid URL",
+		"description": "Error message displayed when the iframe sticky URL is invalid."
+	},
+	"iframeLinkInput": {
+		"message": "Website Link",
+		"description": "Input label for the iframe sticky link."
 	}
 }

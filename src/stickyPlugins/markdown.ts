@@ -146,7 +146,6 @@ const markdownSticky: PluginStickyModel<MarkdownPlugin, MarkdownConfig> = {
 			}
 		}
 	},
-	css: `--sticky-padding: 0`,
 };
 
 const markdownStickyMenuItems: MenuItem[] = [
@@ -222,18 +221,20 @@ function enable(sticky: Sticky<MarkdownPlugin, MarkdownConfig>) {
 			html = DOMPurify.sanitize(dirtyHtml, {
 				// allow showing image
 				ALLOWED_URI_REGEXP:
-					/^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|xxx):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+					/^(?:(?:https):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
 			});
 		}
 		const fragment = document.createRange().createContextualFragment(html);
 		for (const el of fragment.querySelectorAll("pre code")) {
 			const language = el.className.slice(9);
 			// Prism is load by cdn using script tag in index.html
-			window.Prism.plugins.autoloader.loadLanguages(language);
-			el.innerHTML = window.Prism.highlight(
-				(el as HTMLElement).innerText,
-				window.Prism.languages[language],
-			);
+			window?.Prism.plugins.autoloader.loadLanguages(language);
+			if (window?.Prism.languages[language]) {
+				el.innerHTML = window.Prism.highlight(
+					(el as HTMLElement).innerText,
+					window.Prism.languages[language],
+				);
+			}
 		}
 		preview.replaceChildren(fragment);
 	}

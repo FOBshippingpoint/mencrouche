@@ -522,5 +522,21 @@
 	"zoomReset": {
 		"message": "重置縮放",
 		"description": "Command description for reset workspace zoom."
+	},
+	"adjustDockPositionLabel": {
+		"message": "調整Dock位置",
+		"description": "Grid label for adjusting dock position."
+	},
+	"dockTransparentBackgroundCheckboxLabel": {
+		"message": "背景透明化",
+		"description": "Checkbox label for enabling dock transparent background."
+	},
+	"invalidUrl": {
+		"message": "錯誤的URL",
+		"description": "Error message displayed when the iframe sticky URL is invalid."
+	},
+	"iframeLinkInput": {
+		"message": "網站連結",
+		"description": "Input label for the iframe sticky link."
 	}
 }

@@ -136,7 +136,6 @@ const spotifySticky: PluginStickyModel<SpotifyPlugin, SpotifyConfig> = {
 			iframe.height = config.iframeHeight;
 		}
 	},
-	css: `--sticky-padding: 0`,
 };
 
 function enable(sticky: Sticky) {

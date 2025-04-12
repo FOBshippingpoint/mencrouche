@@ -238,8 +238,8 @@
 						width="100%"
 						height="100%"
 						frameborder="0"
-						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-						referrerpolicy="strict-origin-when-cross-origin"
+						allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+						referrerpolicy="same-origin"
 						allowfullscreen
 					></iframe>
 				</template>
@@ -298,6 +298,7 @@
 						allowfullscreen=""
 						allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
 						loading="lazy"
+						referrerpolicy="same-origin"
 					></iframe>
 				</template>
 				<template id="markdownStickyWidgets">
@@ -379,10 +380,9 @@
 					<div class="divider"></div>
 					<div class="preview"></div>
 				</template>
-				<template id="markdownStickyWidgets">
-					<label class="editModeToggleLbl">
+				<template id="iframeStickyWidgets">
+					<button class="ghostBtn pureBtn">
 						<svg
-							class="none"
 							xmlns="http://www.w3.org/2000/svg"
 							width="20"
 							height="20"
@@ -392,37 +392,31 @@
 							stroke-width="2"
 							stroke-linecap="round"
 							stroke-linejoin="round"
-							class="lucide lucide-pencil"
+							class="lucide lucide-box-select"
 						>
-							<path
-								d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
-							/>
-							<path d="m15 5 4 4" />
+							<path d="M5 3a2 2 0 0 0-2 2" />
+							<path d="M19 3a2 2 0 0 1 2 2" />
+							<path d="M21 19a2 2 0 0 1-2 2" />
+							<path d="M5 21a2 2 0 0 1-2-2" />
+							<path d="M9 3h1" />
+							<path d="M9 21h1" />
+							<path d="M14 3h1" />
+							<path d="M14 21h1" />
+							<path d="M3 9v1" />
+							<path d="M21 9v1" />
+							<path d="M3 14v1" />
+							<path d="M21 14v1" />
 						</svg>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="22"
-							height="22"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							class="lucide lucide-sticky-note"
-						>
-							<path
-								d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"
-							/>
-							<path d="M15 3v4a2 2 0 0 0 2 2h4" />
-						</svg>
-						<input hidden="" type="checkbox" />
-					</label>
-					<textarea
-						data-i18n="stickyTextareaStartTypingPlaceholder"
-						data-i18n-for="placeholder"
-					></textarea>
-					<div class="preview" hidden=""></div>
+					</button>
+					<input type="url" name="link" spellcheck="false" class="addressBar" />
+					<iframe
+						class="shadow"
+						frameborder="0"
+						allowfullscreen=""
+						allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+						loading="lazy"
+						referrerpolicy="same-origin"
+					></iframe>
 				</template>
 				<template id="sticky">
 					<div class="sticky" tabindex="0">
@@ -923,17 +917,21 @@
 		</dialog>
 		<dialog id="dockAppearanceDialog">
 			<form class="grid">
-				<label>
-					<span data-i18n="sizeInputLabel"></span>
-					<input
-						type="range"
-						name="size"
-						step="16"
-						min="16"
-						max="64"
-						required
-					/>
-				</label>
+				<label
+					for="dockPlacementSelector"
+					data-i18n="adjustDockPositionLabel"
+				></label>
+				<div id="dockPlacementSelector">
+					<button type="button" data-placement="topLeft"></button>
+					<button type="button" data-placement="top"></button>
+					<button type="button" data-placement="topRight"></button>
+					<button type="button" data-placement="left"></button>
+					<button type="button" data-placement="center"></button>
+					<button type="button" data-placement="right"></button>
+					<button type="button" data-placement="bottomLeft"></button>
+					<button type="button" data-placement="bottom"></button>
+					<button type="button" data-placement="bottomRight"></button>
+				</div>
 				<label>
 					<input type="checkbox" name="alwaysOnTop" />
 					<span data-i18n="alwaysOnTopCheckboxLabel"></span>
@@ -956,25 +954,10 @@
 						</svg>
 					</div>
 				</label>
-				<!-- <label> -->
-				<!--   <input type="checkbox" name="showAddBtn" /> -->
-				<!--   <span data-i18n="showAddBookmarkBtnCheckboxLabel"></span> -->
-				<!-- </label> -->
-				<!-- <label> -->
-				<!--   <input type="checkbox" name="showLabel" /> -->
-				<!--   <span data-i18n="showLabelCheckboxLabel"></span> -->
-				<!-- </label> -->
-				<div class="dockPlacementSelector">
-					<button type="button" data-placement="topLeft"></button>
-					<button type="button" data-placement="top"></button>
-					<button type="button" data-placement="topRight"></button>
-					<button type="button" data-placement="left"></button>
-					<button type="button" data-placement="center"></button>
-					<button type="button" data-placement="right"></button>
-					<button type="button" data-placement="bottomLeft"></button>
-					<button type="button" data-placement="bottom"></button>
-					<button type="button" data-placement="bottomRight"></button>
-				</div>
+				<label>
+					<input type="checkbox" name="transparentBackground" />
+					<span data-i18n="dockTransparentBackgroundCheckboxLabel"></span>
+				</label>
 				<div class="gaButtonGroup">
 					<button
 						class="btn"
@@ -1020,6 +1003,22 @@
 					></option>
 					<option value="352px" data-i18n="spotifyNormalHeight"></option>
 				</select>
+				<div class="gaButtonGroup">
+					<button
+						class="btn"
+						type="button"
+						data-i18n="cancelSubmitBtn"
+					></button>
+					<button class="btn" type="submit" data-i18n="submitBtn"></button>
+				</div>
+			</form>
+		</dialog>
+		<dialog id="iframeDialog">
+			<form class="grid">
+				<label>
+					<span data-i18n="iframeLinkInput"></span>
+					<input name="link" required />
+				</label>
 				<div class="gaButtonGroup">
 					<button
 						class="btn"
