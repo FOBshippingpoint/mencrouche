@@ -60,7 +60,7 @@ mc.registerSticky({
   onDelete() {},
   onRestore() {},
 });
-mc.workspace.create({ type: "clock" });
+mc.workspace.createSticky({ type: "clock" });
 ```
 
 After executing the code, you should see a sticky appended to the workspace:
@@ -94,7 +94,7 @@ mc.registerSticky({
   },
   onRestore() {},
 });
-mc.workspace.create({ type: "clock" });
+mc.workspace.createSticky({ type: "clock" });
 ```
 
 In this version, "update time" is printed every 100ms. After closing the sticky, the `onDelete` will call, to clear interval callback.
@@ -138,7 +138,7 @@ mc.registerSticky({
     sticky.querySelector("span").style.color = pluginConfig.color;
   },
 });
-mc.workspace.create({ type: "clock" });
+mc.workspace.createSticky({ type: "clock" });
 ```
 
 Ta-da!
@@ -261,7 +261,7 @@ mc.registerSticky({
     enableClock(sticky, pluginConfig.color);
   },
 });
-mc.workspace.create({ type: "clock" });
+mc.workspace.createSticky({ type: "clock" });
 ```
 
 

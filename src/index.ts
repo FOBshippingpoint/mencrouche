@@ -91,35 +91,35 @@ const defaultCommands: Command[] = [
 	{
 		name: "addMarkdownSticky",
 		execute() {
-			workspace.create({ type: "markdown" });
+			workspace.createSticky({ type: "markdown" });
 		},
 		defaultShortcut: "C-A-m",
 	},
 	{
 		name: "addYoutubeSticky",
 		execute() {
-			workspace.create({ type: "youtube" });
+			workspace.createSticky({ type: "youtube" });
 		},
 		defaultShortcut: "C-A-y",
 	},
 	{
 		name: "addSpotifySticky",
 		execute() {
-			workspace.create({ type: "spotify" });
+			workspace.createSticky({ type: "spotify" });
 		},
 		defaultShortcut: "C-A-s",
 	},
 	{
 		name: "addIFrameSticky",
 		execute() {
-			workspace.create({ type: "iframe" });
+			workspace.createSticky({ type: "iframe" });
 		},
 		defaultShortcut: "C-A-w",
 	},
 	{
 		name: "addNoteSticky",
 		execute() {
-			workspace.create({ type: "note" });
+			workspace.createSticky({ type: "note" });
 		},
 		defaultShortcut: "C-q",
 	},
@@ -128,7 +128,7 @@ const defaultCommands: Command[] = [
 		execute() {
 			workspace.deleteLatest();
 		},
-		defaultShortcut: "A-x",
+		defaultShortcut: "A-w",
 	},
 	{
 		name: "toggleAutoArrange",
@@ -254,7 +254,8 @@ async function main() {
 	} catch (error) {
 		console.log(error);
 	}
-	$("#workspaceSlot")!.appendChild(workspace.crateMom);
+	$("#workspaceSlot")!.appendChild(workspace.outerCrate);
+	window.dispatchEvent(new CustomEvent("workspaceloaded"));
 
 	// Register default commands.
 	for (const command of defaultCommands) {
@@ -307,7 +308,7 @@ async function main() {
 			],
 		},
 	];
-	workspace.crateMom.dataset.contextMenu = "main";
+	workspace.outerCrate.dataset.contextMenu = "main";
 	registerContextMenu("main", menuItems);
 
 	if (!$(".dock.bookmarker")) {

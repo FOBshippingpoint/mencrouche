@@ -417,7 +417,7 @@ h6 {
 	}
 }
 /* 感覺這邊還是有點BUG */
-.crate:not(.ghost:not(.peakGhost)) .pin.sticky:not(.ghost) {
+.innerCrate:not(.ghost:not(.peakGhost)) .pin.sticky:not(.ghost) {
 	outline: var(--border-size-3) solid var(--well-1);
 }
 
@@ -484,8 +484,10 @@ h6 {
 	display: flex;
 	overflow: auto;
 
-	.preview {
+	.preview,
+	textarea {
 		display: initial;
+		width: 50%;
 	}
 	.divider {
 		width: var(--size-1);
@@ -570,7 +572,7 @@ h6 {
 	border-radius: var(--radius-2);
 }
 
-.crate {
+.innerCrate {
 	position: absolute;
 	transform-origin: 0 0;
 	/* for zooming debugging */

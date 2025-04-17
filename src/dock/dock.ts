@@ -5,7 +5,13 @@ import { registerContextMenu } from "../contextMenu";
 import { bakeBean, soakBean } from "../utils/bean";
 import { markDirtyAndSaveDocument } from "../lifesaver";
 
-const dockSlot = $<HTMLSlotElement>("#dockSlot")!;
+function getDockSlot(): HTMLSlotElement {
+	const dockSlot = $<HTMLSlotElement>(".dockSlot");
+	if (!dockSlot) {
+		throw Error("should get dockSlot element");
+	}
+	return dockSlot;
+}
 const dockAppearanceDialog = $<HTMLDialogElement>("#dockAppearanceDialog")!;
 const alwaysOnTopChk = dockAppearanceDialog.$<HTMLInputElement>(
 	'[name="alwaysOnTop"]',
@@ -180,7 +186,7 @@ export function createDock(options: DockConfig) {
 	});
 
 	model.onCreate(_dock);
-	dockSlot.appendChild(dock);
+	getDockSlot().appendChild(dock);
 	docks.push(_dock);
 
 	return _dock;
@@ -250,21 +256,26 @@ addTodoBeforeSave(() => {
 	);
 });
 addTodoAfterLoad(() => {
-	// Clear all docks
-	dockSlot.replaceChildren();
-	// Restore docks
-	const docks = dataset.getItem<DockConfig[]>("docks");
-	if (docks) {
-		for (const dockConfig of docks) {
-			const dock = createDock(dockConfig);
-			const model = pluginDockPool.get(dockConfig.type);
-			if (model) {
-				model.onRestore(dock, dockConfig.pluginConfig);
-			} else {
-				throw Error(
-					`Failed to restore dock type [ ${dockConfig.type} ]. Please register dock type first via 'registerDock'.`,
-				);
+	// TODO:
+	// I don't satisfy with this approach
+	// Might integrate dock into workspace in future.
+	window.on("workspaceloaded", () => {
+		// Clear all docks
+		getDockSlot().replaceChildren();
+		// Restore docks
+		const docks = dataset.getItem<DockConfig[]>("docks");
+		if (docks) {
+			for (const dockConfig of docks) {
+				const dock = createDock(dockConfig);
+				const model = pluginDockPool.get(dockConfig.type);
+				if (model) {
+					model.onRestore(dock, dockConfig.pluginConfig);
+				} else {
+					throw Error(
+						`Failed to restore dock type [ ${dockConfig.type} ]. Please register dock type first via 'registerDock'.`,
+					);
+				}
 			}
 		}
-	}
+	});
 });

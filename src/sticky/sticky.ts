@@ -132,13 +132,13 @@ export interface WorkspaceConfig {
 }
 class Workspace extends EventTarget {
 	/** Contains stickies. */
-	crate: HTMLDivElement;
+	innerCrate: HTMLDivElement;
 	/**
 	 * Contains crate.
 	 * A simple html element wrapper, so that we can use
 	 * css transform without worrying outer layout.
 	 */
-	crateMom: HTMLDivElement;
+	outerCrate: HTMLDivElement;
 	zoomable: Zoomable;
 	draggable: Draggable;
 	buildSticky: ReturnType<typeof buildBuildSticky>;
@@ -153,44 +153,39 @@ class Workspace extends EventTarget {
 		super();
 		this.apocalypse = apocalypse;
 
-		this.crateMom = $$$("div");
-		this.crateMom.className = "workspace";
+		this.outerCrate = getTemplate<HTMLDivElement>("workspaceWidgets");
+		this.innerCrate = this.outerCrate.$<HTMLDivElement>(".innerCrate")!;
 
-		this.crate = $$$("div");
-		this.crate.className = "crate";
-
-		this.crateMom.appendChild(this.crate);
-
-		this.zoomable = new Zoomable(this.crate, {
-			interactEl: this.crateMom,
+		this.zoomable = new Zoomable(this.innerCrate, {
+			interactEl: this.outerCrate,
 			onZoom: () => markDirtyAndSaveDocument(),
 		});
 
-		this.draggable = new Draggable(this.crate, {
-			interactEl: this.crateMom,
+		this.draggable = new Draggable(this.innerCrate, {
+			interactEl: this.outerCrate,
 			acceptMouseButton: 1, // Only accept middle button drag.
-			onDragStart: () => (this.crateMom.style.cursor = "grab"),
-			onDragEnd: () => this.crateMom.style.removeProperty("cursor"),
+			onDragStart: () => (this.outerCrate.style.cursor = "grab"),
+			onDragEnd: () => this.outerCrate.style.removeProperty("cursor"),
 			onDrag: () => markDirtyAndSaveDocument(),
 		});
 
 		// Peak hidden border when pressing ctrl key.
 		document.body.on("keydown", (e) => {
-			this.crate.classList.toggle("peakGhost", e.ctrlKey);
+			this.innerCrate.classList.toggle("peakGhost", e.ctrlKey);
 		});
 		document.body.on("keyup", (e) => {
-			this.crate.classList.toggle("peakGhost", e.ctrlKey);
+			this.innerCrate.classList.toggle("peakGhost", e.ctrlKey);
 		});
 
 		// Continuosly track the cursor position.
 		this.cursorPoint = [NaN, NaN];
-		this.crateMom.on("pointermove", (e) => {
-			const rect = this.crate.getBoundingClientRect();
+		this.outerCrate.on("pointermove", (e) => {
+			const rect = this.innerCrate.getBoundingClientRect();
 			this.cursorPoint[0] = (e.clientX - rect.x) / this.zoomable.scale;
 			this.cursorPoint[1] = (e.clientY - rect.y) / this.zoomable.scale;
 		});
-		this.crateMom.on("pointerenter", () => (this._isCursorOutside = false));
-		this.crateMom.on("pointerleave", () => (this._isCursorOutside = true));
+		this.outerCrate.on("pointerenter", () => (this._isCursorOutside = false));
+		this.outerCrate.on("pointerleave", () => (this._isCursorOutside = true));
 
 		// Build buildSticky function that has wrap with dynamic cursor point.
 		this.buildSticky = buildBuildSticky(this);
@@ -213,7 +208,7 @@ class Workspace extends EventTarget {
 	refreshHighestZIndex() {
 		// Find and set the highestZIndex when initialize from existing document.
 		this.highestZIndex = 0;
-		for (const sticky of this.crateMom.$$<HTMLDivElement>(".sticky")) {
+		for (const sticky of this.outerCrate.$$<HTMLDivElement>(".sticky")) {
 			const zIndex = parseInt(sticky.style.zIndex);
 			if (zIndex > this.highestZIndex) {
 				this.highestZIndex = zIndex;
@@ -406,8 +401,8 @@ class Workspace extends EventTarget {
 		}
 
 		const GAP = 0; // TODO: remove this variable since this bin packing algo will add gap?
-		const crate = this.crate;
-		const crateMom = this.crateMom;
+		const crate = this.innerCrate;
+		const crateMom = this.outerCrate;
 		const transform = workspace.zoomable.getTransform();
 		const offset = workspace.draggable.getOffset();
 		const blocks = stickies.map((sticky) => ({
@@ -498,16 +493,16 @@ class Workspace extends EventTarget {
 	}
 
 	private maximize(sticky: Sticky) {
-		const width = this.crateMom.offsetWidth / workspace.zoomable.scale;
-		const height = this.crateMom.offsetHeight / workspace.zoomable.scale;
+		const width = this.outerCrate.offsetWidth / workspace.zoomable.scale;
+		const height = this.outerCrate.offsetHeight / workspace.zoomable.scale;
 		const matrix = new DOMMatrixReadOnly(
-			getComputedStyle(this.crate).transform,
+			getComputedStyle(this.innerCrate).transform,
 		);
 		const translateX = matrix.m41;
 		const translateY = matrix.m42;
 		const scale = workspace.zoomable.scale;
-		const left = -this.crate.offsetLeft / scale - translateX / scale;
-		const top = -this.crate.offsetTop / scale - translateY / scale;
+		const left = -this.innerCrate.offsetLeft / scale - translateX / scale;
+		const top = -this.innerCrate.offsetTop / scale - translateY / scale;
 		sticky.setRect(left, top, width, height);
 		sticky.classList.add("maximized");
 	}
@@ -520,16 +515,16 @@ class Workspace extends EventTarget {
 	private restoreSticky(options: StickyConfig) {
 		const sticky = this.buildSticky("restore", options);
 		this.stickies.push(sticky);
-		this.crate.appendChild(sticky);
+		this.innerCrate.appendChild(sticky);
 	}
 
 	private addToTop(sticky: Sticky) {
 		this.stickies.push(sticky);
 		this.moveToTop(sticky);
-		this.crate.appendChild(sticky);
+		this.innerCrate.appendChild(sticky);
 	}
 
-	create(options: StickyConfig) {
+	createSticky(options: StickyConfig) {
 		let backupOptions: StickyConfig;
 		let sticky: Sticky;
 
@@ -560,9 +555,9 @@ class Workspace extends EventTarget {
 
 	getCenterPoint(): CursorPoint {
 		// Return central point
-		const rect = this.crate.getBoundingClientRect();
-		const width = this.crateMom.offsetWidth / workspace.zoomable.scale;
-		const height = this.crateMom.offsetHeight / workspace.zoomable.scale;
+		const rect = this.innerCrate.getBoundingClientRect();
+		const width = this.outerCrate.offsetWidth / workspace.zoomable.scale;
+		const height = this.outerCrate.offsetHeight / workspace.zoomable.scale;
 		return [
 			-rect.x / this.zoomable.scale + width / 2,
 			-rect.y / this.zoomable.scale + height / 2,
@@ -661,7 +656,7 @@ function buildBuildSticky(workspace: Workspace) {
 					let write: Overwrite<Rectangle>;
 					return {
 						interactEl: stickyHeader,
-						container: workspace.crateMom,
+						container: workspace.outerCrate,
 						padding: 20,
 						onDragStart: () => {
 							const rect = extractRect(sticky);

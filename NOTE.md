@@ -70,6 +70,7 @@ just
 ## BUGS
 
 - [ ] Hint is causing overflow in dialog.
+- [ ] (WIPP::move dock slot into workspace) Can not right-click on dock when alwaysOnTop is disabled.
 - [x] Languages dropdown showing nothing.
 - [x] Using navbar add sticky, the sticky position should at center instead of top-right.
 - [x] Copy sticky is not copying position.
