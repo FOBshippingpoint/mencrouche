@@ -424,7 +424,7 @@ h6 {
 	}
 }
 /* 感覺這邊還是有點BUG */
-.innerCrate:not(.ghost:not(.peakGhost)) .pin.sticky:not(.ghost) {
+.innerCrate:not(.ghost:not(.peakGhost)) .pin.sticky:not(.ghost) .stickyShell {
 	outline: var(--border-size-3) solid var(--well-1);
 }
 
@@ -567,6 +567,11 @@ h6 {
 	.addressBar:focus-visible {
 		outline: unset;
 	}
+}
+.spotify iframe {
+	/* Fix spotify jagged whitespace corner problem */
+	/* Overwriting open-props normalize.css settings */
+	color-scheme: unset;
 }
 
 .ghost .youtube iframe,
