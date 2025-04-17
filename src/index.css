@@ -204,6 +204,10 @@ h6 {
 	div:first-child {
 		display: grid;
 		grid-template-columns: 2fr 1fr;
+		border-radius: calc(var(--radius-2) + 0.15em);
+		border-style: solid;
+		border-width: var(--border-size-2);
+		border-color: transparent;
 
 		button {
 			/* background-color: var(--surface-2); */
@@ -218,6 +222,9 @@ h6 {
 		button:nth-child(2) {
 			border-radius: 0 var(--radius-2) var(--radius-2) 0;
 		}
+	}
+	div:first-child:has(button:hover) {
+		border-color: var(--surface-2);
 	}
 
 	.dropdownButtons {
