@@ -573,6 +573,10 @@ h6 {
 	/* Overwriting open-props normalize.css settings */
 	color-scheme: unset;
 }
+.ghost .spotify .stickyShell,
+.ghost.spotify .stickyShell {
+	overflow: unset;
+}
 
 .ghost .youtube iframe,
 .ghost.youtube iframe {
