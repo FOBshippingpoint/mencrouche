@@ -15,7 +15,6 @@ interface TrayTipOptions {
  * @returns - Control function to close the trayTip
  */
 export function trayTip(options: TrayTipOptions): () => void {
-	// Allow simple string as parameter
 	const settings: TrayTipOptions = {
 		title: "",
 		message: "",

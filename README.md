@@ -49,16 +49,15 @@ Let's create a Clock sticky that displays the current time. We'll add a `span` e
 ```javascript
 mc.registerSticky({
   type: "clock",
-  onCreate(sticky) {
-    const span = document.createElement("span");
-    sticky.replaceBody(span);
+  onMount(sticky) {
+    const timeElement = document.createElement("time");
+    sticky.replaceBody(timeElement);
     setInterval(() => {
-      span.textContent = new Date().toLocaleString();
+      timeElement.textContent = new Date().toLocaleString();
     }, 100);
   },
   onSave() {},
   onDelete() {},
-  onRestore() {},
 });
 mc.workspace.createSticky({ type: "clock" });
 ```
@@ -78,21 +77,20 @@ The previous code snippet does not clean up the `setInterval` callback. If you c
 ```javascript
 mc.registerSticky({
   type: "clock",
-  onCreate(sticky) {
-    const span = document.createElement("span");
-    sticky.replaceBody(span);
+  onMount(sticky) {
+    const timeElement = document.createElement("time");
+    sticky.replaceBody(timeElement);
 
     // Store in `sticky.plugin` to prevent name collision.
     sticky.plugin.intervalId = setInterval(() => {
-      console.log("update time");
-      span.textContent = new Date().toLocaleString();
+      console.log("update timeElement");
+      timeElement.textContent = new Date().toLocaleString();
     }, 100);
   },
   onSave() {},
   onDelete(sticky) {
     clearInterval(sticky.plugin.intervalId);
   },
-  onRestore() {},
 });
 mc.workspace.createSticky({ type: "clock" });
 ```
@@ -104,25 +102,26 @@ In this version, "update time" is printed every 100ms. After closing the sticky,
 Next, we'll add a feature to change the clock's color.
 
 ```javascript
-function enableClock(sticky) {
-  const span = document.createElement("span");
-  const randomColorBtn = document.createElement("button");
-  randomColorBtn.textContent = "Change color";
-  randomColorBtn.addEventListener("click", () => {
-    const color = "#" + (~~(Math.random() * (1 << 24))).toString(16);
-    span.style.color = color;
-    sticky.plugin.color = color;
-  });
-  sticky.replaceBody(span, randomColorBtn);
-
-  sticky.plugin.intervalId = setInterval(() => {
-    span.textContent = new Date().toLocaleString();
-  }, 100);
-}
 mc.registerSticky({
   type: "clock",
-  onCreate(sticky) {
-    enableClock(sticky);
+  onMount(sticky) {
+    const timeElement = document.createElement("time");
+    const randomColorBtn = document.createElement("button");
+    randomColorBtn.textContent = "Change color";
+    randomColorBtn.addEventListener("click", () => {
+      const color = "#" + (~~(Math.random() * (1 << 24))).toString(16);
+      timeElement.style.color = color;
+      sticky.plugin.color = color;
+    });
+    sticky.replaceBody(timeElement, randomColorBtn);
+
+    sticky.plugin.intervalId = setInterval(() => {
+      timeElement.textContent = new Date().toLocaleString();
+    }, 100);
+
+    if (sticky.pluginConfig) {
+      sticky.querySelector("timeElement").style.color = sticky.pluginConfig.color;
+    }
   },
   onSave(sticky) {
     // Save the color to use later in `onRestore`
@@ -132,10 +131,6 @@ mc.registerSticky({
   },
   onDelete(sticky) {
     clearInterval(sticky.plugin.intervalId);
-  },
-  onRestore(sticky, pluginConfig) {
-    enableClock(sticky);
-    sticky.querySelector("span").style.color = pluginConfig.color;
   },
 });
 mc.workspace.createSticky({ type: "clock" });
@@ -222,31 +217,32 @@ Dollars is a JQuery-like API, or more accurately, shorthands for most-used funct
 We can combine previous [clock example](#adding-color-to-the-clock) with Dollars API:
 
 ```javascript
-function enableClock(sticky, color) {
-  const clockBody = mc.h(`
-                      <span ${color ? `style="color: ${color}` : ""}></span>
-                      <button type="button">
-                        Change Color
-                      </button>
-                      `);
-  const timeElement = clockBody.$("time");
-  const randomColorBtn = clockBody.$("button");
-  sticky.replaceBody(clockBody);
-
-  randomColorBtn.on("click", () => {
-    const color = "#" + (~~(Math.random() * (1 << 24))).toString(16);
-    timeElement.style.color = color;
-    sticky.plugin.color = color;
-  });
-
-  sticky.plugin.intervalId = setInterval(() => {
-    timeElement.textContent = new Date().toLocaleString();
-  }, 100);
-}
 mc.registerSticky({
   type: "clock",
-  onCreate(sticky) {
-    enableClock(sticky);
+  onMount(sticky) {
+    let color;
+    if (sticky.pluginConfig) {
+      color = sticky.pluginConfig.color;
+    }
+    const clockBody = mc.h(`
+                        <time ${color ? `style="color: ${color}` : ""}></time>
+                        <button type="button">
+                          Change Color
+                        </button>
+                        `);
+    const timeElement = clockBody.$("time");
+    const randomColorBtn = clockBody.$("button");
+    sticky.replaceBody(clockBody);
+
+    randomColorBtn.on("click", () => {
+      const color = "#" + (~~(Math.random() * (1 << 24))).toString(16);
+      timeElement.style.color = color;
+      sticky.plugin.color = color;
+    });
+
+    sticky.plugin.intervalId = setInterval(() => {
+      timeElement.textContent = new Date().toLocaleString();
+    }, 100);
   },
   onSave(sticky) {
     // Save the color to use later in `onRestore`
@@ -256,9 +252,6 @@ mc.registerSticky({
   },
   onDelete(sticky) {
     clearInterval(sticky.plugin.intervalId);
-  },
-  onRestore(sticky, pluginConfig) {
-    enableClock(sticky, pluginConfig.color);
   },
 });
 mc.workspace.createSticky({ type: "clock" });

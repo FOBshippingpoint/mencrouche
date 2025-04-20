@@ -231,7 +231,8 @@ backgroundImagePicker.on("imageChange", (e) => {
 });
 
 resetBackgroundImageBtn.on("click", () => {
-	backgroundImagePicker.style.backgroundImage = "unset";
+	backgroundImagePicker.$<HTMLDivElement>(".dropzone")!.style.backgroundImage =
+		"unset";
 	backgroundImageUrlInput.value = "";
 	dataset.setItem("backgroundImageUrl", null);
 });
@@ -262,7 +263,8 @@ function openSettingsPage() {
 
 function closeSettingsPage() {
 	settings.classList.add("none");
-	backgroundImagePicker.style.backgroundImage = "unset";
+	backgroundImagePicker.$<HTMLDivElement>(".dropzone")!.style.backgroundImage =
+		"unset";
 	backgroundImageUrlInput.value = "";
 }
 
