@@ -358,7 +358,7 @@ mc.registerCommand({
     defaultShortcut: "C-A-h", // Ctrl + Alt + H
 });
 
-mc.executeCommand("say_hi");
+mc.executeCommand("sayHi");
 ```
 
 ## Authors
