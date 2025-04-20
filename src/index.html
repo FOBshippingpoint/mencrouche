@@ -130,9 +130,12 @@
 						<button class="pureBtn" data-command="addIFrameSticky">
 							<span data-i18n="addIFrameStickyBtn"></span>
 						</button>
+						<button class="pureBtn" data-command="addImageSticky">
+							<span data-i18n="addImageSticky"></span>
+						</button>
 					</div>
 				</div>
-				<label for="themeToggle" id="darkIcon" hidden="">
+				<icon-toggle id="themeToggle">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						width="24"
@@ -155,8 +158,6 @@
 						<path d="m6.34 17.66-1.41 1.41"></path>
 						<path d="m19.07 4.93-1.41 1.41"></path>
 					</svg>
-				</label>
-				<label for="themeToggle" id="lightIcon" hidden="">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						width="24"
@@ -171,14 +172,7 @@
 					>
 						<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
 					</svg>
-				</label>
-				<input
-					id="themeToggle"
-					hidden=""
-					type="checkbox"
-					data-i18n-for="title"
-					data-i18n="toggleDarkMode"
-				/>
+				</icon-toggle>
 				<button
 					id="settingsBtn"
 					class="pureBtn"
@@ -311,23 +305,7 @@
 					></iframe>
 				</template>
 				<template id="markdownStickyWidgets">
-					<label class="splitViewToggleLbl">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="20"
-							height="20"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							class="lucide lucide-square-equal-icon lucide-square-equal none"
-						>
-							<rect width="18" height="18" x="3" y="3" rx="2" />
-							<path d="M7 10h10" />
-							<path d="M7 14h10" />
-						</svg>
+					<icon-toggle class="splitViewToggle">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="20"
@@ -343,9 +321,6 @@
 							<rect width="18" height="18" x="3" y="3" rx="2" />
 							<path d="M12 3v18" />
 						</svg>
-						<input hidden="" type="checkbox" />
-					</label>
-					<label class="editModeToggleLbl">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="20"
@@ -356,13 +331,14 @@
 							stroke-width="2"
 							stroke-linecap="round"
 							stroke-linejoin="round"
-							class="lucide lucide-pencil none"
+							class="lucide lucide-square-equal-icon lucide-square-equal"
 						>
-							<path
-								d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
-							/>
-							<path d="m15 5 4 4" />
+							<rect width="18" height="18" x="3" y="3" rx="2" />
+							<path d="M7 10h10" />
+							<path d="M7 14h10" />
 						</svg>
+					</icon-toggle>
+					<icon-toggle class="editModeToggle">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="20"
@@ -380,8 +356,24 @@
 							/>
 							<path d="M15 3v4a2 2 0 0 0 2 2h4" />
 						</svg>
-						<input hidden="" type="checkbox" />
-					</label>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="lucide lucide-pencil"
+						>
+							<path
+								d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
+							/>
+							<path d="m15 5 4 4" />
+						</svg>
+					</icon-toggle>
 					<textarea
 						data-i18n="stickyTextareaStartTypingPlaceholder"
 						data-i18n-for="placeholder"
@@ -389,6 +381,7 @@
 					<div class="divider"></div>
 					<div class="preview"></div>
 				</template>
+
 				<template id="iframeStickyWidgets">
 					<button class="ghostBtn pureBtn">
 						<svg
@@ -427,6 +420,73 @@
 						referrerpolicy="same-origin"
 					></iframe>
 				</template>
+
+				<template id="imageStickyWidgets">
+					<button class="downloadBtn pureBtn">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="lucide lucide-download-icon lucide-download"
+						>
+							<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+							<polyline points="7 10 12 15 17 10" />
+							<line x1="12" x2="12" y1="15" y2="3" />
+						</svg>
+					</button>
+					<button class="copyBtn pureBtn">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="lucide lucide-copy-icon lucide-copy"
+						>
+							<rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+							<path
+								d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"
+							/>
+						</svg>
+					</button>
+					<image-picker>
+						<div class="dropzone">
+							<p data-i18n="dndImageInstruction"></p>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="64"
+								height="64"
+								viewbox="0 0 24 24"
+								fill="none"
+								stroke="currentcolor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								class="lucide lucide-image-up"
+							>
+								<path
+									d="M10.3 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10l-3.1-3.1a2 2 0 0 0-2.814.014L6 21"
+								></path>
+								<path d="m14 19.5 3-3 3 3"></path>
+								<path d="M17 22v-5.5"></path>
+								<circle cx="9" cy="9" r="2"></circle>
+							</svg>
+						</div>
+						<input type="file" accept="image/*" hidden="" />
+					</image-picker>
+					<img alt="" data-context-menu="disabled" />
+				</template>
+
 				<template id="sticky">
 					<div class="sticky" tabindex="0">
 						<div class="stickyShell">
@@ -434,24 +494,7 @@
 								<div class="stickyTitle"></div>
 								<div class="stickyControls">
 									<slot></slot>
-									<label class="maximizeToggleLbl">
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											width="20"
-											height="20"
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											stroke-width="2"
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											class="lucide lucide-maximize-2"
-										>
-											<polyline points="15 3 21 3 21 9" />
-											<polyline points="9 21 3 21 3 15" />
-											<line x1="21" x2="14" y1="3" y2="10" />
-											<line x1="3" x2="10" y1="21" y2="14" />
-										</svg>
+									<icon-toggle class="maximizeToggle">
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
 											width="20"
@@ -469,8 +512,24 @@
 											<line x1="14" x2="21" y1="10" y2="3" />
 											<line x1="3" x2="10" y1="21" y2="14" />
 										</svg>
-										<input hidden="" type="checkbox" />
-									</label>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="20"
+											height="20"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											class="lucide lucide-maximize-2"
+										>
+											<polyline points="15 3 21 3 21 9" />
+											<polyline points="9 21 3 21 3 15" />
+											<line x1="21" x2="14" y1="3" y2="10" />
+											<line x1="3" x2="10" y1="21" y2="14" />
+										</svg>
+									</icon-toggle>
 									<button class="deleteBtn pureBtn">
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
@@ -576,29 +635,31 @@
 							</label>
 							<h3 data-i18n="settingsAppearanceBackgroundSection"></h3>
 							<div class="formGroup">
-								<div class="dropzone">
-									<p data-i18n="dndImageInstruction"></p>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										width="64"
-										height="64"
-										viewbox="0 0 24 24"
-										fill="none"
-										stroke="currentcolor"
-										stroke-width="2"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										class="lucide lucide-image-up"
-									>
-										<path
-											d="M10.3 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10l-3.1-3.1a2 2 0 0 0-2.814.014L6 21"
-										></path>
-										<path d="m14 19.5 3-3 3 3"></path>
-										<path d="M17 22v-5.5"></path>
-										<circle cx="9" cy="9" r="2"></circle>
-									</svg>
+								<image-picker>
+									<div class="dropzone">
+										<p data-i18n="dndImageInstruction"></p>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="64"
+											height="64"
+											viewbox="0 0 24 24"
+											fill="none"
+											stroke="currentcolor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											class="lucide lucide-image-up"
+										>
+											<path
+												d="M10.3 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10l-3.1-3.1a2 2 0 0 0-2.814.014L6 21"
+											></path>
+											<path d="m14 19.5 3-3 3 3"></path>
+											<path d="M17 22v-5.5"></path>
+											<circle cx="9" cy="9" r="2"></circle>
+										</svg>
+									</div>
 									<input type="file" accept="image/*" hidden="" />
-								</div>
+								</image-picker>
 								<label for="backgroundImageUrlInput">
 									<span data-i18n="backgroundImageLink"></span>
 									<input
@@ -829,6 +890,7 @@
 				</button>
 			</template>
 		</main>
+
 		<dialog id="bookmarkDialog">
 			<form>
 				<input name="id" hidden />
@@ -924,6 +986,7 @@
 				</div>
 			</form>
 		</dialog>
+
 		<dialog id="dockAppearanceDialog">
 			<form class="grid">
 				<label
@@ -977,6 +1040,7 @@
 				</div>
 			</form>
 		</dialog>
+
 		<dialog id="youtubeDialog">
 			<form class="grid">
 				<label>
@@ -998,6 +1062,7 @@
 				</div>
 			</form>
 		</dialog>
+
 		<dialog id="spotifyDialog">
 			<form class="grid">
 				<label>
@@ -1022,6 +1087,7 @@
 				</div>
 			</form>
 		</dialog>
+
 		<dialog id="iframeDialog">
 			<form class="grid">
 				<label>
@@ -1038,6 +1104,7 @@
 				</div>
 			</form>
 		</dialog>
+
 		<dialog id="generalDialog">
 			<div class="grid">
 				<h4 class="dialogTitle"></h4>
@@ -1045,7 +1112,108 @@
 				<div class="dialogButtonGroup"></div>
 			</div>
 		</dialog>
+
+		<div id="trayTipContainer"></div>
+
 		<slot id="customJsSlot"></slot>
+
+		<template id="trayTipWidgets">
+			<div class="trayTip" role="alert" aria-live="polite">
+				<div class="trayTipHeader">
+					<div class="trayTipTitleWrapper">
+						<div class="trayTipIcon">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="24"
+								height="24"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								class="none info lucide lucide-info-icon lucide-info"
+							>
+								<circle cx="12" cy="12" r="10" />
+								<path d="M12 16v-4" />
+								<path d="M12 8h.01" />
+							</svg>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="24"
+								height="24"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								class="none success lucide lucide-circle-check-icon lucide-circle-check"
+							>
+								<circle cx="12" cy="12" r="10" />
+								<path d="m9 12 2 2 4-4" />
+							</svg>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="24"
+								height="24"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								class="none warning lucide lucide-triangle-alert-icon lucide-triangle-alert"
+							>
+								<path
+									d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"
+								/>
+								<path d="M12 9v4" />
+								<path d="M12 17h.01" />
+							</svg>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="24"
+								height="24"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								class="none error lucide lucide-circle-x-icon lucide-circle-x"
+							>
+								<circle cx="12" cy="12" r="10" />
+								<path d="m15 9-6 6" />
+								<path d="m9 9 6 6" />
+							</svg>
+						</div>
+						<span></span>
+					</div>
+					<button
+						class="trayTipCloseBtn pureBtn"
+						aria-label="Close notification"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="lucide lucide-x-icon lucide-x"
+						>
+							<path d="M18 6 6 18" />
+							<path d="m6 6 12 12" />
+						</svg>
+					</button>
+				</div>
+				<div class="trayTipBody">This is a notification message!</div>
+			</div>
+		</template>
 
 		<template id="clockWidgets">
 			<div class="clockDock">

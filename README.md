@@ -2,7 +2,7 @@
 
 ![feature_image](https://github.com/user-attachments/assets/2ff6f50b-6183-4ff2-9411-e2f2e5e81c90)
 
-> Homepage for you.
+> Homepage made for you.
 
 - Highly customizable
 - YouTube, Spotify, web page integration

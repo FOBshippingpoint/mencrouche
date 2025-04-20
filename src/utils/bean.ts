@@ -50,7 +50,15 @@ export function soakBean(
 		}
 	}
 
-	if (typeof dataset === "object" && dataset !== null) {
+	if (
+		typeof dataset === "object" &&
+		dataset !== null /* this is funny because typeof null == 'object' */
+	) {
+		// Clear existing dataset
+		for (const key of Object.keys(element.dataset)) {
+			delete element.dataset[key as keyof DOMStringMap];
+		}
+		// Apply new dataset
 		for (const [key, value] of Object.entries(dataset)) {
 			if (value !== null && value !== undefined) {
 				element.dataset[key] = value.toString();

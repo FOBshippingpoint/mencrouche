@@ -13,7 +13,8 @@
     "start-chromium": "web-ext run --source-dir dist/webext-dev --target=chromium",
     "lint-dev": "web-ext lint --source-dir dist/webext-dev",
     "lint-build": "web-ext lint --source-dir dist/webext-prod",
-    "pack-zip": "web-ext build --overwrite-dest --source-dir dist/webext-prod"
+    "pack-zip": "web-ext build --overwrite-dest --source-dir dist/webext-prod",
+    "format": "biome format --write"
   },
   "author": "FOBshippingpoint",
   "license": "MIT",

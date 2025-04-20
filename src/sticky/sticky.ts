@@ -8,7 +8,7 @@ import { markDirtyAndSaveDocument } from "../lifesaver";
 import { Zoomable, type Transform } from "./zoom";
 import { Resizable } from "./resize";
 import { Draggable, type Offset } from "./drag";
-import { $, $$$, addCss } from "../utils/dollars";
+import { $, addCss } from "../utils/dollars";
 
 function onEventOrTimeout<K extends keyof HTMLElementEventMap>(
 	el: HTMLElement,
@@ -31,23 +31,32 @@ function onEventOrTimeout<K extends keyof HTMLElementEventMap>(
 	}, timeout);
 }
 
-export interface PluginStickyPoolMap {}
-export interface PluginSticky {}
-export interface StickyConfig<
-	C extends PluginStickyConfig = PluginStickyConfig,
-> {
+export interface StickyPluginRegistry extends Record<string, StickyPlugin> {
+	default: StickyPlugin;
+}
+type PluginKey = keyof StickyPluginRegistry;
+
+type GetPluginType<K extends PluginKey> = Omit<
+	StickyPluginRegistry[K],
+	"config"
+>;
+
+type GetConfigType<K extends PluginKey> = StickyPluginRegistry[K]["config"];
+
+export interface StickyPlugin {
+	config: Record<string, unknown>;
+}
+export interface StickyConfig<K extends PluginKey = "default"> {
 	id?: string;
-	type?: string;
+	type?: K | string;
 	rect?: Rectangle;
 	zIndex?: number;
 	className?: string;
-	pluginConfig?: C;
+	pluginConfig?: GetConfigType<K>;
 	dataset?: Record<string, unknown>;
 }
-export interface Sticky<
-	T extends PluginSticky = PluginSticky,
-	C extends PluginStickyConfig = PluginStickyConfig,
-> extends HTMLDivElement {
+export interface Sticky<K extends PluginKey = "default">
+	extends HTMLDivElement {
 	type: string;
 	delete: () => void;
 	forceDelete: () => void;
@@ -58,8 +67,9 @@ export interface Sticky<
 	addControlWidget: (element: HTMLElement) => void;
 	setTitle: (title: string) => void;
 	replaceBody: (...nodes: (Node | string)[]) => void;
-	save: () => StickyConfig<C>;
-	plugin: T;
+	save: () => StickyConfig<K>;
+	plugin: GetPluginType<K>;
+	pluginConfig?: GetConfigType<K>;
 }
 
 /**
@@ -72,7 +82,9 @@ const defaultWidth = $<HTMLDivElement>("#stickySizeDummy")!.offsetWidth;
 
 const mutationObserver = new MutationObserver((mutations) => {
 	for (const mutation of mutations) {
-		mutation.target.dispatchEvent(new CustomEvent("classchange"));
+		mutation.target.dispatchEvent(
+			new CustomEvent("classChange", { bubbles: true }),
+		);
 	}
 });
 
@@ -222,6 +234,13 @@ class Workspace extends EventTarget {
 			this.restoreSticky(sticky);
 		}
 		this.refreshHighestZIndex();
+		this.on("workspaceLoaded", () => {
+			for (const sticky of this.stickies) {
+				if (sticky.classList.contains("maximized")) {
+					this.maximize(sticky);
+				}
+			}
+		});
 	}
 
 	delete(sticky: Sticky) {
@@ -282,7 +301,7 @@ class Workspace extends EventTarget {
 	saveSticky(sticky: Sticky) {
 		const config = sticky.save();
 		config.pluginConfig = {};
-		const pluginSticky = getPluginStickyModel(sticky);
+		const pluginSticky = getStickyPluginModel(sticky);
 		if (pluginSticky) {
 			config.type = pluginSticky.type;
 			Object.assign(config.pluginConfig, pluginSticky.onSave(sticky));
@@ -463,10 +482,10 @@ class Workspace extends EventTarget {
 		return this.stickies.at(-1);
 	}
 
-	getLatestStickyByType<K extends keyof PluginStickyPoolMap>(type: K) {
+	getLatestStickyByType<K extends PluginKey>(type: K): Sticky<K> | null {
 		for (let i = this.stickies.length - 1; i >= 0; i--) {
 			if (this.stickies[i]?.type === type) {
-				return this.stickies[i] as PluginStickyPoolMap[K];
+				return this.stickies[i] as Sticky<K>;
 			}
 		}
 		return null;
@@ -483,7 +502,7 @@ class Workspace extends EventTarget {
 		}
 		this.stickies.at(-1)?.focus();
 
-		const model = getPluginStickyModel(sticky);
+		const model = getStickyPluginModel(sticky);
 		if (model) {
 			model.onDelete(sticky);
 		}
@@ -647,8 +666,7 @@ function buildBuildSticky(workspace: Workspace) {
 		function enableStickyFunctionality(): Sticky {
 			const stickyHeader = sticky.$<HTMLDivElement>(".stickyHeader")!;
 			const deleteBtn = sticky.$<HTMLButtonElement>(".deleteBtn")!;
-			const maximizeToggleLbl =
-				sticky.$<HTMLLabelElement>(".maximizeToggleLbl")!;
+			const maximizeToggle = sticky.$(".maximizeToggle")!;
 
 			new Draggable(
 				sticky,
@@ -754,7 +772,7 @@ function buildBuildSticky(workspace: Workspace) {
 				},
 				plugin: {},
 				save() {
-					const config: StickyConfig = {
+					const config: StickyConfig<typeof extendedSticky.type> = {
 						id: extendedSticky.id,
 						type: extendedSticky.type,
 						className: sticky.className,
@@ -769,10 +787,13 @@ function buildBuildSticky(workspace: Workspace) {
 
 					return config;
 				},
+				pluginConfig,
 			});
 
 			sticky.on("pointerdown", (e) => {
-				if (e.button !== 2 /* NOT right-click */) {
+				const notRightClick = e.button !== 2;
+				const notClickOnButton = !(e.target as Element).closest("button");
+				if (notRightClick && notClickOnButton) {
 					workspace.moveToTop(extendedSticky);
 				}
 			});
@@ -781,7 +802,7 @@ function buildBuildSticky(workspace: Workspace) {
 				extendedSticky.delete();
 			});
 
-			maximizeToggleLbl.on("change", () => {
+			maximizeToggle.on("change", () => {
 				extendedSticky.toggleMaximize();
 			});
 
@@ -799,11 +820,11 @@ function buildBuildSticky(workspace: Workspace) {
 			const model = pluginStickyPool.get(type);
 			if (model) {
 				if (buildType === "create") {
-					model.onCreate(basicSticky);
+					model.onMount(basicSticky, "create");
 					basicSticky.classList.add(type);
 					basicSticky.type = type;
 				} else if (buildType === "restore") {
-					model.onRestore(basicSticky, pluginConfig);
+					model.onMount(basicSticky, "restore");
 				}
 			} else {
 				throw Error(
@@ -819,10 +840,7 @@ function buildBuildSticky(workspace: Workspace) {
 
 export const workspace = new Workspace(apocalypse);
 
-const pluginStickyPool = new Map<
-	string,
-	PluginStickyModel<PluginSticky, PluginStickyConfig>
->();
+const pluginStickyPool = new Map<PluginKey, StickyPluginModel<PluginKey>>();
 
 type Rectangle = [
 	left: number | null,
@@ -857,24 +875,18 @@ function parseRect(rect: string): Rectangle {
 	}
 }
 
-export interface PluginStickyConfig extends Record<string, unknown> {}
-export interface PluginStickyModel<
-	S extends PluginSticky,
-	C extends PluginStickyConfig,
-> {
-	type: string;
+export interface StickyPluginModel<K extends PluginKey> {
+	type: K;
 	css?: string;
-	onCreate(sticky: Sticky<S, C>): void;
-	onSave(sticky: Sticky<S, C>): C | void;
-	onDelete(sticky: Sticky<S, C>): void;
-	onRestore(sticky: Sticky<S, C>, config?: C): void;
+	onSave(sticky: Sticky<K>): GetConfigType<K> | void;
+	onDelete(sticky: Sticky<K>): void;
+	onMount(sticky: Sticky<K>, origin: "create" | "restore"): void;
 }
 
-const sheetRegistry = new Map<string, CSSStyleSheet>();
-export function registerSticky<
-	S extends PluginSticky,
-	C extends PluginStickyConfig,
->(model: PluginStickyModel<S, C>) {
+const sheetRegistry = new Map<PluginKey, CSSStyleSheet>();
+export function registerSticky<K extends PluginKey>(
+	model: StickyPluginModel<K>,
+) {
 	if (pluginStickyPool.has(model.type)) {
 		console.warn(
 			`Overwriting existing plugin sticky [ ${model.type} ]. You should only do this while development.`,
@@ -906,16 +918,18 @@ export function registerSticky<
 	pluginStickyPool.set(model.type, model);
 }
 
-export function getPluginStickyModel(sticky: HTMLDivElement | Sticky) {
+export function getStickyPluginModel<K extends PluginKey>(
+	sticky: HTMLDivElement | Sticky<K>,
+) {
 	for (const className of sticky.classList.values()) {
 		const model = pluginStickyPool.get(className);
 		if (model) {
-			return model;
+			return model as StickyPluginModel<K>;
 		}
 	}
 }
 
-export function getPluginStickyTypes() {
+export function getStickyPluginTypes() {
 	return [...pluginStickyPool.values()].map(({ type }) => type);
 }
 

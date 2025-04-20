@@ -61,13 +61,11 @@ export function enable(dock: Dock<ClockPlugin, ClockDockConfig>) {
 const clockModel: PluginDockModel<ClockPlugin, ClockDockConfig> = {
 	type: "clock",
 	onCreate(dock) {
-		console.log("oncreate");
 		enable(dock);
 	},
 	onDelete() {},
 	onSave() {},
 	onRestore(dock) {
-		console.log("onrestore");
 		enable(dock);
 	},
 };

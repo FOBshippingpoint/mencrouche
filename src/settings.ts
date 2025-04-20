@@ -2,7 +2,7 @@ import { createDialog } from "./generalDialog";
 import { createKikey } from "kikey";
 import { $, $$$ } from "./utils/dollars";
 import { n81i } from "./utils/n81i";
-import { toDataUrl } from "./utils/toDataUrl";
+import { anyUrlToDataUrl } from "./utils/toDataUrl";
 import { keySequenceToString, shortcutManager } from "./shortcutManager";
 import { getTemplate } from "./utils/getTemplate";
 import { executeCommand } from "./commands";
@@ -20,6 +20,8 @@ import {
 	markDirtyAndSaveDocument,
 	setIsCloudSyncEnabled,
 } from "./lifesaver";
+import type { ImageChangeDetail, ImagePicker } from "./component/imagePicker";
+import type { IconToggle } from "./component/iconToggle";
 
 const changesManager = (() => {
 	type Todo = () => void;
@@ -77,7 +79,7 @@ const isScriptExecutionAllowedCheckbox = $<HTMLInputElement>(
 const customJsTextArea = $<HTMLTextAreaElement>("#customJsTextArea")!;
 const customJsSlot = $<HTMLSlotElement>("#customJsSlot")!;
 const customCssTextArea = $<HTMLTextAreaElement>("#customCssTextArea")!;
-const backgroundImageDropzone = $<HTMLDivElement>(".dropzone")!;
+const backgroundImagePicker = $<ImagePicker>("image-picker")!;
 const backgroundImageUrlInput = $<HTMLInputElement>(
 	"#backgroundImageUrlInput",
 )!;
@@ -88,7 +90,7 @@ const resetBackgroundImageBtn = $<HTMLButtonElement>(
 	"#setBackgroundImageToDefaultBtn",
 )!;
 const backgroundImageFileInput =
-	backgroundImageDropzone.$<HTMLInputElement>("input")!;
+	backgroundImagePicker.$<HTMLInputElement>("input")!;
 
 const unsavedChangesAlertDialog = createDialog({
 	title: "unsavedChanges",
@@ -196,7 +198,7 @@ importDocumentFileInput.on("change", () => {
 				"data-i18n": "discardBtn",
 				async onClick() {
 					if (file) {
-						loadFromSources(new JsonFileSource(file));
+						loadFromSources([new JsonFileSource(file)]);
 						closeSettingsPage();
 					}
 					discardCurrentChangesDialog.close();
@@ -221,85 +223,15 @@ cancelBtn.on("click", () => {
 });
 
 // Copy from web.dev: https://web.dev/patterns/clipboard/paste-images#js
-backgroundImageUrlInput.on("paste", async (e) => {
-	const clipboardItems = await navigator.clipboard.read();
-
-	for (const clipboardItem of clipboardItems) {
-		let blob;
-		const imageTypes = clipboardItem.types.filter((type) =>
-			type.startsWith("image/"),
-		);
-		for (const imageType of imageTypes) {
-			blob = await clipboardItem.getType(imageType);
-			handleBlob(blob);
-			return;
-		}
-		try {
-			const url = await (await clipboardItem.getType("text/plain")).text();
-			new URL(url);
-			backgroundImageDropzone.style.background = `url(${url}) center center / cover no-repeat`;
-			dataset.setItem("backgroundImageUrl", url);
-			changesManager.markDirty();
-		} catch (_) {
-			alert(n81i.t("imageUrlIsNotValidAlert"));
-		}
-	}
-});
-
-function handleBlob(blob: Blob | File) {
-	const url = URL.createObjectURL(blob);
-	if (!url.startsWith("blob")) {
-		backgroundImageUrlInput.value = url;
-	}
-	backgroundImageDropzone.style.background = `url(${url}) center center / cover no-repeat`;
-	dataset.setItem("backgroundImageUrl", url);
+backgroundImagePicker.listenToPaste(backgroundImageUrlInput);
+backgroundImagePicker.on("imageChange", (e) => {
+	const event = e as CustomEvent<ImageChangeDetail>;
+	dataset.setItem("backgroundImageUrl", event.detail.url);
 	changesManager.markDirty();
-}
-
-// Handle drag and drop events
-backgroundImageDropzone.on("dragover", (event) => {
-	event.preventDefault(); // Prevent default browser behavior (open file)
-	backgroundImageDropzone.setAttribute("active", "");
-});
-backgroundImageDropzone.on("dragleave", () => {
-	backgroundImageDropzone.removeAttribute("active");
-});
-
-backgroundImageDropzone.on("drop", (e) => {
-	e.preventDefault();
-	backgroundImageDropzone.removeAttribute("active");
-	if (e.dataTransfer?.items) {
-		// Use DataTransferItemList interface to access the file(s)
-		[...e.dataTransfer?.items].forEach((item, i) => {
-			// If dropped items aren't files, reject them
-			if (item.kind === "file") {
-				const file = item.getAsFile()!;
-				handleBlob(file);
-			}
-		});
-	} else {
-		// Use DataTransfer interface to access the file(s)
-		[...e.dataTransfer?.files].forEach((file) => {
-			handleBlob(file);
-		});
-	}
-});
-
-// Handle click on dropzone to open file selection dialog
-backgroundImageDropzone.on("click", () => {
-	backgroundImageFileInput.click();
-});
-
-// Handle file selection from dialog
-backgroundImageFileInput.on("change", () => {
-	const selectedFile = backgroundImageFileInput.files?.[0];
-	if (selectedFile) {
-		handleBlob(selectedFile);
-	}
 });
 
 resetBackgroundImageBtn.on("click", () => {
-	backgroundImageDropzone.style.backgroundImage = "unset";
+	backgroundImagePicker.style.backgroundImage = "unset";
 	backgroundImageUrlInput.value = "";
 	dataset.setItem("backgroundImageUrl", null);
 });
@@ -330,12 +262,11 @@ function openSettingsPage() {
 
 function closeSettingsPage() {
 	settings.classList.add("none");
-	backgroundImageDropzone.style.backgroundImage = "unset";
+	backgroundImagePicker.style.backgroundImage = "unset";
 	backgroundImageUrlInput.value = "";
 }
 
 export function toggleSettingsPage() {
-	debugger;
 	if (settings.classList.contains("none")) {
 		openSettingsPage();
 	} else {
@@ -350,7 +281,7 @@ dataset.on<string>("backgroundImageUrl", (_, url) => {
 });
 async function changeBackgroundImage(url: string | undefined) {
 	if (url?.startsWith("blob")) {
-		url = await toDataUrl(url);
+		url = await anyUrlToDataUrl(url);
 	}
 	setCssProperty(
 		"--page-background",
@@ -414,21 +345,17 @@ function queryPrefersColorScheme() {
 }
 
 // Initialize theme.
-const theme = dataset.getOrSetItem("theme", queryPrefersColorScheme());
-const themeToggle = $<HTMLInputElement>("#themeToggle")!;
-changeTheme(theme);
-// true = light
-// false = dark
-function changeTheme(theme: "light" | "dark" | undefined) {
-	$("#lightIcon")!.hidden = theme !== "dark";
-	$("#darkIcon")!.hidden = theme === "dark";
-	themeToggle.checked = theme === "light";
+const themeToggle = $<IconToggle>("#themeToggle")!;
+const defaultTheme = dataset.getOrSetItem("theme", queryPrefersColorScheme());
+document.documentElement.setAttribute("data-theme", defaultTheme);
+dataset.on<"light" | "dark">("theme", (_, theme) => {
 	document.documentElement.setAttribute("data-theme", theme as string);
-}
-dataset.on<"light" | "dark">("theme", (_, theme) => changeTheme(theme));
-themeToggle.on("change", (e) => {
-	const value = (e.target as any).checked ? "light" : "dark";
-	dataset.setItem("theme", value);
+	themeToggle.checked = theme === "light";
+	markDirtyAndSaveDocument();
+});
+themeToggle.on("change", () => {
+	const theme = (themeToggle as any).checked ? "light" : "dark";
+	dataset.setItem("theme", theme);
 });
 
 export function createShortcutItem({
@@ -541,7 +468,7 @@ addOtherStickyBtn.on("click", () => {
 addStickyDropdownContainer.on("click", (e) => {
 	const command = (
 		(e.target as Element)?.closest("[data-command]") as HTMLElement
-	).dataset.command;
+	)?.dataset?.command;
 	if (command) {
 		executeCommand(command);
 		otherStickyDropdown.classList.add("none");
@@ -670,7 +597,7 @@ export function allowScriptExecutionIfNotYetSet() {
 addTodoBeforeSave(async () => {
 	const url = dataset.getItem<string>("backgroundImageUrl");
 	if (url?.startsWith("blob")) {
-		const dataUrl = await toDataUrl(url);
+		const dataUrl = await anyUrlToDataUrl(url);
 		dataset.setItem("backgroundImageUrl", dataUrl);
 	}
 });

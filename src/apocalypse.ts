@@ -1,3 +1,13 @@
+function log(message?: string) {
+	if (message) {
+		console.log(
+			`%c[ APOCALYPSE ]%c ${message}`,
+			"background: red; color: black; font-weight: bold; padding: 2px 6px; border-radius: 3px;",
+			"font-weight: bold;",
+		);
+	}
+}
+
 export interface Undoable {
 	execute: () => void;
 	undo: () => void;
@@ -16,17 +26,26 @@ export type Overwrite<T> = (state: ArgumentedUndoable<T>) => void;
 export class Apocalypse {
 	private history: Undoable[] = [];
 	private pointer: number = -1;
+	public debug: boolean = false;
 
 	redo() {
 		if (this.pointer < this.history.length - 1) {
 			this.pointer++;
-			this.history[this.pointer]!.execute();
+			const undoable = this.history[this.pointer]!;
+			undoable.execute();
+			if (this.debug) {
+				log(`Redo → ${undoable.toString?.()}`);
+			}
 		}
 	}
 	undo() {
 		if (this.pointer >= 0) {
-			this.history[this.pointer]!.undo();
+			const undoable = this.history[this.pointer]!;
+			undoable.undo();
 			this.pointer--;
+			if (this.debug) {
+				log(`Undo ← ${undoable.toString?.()}`);
+			}
 		}
 	}
 	write(undoable: Undoable) {
@@ -37,6 +56,9 @@ export class Apocalypse {
 		this.history.push(undoable);
 		this.pointer++;
 		undoable.execute();
+		if (this.debug) {
+			log(`Write → ${undoable.toString?.()}`);
+		}
 	}
 	listAll(): readonly Undoable[] {
 		return this.history;
@@ -63,3 +85,4 @@ export class Apocalypse {
 }
 
 export const apocalypse = new Apocalypse();
+// apocalypse.debug = true;

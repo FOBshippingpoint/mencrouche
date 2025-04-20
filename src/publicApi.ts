@@ -11,8 +11,8 @@
 import { registerCommand, executeCommand } from "./commands";
 import { $, $$, $$$, addCss, h } from "./utils/dollars";
 import {
-	getPluginStickyTypes,
-	getPluginStickyModel,
+	getStickyPluginTypes,
+	getStickyPluginModel,
 	registerSticky,
 	workspace,
 } from "./sticky/sticky";
@@ -43,9 +43,9 @@ const mc = {
 	registerSticky,
 	executeCommand,
 	registerCommand,
-	getPluginStickyModel,
+	getStickyPluginModel,
 	registerContextMenu,
-	getPluginStickyTypes,
+	getStickyPluginTypes,
 };
 
 export function addPublicApi() {

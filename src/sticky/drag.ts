@@ -60,6 +60,7 @@ export class Draggable extends ZoomAware {
 		this.isDragging = true;
 		this.initialX = e.clientX;
 		this.initialY = e.clientY;
+		this.element.classList.add("dragging");
 
 		document.on("pointermove", this.drag.bind(this));
 		document.on("pointerup", this.dragEnd.bind(this));
@@ -96,6 +97,7 @@ export class Draggable extends ZoomAware {
 	private dragEnd(e: PointerEvent) {
 		if (!this.isDragging) return;
 		this.isDragging = false;
+		this.element.classList.remove("dragging");
 
 		document.off("pointermove", this.drag.bind(this));
 		document.off("pointerup", this.dragEnd.bind(this));

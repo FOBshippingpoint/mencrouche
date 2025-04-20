@@ -119,6 +119,10 @@
 		"message": "New Website Sticky",
 		"description": "Command description for adding a new iframe sticky note."
 	},
+	"addImageSticky": {
+		"message": "New Image Sticky",
+		"description": "Command description for adding a new image sticky."
+	},
 	"openBookmarkInCurrentTabOption": {
 		"message": "Open in current tab",
 		"description": "Context menu item label text for opening bookmark link in current tab."
@@ -378,6 +382,14 @@
 	"unsavedChangesMessage": {
 		"message": "Exit now?",
 		"description": "Dialog message prompting the user to confirm leaving with unsaved changes."
+	},
+	"imageCopiedTitle": {
+		"message": "Copied",
+		"description": "Tray tip title notifying the user that the image has been successfully copied to the clipboard"
+	},
+	"imageCopiedMessage": {
+		"message": "The image has been copied to your clipboard.",
+		"description": "Tray tip message notifying the user that the image has been successfully copied to the clipboard"
 	},
 	"leaveSettingsPage": {
 		"message": "Leave Page",

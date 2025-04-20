@@ -1,5 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { createDataset, type Dataset } from "../../src/utils/dataset.js";
+import {
+	createDataset,
+	type Dataset,
+	DatasetChangeEvent,
+} from "../../src/utils/dataset.js";
 
 describe("createDataset", () => {
 	let dataset: Dataset;
@@ -78,6 +82,34 @@ describe("createDataset", () => {
 		expect(listener).toHaveBeenCalledTimes(1);
 	});
 
+	it("should stop calling listener after it's removed", () => {
+		const listener = vi.fn();
+		dataset.on("listenerKey", listener);
+
+		dataset.setItem("listenerKey", "firstValue");
+		expect(listener).toHaveBeenCalledTimes(1);
+
+		// Remove the listener
+		dataset.off("listenerKey", listener);
+
+		dataset.setItem("listenerKey", "secondValue");
+		expect(listener).toHaveBeenCalledTimes(1); // Still just one call
+	});
+
+	it("should support using unsubscribe function returned by on()", () => {
+		const listener = vi.fn();
+		const unsubscribe = dataset.on("listenerKey", listener);
+
+		dataset.setItem("listenerKey", "firstValue");
+		expect(listener).toHaveBeenCalledTimes(1);
+
+		// Unsubscribe using the returned function
+		unsubscribe();
+
+		dataset.setItem("listenerKey", "secondValue");
+		expect(listener).toHaveBeenCalledTimes(1); // Still just one call
+	});
+
 	it("should create independent instances", () => {
 		const dataset1 = createDataset();
 		const dataset2 = createDataset();
@@ -87,6 +119,34 @@ describe("createDataset", () => {
 
 		expect(dataset1.getItem("key")).toBe("value1");
 		expect(dataset2.getItem("key")).toBe("value2");
+	});
+
+	it("should support multiple listeners for the same key", () => {
+		const listener1 = vi.fn();
+		const listener2 = vi.fn();
+
+		dataset.on("sharedKey", listener1);
+		dataset.on("sharedKey", listener2);
+
+		dataset.setItem("sharedKey", "value");
+
+		expect(listener1).toHaveBeenCalledWith(undefined, "value");
+		expect(listener2).toHaveBeenCalledWith(undefined, "value");
+	});
+
+	it("should only remove the specified listener", () => {
+		const listener1 = vi.fn();
+		const listener2 = vi.fn();
+
+		dataset.on("sharedKey", listener1);
+		dataset.on("sharedKey", listener2);
+
+		dataset.off("sharedKey", listener1);
+
+		dataset.setItem("sharedKey", "value");
+
+		expect(listener1).not.toHaveBeenCalled();
+		expect(listener2).toHaveBeenCalledWith(undefined, "value");
 	});
 
 	describe("Serialize / Deserialize", () => {

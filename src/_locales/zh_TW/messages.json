@@ -375,6 +375,14 @@
 		"message": "確定要離開嗎？",
 		"description": "Dialog message prompting the user to confirm leaving with unsaved changes."
 	},
+	"imageCopiedTitle": {
+		"message": "已複製",
+		"description": "Tray tip title notifying the user that the image has been successfully copied to the clipboard"
+	},
+	"imageCopiedMessage": {
+		"message": "圖片已複製到剪貼簿。",
+		"description": "Tray tip message notifying the user that the image has been successfully copied to the clipboard"
+	},
 	"leaveSettingsPage": {
 		"message": "離開",
 		"description": "Dialog button label to confirm leaving the settings page."
@@ -518,6 +526,10 @@
 	"addNoteSticky": {
 		"message": "新增便利貼",
 		"description": "Command description for adding a new note sticky."
+	},
+	"addImageSticky": {
+		"message": "新增圖片",
+		"description": "Command description for adding a new image sticky."
 	},
 	"zoomIn": {
 		"message": "放大",

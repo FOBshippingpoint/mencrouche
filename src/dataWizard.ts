@@ -6,6 +6,7 @@ import {
 } from "./utils/encryption";
 import { createDataset } from "./utils/dataset";
 import { upgradeFileToLatest, type MencroucheFileFormat } from "./upgradeFile";
+import { downloadBlobAsFile } from "./utils/toDataUrl";
 
 const DEFAULT_DB_NAME = "mencrouche";
 const DEFAULT_STORE_NAME = "data";
@@ -27,21 +28,6 @@ export interface RemoteConfig {
 const _dataset = createDataset();
 // Avoid exposing import/export methods of original dataset object
 const { toJson, toObject, fromObject, fromJson, ...dataset } = _dataset;
-
-const supportsFileSystemAccess = detectFileSystemAccessSupport();
-
-function detectFileSystemAccessSupport(): boolean {
-	return (
-		"showSaveFilePicker" in window &&
-		(() => {
-			try {
-				return window.self === window.top;
-			} catch {
-				return false;
-			}
-		})()
-	);
-}
 
 const beforeSaveTodos: Todo[] = [];
 const afterLoadTodos: Todo[] = [];
@@ -373,7 +359,7 @@ export class JsonFileSource implements Source {
 		const file = new File([json], filename, { type: "application/json" });
 
 		try {
-			await this.triggerDownload(file, filename);
+			await downloadBlobAsFile(file, filename);
 		} catch (error) {
 			throw new Error(
 				`Failed to save file: ${error instanceof Error ? error.message : String(error)}`,
@@ -386,38 +372,6 @@ export class JsonFileSource implements Source {
 			this.inputFile?.name ??
 			`mencrouche_${new Date().toISOString().slice(0, 19).replaceAll(":", "-")}.json`
 		);
-	}
-
-	// Copy from https://web.dev/patterns/files/save-a-file#progressive_enhancement
-	private async triggerDownload(file: File, suggestedName: string) {
-		if (supportsFileSystemAccess) {
-			try {
-				const handle = await (window as any).showSaveFilePicker({
-					suggestedName,
-				});
-				const writable = await handle.createWritable();
-				await writable.write(file);
-				await writable.close();
-				return;
-			} catch (err: any) {
-				if (err.name !== "AbortError") {
-					console.error(err.name, err.message);
-					return;
-				}
-			}
-		} else {
-			const blobUrl = URL.createObjectURL(file);
-			const a = document.createElement("a");
-			a.href = blobUrl;
-			a.download = suggestedName;
-			a.hidden = true;
-			document.body.appendChild(a);
-			a.click();
-			setTimeout(() => {
-				URL.revokeObjectURL(blobUrl);
-				a.remove();
-			}, 1000);
-		}
 	}
 }
 

@@ -45,6 +45,7 @@ export class Resizable extends ZoomAware {
 	private resizeStart(e: PointerEvent) {
 		e.preventDefault();
 		this.isResizing = true;
+		this.element.classList.add("resizing");
 		this.currentHandle = e.target as HTMLElement;
 		this.initialX = e.clientX;
 		this.initialY = e.clientY;
@@ -103,6 +104,7 @@ export class Resizable extends ZoomAware {
 	private resizeEnd(e: PointerEvent) {
 		if (!this.isResizing) return;
 		this.isResizing = false;
+		this.element.classList.remove("resizing");
 		this.currentHandle = null;
 		document.off("pointermove", this.resize.bind(this));
 		document.off("pointerup", this.resizeEnd.bind(this));

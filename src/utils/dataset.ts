@@ -1,10 +1,15 @@
 export interface Dataset {
-	getItem<T>(key: string, defaultValue?: T): T | undefined;
+	getItem<T extends unknown = unknown>(key: string): T | undefined;
+	getItem<T>(key: string, defaultValue: T): T;
 	getOrSetItem<T>(key: string, defaultValue: T): T;
-	setItem(key: string, value: unknown): void;
+	setItem<T>(key: string, value: T): void;
 	derivedSetItem<T>(key: string, func: (oldValue: T | undefined) => T): void;
 	removeItem(key: string): void;
-	on<T>(
+	on<T = unknown>(
+		key: string,
+		callback: (oldValue: T | undefined, newValue: T | undefined) => void,
+	): () => void;
+	off<T = unknown>(
 		key: string,
 		callback: (oldValue: T | undefined, newValue: T | undefined) => void,
 	): void;
@@ -14,17 +19,28 @@ export interface Dataset {
 	fromObject(object: Record<string, unknown>): void;
 }
 
+export class DatasetChangeEvent<T> extends Event {
+	public readonly key: string;
+	public readonly oldValue: T | undefined;
+	public readonly newValue: T | undefined;
+
+	constructor(key: string, oldValue: T | undefined, newValue: T | undefined) {
+		super(`dataset:${key}`);
+		this.key = key;
+		this.oldValue = oldValue;
+		this.newValue = newValue;
+	}
+}
+
 export function createDataset(): Dataset {
 	const storage = new Map<string, unknown>();
-	const listeners = new Map<
-		string,
-		((oldValue: unknown, newValue: unknown) => void)[]
-	>();
+	const eventTarget = new EventTarget();
+	const listenerMap = new WeakMap<Function, (event: Event) => void>();
 
 	return {
 		getItem<T>(key: string, defaultValue?: T): T | undefined {
-			const value = storage.get(key);
-			return (value !== undefined ? value : defaultValue) as T | undefined;
+			const value = storage.get(key) as T;
+			return value !== undefined ? value : defaultValue;
 		},
 
 		getOrSetItem<T>(key: string, defaultValue: T): T {
@@ -36,14 +52,12 @@ export function createDataset(): Dataset {
 			}
 		},
 
-		setItem(key: string, value: unknown) {
-			const oldValue = storage.get(key);
+		setItem<T>(key: string, value: T) {
+			const oldValue = storage.get(key) as T | undefined;
 			if (oldValue !== value) {
 				storage.set(key, value);
-				const callbacks = listeners.get(key);
-				if (callbacks) {
-					callbacks.forEach((callback) => callback(oldValue, value));
-				}
+				const event = new DatasetChangeEvent<T>(key, oldValue, value);
+				eventTarget.dispatchEvent(event);
 			}
 		},
 
@@ -54,23 +68,37 @@ export function createDataset(): Dataset {
 		},
 
 		removeItem(key: string) {
-			const callbacks = listeners.get(key);
-			if (callbacks) {
-				callbacks.forEach((callback) => callback(storage.get(key), undefined));
-			}
+			const oldValue = storage.get(key);
 			storage.delete(key);
+
+			const event = new DatasetChangeEvent(key, oldValue, undefined);
+			eventTarget.dispatchEvent(event);
 		},
 
 		on<T>(
 			key: string,
 			callback: (oldValue: T | undefined, newValue: T | undefined) => void,
+		): () => void {
+			const listener = (e: Event) => {
+				const de = e as DatasetChangeEvent<T>;
+				callback(de.oldValue, de.newValue);
+			};
+			listenerMap.set(callback, listener);
+			eventTarget.addEventListener(`dataset:${key}`, listener);
+			return () => {
+				this.off(key, callback);
+			};
+		},
+
+		off<T>(
+			key: string,
+			callback: (oldValue: T | undefined, newValue: T | undefined) => void,
 		) {
-			if (!listeners.has(key)) {
-				listeners.set(key, []);
+			const listener = listenerMap.get(callback);
+			if (listener) {
+				eventTarget.removeEventListener(`dataset:${key}`, listener);
+				listenerMap.delete(callback);
 			}
-			listeners
-				.get(key)!
-				.push(callback as (oldValue: unknown, newValue: unknown) => void);
 		},
 
 		toJson() {
@@ -88,17 +116,13 @@ export function createDataset(): Dataset {
 
 		fromObject(obj: Record<string, unknown>) {
 			const existingKeys = new Set(storage.keys());
-
 			for (const [key, newValue] of Object.entries(obj)) {
 				const oldValue = storage.get(key);
-				existingKeys.delete(key); // This key is present in both the current state and the new state.
-
+				existingKeys.delete(key);
 				if (oldValue !== newValue) {
 					this.setItem(key, newValue);
 				}
 			}
-
-			// Any remaining keys in existingKeys are in the current state but not in the new JSON, so they should be removed.
 			for (const key of existingKeys) {
 				this.removeItem(key);
 			}

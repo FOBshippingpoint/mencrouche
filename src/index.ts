@@ -1,3 +1,5 @@
+import "./component/iconToggle";
+import "./component/imagePicker";
 import { workspace } from "./sticky/sticky";
 import { $ } from "./utils/dollars";
 import {
@@ -35,6 +37,7 @@ import { initClockDock } from "./dockPlugins/clock";
 import { initBookmarkDock } from "./dockPlugins/bookmark";
 import { isSmallScreen } from "./utils/screenSize";
 import { createDock } from "./dock/dock";
+import { initImageSticky } from "./stickyPlugins/image";
 
 const urls = { en, zh_TW };
 
@@ -122,6 +125,13 @@ const defaultCommands: Command[] = [
 			workspace.createSticky({ type: "note" });
 		},
 		defaultShortcut: "C-q",
+	},
+	{
+		name: "addImageSticky",
+		defaultShortcut: "C-A-i",
+		execute() {
+			workspace.createSticky({ type: "image" });
+		},
 	},
 	{
 		name: "deleteSticky",
@@ -243,6 +253,7 @@ async function main() {
 	// Register custom docks.
 	initClockDock();
 	initBookmarkDock();
+	initImageSticky();
 
 	try {
 		const origin = await loadDocument();
@@ -255,7 +266,9 @@ async function main() {
 		console.log(error);
 	}
 	$("#workspaceSlot")!.appendChild(workspace.outerCrate);
-	window.dispatchEvent(new CustomEvent("workspaceloaded"));
+	workspace.dispatchEvent(
+		new CustomEvent("workspaceLoaded", { bubbles: true }),
+	);
 
 	// Register default commands.
 	for (const command of defaultCommands) {
@@ -303,6 +316,13 @@ async function main() {
 					icon: "lucide:globe",
 					execute() {
 						executeCommand("addIFrameSticky");
+					},
+				},
+				{
+					name: "addImageSticky",
+					icon: "lucide:image",
+					execute() {
+						executeCommand("addImageSticky");
 					},
 				},
 			],

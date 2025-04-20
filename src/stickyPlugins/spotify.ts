@@ -1,8 +1,7 @@
 import {
-	type PluginStickyModel,
-	type PluginStickyConfig,
+	type StickyPluginModel,
 	type Sticky,
-	type PluginSticky,
+	type StickyPlugin,
 	registerSticky,
 } from "../sticky/sticky";
 import { n81i } from "../utils/n81i";
@@ -11,22 +10,23 @@ import { formToObject } from "../utils/formToObject";
 import { getTemplateFragment } from "../utils/getTemplate";
 
 declare module "../sticky/sticky" {
-	interface PluginStickyPoolMap {
-		spotify: Sticky<SpotifyPlugin, SpotifyConfig>;
+	interface StickyPluginRegistry {
+		spotify: SpotifyPlugin;
 	}
 }
 
-interface SpotifyPlugin extends PluginSticky {}
-interface SpotifyConfig extends PluginStickyConfig {
-	iframeHeight: string;
-	iframeSrc: string;
+interface SpotifyPlugin extends StickyPlugin {
+	config: {
+		iframeHeight: string;
+		iframeSrc: string;
+	};
 }
 
 const dialog = $<HTMLDialogElement>("#spotifyDialog")!;
 const form = dialog.$<HTMLFormElement>("form")!;
 const cancelBtn = dialog.$<HTMLButtonElement>('[data-i18n="cancelSubmitBtn"]')!;
 const linkInput = dialog.$<HTMLInputElement>('[name="link"]')!;
-let current: Sticky;
+let current: Sticky<"spotify">;
 
 cancelBtn.on("click", () => {
 	dialog.close();
@@ -66,7 +66,7 @@ form.on("submit", (e) => {
 		url.searchParams.delete(key);
 	}
 
-	const iframe = current.$<HTMLIFrameElement>("iframe")!;
+	const iframe = current.$("iframe")!;
 	iframe.src = url.toString();
 	iframe.height = height;
 	iframe.classList.remove("none");
@@ -91,78 +91,76 @@ form.on("submit", (e) => {
 	dialog.close();
 });
 
-const spotifySticky: PluginStickyModel<SpotifyPlugin, SpotifyConfig> = {
+const spotifySticky: StickyPluginModel<"spotify"> = {
 	type: "spotify",
-	onCreate(sticky: Sticky<SpotifyPlugin>) {
-		sticky.classList.add("none");
-		enable(sticky);
-		current = sticky;
-		// Remove sticky if user cancel.
-		const controller = new AbortController();
-		form.on(
-			"submit",
-			() => {
-				controller.abort();
-				sticky.classList.remove("none");
-			},
-			{ signal: controller.signal },
-		);
-		dialog.on(
-			"close",
-			() => {
-				if (!controller.signal.aborted) {
-					sticky.forceDelete();
-					controller.abort();
+	onMount(sticky, origin) {
+		const widgets = getTemplateFragment("spotifyStickyWidgets");
+		const editLinkBtn = widgets.$<HTMLButtonElement>(".editLinkBtn")!;
+		const ghostBtn = widgets.$<HTMLButtonElement>(".ghostBtn")!;
+		const iframe = widgets.$("iframe")!;
+
+		sticky.addControlWidget(editLinkBtn);
+		sticky.addControlWidget(ghostBtn);
+		sticky.replaceBody(iframe);
+
+		linkInput.value = "";
+
+		editLinkBtn.on("click", () => {
+			current = sticky;
+			linkInput.value = sticky.dataset.link ?? "";
+			form.$$("option").forEach((el) => {
+				if (current.dataset.height) {
+					el.selected = current.dataset.height === el.value;
 				}
-			},
-			{ once: true },
-		);
-		dialog.showModal();
-		linkInput.select();
+			});
+			dialog.showModal();
+			linkInput.select();
+		});
+		ghostBtn.on("click", sticky.toggleGhostMode);
+
+		if (origin === "create") {
+			sticky.classList.add("none");
+			current = sticky;
+			// Remove sticky if user cancel.
+			const controller = new AbortController();
+			form.on(
+				"submit",
+				() => {
+					controller.abort();
+					sticky.classList.remove("none");
+				},
+				{ signal: controller.signal },
+			);
+			dialog.on(
+				"close",
+				() => {
+					if (!controller.signal.aborted) {
+						sticky.forceDelete();
+						controller.abort();
+					}
+				},
+				{ once: true },
+			);
+			dialog.showModal();
+			linkInput.select();
+		} else if (origin === "restore") {
+			const iframe = sticky.$("iframe")!;
+			const pluginConfig = sticky.pluginConfig;
+			if (pluginConfig) {
+				iframe.src = pluginConfig.iframeSrc;
+				iframe.height = pluginConfig.iframeHeight;
+			}
+		}
 	},
 	onSave(sticky) {
-		const iframe = sticky.$<HTMLIFrameElement>("iframe")!;
+		const iframe = sticky.$("iframe")!;
 		return {
 			iframeHeight: iframe.height,
 			iframeSrc: iframe.src,
 		};
 	},
 	onDelete() {},
-	onRestore(sticky, config) {
-		enable(sticky);
-		const iframe = sticky.$<HTMLIFrameElement>("iframe")!;
-		if (config) {
-			iframe.src = config.iframeSrc;
-			iframe.height = config.iframeHeight;
-		}
-	},
 };
-
-function enable(sticky: Sticky) {
-	const widgets = getTemplateFragment("spotifyStickyWidgets");
-	const editLinkBtn = widgets.$<HTMLButtonElement>(".editLinkBtn")!;
-	const ghostBtn = widgets.$<HTMLButtonElement>(".ghostBtn")!;
-	const iframe = widgets.$<HTMLIFrameElement>("iframe")!;
-
-	sticky.addControlWidget(editLinkBtn);
-	sticky.addControlWidget(ghostBtn);
-	sticky.replaceBody(iframe);
-
-	linkInput.value = "";
-
-	editLinkBtn.on("click", () => {
-		current = sticky;
-		linkInput.value = sticky.dataset.link ?? "";
-		form.$$<HTMLOptionElement>("option").forEach((el) => {
-			if (current.dataset.height) {
-				el.selected = current.dataset.height === el.value;
-			}
-		});
-		dialog.showModal();
-		linkInput.select();
-	});
-	ghostBtn.on("click", sticky.toggleGhostMode);
-}
 
 export function initSpotifySticky() {
 	registerSticky(spotifySticky);

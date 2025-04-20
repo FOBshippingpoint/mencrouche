@@ -67,6 +67,7 @@ document.body.on("contextmenu", (e) => {
 	if (!$("#settings")!.classList.contains("none")) return;
 	if ((e.target as Element).matches("input,textarea,[contenteditable='true']"))
 		return;
+	if ((e.target as Element).closest('[data-context-menu="disabled"]')) return;
 
 	showContextMenu(e);
 });

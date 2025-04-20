@@ -159,7 +159,7 @@ export function createDock(options: DockConfig) {
 	const dock = getTemplate<HTMLDivElement>("dockWidgets");
 	const _dock = dock as Dock;
 	dock.id = options.id ?? crypto.randomUUID();
-	dock.className = options.className ?? options.type;
+	dock.className = options.className ?? `${dock.className} ${options.type}`;
 	placeElement(dock, options.placement ?? "center", options.grow ?? false);
 
 	Object.assign(dock, {
@@ -259,7 +259,7 @@ addTodoAfterLoad(() => {
 	// TODO:
 	// I don't satisfy with this approach
 	// Might integrate dock into workspace in future.
-	window.on("workspaceloaded", () => {
+	window.on("workspaceLoaded", () => {
 		// Clear all docks
 		getDockSlot().replaceChildren();
 		// Restore docks

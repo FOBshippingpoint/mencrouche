@@ -1,8 +1,7 @@
 import {
-	type PluginStickyModel,
-	type PluginStickyConfig,
+	type StickyPluginModel,
 	type Sticky,
-	type PluginSticky,
+	type StickyPlugin,
 	registerSticky,
 } from "../sticky/sticky";
 import { n81i } from "../utils/n81i";
@@ -10,25 +9,31 @@ import { $ } from "../utils/dollars";
 import { formToObject } from "../utils/formToObject";
 import { getTemplateFragment } from "../utils/getTemplate";
 
-interface YouTubePlugin extends PluginSticky {
+declare module "../sticky/sticky" {
+	interface StickyPluginRegistry {
+		youtube: YouTubePlugin;
+	}
+}
+
+interface YouTubePlugin extends StickyPlugin {
 	initPlayer: () => void;
 	player?: YT.Player;
-}
-interface YouTubeConfig extends PluginStickyConfig {
-	iframeSrc: string;
-	currentTime: number;
-	playerState: number;
+	config: {
+		iframeSrc: string;
+		currentTime: number;
+		playerState: number;
+	};
 }
 
 let isYoutubeScriptLoaded = false;
 
 const dialog = $<HTMLDialogElement>("#youtubeDialog")!;
-const form = dialog.$<HTMLFormElement>("form")!;
+const form = dialog.$("form")!;
 const cancelBtn = dialog.$<HTMLButtonElement>('[data-i18n="cancelSubmitBtn"]')!;
 const linkInput = dialog.$<HTMLInputElement>('[name="link"]')!;
 const videoIdInput = dialog.$<HTMLInputElement>('[name="videoId"]')!;
 const autoplayCheckbox = dialog.$<HTMLInputElement>('[name="autoplay"]')!;
-let current: Sticky<YouTubePlugin>;
+let current: Sticky<"youtube">;
 
 cancelBtn.on("click", () => {
 	dialog.close();
@@ -82,55 +87,124 @@ form.on("submit", (e) => {
 	dialog.close();
 });
 
-const youtubeSticky: PluginStickyModel<YouTubePlugin, YouTubeConfig> = {
+const youtubeSticky: StickyPluginModel<"youtube"> = {
 	type: "youtube",
-	onCreate(sticky) {
-		sticky.classList.add("none");
-		enable(sticky, () => {
-			if (sticky.dataset.autoplay === "on") {
-				sticky.plugin.player?.playVideo();
-			}
+	onMount(sticky) {
+		let onScriptLoaded = () => {};
+		const widgets = getTemplateFragment("youtubeStickyWidgets");
+		const editLinkBtn = widgets.$<HTMLButtonElement>(".editLinkBtn")!;
+		const iframe = widgets.$("iframe")!;
+
+		sticky.addControlWidget(editLinkBtn);
+		sticky.replaceBody(iframe);
+
+		current = sticky;
+		linkInput.value = "";
+		videoIdInput.value = "";
+		iframe.id = crypto.randomUUID();
+
+		editLinkBtn.on("click", () => {
+			current = sticky;
+			sticky.dataset.isPlaying =
+				current.plugin.player?.getPlayerState?.() === YT.PlayerState.PLAYING
+					? "on"
+					: "off";
+			sticky.plugin.player?.pauseVideo();
+			linkInput.value = sticky.dataset.link ?? "";
+			videoIdInput.value = sticky.dataset.videoId ?? "";
+			autoplayCheckbox.checked = sticky.dataset.autoplay === "on";
+			dialog.showModal();
+			linkInput.focus();
+			linkInput.select();
 		});
-		if (window.matchMedia("(min-width: 1536px)").matches) {
-			sticky.style.width = "864px";
-			sticky.style.height = "528px";
-		} else if (window.matchMedia("(min-width: 1024px)").matches) {
-			sticky.style.width = "720px";
-			sticky.style.height = "432px";
+
+		let inited = false;
+		sticky.plugin.initPlayer = () => {
+			if (inited) return;
+			if (isYoutubeScriptLoaded) {
+				sticky.plugin.player = new YT.Player(iframe.id, {
+					events: {
+						onReady: () => {
+							onScriptLoaded();
+							inited = true;
+						},
+					},
+				});
+			}
+		};
+
+		if (isYoutubeScriptLoaded) {
+			sticky.plugin.initPlayer();
 		} else {
-			sticky.style.width = "368px";
-			sticky.style.height = "240px";
+			const tag = document.createElement("script");
+			tag.src = "https://www.youtube.com/iframe_api";
+			const firstScriptTag = document.getElementsByTagName("script")[0];
+			firstScriptTag?.parentNode!.insertBefore(tag, firstScriptTag);
+
+			Object.assign(window, {
+				onYouTubeIframeAPIReady() {
+					isYoutubeScriptLoaded = true;
+					sticky.plugin.initPlayer();
+				},
+			});
 		}
 
-		// sticky.style.left = `${parseInt(sticky.style.left) - parseInt(sticky.style.width) / 2}px`;
-
-		// Remove sticky if user cancel.
-		const controller = new AbortController();
-		form.on(
-			"submit",
-			() => {
-				controller.abort();
-				sticky.classList.remove("none");
-			},
-			{ signal: controller.signal },
-		);
-		dialog.on(
-			"close",
-			() => {
-				if (!controller.signal.aborted) {
-					sticky.forceDelete();
-					controller.abort();
+		const pluginConfig = sticky.pluginConfig;
+		if (pluginConfig) {
+			onScriptLoaded = () => {
+				sticky.plugin.player?.seekTo(pluginConfig.currentTime, true);
+				sticky.plugin.player?.playVideo();
+			};
+			sticky.$<HTMLIFrameElement>("iframe")!.src = pluginConfig.iframeSrc;
+			sticky.plugin.initPlayer();
+		} else {
+			onScriptLoaded = () => {
+				if (sticky.dataset.autoplay === "on") {
+					sticky.plugin.player?.playVideo();
 				}
-			},
-			{ once: true },
-		);
-		dialog.showModal();
-		linkInput.focus();
+			};
+			sticky.classList.add("none");
+			if (window.matchMedia("(min-width: 1536px)").matches) {
+				sticky.style.width = "864px";
+				sticky.style.height = "528px";
+			} else if (window.matchMedia("(min-width: 1024px)").matches) {
+				sticky.style.width = "720px";
+				sticky.style.height = "432px";
+			} else {
+				sticky.style.width = "368px";
+				sticky.style.height = "240px";
+			}
+
+			// sticky.style.left = `${parseInt(sticky.style.left) - parseInt(sticky.style.width) / 2}px`;
+
+			// Remove sticky if user cancel.
+			const controller = new AbortController();
+			form.on(
+				"submit",
+				() => {
+					controller.abort();
+					sticky.classList.remove("none");
+				},
+				{ signal: controller.signal },
+			);
+			dialog.on(
+				"close",
+				() => {
+					if (!controller.signal.aborted) {
+						sticky.forceDelete();
+						controller.abort();
+					}
+				},
+				{ once: true },
+			);
+			dialog.showModal();
+			linkInput.focus();
+		}
 	},
 	onSave(sticky) {
 		// Save current player state and time.
 		if (sticky.plugin.player) {
-			const pluginConfig: YouTubeConfig = {
+			const pluginConfig: YouTubePlugin["config"] = {
 				playerState:
 					sticky.plugin.player.getPlayerState?.() ?? YT.PlayerState.UNSTARTED,
 				currentTime: sticky.plugin.player.getCurrentTime?.() ?? 0,
@@ -140,81 +214,7 @@ const youtubeSticky: PluginStickyModel<YouTubePlugin, YouTubeConfig> = {
 		}
 	},
 	onDelete() {},
-	onRestore(sticky, pluginConfig) {
-		if (pluginConfig) {
-			enable(sticky, () => {
-				if (pluginConfig.currentTime) {
-					sticky.plugin.player?.seekTo(pluginConfig.currentTime, true);
-				}
-				if (pluginConfig.playerState === YT.PlayerState.PLAYING) {
-					sticky.plugin.player?.playVideo();
-				}
-			});
-			sticky.$<HTMLIFrameElement>("iframe")!.src = pluginConfig.iframeSrc;
-			sticky.plugin.initPlayer();
-		}
-	},
 };
-
-function enable(sticky: Sticky<YouTubePlugin>, onScriptLoad: () => void) {
-	const widgets = getTemplateFragment("youtubeStickyWidgets");
-	const editLinkBtn = widgets.$<HTMLButtonElement>(".editLinkBtn")!;
-	const iframe = widgets.$("iframe")!;
-
-	sticky.addControlWidget(editLinkBtn);
-	sticky.replaceBody(iframe);
-
-	current = sticky;
-	linkInput.value = "";
-	videoIdInput.value = "";
-	iframe.id = crypto.randomUUID();
-
-	editLinkBtn.on("click", () => {
-		current = sticky;
-		sticky.dataset.isPlaying =
-			current.plugin.player?.getPlayerState?.() === YT.PlayerState.PLAYING
-				? "on"
-				: "off";
-		sticky.plugin.player?.pauseVideo();
-		linkInput.value = sticky.dataset.link ?? "";
-		videoIdInput.value = sticky.dataset.videoId ?? "";
-		autoplayCheckbox.checked = sticky.dataset.autoplay === "on";
-		dialog.showModal();
-		linkInput.focus();
-		linkInput.select();
-	});
-
-	let inited = false;
-	sticky.plugin.initPlayer = () => {
-		if (inited) return;
-		if (isYoutubeScriptLoaded) {
-			sticky.plugin.player = new YT.Player(iframe.id, {
-				events: {
-					onReady: () => {
-						onScriptLoad();
-						inited = true;
-					},
-				},
-			});
-		}
-	};
-
-	if (isYoutubeScriptLoaded) {
-		sticky.plugin.initPlayer();
-	} else {
-		const tag = document.createElement("script");
-		tag.src = "https://www.youtube.com/iframe_api";
-		const firstScriptTag = document.getElementsByTagName("script")[0];
-		firstScriptTag?.parentNode!.insertBefore(tag, firstScriptTag);
-
-		Object.assign(window, {
-			onYouTubeIframeAPIReady() {
-				isYoutubeScriptLoaded = true;
-				sticky.plugin.initPlayer();
-			},
-		});
-	}
-}
 
 export function initYouTubeSticky() {
 	registerSticky(youtubeSticky);
