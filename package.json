@@ -39,6 +39,7 @@
     "parcel": "^2.13.3",
     "prismjs": "^1.30.0",
     "quill": "^2.0.3",
+    "typedoc": "^0.28.3",
     "typescript": "^5.8.2",
     "vitest": "^3.0.8",
     "web-ext": "^8.4.0",

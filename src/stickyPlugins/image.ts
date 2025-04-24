@@ -14,6 +14,7 @@ import {
 	urlToBlob,
 } from "../utils/toDataUrl";
 import { trayTip } from "../utils/traytip";
+import { $ } from "../utils/dollars";
 
 declare module "../sticky/sticky" {
 	interface StickyPluginRegistry {
@@ -89,11 +90,11 @@ const imageSticky: StickyPluginModel<"image"> = {
 export function initImageSticky() {
 	registerSticky(imageSticky);
 	window.on("paste", async (e) => {
-		if (
-			(e.target as HTMLElement).matches(
-				"input,textarea,[contenteditable='true']",
-			)
-		) {
+		const isInputting = (e.target as HTMLElement).closest(
+			"input,textarea,[contenteditable='true']",
+		);
+		const isSettingsPageOpened = !$("#settings")!.classList.contains("none");
+		if (isInputting || isSettingsPageOpened) {
 			return;
 		}
 

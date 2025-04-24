@@ -89,8 +89,6 @@ const importDocumentFileInput = $<HTMLInputElement>(
 const resetBackgroundImageBtn = $<HTMLButtonElement>(
 	"#setBackgroundImageToDefaultBtn",
 )!;
-const backgroundImageFileInput =
-	backgroundImagePicker.$<HTMLInputElement>("input")!;
 
 const unsavedChangesAlertDialog = createDialog({
 	title: "unsavedChanges",
@@ -222,7 +220,6 @@ cancelBtn.on("click", () => {
 	closeSettingsPage();
 });
 
-// Copy from web.dev: https://web.dev/patterns/clipboard/paste-images#js
 backgroundImagePicker.listenToPaste(backgroundImageUrlInput);
 backgroundImagePicker.on("imageChange", (e) => {
 	const event = e as CustomEvent<ImageChangeDetail>;
