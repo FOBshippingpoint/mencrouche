@@ -503,6 +503,10 @@
 		"message": "Copied",
 		"description": "Button state for copy operation."
 	},
+	"isAutoSaveEnabledCheckboxLabel": {
+		"message": "Auto Save",
+		"description": "Checkbox label for enabling auto saving."
+	},
 	"isCloudSyncEnabledCheckboxLabel": {
 		"message": "Enable Cloud Sync",
 		"description": "Checkbox label for enabling cloud sync."

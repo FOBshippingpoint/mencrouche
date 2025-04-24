@@ -503,6 +503,10 @@
 		"message": "已複製",
 		"description": "Button state for copy operation."
 	},
+	"isAutoSaveEnabledCheckboxLabel": {
+		"message": "自動儲存",
+		"description": "Checkbox label for enabling auto saving."
+	},
 	"isCloudSyncEnabledCheckboxLabel": {
 		"message": "啟用雲端同步",
 		"description": "Checkbox label for enabling cloud sync."

@@ -69,6 +69,9 @@ const shortcutList = $<HTMLDivElement>("#shortcutList")!;
 const uiOpacityInput = $<HTMLInputElement>("#uiOpacityInput")!;
 const saveAndCloseBtn = $<HTMLButtonElement>("#saveAndCloseSettingsBtn")!;
 const shareDataLinkBtn = $<HTMLButtonElement>("#shareDataLinkBtn")!;
+const isAutoSaveEnabledCheckbox = $<HTMLInputElement>(
+	'[name="isAutoSaveEnabled"]',
+)!;
 const deleteDocumentBtn = $<HTMLButtonElement>("#deleteDocumentBtn")!;
 const exportDocumentBtn = $<HTMLButtonElement>("#exportDocumentBtn")!;
 const importDocumentBtn = $<HTMLButtonElement>("#importDocumentBtn")!;
@@ -120,7 +123,6 @@ settingsBtn.on("click", () => {
 	}
 });
 
-isCloudSyncEnabledCheckbox.checked = isCloudSyncEnabled();
 isCloudSyncEnabledCheckbox.on("input", () => {
 	changesManager.setChange("setIsCloudSyncEnabled", () => {
 		setIsCloudSyncEnabled(isCloudSyncEnabledCheckbox.checked);
@@ -159,6 +161,13 @@ shareDataLinkBtn.on("click", () => {
 	} else {
 		alert("Cannot share the data.");
 	}
+});
+
+isAutoSaveEnabledCheckbox.on("input", () => {
+	changesManager.setChange("setIsAutoSaveEnabled", () => {
+		dataset.setItem("isAutoSaveEnabled", isAutoSaveEnabledCheckbox.checked);
+	});
+	changesManager.markDirty();
 });
 deleteDocumentBtn.on("click", async () => {
 	if (confirm(n81i.t("confirmDeleteDocument"))) {
@@ -242,6 +251,13 @@ uiOpacityInput.on("input", () => {
 });
 
 function openSettingsPage() {
+	isAutoSaveEnabledCheckbox.checked = dataset.getOrSetItem(
+		"isAutoSaveEnabled",
+		true,
+	);
+	isScriptExecutionAllowedCheckbox.checked =
+		localStorage.getItem("isScriptExecutionAllowed") === "on";
+	isCloudSyncEnabledCheckbox.checked = isCloudSyncEnabled();
 	settings.classList.remove("none");
 
 	// Backup attributes.
@@ -541,8 +557,6 @@ customJsTextArea.on("input", () => {
 	});
 });
 
-isScriptExecutionAllowedCheckbox.checked =
-	localStorage.getItem("isScriptExecutionAllowed") === "on";
 isScriptExecutionAllowedCheckbox.on("input", () => {
 	changesManager.setChange("setIsScriptExecutionAllowed", () => {
 		localStorage.setItem(

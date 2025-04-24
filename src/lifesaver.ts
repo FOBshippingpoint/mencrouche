@@ -8,6 +8,7 @@ import { switchDocumentStatus } from "./documentStatus";
 import { generateEncryptionKey } from "./utils/encryption";
 import { debounce } from "./utils/debounce";
 import {
+	dataset,
 	IndexedDbSource,
 	loadFromSources,
 	RemoteSource,
@@ -129,6 +130,10 @@ export async function saveDocument() {
 }
 
 export const markDirtyAndSaveDocument = () => {
-	switchDocumentStatus("saving");
-	debounce(saveDocument)();
+	if (dataset.getOrSetItem("isAutoSaveEnabled", true)) {
+		switchDocumentStatus("saving");
+		debounce(saveDocument)();
+	} else {
+		switchDocumentStatus("unsaved");
+	}
 };
