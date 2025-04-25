@@ -34,7 +34,7 @@ import { executeCommand, registerCommand, type Command } from "./commands";
 import { initNoteSticky } from "./stickyPlugins/note";
 import { initIFrameSticky } from "./stickyPlugins/iframe";
 import { initClockDock } from "./dockPlugins/clock";
-import { initBookmarkDock } from "./dockPlugins/bookmark";
+import { initBookmarkDock } from "./dockPlugins/bookmarker";
 import { isSmallScreen } from "./utils/screenSize";
 import { createDock } from "./dock/dock";
 import { initImageSticky } from "./stickyPlugins/image";
@@ -266,8 +266,8 @@ async function main() {
 		console.log(error);
 	}
 	$("#workspaceSlot")!.appendChild(workspace.outerCrate);
-	workspace.dispatchEvent(
-		new CustomEvent("workspaceLoaded", { bubbles: true }),
+	workspace.outerCrate.dispatchEvent(
+		new CustomEvent("workspaceConnected", { bubbles: true }),
 	);
 
 	// Register default commands.

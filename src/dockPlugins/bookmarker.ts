@@ -2,9 +2,8 @@ import { apocalypse } from "../apocalypse";
 import {
 	registerDock,
 	type Dock,
-	type PluginDock,
-	type PluginDockConfig,
-	type PluginDockModel,
+	type DockPlugin,
+	type DockPluginModel,
 } from "../dock/dock";
 import { DragAndDropSorter } from "../dock/dragAndDropSorter";
 import { markDirtyAndSaveDocument } from "../lifesaver";
@@ -15,6 +14,12 @@ import { dataset } from "../dataWizard";
 import { registerContextMenu } from "../contextMenu";
 import { clipboardImageItemToDataUrl } from "../utils/toDataUrl";
 import { parseUrl } from "../utils/parseUrl";
+
+declare module "../dock/dock" {
+	interface DockPluginRegistry {
+		bookmarker: BookmarkerPlugin;
+	}
+}
 
 class Bookmark {
 	readonly element: HTMLAnchorElement;
@@ -140,7 +145,7 @@ let previewBookmark = new Bookmark({
 	target: "_self",
 	backgroundColor: generateRandomColor(),
 });
-let currentDock: Dock<BookmarkerPlugin, BookmarkerConfig>;
+let currentDock: Dock<"bookmarker">;
 
 const dialog = $<HTMLDialogElement>("#bookmarkDialog")!;
 const form = dialog.$("form")!;
@@ -279,99 +284,94 @@ interface BookmarkData {
 	label: string;
 }
 
-interface BookmarkerPlugin extends PluginDock {
+interface BookmarkerPlugin extends DockPlugin {
 	map: Map<string, Bookmark>;
 	takeSnapshot(): BookmarkData[];
 	restoreSnapshot(bookmarks: BookmarkData[]): void;
 	addBookmark(bookmark: Bookmark): void;
-}
-interface BookmarkerConfig extends PluginDockConfig {
-	bookmarks: BookmarkData[];
-}
-
-function enable(dock: Dock<BookmarkerPlugin, BookmarkerConfig>) {
-	const widgets = getTemplate("bookmarkDockWidgets");
-	const addBookmarkBtn = widgets.$("button")!;
-	const mom = widgets.$("div")!;
-	new DragAndDropSorter(mom, (src, target) => {
-		const bookmarks = takeSnapshot();
-		const srcIdx = bookmarks.findIndex((b) => b.id === src.id)!;
-		const targetIdx = bookmarks.findIndex((b) => b.id === target.id)!;
-		let ignore = true; // Ignore first execute because the swap itself is done by DragAndDropSorter.
-		apocalypse.write({
-			execute() {
-				if (ignore) {
-					ignore = false;
-					return;
-				}
-				const swapped = [...bookmarks];
-				swapped[targetIdx] = bookmarks[srcIdx]!;
-				swapped[srcIdx] = bookmarks[targetIdx]!;
-				restoreSnapshot(swapped);
-			},
-			undo() {
-				restoreSnapshot(bookmarks);
-			},
-		});
-		markDirtyAndSaveDocument();
-	});
-
-	addBookmarkBtn.on("click", () => {
-		currentDock = dock;
-		openDialog();
-	});
-	dock.replaceBody(widgets);
-
-	dock.plugin.map = new Map();
-
-	function takeSnapshot() {
-		const bookmarks: BookmarkData[] = [];
-		for (const bookmarkEl of dock.$$(".bookmark")) {
-			const bookmark = dock.plugin.map.get(bookmarkEl.id);
-			if (bookmark) {
-				bookmarks.push(bookmark.toData());
-			}
-		}
-		return bookmarks;
-	}
-	function restoreSnapshot(bookmarks: BookmarkData[]) {
-		dock.plugin.map.clear();
-		const frag = document.createDocumentFragment();
-		for (const bookmark of bookmarks.map((data) => new Bookmark(data))) {
-			dock.plugin.map.set(bookmark.id, bookmark);
-			frag.appendChild(bookmark.element);
-		}
-		mom.replaceChildren(frag);
-	}
-	function addBookmark(bookmark: Bookmark) {
-		mom.appendChild(bookmark.element);
-	}
-
-	Object.assign(dock.plugin, {
-		takeSnapshot,
-		restoreSnapshot,
-		addBookmark,
-	});
+	config: {
+		bookmarks: BookmarkData[];
+	};
 }
 
-const bookmarkDock: PluginDockModel<BookmarkerPlugin, BookmarkerConfig> = {
+const bookmarkDock: DockPluginModel<"bookmarker"> = {
 	type: "bookmarker",
-	onCreate(dock) {
-		enable(dock);
+	onMount(dock) {
+		const widgets = getTemplate("bookmarkDockWidgets");
+		const addBookmarkBtn = widgets.$("button")!;
+		const mom = widgets.$("div")!;
+		new DragAndDropSorter(mom, (src, target) => {
+			const bookmarks = takeSnapshot();
+			const srcIdx = bookmarks.findIndex((b) => b.id === src.id)!;
+			const targetIdx = bookmarks.findIndex((b) => b.id === target.id)!;
+			let ignore = true; // Ignore first execute because the swap itself is done by DragAndDropSorter.
+			apocalypse.write({
+				execute() {
+					if (ignore) {
+						ignore = false;
+						return;
+					}
+					const swapped = [...bookmarks];
+					swapped[targetIdx] = bookmarks[srcIdx]!;
+					swapped[srcIdx] = bookmarks[targetIdx]!;
+					restoreSnapshot(swapped);
+				},
+				undo() {
+					restoreSnapshot(bookmarks);
+				},
+			});
+			markDirtyAndSaveDocument();
+		});
+
+		addBookmarkBtn.on("click", () => {
+			currentDock = dock;
+			openDialog();
+		});
+		dock.replaceBody(widgets);
+
+		dock.plugin.map = new Map();
+
+		function takeSnapshot() {
+			const bookmarks: BookmarkData[] = [];
+			for (const bookmarkEl of dock.$$(".bookmark")) {
+				const bookmark = dock.plugin.map.get(bookmarkEl.id);
+				if (bookmark) {
+					bookmarks.push(bookmark.toData());
+				}
+			}
+			return bookmarks;
+		}
+		function restoreSnapshot(bookmarks: BookmarkData[]) {
+			dock.plugin.map.clear();
+			const frag = document.createDocumentFragment();
+			for (const bookmark of bookmarks.map((data) => new Bookmark(data))) {
+				dock.plugin.map.set(bookmark.id, bookmark);
+				frag.appendChild(bookmark.element);
+			}
+			mom.replaceChildren(frag);
+		}
+		function addBookmark(bookmark: Bookmark) {
+			mom.appendChild(bookmark.element);
+		}
+
+		Object.assign(dock.plugin, {
+			takeSnapshot,
+			restoreSnapshot,
+			addBookmark,
+		});
+
+		const pluginConfig = dock.pluginConfig;
+		if (pluginConfig) {
+			dock.plugin.restoreSnapshot(pluginConfig.bookmarks);
+		}
 	},
 	onDelete() {},
 	onSave(dock) {
 		const bookmarks: BookmarkData[] = [];
-		for (const [_, bookmark] of dock.plugin.map.entries()) {
+		for (const bookmark of dock.plugin.map.values()) {
 			bookmarks.push(bookmark.toData());
 		}
 		return { bookmarks };
-	},
-	onRestore(dock, config) {
-		enable(dock);
-		if (config) {
-			dock.plugin.restoreSnapshot(config.bookmarks);
-		}
 	},
 };
 
@@ -380,10 +380,7 @@ const bookmarkMenuItems = [
 		name: "editBookmarkMenuItem",
 		icon: "lucide-pencil",
 		execute() {
-			const dock = anchor.closest(".dock.bookmarker") as Dock<
-				BookmarkerPlugin,
-				BookmarkerConfig
-			>;
+			const dock = anchor.closest(".dock.bookmarker") as Dock<"bookmarker">;
 			currentDock = dock;
 			const bookmark = dock.plugin.map.get(anchor.id);
 			if (bookmark) {
@@ -395,10 +392,7 @@ const bookmarkMenuItems = [
 		name: "deleteBookmarkMenuItem",
 		icon: "lucide-trash-2",
 		execute() {
-			const dock = anchor.closest(".dock.bookmarker") as Dock<
-				BookmarkerPlugin,
-				BookmarkerConfig
-			>;
+			const dock = anchor.closest(".dock.bookmarker") as Dock<"bookmarker">;
 			currentDock = dock;
 			const bookmark = dock.plugin.map.get(anchor.id);
 			if (bookmark) {
@@ -445,7 +439,8 @@ function cssColorToHexString(color: string) {
 }
 
 function getFaviconUrl(domainUrl: string) {
-	return `https://twenty-icons.com/${domainUrl}`;
+	const wwwRemoved = domainUrl.replace("www.", "");
+	return `https://twenty-icons.com/${wwwRemoved}`;
 }
 
 export function initBookmarkDock() {

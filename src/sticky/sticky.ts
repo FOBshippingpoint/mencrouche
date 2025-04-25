@@ -73,7 +73,7 @@ export interface Sticky<K extends PluginKey = "default">
 }
 
 /**
- * `var(--size-fluid-9)` in pixels.
+ * `calc(var(--size-fluid-4) + var(--size-fluid-9))` in pixels.
  *
  * Enable us to center sticky on screen
  * even if user hasn't move the cursor yet.
@@ -142,7 +142,7 @@ export interface WorkspaceConfig {
 	/** All stickies inside workspace. */
 	stickies: StickyConfig[];
 }
-class Workspace extends EventTarget {
+class Workspace {
 	/** Contains stickies. */
 	innerCrate: HTMLDivElement;
 	/**
@@ -162,7 +162,6 @@ class Workspace extends EventTarget {
 	apocalypse: Apocalypse;
 
 	constructor(apocalypse: Apocalypse) {
-		super();
 		this.apocalypse = apocalypse;
 
 		this.outerCrate = getTemplate<HTMLDivElement>("workspaceWidgets");
@@ -204,7 +203,7 @@ class Workspace extends EventTarget {
 
 		this.refreshHighestZIndex();
 
-		this.on("dragminimize", (event) => {
+		this.outerCrate.on("dragminimize", (event) => {
 			// When user drag maximized sticky
 			// We will adjust sticky position to cursor
 			// And keep the original width/height.
@@ -234,13 +233,17 @@ class Workspace extends EventTarget {
 			this.restoreSticky(sticky);
 		}
 		this.refreshHighestZIndex();
-		this.on("workspaceLoaded", () => {
-			for (const sticky of this.stickies) {
-				if (sticky.classList.contains("maximized")) {
-					this.maximize(sticky);
+		this.outerCrate.on(
+			"workspaceConnected",
+			() => {
+				for (const sticky of this.stickies) {
+					if (sticky.classList.contains("maximized")) {
+						this.maximize(sticky);
+					}
 				}
-			}
-		});
+			},
+			{ once: true },
+		);
 	}
 
 	delete(sticky: Sticky) {
@@ -679,7 +682,7 @@ function buildBuildSticky(workspace: Workspace) {
 						onDragStart: () => {
 							const rect = extractRect(sticky);
 							if (sticky.classList.contains("maximized")) {
-								workspace.dispatchEvent(
+								workspace.outerCrate.dispatchEvent(
 									new CustomEvent<Sticky>("dragminimize", {
 										detail: sticky as Sticky,
 									}),

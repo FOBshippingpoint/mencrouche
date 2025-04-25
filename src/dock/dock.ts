@@ -64,26 +64,35 @@ for (const btn of placementBtns) {
 	});
 }
 
-export interface PluginDockConfig extends Record<string, unknown> {}
+export interface DockPluginRegistry extends Record<string, DockPlugin> {
+	default: DockPlugin;
+}
+type PluginKey = keyof DockPluginRegistry;
 
-export interface PluginDock {}
-export interface DockConfig<C extends PluginDockConfig = PluginDockConfig> {
-	type: string;
+type GetPluginType<K extends PluginKey> = Omit<DockPluginRegistry[K], "config">;
+
+type GetConfigType<K extends PluginKey> = DockPluginRegistry[K]["config"];
+
+export interface DockPlugin {
+	config: Record<string, unknown>;
+}
+export interface DockConfig<K extends PluginKey = "default"> {
 	id?: string;
+	type?: K | string;
+	zIndex?: number;
 	className?: string;
-	pluginConfig?: C;
+	pluginConfig?: GetConfigType<K>;
+	dataset?: Record<string, unknown>;
 	placement?: Placement;
 	grow?: boolean;
 }
 
-export interface Dock<
-	P extends PluginDock = PluginDock,
-	C extends PluginDockConfig = PluginDockConfig,
-> extends HTMLDivElement {
+export interface Dock<K extends PluginKey = "default"> extends HTMLDivElement {
 	type: string;
 	replaceBody: (...nodes: (Node | string)[]) => void;
-	save: () => DockConfig<C>;
-	plugin: P;
+	save: () => GetConfigType<K>;
+	plugin: GetPluginType<K>;
+	pluginConfig?: GetConfigType<K>;
 	placeAt(placement: Placement, grow: boolean): void;
 }
 
@@ -98,25 +107,19 @@ type Placement =
 	| "bottomLeft"
 	| "left";
 
-const pluginDockPool = new Map<string, PluginDockModel>();
+const pluginDockPool = new Map<PluginKey, DockPluginModel<PluginKey>>();
 const docks: Dock[] = [];
 
-export interface PluginDockModel<
-	P extends PluginDock = PluginDock,
-	C extends PluginDockConfig = PluginDockConfig,
-> {
-	type: string;
+export interface DockPluginModel<K extends PluginKey> {
+	type: K;
 	css?: string;
-	onCreate(dock: Dock<P, C>): void;
-	onSave(dock: Dock<P, C>): C | void;
-	onDelete(dock: Dock<P, C>): void;
-	onRestore(dock: Dock<P, C>, config?: C): void;
+	onSave(dock: Dock<K>): GetConfigType<K> | void;
+	onDelete(dock: Dock<K>): void;
+	onMount(dock: Dock<K>, origin: "create" | "restore"): void;
 }
 
-const sheetRegistry = new Map<string, CSSStyleSheet>();
-export function registerDock<P extends PluginDock, C extends PluginDockConfig>(
-	model: PluginDockModel<P, C>,
-) {
+const sheetRegistry = new Map<PluginKey, CSSStyleSheet>();
+export function registerDock<K extends PluginKey>(model: DockPluginModel<K>) {
 	if (pluginDockPool.has(model.type)) {
 		console.warn(
 			`Overwriting existing plugin dock [ ${model.type} ]. You should only do this while development.`,
@@ -150,16 +153,18 @@ export function registerDock<P extends PluginDock, C extends PluginDockConfig>(
 }
 
 export function createDock(options: DockConfig) {
-	if (!pluginDockPool.has(options.type)) {
+	if (!pluginDockPool.has(options.type ?? "")) {
 		throw Error(
 			`Dock type [ ${options.type} ] not found. Please register dock type first via 'registerDock'.`,
 		);
 	}
-	const model = pluginDockPool.get(options.type)!;
+	const model = pluginDockPool.get(options.type ?? "")!;
 	const dock = getTemplate<HTMLDivElement>("dockWidgets");
 	const _dock = dock as Dock;
 	dock.id = options.id ?? crypto.randomUUID();
 	dock.className = options.className ?? `${dock.className} ${options.type}`;
+	console.log(options);
+	_dock.pluginConfig = options.pluginConfig;
 	placeElement(dock, options.placement ?? "center", options.grow ?? false);
 
 	Object.assign(dock, {
@@ -185,14 +190,14 @@ export function createDock(options: DockConfig) {
 		},
 	});
 
-	model.onCreate(_dock);
+	model.onMount(_dock, "create");
 	getDockSlot().appendChild(dock);
 	docks.push(_dock);
 
 	return _dock;
 }
 
-export function getPluginDockModel(dock: Dock | HTMLElement) {
+export function getDockPluginModel(dock: Dock | HTMLElement) {
 	for (const className of dock.classList.values()) {
 		const model = pluginDockPool.get(className);
 		if (model) {
@@ -201,7 +206,7 @@ export function getPluginDockModel(dock: Dock | HTMLElement) {
 	}
 }
 
-export function getPluginDockTypes() {
+export function getDockPluginTypes() {
 	return [...pluginDockPool.values()].map(({ type }) => type);
 }
 
@@ -233,8 +238,8 @@ registerContextMenu("dock", [
 	{
 		name: "editDockAppearanceMenuItem",
 		icon: "lucide-paintbrush",
-		execute(dock: Dock) {
-			currentDock = dock;
+		execute(dock: any) {
+			currentDock = dock as Dock;
 			backup = bakeBean(dock, "class");
 			placementBtns.forEach((btn) => (btn.className = ""));
 			dockAppearanceDialog.$(
@@ -259,17 +264,18 @@ addTodoAfterLoad(() => {
 	// TODO:
 	// I don't satisfy with this approach
 	// Might integrate dock into workspace in future.
-	window.on("workspaceLoaded", () => {
+	window.on("workspaceConnected", () => {
 		// Clear all docks
 		getDockSlot().replaceChildren();
 		// Restore docks
-		const docks = dataset.getItem<DockConfig[]>("docks");
-		if (docks) {
-			for (const dockConfig of docks) {
+		const dockConfigs = dataset.getItem<DockConfig[]>("docks");
+		console.log(dockConfigs);
+		if (dockConfigs) {
+			for (const dockConfig of dockConfigs) {
 				const dock = createDock(dockConfig);
-				const model = pluginDockPool.get(dockConfig.type);
+				const model = pluginDockPool.get(dockConfig.type ?? "");
 				if (model) {
-					model.onRestore(dock, dockConfig.pluginConfig);
+					model.onMount(dock, "restore");
 				} else {
 					throw Error(
 						`Failed to restore dock type [ ${dockConfig.type} ]. Please register dock type first via 'registerDock'.`,

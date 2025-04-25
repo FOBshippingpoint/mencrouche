@@ -264,15 +264,13 @@ h6 {
 
 /* Dummy sticky for getting "actual" size of css variables */
 #stickySizeDummy {
-	width: var(--size-fluid-9);
+	width: calc(var(--size-fluid-4) + var(--size-fluid-9));
 	height: 0;
 }
 /* Sticky skeleton */
 .sticky {
 	position: absolute;
 	cursor: default;
-	width: var(--size-fluid-9);
-	height: var(--size-fluid-9);
 	min-width: var(--size-fluid-6);
 	min-height: var(--size-fluid-6);
 }
