@@ -45,10 +45,8 @@ export function trayTip(options: TrayTipOptions): () => void {
 	}
 
 	function closeTrayTip(): void {
-		console.log("close");
 		window.clearTimeout(autoCloseTimeout);
 		trayTip.on("animationend", () => {
-			console.log("animationend");
 			trayTip.remove();
 			if (settings.onClose) settings.onClose();
 		});

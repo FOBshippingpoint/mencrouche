@@ -1,3 +1,4 @@
+import { dataset } from "../dataWizard";
 import {
 	registerDock,
 	type DockPlugin,
@@ -5,6 +6,7 @@ import {
 } from "../dock/dock";
 import { getTemplate } from "../utils/getTemplate";
 import { isSmallScreen } from "../utils/screenSize";
+import { toBcp47LangTag } from "../utils/toBcp47LangTag";
 
 declare module "../dock/dock" {
 	interface DockPluginRegistry {
@@ -24,13 +26,21 @@ const clockModel: DockPluginModel<"clock"> = {
 		const minuteHand = clock.$<HTMLElement>(".minute")!;
 		const hourHand = clock.$<HTMLElement>(".hour")!;
 
+		let locale = dataset.getItem<string | undefined>("locale", undefined);
+		if (locale) {
+			locale = toBcp47LangTag(locale);
+		}
+		dataset.on<string>("locale", (_, value) => {
+			locale = value ? toBcp47LangTag(value) : undefined;
+		});
 		function updateTime() {
 			const now = new Date();
-			timeEl.textContent = now.toLocaleTimeString(undefined, {
+
+			timeEl.textContent = now.toLocaleTimeString(locale, {
 				hour: "2-digit",
 				minute: "2-digit",
 			});
-			dateEl.textContent = now.toLocaleDateString(undefined, {
+			dateEl.textContent = now.toLocaleDateString(locale, {
 				weekday: "short",
 				month: "short",
 				day: "numeric",
@@ -58,7 +68,10 @@ const clockModel: DockPluginModel<"clock"> = {
 		minuteHand.style.animationDelay = `${minuteDelay}s`;
 		hourHand.style.animationDelay = `${hourDelay}s`;
 
-		dock.classList.toggle("none", isSmallScreen());
+		// If already none, omit check screen size
+		if (!dock.classList.contains("none")) {
+			dock.classList.toggle("none", isSmallScreen());
+		}
 		dock.replaceBody(clock);
 	},
 	onDelete() {},

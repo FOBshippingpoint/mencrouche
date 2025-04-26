@@ -99,10 +99,6 @@
 		"message": "Invalid image URL. Please try another link.",
 		"description": "Alert message for an invalid image URL."
 	},
-	"addBookmarkSticky": {
-		"message": "New bookmark sticky",
-		"description": "Command description for adding a new bookmark sticky."
-	},
 	"addMarkdownSticky": {
 		"message": "New sticky note",
 		"description": "Command description for adding a new sticky note."
@@ -206,10 +202,6 @@
 	"submitBtn": {
 		"message": "Confirm",
 		"description": "Button text for submitting form."
-	},
-	"submitBookmarkBtn": {
-		"message": "Submit",
-		"description": "Button text for submitting bookmark."
 	},
 	"toggleAutoArrange": {
 		"message": "Toggle arrange/free mode",
@@ -550,6 +542,22 @@
 	"dockTransparentBackgroundCheckboxLabel": {
 		"message": "Transparent Background",
 		"description": "Checkbox label for enabling dock transparent background."
+	},
+	"isDockHiddenCheckboxLabel": {
+		"message": "Hide",
+		"description": "Checkbox label for hiding dock."
+	},
+	"settingsDockAppearanceSection": {
+		"message": "Dock",
+		"description": "Title for the dock appearance subsection in appearance settings."
+	},
+	"isDockClockHidden": {
+		"message": "Hide Clock",
+		"description": "Checkbox label for hiding clock dock."
+	},
+	"isDockBookmarkerHidden": {
+		"message": "Hide Bookmarker",
+		"description": "Checkbox label for hiding bookmarker dock."
 	},
 	"invalidUrl": {
 		"message": "Invalid URL",

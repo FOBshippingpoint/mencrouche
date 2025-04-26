@@ -163,7 +163,6 @@ export function createDock(options: DockConfig) {
 	const _dock = dock as Dock;
 	dock.id = options.id ?? crypto.randomUUID();
 	dock.className = options.className ?? `${dock.className} ${options.type}`;
-	console.log(options);
 	_dock.pluginConfig = options.pluginConfig;
 	placeElement(dock, options.placement ?? "center", options.grow ?? false);
 
@@ -262,14 +261,13 @@ addTodoBeforeSave(() => {
 });
 addTodoAfterLoad(() => {
 	// TODO:
-	// I don't satisfy with this approach
+	// I'm not happy with this approach
 	// Might integrate dock into workspace in future.
 	window.on("workspaceConnected", () => {
 		// Clear all docks
 		getDockSlot().replaceChildren();
 		// Restore docks
 		const dockConfigs = dataset.getItem<DockConfig[]>("docks");
-		console.log(dockConfigs);
 		if (dockConfigs) {
 			for (const dockConfig of dockConfigs) {
 				const dock = createDock(dockConfig);

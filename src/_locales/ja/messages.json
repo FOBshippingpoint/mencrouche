@@ -1,170 +1,178 @@
 {
 	"addBookmarkBtn": {
-		"message": "新增書籤",
+		"message": "ブックマークを追加",
 		"description": "Button text for adding bookmark."
 	},
 	"backgroundImageLink": {
-		"message": "背景圖片連結",
+		"message": "背景画像のURL",
 		"description": "Label for the background image URL input."
 	},
 	"backgroundImageUrlInputPlaceholder": {
-		"message": "貼上圖片連結",
+		"message": "画像URLをここに貼り付け",
 		"description": "Placeholder text for the background image URL input."
 	},
 	"bookmarkHrefLabel": {
-		"message": "連結",
+		"message": "リンク",
 		"description": "Label text for the bookmark link input."
 	},
 	"bookmarkIconLabel": {
-		"message": "圖示",
+		"message": "アイコン",
 		"description": "Label text for the bookmark link input."
 	},
 	"bookmarkLabelLabel": {
-		"message": "標題",
+		"message": "ラベル",
 		"description": "Label text for the bookmark label input."
 	},
 	"bookmarkMoreOptions": {
-		"message": "更多選項",
+		"message": "詳細オプション",
 		"description": "More options button for bookmark editing dialog."
 	},
 	"bookmarkTargetLabel": {
-		"message": "開啟方式",
+		"message": "開き方の設定",
 		"description": "Label text for the bookmark anchor target."
 	},
 	"bookmarkBackgroundColorLabel": {
-		"message": "背景顏色",
+		"message": "背景色",
 		"description": "Label text for the bookmark background color."
 	},
 	"getRandomBookmarkColorBtn": {
-		"message": "隨機顏色",
+		"message": "ランダムな色",
 		"description": "Button title for getting random color for bookmark background."
 	},
 	"removeBookmarkBackgroundBtn": {
-		"message": "移除背景",
+		"message": "背景を削除",
 		"description": "Button title for removing bookmark background."
 	},
 	"cancelSettingsBtn": {
-		"message": "取消",
+		"message": "キャンセル",
 		"description": "Text for the cancel settings button."
 	},
 	"cancelSubmitBtn": {
-		"message": "取消",
+		"message": "キャンセル",
 		"description": "Button text for submitting form."
 	},
 	"commandPaletteSearchPlaceholder": {
-		"message": "搜尋指令...",
+		"message": "コマンドを検索...",
 		"description": "Placeholder text for the command palette search bar."
 	},
 	"confirmDeleteDocument": {
-		"message": "確定要刪除文件嗎？",
+		"message": "ドキュメントを削除しますか？",
 		"description": "Confirmation message while deleting document."
 	},
 	"deleteAllStickies": {
-		"message": "刪除所有便利貼",
+		"message": "すべての付箋を削除",
 		"description": "Command description for deleting all sticky notes."
 	},
 	"deleteBookmarkMenuItem": {
-		"message": "刪除",
+		"message": "削除",
 		"description": "Context menu item label text for deleting bookmark."
 	},
 	"deleteDocumentBtn": {
-		"message": "刪除",
+		"message": "削除",
 		"description": "Text for the delete document button."
 	},
 	"deleteSticky": {
-		"message": "刪除便利貼",
+		"message": "付箋を削除",
 		"description": "Command description for deleting a sticky note."
 	},
 	"dndImageInstruction": {
-		"message": "拖曳圖片或點擊來上傳檔案",
+		"message": "画像をここにドラッグ＆ドロップ、またはクリックしてファイルを選択",
 		"description": "Instructions for setting the background image via drag and drop."
 	},
 	"duplicateSticky": {
-		"message": "複製便利貼",
+		"message": "付箋を複製",
 		"description": "Command description for duplicating a sticky note."
 	},
 	"editBookmarkMenuItem": {
-		"message": "編輯",
+		"message": "編集",
 		"description": "Context menu item label text for editing bookmark."
 	},
 	"exportDocumentBtn": {
-		"message": "匯出",
+		"message": "エクスポート",
 		"description": "Text for the export document button."
 	},
 	"extensionDescription": {
-		"message": "新分頁",
+		"message": "新しいタブ",
 		"description": "Description of the extension."
 	},
 	"imageUrlIsNotValidAlert": {
-		"message": "無效的圖片連結。請嘗試其他連結。",
+		"message": "無効な画像URLです。別のリンクをお試しください。",
 		"description": "Alert message for an invalid image URL."
 	},
+	"addBookmarkSticky": {
+		"message": "新規ブックマーク付箋",
+		"description": "Command description for adding a new bookmark sticky."
+	},
 	"addMarkdownSticky": {
-		"message": "新增Markdown便利貼",
+		"message": "新規Markdown付箋",
 		"description": "Command description for adding a new sticky note."
 	},
 	"addYoutubeSticky": {
-		"message": "新增YouTube便利貼",
+		"message": "新規YouTube付箋",
 		"description": "Command description for adding a new youtube sticky note."
 	},
 	"addSpotifySticky": {
-		"message": "新增Spotify便利貼",
+		"message": "新規Spotify付箋",
 		"description": "Command description for adding a new spotify sticky note."
 	},
 	"addIFrameSticky": {
-		"message": "新增網站便利貼",
-		"description": "Command description for adding a new iframe sticky."
+		"message": "新規ウェブサイト付箋",
+		"description": "Command description for adding a new iframe sticky note."
+	},
+	"addImageSticky": {
+		"message": "新規画像付箋",
+		"description": "Command description for adding a new image sticky."
 	},
 	"openBookmarkInCurrentTabOption": {
-		"message": "在此分頁開啟",
+		"message": "現在のタブで開く",
 		"description": "Context menu item label text for opening bookmark link in current tab."
 	},
 	"openBookmarkInNewTabOption": {
-		"message": "用新分頁開啟",
+		"message": "新しいタブで開く",
 		"description": "Context menu item label text for opening bookmark link in a new tab."
 	},
 	"openYoutube": {
-		"message": "開啟YouTube",
+		"message": "YouTubeを開く",
 		"description": "Command description for opening YouTube."
 	},
 	"recordShortcutBtn": {
-		"message": "錄製",
+		"message": "記録",
 		"description": "Text for the record shortcut button."
 	},
 	"redo": {
-		"message": "重做",
+		"message": "やり直し",
 		"description": "redo"
 	},
 	"resetBtn": {
-		"message": "重設",
+		"message": "リセット",
 		"description": "Text for the button to reset shortcut to default."
 	},
 	"saveAndCloseSettingsBtn": {
-		"message": "儲存並關閉",
+		"message": "保存して閉じる",
 		"description": "Text for the save and close settings button."
 	},
 	"saveDocument": {
-		"message": "儲存文件",
+		"message": "ドキュメントを保存",
 		"description": "Command description for saving documents."
 	},
 	"saveSettingsBtn": {
-		"message": "儲存",
+		"message": "保存",
 		"description": "Text for the save settings button."
 	},
 	"saved": {
-		"message": "已儲存",
+		"message": "保存済み",
 		"description": "Status message for a saved document."
 	},
 	"saving": {
-		"message": "儲存中...",
+		"message": "保存中...",
 		"description": "Status message while saving a document."
 	},
 	"setBackgroundImage": {
-		"message": "設定背景圖片",
+		"message": "背景画像を設定",
 		"description": "Command description for setting the background image."
 	},
 	"setToDefaultBtn": {
-		"message": "重設為預設值",
+		"message": "デフォルトに戻す",
 		"description": "Button text for resetting the background image to default."
 	},
 	"settingsAppearanceBackgroundSection": {
@@ -172,23 +180,23 @@
 		"description": "Title for the background subsection in appearance settings."
 	},
 	"settingsAppearanceSection": {
-		"message": "外觀",
+		"message": "外観",
 		"description": "Title for the appearance section in settings."
 	},
 	"settingsLanguageSection": {
-		"message": "語言",
+		"message": "言語",
 		"description": "Title for the language section in settings."
 	},
 	"settingsShortcutsSection": {
-		"message": "快捷鍵",
+		"message": "ショートカット",
 		"description": "Title for the shortcuts section in settings."
 	},
 	"settingsStorageSection": {
-		"message": "檔案與同步",
+		"message": "ストレージ",
 		"description": "Title for the storage section in settings."
 	},
 	"stickyTextareaStartTypingPlaceholder": {
-		"message": "開始輸入...",
+		"message": "入力を開始...",
 		"description": "Placeholder text for the sticky note textarea."
 	},
 	"stopRecordShortcutBtn": {
@@ -200,195 +208,195 @@
 		"description": "Button text for submitting form."
 	},
 	"toggleAutoArrange": {
-		"message": "切換整齊模式",
+		"message": "整列/自由モード切り替え",
 		"description": "Command description for toggling between arrange and free mode for sticky notes."
 	},
 	"toggleCommandPalette": {
-		"message": "切換指令窗格",
+		"message": "コマンドパレットの切り替え",
 		"description": "Command description for toggling the command palette."
 	},
 	"toggleDarkMode": {
-		"message": "切換深色/淺色模式",
+		"message": "ダークモードの切り替え",
 		"description": "Command description for toggling dark mode on/off."
 	},
 	"toggleGhostMode": {
-		"message": "切換隱藏邊框模式",
+		"message": "非表示ボーダーの切り替え",
 		"description": "Command description for toggling ghost mode."
 	},
 	"toggleGlobalGhostMode": {
-		"message": "切換全域隱藏邊框模式",
+		"message": "グローバル非表示ボーダーの切り替え",
 		"description": "Command description for toggling global ghost mode."
 	},
 	"toggleMaximizeSticky": {
-		"message": "切換最大化",
+		"message": "最大化/最小化の切り替え",
 		"description": "Command description for toggling maximize/minimize of a sticky note."
 	},
 	"toggleSettings": {
-		"message": "開啟/關閉設定頁面",
+		"message": "設定ページの表示/非表示",
 		"description": "Command description for toggling the settings page."
 	},
 	"toggleSplitView": {
-		"message": "切換雙欄",
+		"message": "分割表示の切り替え",
 		"description": "Command description for toggling split view of sticky notes."
 	},
 	"toggleStickyEditMode": {
-		"message": "切換編輯模式",
+		"message": "編集モードの切り替え",
 		"description": "Command description for toggling edit/view mode for the current sticky note."
 	},
 	"toggleStickyPinMode": {
-		"message": "切換釘選",
+		"message": "ピン留めの切り替え",
 		"description": "Command description for toggling pin mode of a sticky note."
 	},
 	"uiOpacity": {
-		"message": "界面透明度",
+		"message": "UIの不透明度",
 		"description": "Label for the UI opacity input."
 	},
 	"undo": {
-		"message": "復原",
+		"message": "元に戻す",
 		"description": "undo"
 	},
 	"unsaved": {
-		"message": "未儲存的變更",
+		"message": "未保存の変更",
 		"description": "Status message for unsaved changes in a document."
 	},
 	"showAddBookmarkBtnCheckboxLabel": {
-		"message": "顯示新增捷徑按鈕",
-		"description": "Checkbox label for showing/not showing add bookmark button."
+		"message": "ブックマーク追加ボタンを表示",
+		"description": "Checkbox label for showing or hiding the add bookmark button."
 	},
 	"sizeInputLabel": {
-		"message": "書籤大小",
-		"description": "Label for adjusting bookmark size."
+		"message": "ブックマークのサイズ",
+		"description": "Label for adjusting the bookmark size."
 	},
 	"showLabelCheckboxLabel": {
-		"message": "顯示捷徑標題",
-		"description": "Checkbox label for showing/not showing bookmark label."
+		"message": "ブックマークラベルを表示",
+		"description": "Checkbox label for showing or hiding the bookmark label."
 	},
 	"addBookmarkMenuItem": {
-		"message": "新增書籤",
-		"description": "Menu item label for adding bookmark."
+		"message": "ブックマークを追加",
+		"description": "Menu item label for adding a bookmark."
 	},
 	"editDockAppearanceMenuItem": {
-		"message": "設定外觀",
+		"message": "外観を編集",
 		"description": "Menu item label for editing dock appearance."
 	},
 	"dockPositionRightRadioLabel": {
-		"message": "停駐於右側",
-		"description": "Radio label for dock position right."
+		"message": "右側にドッキング",
+		"description": "Radio label for positioning the dock on the right side."
 	},
 	"dockPositionBottomRadioLabel": {
-		"message": "停駐於底端",
-		"description": "Radio label for dock position bottom."
+		"message": "下部にドッキング",
+		"description": "Radio label for positioning the dock at the bottom."
 	},
 	"dockPositionTopRadioLabel": {
-		"message": "停駐於頂端",
-		"description": "Radio label for dock position top."
+		"message": "上部にドッキング",
+		"description": "Radio label for positioning the dock at the top."
 	},
 	"dockPositionLeftRadioLabel": {
-		"message": "停駐於左側",
-		"description": "Radio label for dock position left."
+		"message": "左側にドッキング",
+		"description": "Radio label for positioning the dock on the left side."
 	},
 	"youtubeLinkInputLabel": {
-		"message": "YouTube影片連結",
+		"message": "YouTube動画リンク",
 		"description": "Input label for YouTube video link."
 	},
 	"youtubeAutoplayCheckboxLabel": {
-		"message": "自動播放",
+		"message": "動画を自動再生",
 		"description": "Checkbox label for autoplay YouTube video."
 	},
 	"cannotFoundYoutubeVideo": {
-		"message": "YouTube影片連結格式有誤",
+		"message": "YouTube動画リンクの形式が正しくありません",
 		"description": "Error message displayed when the YouTube video ID cannot be found in the provided input."
 	},
 	"paletteHue": {
-		"message": "色調",
+		"message": "色相",
 		"description": "Label for the palette hue wheel in appearance settings."
 	},
 	"spotifyLinkInput": {
-		"message": "Spotify曲目連結",
+		"message": "Spotifyトラックリンク",
 		"description": "Input label for the Spotify link."
 	},
 	"spotifyNormalHeight": {
-		"message": "普通 (352px)",
+		"message": "標準 (352px)",
 		"description": "Normal height option for embedded Spotify media."
 	},
 	"spotifyCompactHeight": {
-		"message": "緊密 (152px)",
+		"message": "コンパクト (152px)",
 		"description": "Compact height option for embedded Spotify media."
 	},
 	"cannotFoundSpotifyMedia": {
-		"message": "找不到Spotify曲目",
+		"message": "Spotifyトラックが見つかりません",
 		"description": "Error message displayed when the Spotify media cannot be found in the provided input."
 	},
 	"addOtherStickyGroup": {
-		"message": "其他便利貼",
+		"message": "その他の付箋",
 		"description": "Context menu sub-menu name for other sticky group."
 	},
 	"markdownStickyEditModeOn": {
-		"message": "編輯模式",
+		"message": "編集モード",
 		"description": "Context menu label for toggle on markdown sticky edit mode."
 	},
 	"markdownStickyEditModeOff": {
-		"message": "檢視模式",
+		"message": "表示モード",
 		"description": "Context menu label for toggle off markdown sticky edit mode."
 	},
 	"markdownStickySplitViewOn": {
-		"message": "雙欄模式",
+		"message": "分割表示",
 		"description": "Context menu label for toggle on markdown sticky split view."
 	},
 	"markdownStickySplitViewOff": {
-		"message": "單欄模式",
+		"message": "単一列表示",
 		"description": "Context menu label for toggle off markdown sticky split view."
 	},
 	"maximizeSticky": {
-		"message": "最大化便利貼",
+		"message": "付箋を最大化",
 		"description": "Context menu option to maximize a sticky note."
 	},
 	"minimizeSticky": {
-		"message": "最小化便利貼",
+		"message": "付箋を最小化",
 		"description": "Context menu option to minimize a sticky note."
 	},
 	"pinSticky": {
-		"message": "釘選便利貼",
+		"message": "付箋をピン留め",
 		"description": "Context menu option to pin a sticky note."
 	},
 	"unpinSticky": {
-		"message": "取消釘選便利貼",
+		"message": "付箋のピン留めを解除",
 		"description": "Context menu option to unpin a sticky note."
 	},
 	"stickyGhostModeOn": {
-		"message": "隱藏邊框",
+		"message": "ボーダーを非表示",
 		"description": "Context menu option to enable ghost mode on a sticky note."
 	},
 	"stickyGhostModeOff": {
-		"message": "顯示邊框",
+		"message": "ボーダーを表示",
 		"description": "Context menu option to disable ghost mode on a sticky note."
 	},
 	"unsavedChanges": {
-		"message": "尚未儲存變更",
+		"message": "未保存の変更",
 		"description": "Dialog title indicating unsaved changes."
 	},
 	"unsavedChangesMessage": {
-		"message": "確定要離開嗎？",
+		"message": "今すぐ終了しますか？",
 		"description": "Dialog message prompting the user to confirm leaving with unsaved changes."
 	},
 	"imageCopiedTitle": {
-		"message": "已複製",
+		"message": "コピーしました",
 		"description": "Tray tip title notifying the user that the image has been successfully copied to the clipboard"
 	},
 	"imageCopiedMessage": {
-		"message": "圖片已複製到剪貼簿。",
+		"message": "画像がクリップボードにコピーされました。",
 		"description": "Tray tip message notifying the user that the image has been successfully copied to the clipboard"
 	},
 	"leaveSettingsPage": {
-		"message": "離開",
+		"message": "ページを離れる",
 		"description": "Dialog button label to confirm leaving the settings page."
 	},
 	"alwaysOnTopCheckboxLabel": {
-		"message": "顯示於最上層",
+		"message": "常に手前に表示",
 		"description": "Label for the checkbox that keeps a dock always on top."
 	},
 	"alwaysOnTopHelp": {
-		"message": "避免被便利貼遮住",
+		"message": "ドックが付箋で隠れるのを防ぎます。",
 		"description": "Help message for checkbox that keeps a dock always on top."
 	},
 	"addYoutubeStickyBtn": {
@@ -400,7 +408,7 @@
 		"description": "Button label for adding Spotify sticky."
 	},
 	"shareDataLinkBtn": {
-		"message": "分享連結",
+		"message": "ドキュメント共有リンク",
 		"description": "Input label for sharing data link."
 	},
 	"settings": {
@@ -408,107 +416,99 @@
 		"description": "Settings page header."
 	},
 	"importDocumentBtn": {
-		"message": "匯入",
+		"message": "インポート",
 		"description": "Button label for import file."
 	},
 	"discardCurrentChanges": {
-		"message": "載入舊檔",
+		"message": "現在の変更を破棄",
 		"description": "Dialog title indicating replace title and select."
 	},
 	"discardCurrentChangesAndLoadFileMessage": {
-		"message": "確定要放棄目前變更並開啟舊檔？",
+		"message": "すべての変更を破棄してファイルから読み込みますか？",
 		"description": "Dialog message prompting the user to confirm discard current changes and load selected file."
 	},
 	"discardBtn": {
-		"message": "放棄並載入",
+		"message": "破棄して読み込む",
 		"description": "Dialog button label to confirm discard current changes and load selected file."
 	},
 	"syncRemoteAuthKeyInputLabel": {
-		"message": "同步密鑰",
-		"description": "Input label for syncing service authorization key."
-	},
-	"discardBtn": {
-		"message": "放棄並載入",
-		"description": "Dialog button label to confirm discard current changes and load selected file."
-	},
-	"syncRemoteAuthKeyInputLabel": {
-		"message": "同步密鑰",
+		"message": "クラウド同期シークレットキー",
 		"description": "Input label for syncing service authorization key."
 	},
 	"allowScriptExecution": {
-		"message": "啟用程式碼執行",
+		"message": "スクリプトの実行を許可",
 		"description": "Dialog title that asking user to grant permission for allowing JavaScript and CSS injection."
 	},
 	"allowScriptExecutionMessage": {
-		"message": "是否要啟用自訂程式碼和樣式表？",
+		"message": "JavaScriptおよびCSSの実行を許可しますか？",
 		"description": "Dialog message that asking user to grant permission for allowing JavaScript and CSS injection."
 	},
 	"doNotAllowScriptExecutionBtn": {
-		"message": "僅載入標準內容",
+		"message": "標準コンテンツのみ読み込む",
 		"description": "Dialog button label to load standard content only (without JavaScript and CSS)."
 	},
 	"allowScriptExecutionBtn": {
-		"message": "信任",
+		"message": "信頼",
 		"description": "Dialog button label to load JavaScript and CSS."
 	},
 	"settingsAdvancedSection": {
-		"message": "進階",
+		"message": "詳細設定",
 		"description": "Title for the advanced settings section."
 	},
 	"customJavaScriptLabel": {
-		"message": "自訂JavaScript程式碼",
+		"message": "カスタムJavaScriptコード",
 		"description": "Label for custom JavaScript code textarea."
 	},
 	"customJavaScriptHelp": {
-		"message": "JavaScript程式碼可用於擴展/修改Mencrouche，為了您的安全，切勿貼上來源不明的程式碼。",
+		"message": "JavaScriptコードを使用してMencroucheを拡張/変更できます。安全のため、不明なソースからのコードは貼り付けないでください。",
 		"description": "Help message for the usage and warning for custom JavaScript."
 	},
 	"customJavaScriptPlaceholder": {
-		"message": "請僅輸入您信任的程式碼",
-		"description": "Placeholder for custom JavaScript textarea warning user do not enter unknown code."
+		"message": "信頼できるコードのみを入力してください",
+		"description": "Placeholder for custom JavaScript textarea warning the user not to enter unknown code."
 	},
 	"customCssLabel": {
-		"message": "自訂CSS",
+		"message": "カスタムCSS",
 		"description": "Label for custom CSS textarea."
 	},
 	"customCssHelp": {
-		"message": "CSS可以修改網頁的外觀，貼上來源不明的CSS可能造成功能異常。",
+		"message": "CSSはウェブページの外観を変更できます。不明なソースからのCSSを貼り付けると、機能が損なわれる可能性があります。",
 		"description": "Help message for the usage and warning for custom CSS."
 	},
 	"customCssPlaceholder": {
-		"message": "請僅輸入您信任的CSS",
-		"description": "Placeholder for custom css textarea warning user do not enter unknown styles."
+		"message": "信頼できるCSSのみを入力してください",
+		"description": "Placeholder for custom CSS textarea warning the user not to enter unknown styles."
 	},
 	"okBtn": {
-		"message": "了解",
+		"message": "OK",
 		"description": "Button label for OK."
 	},
 	"reloadNeeded": {
-		"message": "需要重新載入",
-		"description": "Dialog title for notify user refresh page is needed for applying custom JavaScript."
+		"message": "再読み込みが必要です",
+		"description": "Dialog title notifying the user that a page refresh is needed to apply custom JavaScript."
 	},
 	"reloadNeededMessage": {
-		"message": "重新載入網頁以啟用自訂JavaScript",
-		"description": "Dialog message for notify user refresh page is needed for applying custom JavaScript."
+		"message": "カスタムJavaScriptを適用するにはページを再読み込みしてください",
+		"description": "Dialog message notifying the user that a page refresh is needed to apply custom JavaScript."
 	},
 	"clickToExpand": {
-		"message": "點擊展開",
+		"message": "クリックして展開",
 		"description": "Details summary message."
 	},
 	"copied": {
-		"message": "已複製",
+		"message": "コピー済み",
 		"description": "Button state for copy operation."
 	},
 	"isAutoSaveEnabledCheckboxLabel": {
-		"message": "自動儲存",
+		"message": "自動保存",
 		"description": "Checkbox label for enabling auto saving."
 	},
 	"isCloudSyncEnabledCheckboxLabel": {
-		"message": "啟用雲端同步",
+		"message": "クラウド同期を有効にする",
 		"description": "Checkbox label for enabling cloud sync."
 	},
 	"isScriptExecutionAllowedCheckboxLabel": {
-		"message": "啟用程式碼執行",
+		"message": "スクリプトの実行を許可する",
 		"description": "Checkbox label for allowing script execution."
 	},
 	"addMarkdownStickyBtn": {
@@ -516,23 +516,19 @@
 		"description": "Button title for markdown sticky."
 	},
 	"addIFrameStickyBtn": {
-		"message": "網站",
+		"message": "ウェブサイト",
 		"description": "Button title for iframe sticky."
 	},
 	"addNoteStickyBtnTitle": {
-		"message": "新增Markdown便利貼",
+		"message": "新規ノート",
 		"description": "Button title for note sticky."
 	},
 	"addNoteSticky": {
-		"message": "新增便利貼",
+		"message": "ノート付箋",
 		"description": "Command description for adding a new note sticky."
 	},
-	"addImageSticky": {
-		"message": "新增圖片",
-		"description": "Command description for adding a new image sticky."
-	},
 	"zoomIn": {
-		"message": "放大",
+		"message": "拡大",
 		"description": "Command description for zoom in workspace."
 	},
 	"zoomOut": {
@@ -540,39 +536,35 @@
 		"description": "Command description for zoom out workspace."
 	},
 	"zoomReset": {
-		"message": "重置縮放",
+		"message": "ズームをリセット",
 		"description": "Command description for reset workspace zoom."
 	},
 	"adjustDockPositionLabel": {
-		"message": "調整Dock位置",
+		"message": "ドックの位置を調整",
 		"description": "Grid label for adjusting dock position."
 	},
 	"dockTransparentBackgroundCheckboxLabel": {
-		"message": "背景透明化",
+		"message": "背景を透過",
 		"description": "Checkbox label for enabling dock transparent background."
 	},
-	"isDockHiddenCheckboxLabel": {
-		"message": "隱藏",
-		"description": "Checkbox label for hiding dock."
-	},
 	"settingsDockAppearanceSection": {
-		"message": "Dock",
+		"message": "ドックの外観",
 		"description": "Title for the dock appearance subsection in appearance settings."
 	},
 	"isDockClockHidden": {
-		"message": "隱藏時鐘",
+		"message": "時計を非表示",
 		"description": "Checkbox label for hiding clock dock."
 	},
 	"isDockBookmarkerHidden": {
-		"message": "隱藏書籤列",
+		"message": "ブックマーカーを非表示",
 		"description": "Checkbox label for hiding bookmarker dock."
 	},
 	"invalidUrl": {
-		"message": "錯誤的URL",
+		"message": "無効なURL",
 		"description": "Error message displayed when the iframe sticky URL is invalid."
 	},
 	"iframeLinkInput": {
-		"message": "網站連結",
+		"message": "ウェブサイトリンク",
 		"description": "Input label for the iframe sticky link."
 	}
 }

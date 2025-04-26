@@ -4,6 +4,7 @@ import { workspace } from "./sticky/sticky";
 import { $ } from "./utils/dollars";
 import {
 	allowScriptExecutionIfNotYetSet,
+	createDockAppearanceItem,
 	createShortcutItem,
 	grantScriptPermission,
 	isScriptExecutionAllowed,
@@ -30,18 +31,20 @@ import { addTodoAfterLoad, dataset } from "./dataWizard";
 import en from "url:./_locales/en/messages.json";
 // @ts-ignore
 import zh_TW from "url:./_locales/zh_TW/messages.json";
+// @ts-ignore
+import ja from "url:./_locales/ja/messages.json";
 import { executeCommand, registerCommand, type Command } from "./commands";
 import { initNoteSticky } from "./stickyPlugins/note";
 import { initIFrameSticky } from "./stickyPlugins/iframe";
 import { initClockDock } from "./dockPlugins/clock";
 import { initBookmarkDock } from "./dockPlugins/bookmarker";
 import { isSmallScreen } from "./utils/screenSize";
-import { createDock } from "./dock/dock";
+import { createDock, getDockPluginTypes } from "./dock/dock";
 import { initImageSticky } from "./stickyPlugins/image";
 
-const urls = { en, zh_TW };
+const urls = { en, zh_TW, ja };
 
-const AVAILABLE_LOCALES = ["en", "zh_TW"];
+const AVAILABLE_LOCALES = ["en", "zh_TW", "ja"];
 
 const defaultCommands: Command[] = [
 	{
@@ -124,7 +127,7 @@ const defaultCommands: Command[] = [
 		execute() {
 			workspace.createSticky({ type: "note" });
 		},
-		defaultShortcut: "C-q",
+		defaultShortcut: "C-A-n",
 	},
 	{
 		name: "addImageSticky",
@@ -229,6 +232,7 @@ function getUserPreferredLanguage() {
 n81i.init({
 	locale: dataset.getOrSetItem<string>("locale", getUserPreferredLanguage()),
 	availableLocales: AVAILABLE_LOCALES,
+	fallback: "en",
 	resourceLoader: async (locale: string) => {
 		let url: string;
 		if (window.browser) {
@@ -256,12 +260,12 @@ async function main() {
 	initImageSticky();
 
 	try {
-		const origin = await loadDocument();
+		await loadDocument();
 		allowScriptExecutionIfNotYetSet();
-		if (isScriptExecutionAllowed() && origin === "HashEncodedRemoteSource") {
-			// Make sure user want to execute script from third party.
-			await grantScriptPermission();
-		}
+		// if (isScriptExecutionAllowed()) {
+		// 	// Make sure user want to execute script from third party.
+		// 	await grantScriptPermission();
+		// }
 	} catch (error) {
 		console.log(error);
 	}
@@ -277,6 +281,10 @@ async function main() {
 	// Create shortcut editor DOM
 	for (const action of shortcutManager.getAllActions()) {
 		createShortcutItem(action);
+	}
+	// Create dock appearance DOM
+	for (const dockType of getDockPluginTypes()) {
+		createDockAppearanceItem(dockType);
 	}
 
 	const menuItems = [

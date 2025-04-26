@@ -34,6 +34,12 @@ const todos: Todo[] = [];
 function mergeMessagesJson(locale: string, json: MessagesJson) {
 	const exisitingMessagesJson = localeAndMessagesJson.get(locale) ?? {};
 	localeAndMessagesJson.set(locale, Object.assign(exisitingMessagesJson, json));
+
+	for (const [key, value] of Object.entries(
+		localeAndMessagesJson.get(locale)!,
+	)) {
+		messageMap.set(`${locale}@${key}`, (value as Message).message);
+	}
 }
 
 // see also: https://www.w3.org/International/questions/qa-choosing-language-tags
@@ -70,6 +76,7 @@ export const n81i = {
 		if (options.fallback) {
 			fallback = options.fallback;
 			await this.loadLanguage(fallback);
+			console.log(messageMap);
 		}
 		if (options.availableLocales) {
 			availableLocales = options.availableLocales;
@@ -88,11 +95,6 @@ export const n81i = {
 	async changeLanguage(locale: string) {
 		_locale = locale;
 		await this.loadLanguage(locale);
-		for (const [key, value] of Object.entries(
-			localeAndMessagesJson.get(locale)!,
-		)) {
-			messageMap.set(`${locale}@${key}`, (value as Message).message);
-		}
 	},
 	/**
 	 * "Translates" a key to the current locale's message.

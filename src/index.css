@@ -766,15 +766,11 @@ h6 {
 	min-width: var(--size-fluid-8);
 }
 #appearancePref {
-	label {
-		display: grid;
-		gap: var(--size-1);
-	}
 	img {
 		max-width: var(--size-content-2);
 	}
 	h3 {
-		padding-bottom: var(--size-3);
+		padding-block: var(--size-3);
 	}
 	#hueWheel {
 		touch-action: none;
@@ -797,7 +793,6 @@ h6 {
 	label:has(.huePreview) {
 		justify-items: start;
 		gap: var(--size-3);
-		margin-bottom: var(--size-4);
 	}
 	.huePreview {
 		display: grid;
@@ -836,6 +831,19 @@ h6 {
 	#uiOpacityInput::-webkit-slider-thumb,
 	#uiOpacityInput::-moz-range-thumb {
 		opacity: var(--ui-opacity);
+	}
+
+	label:not(:has([type="checkbox"])) {
+		display: grid;
+		gap: var(--size-1);
+	}
+
+	#dockAppearanceList {
+		list-style: none;
+		padding-inline-start: 0;
+		li {
+			padding-inline-start: 0;
+		}
 	}
 }
 .backgroundPresetContainer {
