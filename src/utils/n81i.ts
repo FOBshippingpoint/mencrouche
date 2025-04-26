@@ -76,7 +76,6 @@ export const n81i = {
 		if (options.fallback) {
 			fallback = options.fallback;
 			await this.loadLanguage(fallback);
-			console.log(messageMap);
 		}
 		if (options.availableLocales) {
 			availableLocales = options.availableLocales;

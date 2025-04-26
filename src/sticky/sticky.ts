@@ -214,6 +214,16 @@ class Workspace {
 			rect[1] = this.cursorPoint[1];
 			this.minimize(sticky, rect);
 		});
+
+    const reflectToScreenChange = () => {
+      for(const sticky of this.stickies) {
+        if (sticky.classList.contains("maximized")) {
+          this.maximize(sticky);
+        }
+      }
+    }
+    window.on("resize", () => reflectToScreenChange());
+    screen.orientation.on("change", () => reflectToScreenChange());
 	}
 
 	refreshHighestZIndex() {

@@ -8,7 +8,7 @@ hero:
   tagline: It's your personal dashboard, content hub, and visual workspace – all in one.
   image:
     src: /icon.svg
-    alt: VitePress
+    alt: Mencrouche
     width: 200rem
   actions:
     - theme: brand
