@@ -13,23 +13,23 @@
 @import "npm:open-props/utilities.css";
 
 :root {
-	--page-background: unset;
-	--dock-edge-padding: var(--size-4);
+	--pageBackground: unset;
+	--dockEdgePadding: var(--size-4);
 	--second: 1s;
 	--minute: calc(var(--second) * 60);
 	--hour: calc(var(--minute) * 60);
-	--screen-size: "large";
+	--screenSize: "large";
 }
 
 @media (max-width: 768px) {
 	:root {
-		--screen-size: "medium";
+		--screenSize: "medium";
 	}
 }
 
 @media (max-width: 576px) {
 	:root {
-		--screen-size: "small";
+		--screenSize: "small";
 	}
 }
 
@@ -76,7 +76,7 @@
 }
 
 body::before {
-	background: var(--page-background);
+	background: var(--pageBackground);
 	background-size: cover;
 	opacity: 0.4;
 	content: " ";
@@ -1110,55 +1110,55 @@ hr {
 }
 
 .dock[data-placement="top"] {
-	top: var(--dock-edge-padding);
+	top: var(--dockEdgePadding);
 	left: 50%;
 	transform: translateX(-50%);
 }
 
 .dock[data-placement="right"] {
-	right: var(--dock-edge-padding);
+	right: var(--dockEdgePadding);
 	top: 50%;
 	transform: translateY(-50%);
 }
 
 .dock[data-placement="bottom"] {
-	bottom: var(--dock-edge-padding);
+	bottom: var(--dockEdgePadding);
 	left: 50%;
 	transform: translateX(-50%);
 }
 
 .dock[data-placement="left"] {
-	left: var(--dock-edge-padding);
+	left: var(--dockEdgePadding);
 	top: 50%;
 	transform: translateY(-50%);
 }
 
 .dock[data-placement="topLeft"] {
-	top: var(--dock-edge-padding);
-	left: var(--dock-edge-padding);
+	top: var(--dockEdgePadding);
+	left: var(--dockEdgePadding);
 }
 
 .dock[data-placement="topRight"] {
-	top: var(--dock-edge-padding);
-	right: var(--dock-edge-padding);
+	top: var(--dockEdgePadding);
+	right: var(--dockEdgePadding);
 }
 
 .dock[data-placement="bottomLeft"] {
-	bottom: var(--dock-edge-padding);
-	left: var(--dock-edge-padding);
+	bottom: var(--dockEdgePadding);
+	left: var(--dockEdgePadding);
 }
 
 .dock[data-placement="bottomRight"] {
-	bottom: var(--dock-edge-padding);
-	right: var(--dock-edge-padding);
+	bottom: var(--dockEdgePadding);
+	right: var(--dockEdgePadding);
 }
 
 .dock[data-grow="horizontal"] {
-	width: calc(100% - 2 * var(--dock-edge-padding));
+	width: calc(100% - 2 * var(--dockEdgePadding));
 }
 
 .dock[data-grow="vertical"] {
-	height: calc(100% - 2 * var(--dock-edge-padding));
+	height: calc(100% - 2 * var(--dockEdgePadding));
 }
 
 .alwaysOnTop {

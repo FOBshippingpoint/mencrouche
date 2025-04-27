@@ -407,6 +407,10 @@
 		"message": "Spotify",
 		"description": "Button label for adding Spotify sticky."
 	},
+	"addImageStickyBtn": {
+		"message": "画像",
+		"description": "Button label for adding Image sticky."
+	},
 	"shareDataLinkBtn": {
 		"message": "ドキュメント共有リンク",
 		"description": "Input label for sharing data link."

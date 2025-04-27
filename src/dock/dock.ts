@@ -19,6 +19,9 @@ const alwaysOnTopChk = dockAppearanceDialog.$<HTMLInputElement>(
 const transparentBackgroundChk = dockAppearanceDialog.$<HTMLInputElement>(
 	'[name="transparentBackground"]',
 )!;
+const isDockHiddenChk = dockAppearanceDialog.$<HTMLInputElement>(
+	'[name="isDockHidden"]',
+)!;
 const placementBtns = dockAppearanceDialog.$$<HTMLButtonElement>(
 	"#dockPlacementSelector button",
 );
@@ -45,6 +48,9 @@ alwaysOnTopChk.on("change", () => {
 transparentBackgroundChk.on("change", () => {
 	currentDock.classList.toggle("surface");
 	currentDock.classList.toggle("shadow");
+});
+isDockHiddenChk.on("change", () => {
+	currentDock.classList.toggle("none", isDockHiddenChk.checked);
 });
 for (const btn of placementBtns) {
 	btn.on("click", () => {
@@ -247,6 +253,7 @@ registerContextMenu("dock", [
 			alwaysOnTopChk.checked = currentDock.classList.contains("alwaysOnTop");
 			transparentBackgroundChk.checked =
 				!currentDock.classList.contains("surface");
+			isDockHiddenChk.checked = currentDock.classList.contains("none");
 			dockAppearanceDialog.showModal();
 			shouldRestore = true;
 		},

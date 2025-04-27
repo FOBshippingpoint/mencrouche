@@ -155,7 +155,7 @@ async function changeBackgroundImage(url: string | undefined) {
 		url = await anyUrlToDataUrl(url);
 	}
 	setCssProperty(
-		"--page-background",
+		"--pageBackground",
 		url ? `url(${url}) no-repeat center center fixed` : "unset",
 	);
 	if (url) {

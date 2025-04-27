@@ -100,7 +100,7 @@
 		"description": "Alert message for an invalid image URL."
 	},
 	"addMarkdownSticky": {
-		"message": "New sticky note",
+		"message": "New Sticky Note",
 		"description": "Command description for adding a new sticky note."
 	},
 	"addYoutubeSticky": {
@@ -402,6 +402,10 @@
 	"addSpotifyStickyBtn": {
 		"message": "Spotify",
 		"description": "Button label for adding Spotify sticky."
+	},
+	"addImageStickyBtn": {
+		"message": "Image",
+		"description": "Button label for adding Image sticky."
 	},
 	"shareDataLinkBtn": {
 		"message": "Sharing Document",

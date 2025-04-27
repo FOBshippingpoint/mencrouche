@@ -1,6 +1,6 @@
 function getScreenSize() {
 	return getComputedStyle(document.documentElement)
-		.getPropertyValue("--screen-size")
+		.getPropertyValue("--screenSize")
 		.replaceAll('"', "");
 }
 

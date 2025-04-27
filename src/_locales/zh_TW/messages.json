@@ -399,6 +399,10 @@
 		"message": "Spotify",
 		"description": "Button label for adding Spotify sticky."
 	},
+	"addImageStickyBtn": {
+		"message": "圖片",
+		"description": "Button label for adding Image sticky."
+	},
 	"shareDataLinkBtn": {
 		"message": "分享連結",
 		"description": "Input label for sharing data link."

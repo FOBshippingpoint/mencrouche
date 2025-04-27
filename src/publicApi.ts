@@ -21,6 +21,7 @@ import { registerContextMenu } from "./contextMenu";
 import { apocalypse } from "./apocalypse";
 import { dataset } from "./dataWizard";
 import { createDock } from "./dock/dock";
+import { trayTip } from "./utils/trayTip";
 
 declare global {
 	interface Window {
@@ -37,6 +38,7 @@ const mc = {
 	n81i,
 	addCss,
 	dataset,
+	trayTip,
 	createDock,
 	apocalypse,
 	workspace,

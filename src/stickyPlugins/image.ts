@@ -13,7 +13,7 @@ import {
 	downloadBlobAsFile,
 	urlToBlob,
 } from "../utils/toDataUrl";
-import { trayTip } from "../utils/traytip";
+import { trayTip } from "../utils/trayTip";
 import { $ } from "../utils/dollars";
 
 declare module "../sticky/sticky" {
