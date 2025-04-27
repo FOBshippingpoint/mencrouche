@@ -15,8 +15,8 @@ hero:
       text: Try Now
       link: https://mencrouche.com
     - theme: alt
-      text: API Examples
-      link: /api-examples
+      text: I'm Developer
+      link: /dev
 
 features:
   - icon: 📝
@@ -34,4 +34,9 @@ features:
 ---
 
 
-![](/large_images/tmr.png)
+<div class="screenshotList">
+    <img src="/img/index/student.webp"></img>
+    <img src="/img/index/cook.webp"></img>
+    <img src="/img/index/tmr.webp"></img>
+    <img src="/img/index/light.webp"></img>
+</div>

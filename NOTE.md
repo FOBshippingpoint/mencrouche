@@ -7,6 +7,12 @@ just
 
 - .htmlnanorc setting will prevent parcel to strip svg viewBox attribute.
 
+Convert png to webp
+
+```powershell
+Get-ChildItem -r -File *.png | Select-Object -ExpandProperty FullName | % { cwebp $_ -o $_.replace("png", "webp") }
+```
+
 ## TODOs
 
 - [x] Maximize
@@ -38,7 +44,7 @@ just
 - [ ] Zooming UI
 - [x] Fix the default position on top left instead of central problem.
 - [ ] Toolbar for mobile.
-- [ ] iframe sticky
+- [x] iframe sticky
 - [ ] declarativeNetRequest -> unblock iframe
 - [ ] Blockly
 - [ ] Web extension version.
@@ -70,6 +76,7 @@ just
 ## BUGS
 
 - [ ] Hint is causing overflow in dialog.
+- [ ] Popout will be hidden by sticky (e.g., quill link editing).
 - [x] (::move dock slot into workspace) Can not right-click on dock when alwaysOnTop is disabled.
 - [x] Languages dropdown showing nothing.
 - [x] Using navbar add sticky, the sticky position should at center instead of top-right.

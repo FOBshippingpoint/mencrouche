@@ -1,0 +1,33 @@
+ :root {
+  --vp-c-brand-1: #5f7600;
+ }
+
+ .dark {
+  --vp-c-brand-1: #abc837;
+ }
+
+ .screenshotList {
+   margin-block-start: 4rem;
+   display: flex;
+   flex-direction: column;
+   gap: 2rem;
+   
+   img {
+     box-shadow: #0000003a 0 1rem 1.5rem;
+   }
+ }
+
+ kbd {
+  background-color: white;
+  color: black;
+  border-radius: 0.25rem;
+  border: 1px solid grey;
+  font-size: 0.75em;
+  line-height: 1;
+  min-width: 0.75rem;
+  text-align: center;
+  padding: 2px 5px;
+  position: relative;
+  top: -1px;
+ }
+
