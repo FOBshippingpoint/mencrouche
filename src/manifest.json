@@ -1,0 +1,19 @@
+{
+	"manifest_version": 2,
+	"name": "Mencrouche",
+	"version": "0.0.1",
+	"author": "FOBshippingpoint",
+	"description": "__MSG_extensionDescription__",
+	"homepage_url": "https://github.com/FOBshippingpoint/mencrouche",
+	"chrome_url_overrides": {
+		"newtab": "index.html"
+	},
+	"icons": {
+		"16": "public/icon.svg",
+		"48": "public/icon.svg",
+		"128": "public/icon.svg"
+  },
+	"browser_action": {},
+	"default_locale": "en",
+	"permissions": ["activeTab", "storage"]
+}
