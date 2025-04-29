@@ -1,4 +1,4 @@
-# Dollars API
+# Dollars
 
 The Dollars API provides a set of convenient shorthands for common DOM manipulation and selection. While not a full replacement for libraries like [jQuery](https://jquery.com/), it offers a similar feel with minimal overhead when interacting with the DOM.
 

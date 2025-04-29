@@ -28,11 +28,11 @@ export default defineConfig({
         {
           text: "API",
           items: [
-            { text: "Dollars API", link: "/dev/dollars-api" },
-            { text: "Context Menu API", link: "/dev/context-menu-api" },
-            { text: "Command API", link: "/dev/command-api" },
-            { text: "n81i API", link: "/dev/n81i-api" },
-            { text: "Apocalypse API", link: "/dev/apocalypse-api" },
+            { text: "Dollars API", link: "/dev/dollars" },
+            { text: "Context Menu API", link: "/dev/context-menu" },
+            { text: "Command API", link: "/dev/command" },
+            { text: "n81i API", link: "/dev/n81i" },
+            { text: "Apocalypse API", link: "/dev/apocalypse" },
           ],
         },
       ],

@@ -1,4 +1,4 @@
-# Apocalypse API
+# Apocalypse
 
 The apocalypse API provides undo/redo functionality, user can trigger with <kbd>Ctrl</kbd> + <kbd>Z</kbd> and <kbd>Ctrl</kbd> + <kbd>Y</kbd> shortcuts. Didn't name it History API because it is already taken by [standard Web API](https://developer.mozilla.org/en-US/docs/Web/API/History_API).
 
