@@ -4,6 +4,7 @@ import { workspace } from "./sticky/sticky";
 import { $ } from "./utils/dollars";
 import {
 	allowScriptExecutionIfNotYetSet,
+	AVAILABLE_LOCALES,
 	createDockAppearanceItem,
 	createShortcutItem,
 	grantScriptPermission,
@@ -43,8 +44,6 @@ import { createDock, getDockPluginTypes } from "./dock/dock";
 import { initImageSticky } from "./stickyPlugins/image";
 
 const urls = { en, zh_TW, ja };
-
-export const AVAILABLE_LOCALES = ["en", "zh_TW", "ja"];
 
 const defaultCommands: Command[] = [
 	{

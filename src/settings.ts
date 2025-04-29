@@ -25,7 +25,8 @@ import type { ImageChangeDetail, ImagePicker } from "./component/imagePicker";
 import type { IconToggle } from "./component/iconToggle";
 import { type DockPluginRegistry } from "./dock/dock";
 import { toBcp47LangTag } from "./utils/toBcp47LangTag";
-import { AVAILABLE_LOCALES } from ".";
+
+export const AVAILABLE_LOCALES = ["en", "zh_TW", "ja"];
 
 // -----------------------------------------------------------------------------
 // Changes manager for tracking unsaved modifications
