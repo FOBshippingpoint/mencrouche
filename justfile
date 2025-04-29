@@ -5,7 +5,7 @@ default: clean-dev
 alias cd := clean-dev
 
 dev:
-  bun dev-site
+  bun run site:dev
 
 clean-dev: && dev
   rm -rf .parcel-cache

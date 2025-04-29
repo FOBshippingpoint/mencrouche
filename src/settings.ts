@@ -25,6 +25,7 @@ import type { ImageChangeDetail, ImagePicker } from "./component/imagePicker";
 import type { IconToggle } from "./component/iconToggle";
 import { type DockPluginRegistry } from "./dock/dock";
 import { toBcp47LangTag } from "./utils/toBcp47LangTag";
+import { AVAILABLE_LOCALES } from ".";
 
 // -----------------------------------------------------------------------------
 // Changes manager for tracking unsaved modifications
@@ -789,6 +790,7 @@ function setupLanguageDropdown(locales: string[]) {
 // -----------------------------------------------------------------------------
 
 function initializeSettings() {
+	setupLanguageDropdown(AVAILABLE_LOCALES);
 	setupEventListeners();
 	setupDataObservers();
 

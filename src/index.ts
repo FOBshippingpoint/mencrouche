@@ -44,7 +44,7 @@ import { initImageSticky } from "./stickyPlugins/image";
 
 const urls = { en, zh_TW, ja };
 
-const AVAILABLE_LOCALES = ["en", "zh_TW", "ja"];
+export const AVAILABLE_LOCALES = ["en", "zh_TW", "ja"];
 
 const defaultCommands: Command[] = [
 	{
@@ -353,8 +353,3 @@ async function main() {
 
 addPublicApi();
 main();
-
-addTodoAfterLoad(() => {
-	dataset.getOrSetItem("availableLocales", AVAILABLE_LOCALES);
-});
-dataset.getOrSetItem("availableLocales", AVAILABLE_LOCALES);

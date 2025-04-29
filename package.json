@@ -12,7 +12,7 @@
     "ext:firefox": "web-ext run --source-dir dist/webext-dev --target=firefox-desktop",
     "ext:chrome": "web-ext run --source-dir dist/webext-dev --target=chromium",
     "ext:lint-dev": "web-ext lint --source-dir dist/webext-dev",
-    "ext:lint-build": "web-ext lint --source-dir dist/webext-prod",
+    "ext:lint-prod": "web-ext lint --source-dir dist/webext-prod",
     "ext:pack-zip": "web-ext build --overwrite-dest --source-dir dist/webext-prod",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",

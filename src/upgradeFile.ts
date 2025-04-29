@@ -38,7 +38,6 @@ export interface MencroucheFileFormat extends Record<string, unknown> {
 interface V1 extends MencroucheFileFormat {
 	mencroucheFileFormatVersion: 1;
 	locale: string;
-	availableLocales: string[];
 	isGhostMode: boolean;
 	/**
 	 * base64 url or other like imgur url.
