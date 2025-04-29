@@ -12,6 +12,10 @@ interface TrayTipOptions {
 /**
  * Displays a notification
  *
+ * ```typesctip
+ * trayTip({ title: "Copied", message: "Text copied to the clipboard." });
+ * ```
+ *
  * @returns - Control function to close the trayTip
  */
 export function trayTip(options: TrayTipOptions): () => void {
