@@ -40,7 +40,7 @@ jobs:
           touch .env
           echo CLOUD_SYNC_URL=${{ secrets.CLOUD_SYNC_URL }} >> .env
       - name: Build site
-        run: bun run build-site
+        run: bun run site:build
       - name: Setup pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
