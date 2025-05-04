@@ -99,10 +99,6 @@
 		"message": "無効な画像URLです。別のリンクをお試しください。",
 		"description": "Alert message for an invalid image URL."
 	},
-	"addBookmarkSticky": {
-		"message": "新規ブックマーク付箋",
-		"description": "Command description for adding a new bookmark sticky."
-	},
 	"addMarkdownSticky": {
 		"message": "新規Markdown付箋",
 		"description": "Command description for adding a new sticky note."
@@ -554,6 +550,10 @@
 	"settingsDockAppearanceSection": {
 		"message": "ドックの外観",
 		"description": "Title for the dock appearance subsection in appearance settings."
+	},
+	"isDockHiddenCheckboxLabel": {
+		"message": "非表示",
+		"description": "Checkbox label for hiding dock."
 	},
 	"isDockClockHidden": {
 		"message": "時計を非表示",

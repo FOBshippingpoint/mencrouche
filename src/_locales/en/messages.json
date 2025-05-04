@@ -100,7 +100,7 @@
 		"description": "Alert message for an invalid image URL."
 	},
 	"addMarkdownSticky": {
-		"message": "New Sticky Note",
+		"message": "New Markdown Sticky",
 		"description": "Command description for adding a new sticky note."
 	},
 	"addYoutubeSticky": {
@@ -444,11 +444,11 @@
 		"description": "Dialog message that asking user to grant permission for allowing JavaScript and CSS injection."
 	},
 	"doNotAllowScriptExecutionBtn": {
-		"message": "僅載入標準內容",
+		"message": "Load Safe Content",
 		"description": "Dialog button label to load standard content only (without JavaScript and CSS)."
 	},
 	"allowScriptExecutionBtn": {
-		"message": "信任",
+		"message": "Trust",
 		"description": "Dialog button label to load JavaScript and CSS."
 	},
 	"settingsAdvancedSection": {

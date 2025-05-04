@@ -537,7 +537,7 @@ function setupEventListeners() {
 		els.hueWheel.off("pointermove", adjustPaletteHue),
 	);
 	els.resetPaletteHueBtn.on("click", () => {
-		setCssProperty("--palette-hue", null);
+		setCssProperty("--paletteHue", null);
 	});
 
 	// Theme toggle
@@ -620,7 +620,7 @@ function adjustPaletteHue(e: MouseEvent) {
 	const angle = Math.atan2(y, x) * (180 / Math.PI);
 	const paletteHue = Math.round(angle).toString();
 
-	setCssProperty("--palette-hue", paletteHue);
+	setCssProperty("--paletteHue", paletteHue);
 	dataset.setItem("paletteHue", paletteHue);
 	changesManager.markDirty();
 }
@@ -715,7 +715,7 @@ function setupDataObservers() {
 	// UI Opacity
 	dataset.on<number>("uiOpacity", (_, uiOpacity) => {
 		if (uiOpacity !== undefined) {
-			setCssProperty("--ui-opacity", uiOpacity.toString());
+			setCssProperty("--uiOpacity", uiOpacity.toString());
 			els.uiOpacityInput.style.opacity = uiOpacity.toString();
 			els.uiOpacityInput.value = (uiOpacity * 100).toString();
 		}
@@ -723,7 +723,7 @@ function setupDataObservers() {
 
 	// Palette Hue
 	dataset.on<string>("paletteHue", (_, paletteHue) => {
-		setCssProperty("--palette-hue", paletteHue);
+		setCssProperty("--paletteHue", paletteHue);
 	});
 
 	// Ghost Mode

@@ -1,4 +1,12 @@
 /**
+ * @module
+ *
+ * The bean module helps you handle HTML to JSON (or opposite) serialization.
+ * The word "bean" is taken from the Java Bean.
+ */
+
+/**
+ * HTML -> JSON
  * Serializes the attributes of an HTML or SVG element into an object with a nested `dataset` field.
  *
  * @param element - The element from which to extract attributes.
@@ -23,6 +31,7 @@ export function bakeBean(
 }
 
 /**
+ * JSON -> HTML
  * Populates an element’s attributes from a bean object with a nested `dataset` field.
  *
  * @param element - The element to apply attributes to.

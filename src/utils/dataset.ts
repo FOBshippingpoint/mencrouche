@@ -1,3 +1,9 @@
+/**
+ * @module dataset
+ *
+ * This module provides a key-value paired data interaction API.
+ * With ergonomic design, serialization, and event supports.
+ */
 export interface Dataset {
 	getItem<T extends unknown = unknown>(key: string): T | undefined;
 	getItem<T>(key: string, defaultValue: T): T;
