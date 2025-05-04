@@ -10,6 +10,9 @@ dev:
 clean-dev: && dev
   rm -rf .parcel-cache
 
+doc:
+  bun run docs:dev --open
+
 loc:
   @echo Counting line of codes...
   @/usr/bin/find src -name '*.ts' \

@@ -35,6 +35,12 @@ export default defineConfig({
             { text: "Apocalypse API", link: "/dev/apocalypse" },
           ],
         },
+        {
+          text: "Appendix",
+          items: [
+            { text: "Glossary", link: "/dev/glossary" },
+          ],
+        },
       ],
     },
 

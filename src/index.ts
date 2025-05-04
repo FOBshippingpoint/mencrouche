@@ -1,7 +1,7 @@
 import "./component/iconToggle";
 import "./component/imagePicker";
 import { workspace } from "./sticky/sticky";
-import { $ } from "./utils/dollars";
+import { $, h } from "./utils/dollars";
 import {
 	allowScriptExecutionIfNotYetSet,
 	AVAILABLE_LOCALES,
@@ -352,3 +352,13 @@ async function main() {
 
 addPublicApi();
 main();
+
+// Tracking...
+if (process.env.IS_DEV_MODE !== "true" && process.env.UMAMI_WEBSITE_ID) {
+	const tag = document.createElement("script");
+	tag.src = "https://cloud.umami.is/script.js";
+	tag.defer = true;
+	tag.dataset.websiteId = process.env.UMAMI_WEBSITE_ID;
+	const firstScriptTag = document.getElementsByTagName("script")[0];
+	firstScriptTag?.parentNode!.insertBefore(tag, firstScriptTag);
+}

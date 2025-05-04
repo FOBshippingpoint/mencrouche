@@ -1,5 +1,12 @@
 ## Development
 
+Create symbolic link
+
+```powershell
+new-item -Path .\docs\public\icon.svg -itemtype SymbolicLink -Target ..\..\src\public\icon.svg
+``````
+
+
 ```sh
 # Use `just` tool to start dev server and open webpage in browser.
 just
@@ -8,6 +15,8 @@ just
 - .htmlnanorc setting will prevent parcel to strip svg viewBox attribute.
 
 Convert png to webp
+
+Please install cwebp first.
 
 ```powershell
 Get-ChildItem -r -File *.png | Select-Object -ExpandProperty FullName | % { cwebp $_ -o $_.replace("png", "webp") }
