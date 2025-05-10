@@ -35,11 +35,11 @@ jobs:
         uses: oven-sh/setup-bun@v2
       - name: Install dependencies
         run: bun install
-      - name: Create env file
-        run: |
-          touch .env
-          echo CLOUD_SYNC_URL=${{ secrets.CLOUD_SYNC_URL }} >> .env
       - name: Build site
+        env:
+          CLOUD_SYNC_URL: ${{ secrets.CLOUD_SYNC_URL }}
+          IS_DEV_MODE: false
+          UMAMI_WEBSITE_ID: ${{ secrets.UMAMI_WEBSITE_ID }}
         run: bun run site:build
       - name: Setup pages
         uses: actions/configure-pages@v3
