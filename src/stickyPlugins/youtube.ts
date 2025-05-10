@@ -89,6 +89,9 @@ form.on("submit", (e) => {
 
 const youtubeSticky: StickyPluginModel<"youtube"> = {
 	type: "youtube",
+	meta: {
+		contextMenuIcon: "lucide:youtube",
+	},
 	onMount(sticky) {
 		let onScriptLoaded = () => {};
 		const widgets = getTemplateFragment("youtubeStickyWidgets");

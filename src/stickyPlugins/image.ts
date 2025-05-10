@@ -32,6 +32,9 @@ interface ImagePlugin extends StickyPlugin {
 
 const imageSticky: StickyPluginModel<"image"> = {
 	type: "image",
+	meta: {
+		contextMenuIcon: "lucide:image",
+	},
 	onMount(sticky) {
 		const widgets = getTemplateFragment("imageStickyWidgets");
 		const downloadBtn = widgets.$<HTMLButtonElement>(".downloadBtn")!;

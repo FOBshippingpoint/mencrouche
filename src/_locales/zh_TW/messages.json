@@ -99,19 +99,19 @@
 		"message": "無效的圖片連結。請嘗試其他連結。",
 		"description": "Alert message for an invalid image URL."
 	},
-	"addMarkdownSticky": {
+	"markdown__addSticky": {
 		"message": "新增Markdown便利貼",
 		"description": "Command description for adding a new sticky note."
 	},
-	"addYoutubeSticky": {
+	"youtube__addSticky": {
 		"message": "新增YouTube便利貼",
 		"description": "Command description for adding a new youtube sticky note."
 	},
-	"addSpotifySticky": {
+	"spotify__addSticky": {
 		"message": "新增Spotify便利貼",
 		"description": "Command description for adding a new spotify sticky note."
 	},
-	"addIFrameSticky": {
+	"iframe__addSticky": {
 		"message": "新增網站便利貼",
 		"description": "Command description for adding a new iframe sticky."
 	},
@@ -319,7 +319,7 @@
 		"message": "找不到Spotify曲目",
 		"description": "Error message displayed when the Spotify media cannot be found in the provided input."
 	},
-	"addOtherStickyGroup": {
+	"otherAddStickyGroup": {
 		"message": "其他便利貼",
 		"description": "Context menu sub-menu name for other sticky group."
 	},
@@ -391,15 +391,15 @@
 		"message": "避免被便利貼遮住",
 		"description": "Help message for checkbox that keeps a dock always on top."
 	},
-	"addYoutubeStickyBtn": {
+	"youtube__addStickyBtn": {
 		"message": "YouTube",
 		"description": "Button label for adding YouTube sticky."
 	},
-	"addSpotifyStickyBtn": {
+	"spotify__addStickyBtn": {
 		"message": "Spotify",
 		"description": "Button label for adding Spotify sticky."
 	},
-	"addImageStickyBtn": {
+	"image__addStickyBtn": {
 		"message": "圖片",
 		"description": "Button label for adding Image sticky."
 	},
@@ -515,23 +515,23 @@
 		"message": "啟用程式碼執行",
 		"description": "Checkbox label for allowing script execution."
 	},
-	"addMarkdownStickyBtn": {
+	"markdown__addStickyBtn": {
 		"message": "Markdown",
 		"description": "Button title for markdown sticky."
 	},
-	"addIFrameStickyBtn": {
+	"iframe__addStickyBtn": {
 		"message": "網站",
 		"description": "Button title for iframe sticky."
 	},
-	"addNoteStickyBtnTitle": {
+	"note__addStickyBtnTitle": {
 		"message": "新增Markdown便利貼",
 		"description": "Button title for note sticky."
 	},
-	"addNoteSticky": {
+	"note__addSticky": {
 		"message": "新增便利貼",
 		"description": "Command description for adding a new note sticky."
 	},
-	"addImageSticky": {
+	"image__addSticky": {
 		"message": "新增圖片",
 		"description": "Command description for adding a new image sticky."
 	},

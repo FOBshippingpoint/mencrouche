@@ -99,23 +99,23 @@
 		"message": "Invalid image URL. Please try another link.",
 		"description": "Alert message for an invalid image URL."
 	},
-	"addMarkdownSticky": {
+	"markdown__addSticky": {
 		"message": "New Markdown Sticky",
 		"description": "Command description for adding a new sticky note."
 	},
-	"addYoutubeSticky": {
+	"youtube__addSticky": {
 		"message": "New YouTube Sticky",
 		"description": "Command description for adding a new youtube sticky note."
 	},
-	"addSpotifySticky": {
+	"spotify__addSticky": {
 		"message": "New Spotify Sticky",
 		"description": "Command description for adding a new spotify sticky note."
 	},
-	"addIFrameSticky": {
+	"iframe__addSticky": {
 		"message": "New Website Sticky",
 		"description": "Command description for adding a new iframe sticky note."
 	},
-	"addImageSticky": {
+	"image__addSticky": {
 		"message": "New Image Sticky",
 		"description": "Command description for adding a new image sticky."
 	},
@@ -323,7 +323,7 @@
 		"message": "Spotify track not found",
 		"description": "Error message displayed when the Spotify media cannot be found in the provided input."
 	},
-	"addOtherStickyGroup": {
+	"otherAddStickyGroup": {
 		"message": "Other Sticky Notes",
 		"description": "Context menu sub-menu name for other sticky group."
 	},
@@ -395,15 +395,15 @@
 		"message": "Avoid dock cover by stickies.",
 		"description": "Help message for checkbox that keeps a dock always on top."
 	},
-	"addYoutubeStickyBtn": {
+	"youtube__addStickyBtn": {
 		"message": "YouTube",
 		"description": "Button label for adding YouTube sticky."
 	},
-	"addSpotifyStickyBtn": {
+	"spotify__addStickyBtn": {
 		"message": "Spotify",
 		"description": "Button label for adding Spotify sticky."
 	},
-	"addImageStickyBtn": {
+	"image__addStickyBtn": {
 		"message": "Image",
 		"description": "Button label for adding Image sticky."
 	},
@@ -511,19 +511,19 @@
 		"message": "Allow Script Execution",
 		"description": "Checkbox label for allowing script execution."
 	},
-	"addMarkdownStickyBtn": {
+	"markdown__addStickyBtn": {
 		"message": "Markdown",
 		"description": "Button title for markdown sticky."
 	},
-	"addIFrameStickyBtn": {
+	"iframe__addStickyBtn": {
 		"message": "Website",
 		"description": "Button title for iframe sticky."
 	},
-	"addNoteStickyBtnTitle": {
+	"note__addStickyBtnTitle": {
 		"message": "New Note",
 		"description": "Button title for note sticky."
 	},
-	"addNoteSticky": {
+	"note__addSticky": {
 		"message": "Note Sticky",
 		"description": "Command description for adding a new note sticky."
 	},

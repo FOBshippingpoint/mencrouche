@@ -894,6 +894,9 @@ export interface StickyPluginModel<K extends PluginKey> {
 	onSave(sticky: Sticky<K>): GetConfigType<K> | void;
 	onDelete(sticky: Sticky<K>): void;
 	onMount(sticky: Sticky<K>, origin: "create" | "restore"): void;
+	meta?: {
+		contextMenuIcon?: string;
+	};
 }
 
 const sheetRegistry = new Map<PluginKey, CSSStyleSheet>();
@@ -929,6 +932,9 @@ export function registerSticky<K extends PluginKey>(
 	}
 
 	pluginStickyPool.set(model.type, model);
+	window.dispatchEvent(
+		new CustomEvent("registerSticky", { detail: { type: model.type } }),
+	);
 }
 
 export function getStickyPluginModel<K extends PluginKey>(
@@ -944,6 +950,13 @@ export function getStickyPluginModel<K extends PluginKey>(
 
 export function getStickyPluginTypes() {
 	return [...pluginStickyPool.values()].map(({ type }) => type);
+}
+
+export function getStickyPluginModelByType<K extends PluginKey>(type: K) {
+	const model = pluginStickyPool.get(type);
+	if (model) {
+		return model as StickyPluginModel<K>;
+	}
 }
 
 addTodoBeforeSave(() => {

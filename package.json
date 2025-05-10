@@ -1,26 +1,7 @@
 {
   "name": "Mencrouche",
   "version": "0.0.1",
-  "description": "A highly customizable web extension for new tab. Bring your own content to build your web experience.",
-  "scripts": {
-    "test": "vitest",
-    "format": "biome format --write",
-    "start": "parcel watch src/manifest.json --host localhost --config @parcel/config-webextension --no-cache",
-    "site:dev": "parcel --target website --lazy --open",
-    "site:build": "parcel build --target website",
-    "ext:build": "parcel build src/manifest.json --config @parcel/config-webextension",
-    "ext:firefox": "web-ext run --source-dir dist/webext-dev --target=firefox-desktop",
-    "ext:chrome": "web-ext run --source-dir dist/webext-dev --target=chromium",
-    "ext:lint-dev": "web-ext lint --source-dir dist/webext-dev",
-    "ext:lint-prod": "web-ext lint --source-dir dist/webext-prod",
-    "ext:pack-zip": "web-ext build --overwrite-dest --source-dir dist/webext-prod",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
-  },
   "author": "FOBshippingpoint",
-  "license": "MIT",
-  "type": "module",
   "devDependencies": {
     "@biomejs/biome": "^2.0.0-beta.1",
     "@parcel/config-webextension": "^2.13.3",
@@ -36,16 +17,33 @@
     "dompurify": "^3.2.4",
     "happy-dom": "^17.4.4",
     "kikey": "^3.1.0",
+    "marked": "^15.0.11",
     "open-props": "2.0.0-beta.5",
     "parcel": "^2.13.3",
-    "prismjs": "^1.30.0",
     "quill": "^2.0.3",
     "typedoc": "^0.28.3",
     "typescript": "^5.8.2",
     "vitepress": "^1.6.3",
     "vitest": "^3.0.8",
-    "web-ext": "^8.4.0",
-    "zx": "^8.4.1"
+    "web-ext": "^8.4.0"
+  },
+  "description": "A highly customizable web extension for new tab. Bring your own content to build your web experience.",
+  "license": "MIT",
+  "scripts": {
+    "test": "vitest",
+    "format": "biome format --write",
+    "start": "parcel watch src/manifest.json --host localhost --config @parcel/config-webextension --no-cache",
+    "site:dev": "parcel --target website --lazy --open",
+    "site:build": "parcel build --target website",
+    "ext:build": "parcel build src/manifest.json --config @parcel/config-webextension",
+    "ext:firefox": "web-ext run --source-dir dist/webext-dev --target=firefox-desktop",
+    "ext:chrome": "web-ext run --source-dir dist/webext-dev --target=chromium",
+    "ext:lint-dev": "web-ext lint --source-dir dist/webext-dev",
+    "ext:lint-prod": "web-ext lint --source-dir dist/webext-prod",
+    "ext:pack-zip": "web-ext build --overwrite-dest --source-dir dist/webext-prod",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "targets": {
     "website": {
@@ -63,11 +61,5 @@
       "sourceMap": false
     }
   },
-  "dependencies": {
-    "asciidoctor": "^3.0.4",
-    "caniuse-lite": "^1.0.30001704",
-    "marked": "^15.0.7",
-    "svgo": "^3.3.2",
-    "tweakpane": "^4.0.5"
-  }
+  "type": "module"
 }

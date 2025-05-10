@@ -1,6 +1,6 @@
 import "./component/iconToggle";
 import "./component/imagePicker";
-import { workspace } from "./sticky/sticky";
+import { workspace, getStickyPluginModelByType } from "./sticky/sticky";
 import { $, h } from "./utils/dollars";
 import {
 	allowScriptExecutionIfNotYetSet,
@@ -94,42 +94,42 @@ const defaultCommands: Command[] = [
 		defaultShortcut: "C-A-x",
 	},
 	{
-		name: "addMarkdownSticky",
+		name: "markdown__addSticky",
 		execute() {
 			workspace.createSticky({ type: "markdown" });
 		},
 		defaultShortcut: "C-A-m",
 	},
 	{
-		name: "addYoutubeSticky",
+		name: "youtube__addSticky",
 		execute() {
 			workspace.createSticky({ type: "youtube" });
 		},
 		defaultShortcut: "C-A-y",
 	},
 	{
-		name: "addSpotifySticky",
+		name: "spotify__addSticky",
 		execute() {
 			workspace.createSticky({ type: "spotify" });
 		},
 		defaultShortcut: "C-A-s",
 	},
 	{
-		name: "addIFrameSticky",
+		name: "iframe__addSticky",
 		execute() {
 			workspace.createSticky({ type: "iframe" });
 		},
 		defaultShortcut: "C-A-w",
 	},
 	{
-		name: "addNoteSticky",
+		name: "note__addSticky",
 		execute() {
 			workspace.createSticky({ type: "note" });
 		},
 		defaultShortcut: "C-A-n",
 	},
 	{
-		name: "addImageSticky",
+		name: "image__addSticky",
 		defaultShortcut: "C-A-i",
 		execute() {
 			workspace.createSticky({ type: "image" });
@@ -246,6 +246,42 @@ n81i.init({
 n81i.translatePage();
 
 async function main() {
+	// Register menu items
+	const menuItems = [
+		{
+			name: "note__addSticky",
+			icon: "lucide:plus",
+			execute() {
+				executeCommand("note__addSticky");
+			},
+		},
+		(() => {
+			const otherAddStickyMenuItem = {
+				name: "otherAddStickyGroup",
+				subItems: [],
+			};
+			window.on("registerSticky", (e) => {
+				const modelType = e.detail.type;
+				if (modelType !== "note") {
+					// skip note since we add it before.
+					const model = getStickyPluginModelByType(e.detail.type);
+					otherAddStickyMenuItem.subItems.push({
+						name: `${modelType}__addSticky`,
+						icon: model.meta?.contextMenuIcon,
+						execute() {
+							executeCommand(`${modelType}__addSticky`);
+						},
+					});
+				}
+			});
+
+			return () => otherAddStickyMenuItem;
+		})(),
+	];
+
+	workspace.outerCrate.dataset.contextMenu = "main";
+	registerContextMenu("main", menuItems);
+
 	// Register custom stickies.
 	initMarkdownSticky();
 	initSpotifySticky();
@@ -285,58 +321,6 @@ async function main() {
 	for (const dockType of getDockPluginTypes()) {
 		createDockAppearanceItem(dockType);
 	}
-
-	const menuItems = [
-		{
-			name: "addNoteSticky",
-			icon: "lucide-plus",
-			execute() {
-				executeCommand("addNoteSticky");
-			},
-		},
-		{
-			name: "addOtherStickyGroup",
-			subItems: [
-				{
-					name: "addYoutubeSticky",
-					icon: "lucide-youtube",
-					execute() {
-						executeCommand("addYoutubeSticky");
-					},
-				},
-				{
-					name: "addSpotifySticky",
-					icon: "mdi:spotify",
-					execute() {
-						executeCommand("addSpotifySticky");
-					},
-				},
-				{
-					name: "addMarkdownSticky",
-					icon: "ri:markdown-fill",
-					execute() {
-						executeCommand("addMarkdownSticky");
-					},
-				},
-				{
-					name: "addIFrameSticky",
-					icon: "lucide:globe",
-					execute() {
-						executeCommand("addIFrameSticky");
-					},
-				},
-				{
-					name: "addImageSticky",
-					icon: "lucide:image",
-					execute() {
-						executeCommand("addImageSticky");
-					},
-				},
-			],
-		},
-	];
-	workspace.outerCrate.dataset.contextMenu = "main";
-	registerContextMenu("main", menuItems);
 
 	if (!$(".dock.bookmarker")) {
 		if (isSmallScreen()) {

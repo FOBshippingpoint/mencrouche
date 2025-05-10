@@ -99,23 +99,23 @@
 		"message": "無効な画像URLです。別のリンクをお試しください。",
 		"description": "Alert message for an invalid image URL."
 	},
-	"addMarkdownSticky": {
+	"markdown__addSticky": {
 		"message": "新規Markdown付箋",
 		"description": "Command description for adding a new sticky note."
 	},
-	"addYoutubeSticky": {
+	"youtube__addSticky": {
 		"message": "新規YouTube付箋",
 		"description": "Command description for adding a new youtube sticky note."
 	},
-	"addSpotifySticky": {
+	"spotify__addSticky": {
 		"message": "新規Spotify付箋",
 		"description": "Command description for adding a new spotify sticky note."
 	},
-	"addIFrameSticky": {
+	"iframe__addSticky": {
 		"message": "新規ウェブサイト付箋",
 		"description": "Command description for adding a new iframe sticky note."
 	},
-	"addImageSticky": {
+	"image__addSticky": {
 		"message": "新規画像付箋",
 		"description": "Command description for adding a new image sticky."
 	},
@@ -323,7 +323,7 @@
 		"message": "Spotifyトラックが見つかりません",
 		"description": "Error message displayed when the Spotify media cannot be found in the provided input."
 	},
-	"addOtherStickyGroup": {
+	"otherAddStickyGroup": {
 		"message": "その他の付箋",
 		"description": "Context menu sub-menu name for other sticky group."
 	},
@@ -395,15 +395,15 @@
 		"message": "ドックが付箋で隠れるのを防ぎます。",
 		"description": "Help message for checkbox that keeps a dock always on top."
 	},
-	"addYoutubeStickyBtn": {
+	"youtube__addStickyBtn": {
 		"message": "YouTube",
 		"description": "Button label for adding YouTube sticky."
 	},
-	"addSpotifyStickyBtn": {
+	"spotify__addStickyBtn": {
 		"message": "Spotify",
 		"description": "Button label for adding Spotify sticky."
 	},
-	"addImageStickyBtn": {
+	"image__addStickyBtn": {
 		"message": "画像",
 		"description": "Button label for adding Image sticky."
 	},
@@ -511,19 +511,19 @@
 		"message": "スクリプトの実行を許可する",
 		"description": "Checkbox label for allowing script execution."
 	},
-	"addMarkdownStickyBtn": {
+	"markdown__addStickyBtn": {
 		"message": "Markdown",
 		"description": "Button title for markdown sticky."
 	},
-	"addIFrameStickyBtn": {
+	"iframe__addStickyBtn": {
 		"message": "ウェブサイト",
 		"description": "Button title for iframe sticky."
 	},
-	"addNoteStickyBtnTitle": {
+	"note__addStickyBtnTitle": {
 		"message": "新規ノート",
 		"description": "Button title for note sticky."
 	},
-	"addNoteSticky": {
+	"note__addSticky": {
 		"message": "ノート付箋",
 		"description": "Command description for adding a new note sticky."
 	},

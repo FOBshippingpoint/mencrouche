@@ -82,7 +82,7 @@ const els = {
 	addStickyDropdownContainer: $<HTMLButtonElement>(
 		"#addStickyDropdownContainer",
 	)!,
-	addOtherStickyBtn: $<HTMLButtonElement>(".addOtherStickyBtn")!,
+	otherAddStickyBtn: $<HTMLButtonElement>(".otherAddStickyBtn")!,
 	otherStickyDropdown: $<HTMLDivElement>(".dropdownButtons")!,
 };
 
@@ -585,7 +585,7 @@ function setupEventListeners() {
 }
 
 function setupAddStickyDropdown() {
-	els.addOtherStickyBtn.on("click", () => {
+	els.otherAddStickyBtn.on("click", () => {
 		els.otherStickyDropdown.classList.toggle("none");
 	});
 
@@ -602,7 +602,7 @@ function setupAddStickyDropdown() {
 	document.body.on("click", (e) => {
 		if (
 			!(e.target as Element).closest(".dropdownButtons") &&
-			!(e.target as Element).closest(".addOtherStickyBtn")
+			!(e.target as Element).closest(".otherAddStickyBtn")
 		) {
 			els.otherStickyDropdown.classList.add("none");
 		}

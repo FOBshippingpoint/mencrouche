@@ -93,6 +93,9 @@ form.on("submit", (e) => {
 
 const spotifySticky: StickyPluginModel<"spotify"> = {
 	type: "spotify",
+	meta: {
+		contextMenuIcon: "mdi:spotify",
+	},
 	onMount(sticky, origin) {
 		const widgets = getTemplateFragment("spotifyStickyWidgets");
 		const editLinkBtn = widgets.$<HTMLButtonElement>(".editLinkBtn")!;

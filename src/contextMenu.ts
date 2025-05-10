@@ -196,9 +196,9 @@ function buildMenuItems(menuItems: MenuItem[], eventTarget: EventTarget) {
 		} else {
 			const menuItemDef = menuItem as MenuItemDefinition;
 			const btn = getTemplate<HTMLButtonElement>("menuItem");
-			const iconL = btn.$<HTMLElement>(".icon.left")!;
+			const iconL = btn.$(".icon.left")!;
 			const span = btn.$("span")!;
-			const iconR = btn.$<HTMLElement>(".icon.right")!;
+			const iconR = btn.$(".icon.right")!;
 			span.dataset.i18n = menuItemDef.name;
 
 			function setIconProperty(iconEl: HTMLElement, iconName: string) {

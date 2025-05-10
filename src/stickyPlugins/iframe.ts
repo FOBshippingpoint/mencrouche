@@ -40,6 +40,9 @@ form.on("submit", (e) => {
 
 const iframeSticky: StickyPluginModel<"iframe"> = {
 	type: "iframe",
+	meta: {
+		contextMenuIcon: "lucide:globe",
+	},
 	onMount(sticky, origin) {
 		const widgets = getTemplateFragment("iframeStickyWidgets");
 		const ghostBtn = widgets.$<HTMLButtonElement>(".ghostBtn")!;

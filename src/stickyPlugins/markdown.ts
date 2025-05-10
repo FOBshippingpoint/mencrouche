@@ -99,6 +99,9 @@ function paste(textarea: HTMLTextAreaElement, toPaste: string) {
 
 const markdownSticky: StickyPluginModel<"markdown"> = {
 	type: "markdown",
+	meta: {
+		contextMenuIcon: "ri:markdown-fill",
+	},
 	onMount(sticky, origin) {
 		const widgets = getTemplateFragment("markdownStickyWidgets");
 		const editModeToggle = widgets.$<IconToggle>(".editModeToggle")!;
