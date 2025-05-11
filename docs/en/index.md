@@ -34,9 +34,20 @@ features:
 ---
 
 
-<div class="screenshotList">
-    <img src="/img/index/student.webp"></img>
-    <img src="/img/index/cook.webp"></img>
-    <img src="/img/index/tmr.webp"></img>
-    <img src="/img/index/light.webp"></img>
+<div class="feature-grid">
+    <video class="round hero" autoplay="" muted="" loop="true" playsinline="" src="/media/index/note.webm"></video>
+    <img class="round" src="/media/index/spotify.webp"></img>
+    <div class="feature-description"><h3>Media Integration</h3><p>Mencrouche can embed Spotify, YouTube, and even website in stickies. Store your favorites song, taking notes while watching YouTube video.</p></div>
+    <video class="round hero" autoplay="" muted="" loop="true" playsinline="" src="/media/index/spotify.webm"></video>
+    <img class="round" src="/media/index/markdown.webp"></img>
+    <div class="feature-description"><h3>Beyond WYSIWYG</h3><p>Write fast, focused, and frictionless with Markdown sticky. Use split view to preview the output instantly.</p></div>
+    <video class="round hero" autoplay="" muted="" loop="true" playsinline="" src="/media/index/markdown.webm"></video>
+</div>
+
+<div class="gallery">
+    <h2>Design your perfect homepage.<div class="no-bold">Choose only what you need—no noise.</div></h2>
+    <img src="/media/index/student.webp"></img>
+    <img src="/media/index/cook.webp"></img>
+    <img src="/media/index/tmr.webp"></img>
+    <img src="/media/index/light.webp"></img>
 </div>

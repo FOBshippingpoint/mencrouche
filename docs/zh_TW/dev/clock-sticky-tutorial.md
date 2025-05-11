@@ -2,7 +2,7 @@
 
 本教學中我們將建立一個能顯示現在時間的**時鐘便利貼**，並有一個按鈕能夠更改顏色，關閉便利貼再打開還能維持設定的顏色。以下是最終結果：
 
-![](/img/clock-sticky-tutorial/done.gif)
+![](/media/clock-sticky-tutorial/done.gif)
 
 在此我們會用<abbr title="Mencrouche">`mc`</abbr>物件來和Mencrouche API溝通。你可以把後續的程式碼直接貼上到瀏覽器開發人員工具主控台。
 
@@ -56,7 +56,7 @@ mc.workspace.createSticky({ type: "clock" });
 
 ✅ **結果**：你應該能看到一個顯示現在時間的便利貼。
 
-![](/img/clock-sticky-tutorial/step1.webp)
+![](/media/clock-sticky-tutorial/step1.webp)
 
 
 ## 第二步：

@@ -2,7 +2,7 @@
 
 In this tutorial, we will build a **Clock Sticky** that displays the current time, allows changing its color, and remembers the color when closed and reopened. Here's the final result:
 
-![](/img/clock-sticky-tutorial/done.gif)
+![](/media/clock-sticky-tutorial/done.gif)
 
 We'll use the global <abbr title="Mencrouche">`mc`</abbr> object provided by the application to interact with the sticky system. You can follow along by pasting the code snippets into your browser's developer console.
 
@@ -59,7 +59,7 @@ mc.workspace.createSticky({ type: "clock" });
 
 ✅ **Result:** You should see a new sticky appear, displaying the current time, which updates every second.
 
-![](/img/clock-sticky-tutorial/step1.webp)
+![](/media/clock-sticky-tutorial/step1.webp)
 
 
 ## Step 2: Clean-up Resources

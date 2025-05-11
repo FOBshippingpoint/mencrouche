@@ -4,7 +4,7 @@ To allow plugins to manage their state and behavior within the application, the 
 
 This diagram illustrates the sequence and triggers for these lifecycle functions:
 
-![](/img/sticky-lifecycle/sticky_lifecycle_diagram.webp)
+![](/media/sticky-lifecycle/sticky_lifecycle_diagram.webp)
 
 ## `onMount(sticky, origin)`
 

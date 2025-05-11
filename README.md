@@ -15,10 +15,10 @@
 
 ## Screenshots
 
-![](https://raw.githubusercontent.com/FOBshippingpoint/mencrouche/refs/heads/main/docs/public/img/index/student.webp)
-![](https://raw.githubusercontent.com/FOBshippingpoint/mencrouche/refs/heads/main/docs/public/img/index/cook.webp)
-![](https://raw.githubusercontent.com/FOBshippingpoint/mencrouche/refs/heads/main/docs/public/img/index/tmr.webp)
-![](https://raw.githubusercontent.com/FOBshippingpoint/mencrouche/refs/heads/main/docs/public/img/index/light.webp)
+![](https://raw.githubusercontent.com/FOBshippingpoint/mencrouche/refs/heads/main/docs/public/media/index/student.webp)
+![](https://raw.githubusercontent.com/FOBshippingpoint/mencrouche/refs/heads/main/docs/public/media/index/cook.webp)
+![](https://raw.githubusercontent.com/FOBshippingpoint/mencrouche/refs/heads/main/docs/public/media/index/tmr.webp)
+![](https://raw.githubusercontent.com/FOBshippingpoint/mencrouche/refs/heads/main/docs/public/media/index/light.webp)
 
 ## Authors
 

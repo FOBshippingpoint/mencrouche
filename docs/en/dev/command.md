@@ -2,7 +2,7 @@
 
 The Command API allows you to **register custom commands** that can be executed via the Command Palette, keyboard shortcuts, or programmatically.
 
-![](/img/command/command_palette.webp)
+![](/media/command/command_palette.webp)
 
 ## Introduction
 

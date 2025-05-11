@@ -2,7 +2,7 @@
 
 The Context Menu API allows you to **register custom context menus** (via right-click or long-press) for specific DOM elements.
 
-![](/img/context-menu/context_menu.webp)
+![](/media/context-menu/context_menu.webp)
 
 ## Introduction
 

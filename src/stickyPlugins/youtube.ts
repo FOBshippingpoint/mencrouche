@@ -112,7 +112,7 @@ const youtubeSticky: StickyPluginModel<"youtube"> = {
 				current.plugin.player?.getPlayerState?.() === YT.PlayerState.PLAYING
 					? "on"
 					: "off";
-			sticky.plugin.player?.pauseVideo();
+			sticky.plugin.player?.pauseVideo?.();
 			linkInput.value = sticky.dataset.link ?? "";
 			videoIdInput.value = sticky.dataset.videoId ?? "";
 			autoplayCheckbox.checked = sticky.dataset.autoplay === "on";
