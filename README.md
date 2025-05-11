@@ -26,4 +26,4 @@
 
 ## License
 
-[MIT](https://github.com/FOBshippingpoint/goocoucou-webext/blob/main/LICENSE)
+[AGPLv3](https://github.com/FOBshippingpoint/mencrouche/blob/main/LICENSE)

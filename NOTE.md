@@ -36,8 +36,6 @@ Get-ChildItem -r -File *.png | Select-Object -ExpandProperty FullName | % { cweb
 - [x] Sub menus
 - [x] Dock preference always on top.
 - [x] Sync
-- [x] {impossible} Spotify border radius adjust.
-    - Spotify embedded content already had border-radius, unless we can get the background color, we cannot get rid of that border.j
 - [x] Dropdown add sticky.
 - [x] Add nav for settings.
 - [x] Add javascript customization textarea.

@@ -45,7 +45,7 @@ function sidebar(): DefaultTheme.Sidebar {
 			{
 				text: "附錄",
 				base: "zh_TW/dev/",
-				items: [{ text: "名詞", link: "glossary" }],
+				items: [{ text: "詞彙表", link: "glossary" }],
 			},
 		],
 	};
