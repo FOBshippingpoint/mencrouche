@@ -1,4 +1,4 @@
-# About Mencrouche
+# About
 
 Mencrouche is a customizable, easy-to-extend browser start page. You can try it [online](https://mencrouche.com).
 

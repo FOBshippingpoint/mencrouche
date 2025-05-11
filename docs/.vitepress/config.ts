@@ -1,58 +1,33 @@
 import { defineConfig } from "vitepress";
+import { en } from "./configs/en";
+import { zh_TW } from "./configs/zh_TW";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "Mencrouche Doc",
-  head: [["link", { rel: "icon", href: "/icon.svg" }]],
-  description: "Mencrouche Documentation Site",
-  themeConfig: {
-    logo: "/icon.svg",
-    // https://vitepress.dev/reference/default-theme-config
-    nav: [
-      { text: "Mencrouche", link: "https://mencrouche.com" },
-      // { text: "I'm User", link: "/user" },
-      { text: "I'm Developer", link: "/dev" },
-      { text: "About", link: "/about" },
-    ],
+	title: "Mencrouche Doc",
+	rewrites: {
+		"en/:rest*": ":rest*",
+	},
+	locales: {
+		root: { label: "English", ...en },
+		zh_TW: { label: "繁體中文", ...zh_TW },
+	},
+	lastUpdated: true,
+	cleanUrls: true,
+	head: [["link", { rel: "icon", href: "/icon.svg" }]],
+	description: "Mencrouche Documentation Site",
+	themeConfig: {
+		logo: "/icon.svg",
 
-    sidebar: {
-      "/dev/": [
-        {
-          text: "Introduction",
-          items: [
-            { text: "Overview", link: "/dev" },
-            { text: "Clock Sticky Tutorial", link: "/dev/clock-sticky-tutorial" },
-            { text: "Sticky LifeCycle", link: "/dev/sticky-lifecycle" },
-          ],
-        },
-        {
-          text: "API",
-          items: [
-            { text: "Dollars API", link: "/dev/dollars" },
-            { text: "Context Menu API", link: "/dev/context-menu" },
-            { text: "Command API", link: "/dev/command" },
-            { text: "n81i API", link: "/dev/n81i" },
-            { text: "Apocalypse API", link: "/dev/apocalypse" },
-          ],
-        },
-        {
-          text: "Appendix",
-          items: [
-            { text: "Glossary", link: "/dev/glossary" },
-          ],
-        },
-      ],
-    },
+		socialLinks: [
+			{
+				icon: "github",
+				link: "https://github.com/FOBshippingpoint/mencrouche",
+			},
+		],
 
-    socialLinks: [
-      {
-        icon: "github",
-        link: "https://github.com/FOBshippingpoint/mencrouche",
-      },
-    ],
-
-    search: {
-      provider: "local",
-    },
-  },
+		search: {
+			provider: "local",
+		},
+	},
 });
