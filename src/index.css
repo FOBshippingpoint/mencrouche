@@ -60,8 +60,8 @@
 	--text-1: var(--color-1);
 	--text-2: var(--color-5);
 
-	--link: oklch(90% 80% var(--palette-hue));
-	--link-visited: oklch(90% 80% calc(var(--palette-hue) * 1.2));
+	--link: oklch(90% 80% var(--paletteHue));
+	--link-visited: oklch(90% 80% calc(var(--paletteHue) * 1.2));
 
 	button {
 		--_ink-shadow: var(--_ink-shadow-dark);
@@ -104,7 +104,7 @@ button:disabled {
 }
 
 main {
-	opacity: var(--ui-opacity);
+	opacity: var(--uiOpacity);
 	line-height: 1.5;
 	font-family:
 		"IBM Plex Sans", "Punctuation SC", "Inter", ui-sans-serif, system-ui,
@@ -830,7 +830,7 @@ h6 {
 	}
 	#uiOpacityInput::-webkit-slider-thumb,
 	#uiOpacityInput::-moz-range-thumb {
-		opacity: var(--ui-opacity);
+		opacity: var(--uiOpacity);
 	}
 
 	label:not(:has([type="checkbox"])) {
