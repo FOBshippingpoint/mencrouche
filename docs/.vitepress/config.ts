@@ -22,9 +22,11 @@ export default defineConfig({
 			"meta",
 			{
 				property: "og:image",
-				content: "https://mencrouche.com/public/og_image.png",
+				content: "https://mencrouche.com/og_image.png",
 			},
 		],
+		["meta", { property: "og:image:width", content: "1200" }],
+		["meta", { property: "og:image:height", content: "648" }],
 		["meta", { property: "og:url", content: "https://docs.mencrouche.com/" }],
 		[
 			"script",
