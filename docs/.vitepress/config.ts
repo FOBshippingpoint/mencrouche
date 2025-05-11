@@ -26,6 +26,14 @@ export default defineConfig({
 			},
 		],
 		["meta", { property: "og:url", content: "https://docs.mencrouche.com/" }],
+		[
+			"script",
+			{
+				src: "https://cloud.umami.is/script.js",
+				"data-website-id": "7d387d53-a773-4ea8-abb1-5468550bef69",
+				defer: "",
+			},
+		],
 	],
 	description:
 		"Mencrouche Documentation Site - A highly customizable homepage for organizing links and notes.",
