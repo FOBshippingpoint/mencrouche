@@ -467,21 +467,6 @@ h6 {
 
 .stickyBody {
 	flex-grow: 1;
-
-	.preview {
-		height: 100%;
-		padding-inline: var(--size-2);
-		padding-block: var(--size-1);
-
-		pre {
-			max-inline-size: unset;
-			overflow: auto;
-
-			code {
-				border-radius: var(--radius-conditional-2);
-			}
-		}
-	}
 }
 
 .markdown.editMode.splitView .stickyBody {
@@ -510,16 +495,35 @@ h6 {
 	}
 }
 
+/* Not edit mode */
+.markdown {
+	textarea {
+		display: none;
+	}
+	.divider {
+		display: none;
+	}
+	.preview {
+		height: 100%;
+		overflow-y: auto;
+		padding-inline: var(--size-2);
+		padding-block: var(--size-1);
+
+		pre {
+			max-inline-size: unset;
+			overflow: auto;
+
+			code {
+				border-radius: var(--radius-conditional-2);
+			}
+		}
+	}
+}
 .markdown.editMode {
 	textarea {
 		display: initial;
 	}
 	.preview {
-		display: none;
-	}
-}
-.markdown:not(.editMode) {
-	textarea {
 		display: none;
 	}
 }

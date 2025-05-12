@@ -28,7 +28,7 @@ const toolbarOptions = [
 
 const noteSticky: StickyPluginModel<"note"> = {
 	type: "note",
-	onMount(sticky) {
+	onMount(sticky, origin) {
 		const quillDom = $$$("div");
 		sticky.replaceBody(quillDom);
 		sticky.plugin.quill = new Quill(quillDom, {
@@ -49,6 +49,11 @@ const noteSticky: StickyPluginModel<"note"> = {
 			},
 			theme: "snow",
 		});
+		if (origin === "create") {
+			setTimeout(() => {
+				sticky.$<HTMLElement>(".ql-editor")!.focus();
+			});
+		}
 		if (sticky.pluginConfig) {
 			sticky.plugin.quill.setContents(sticky.pluginConfig.contents);
 		}
