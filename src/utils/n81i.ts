@@ -1,21 +1,21 @@
-interface Message {
+export interface Message {
 	message: string;
 	description: string;
 }
 
-interface MessagesJson {
+export interface MessagesJson {
 	[key: string]: Message;
 }
 
-type LocaleResourceLoader = (locale: string) => Promise<MessagesJson>;
-interface N81iInitOptions {
+export type LocaleResourceLoader = (locale: string) => Promise<MessagesJson>;
+export interface N81iInitOptions {
 	locale: string;
 	availableLocales: string[];
 	resourceLoader: LocaleResourceLoader;
 	fallback?: string;
 }
 
-interface N81iResource {
+export interface N81iResource {
 	[key: string]: Record<string, Message>;
 }
 

@@ -142,7 +142,7 @@ export interface WorkspaceConfig {
 	/** All stickies inside workspace. */
 	stickies: StickyConfig[];
 }
-class Workspace {
+class _Workspace {
 	/** Contains stickies. */
 	innerCrate: HTMLDivElement;
 	/**
@@ -612,7 +612,7 @@ document.addEventListener(
  * e.g. the Rectangle type accept null.
  */
 type CursorPoint = [number, number];
-function buildBuildSticky(workspace: Workspace) {
+function buildBuildSticky(workspace: _Workspace) {
 	return function buildSticky(
 		buildType: "create" | "restore",
 		{
@@ -851,7 +851,10 @@ function buildBuildSticky(workspace: Workspace) {
 	};
 }
 
-export const workspace = new Workspace(apocalypse);
+// Actually I don't know what is this
+// https://stackoverflow.com/a/74491860
+export type Workspace = Omit<_Workspace, never>;
+export const workspace: Workspace = new _Workspace(apocalypse);
 
 const pluginStickyPool = new Map<PluginKey, StickyPluginModel<PluginKey>>();
 

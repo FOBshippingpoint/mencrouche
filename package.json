@@ -47,9 +47,9 @@
   },
   "targets": {
     "website": {
-      "source": "./src/index.html",
+      "source": "src/index.html",
       "publicUrl": "./",
-      "distDir": "./dist/site"
+      "distDir": "dist/site"
     },
     "webext-dev": {
       "sourceMap": {
