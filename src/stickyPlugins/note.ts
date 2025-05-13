@@ -39,7 +39,7 @@ const noteSticky: StickyPluginModel<"note"> = {
 						undo: {
 							key: "z",
 							shortKey: true,
-							handler: function (range, context) {
+							handler: function () {
 								// If the quill sticky is focused, then let quill's undo pass.
 								return sticky.contains(document.activeElement);
 							},

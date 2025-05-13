@@ -90,7 +90,7 @@ HTMLElement.prototype.setRect = function (left, top, width, height) {
  * @param selectors - Either a CSS selector string or an existing DOM element.
  * @returns The selected element or null if not found.
  */
-const $ = document.querySelector.bind(document);
+const $: typeof document.querySelector = document.querySelector.bind(document);
 
 /**
  * Selects multiple elements from the DOM and returns them as an array.

@@ -16,7 +16,7 @@ import { initMarkdownSticky } from "./stickyPlugins/markdown";
 import { initSpotifySticky } from "./stickyPlugins/spotify";
 import { initYouTubeSticky } from "./stickyPlugins/youtube";
 import { n81i } from "./utils/n81i";
-import { registerContextMenu } from "./contextMenu";
+import { type MenuItem, registerContextMenu } from "./contextMenu";
 import { shortcutManager } from "./shortcutManager";
 import { loadDocument, saveDocument } from "./lifesaver";
 import { addTodoAfterLoad, dataset } from "./dataWizard";
@@ -217,7 +217,7 @@ const defaultCommands: Command[] = [
 function getUserPreferredLanguage() {
 	// e.g. zh-TW => zh_TW to fit chrome webextension locales.
 	// See also: https://developer.chrome.com/docs/extensions/reference/api/i18n
-	const lang = navigator.language.replaceAll("-", "_");
+	const lang = (navigator.language as any).replaceAll("-", "_");
 	if (
 		/* If supports user language */
 		AVAILABLE_LOCALES.includes(lang)
@@ -256,16 +256,16 @@ async function main() {
 			},
 		},
 		(() => {
-			const otherAddStickyMenuItem = {
+			const otherAddStickyMenuItem: MenuItem = {
 				name: "otherAddStickyGroup",
 				subItems: [],
 			};
 			window.on("registerSticky", (e) => {
-				const modelType = e.detail.type;
+				const modelType: string = (e as CustomEvent).detail.type;
 				if (modelType !== "note") {
 					// skip note since we add it before.
-					const model = getStickyPluginModelByType(e.detail.type);
-					otherAddStickyMenuItem.subItems.push({
+					const model = getStickyPluginModelByType(modelType)!;
+					otherAddStickyMenuItem.subItems?.push({
 						name: `${modelType}__addSticky`,
 						icon: model.meta?.contextMenuIcon,
 						execute() {

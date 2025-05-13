@@ -33,21 +33,6 @@ declare global {
 const mc = {
 	h,
 	$,
-	$$,
-	$$$,
-	n81i,
-	addCss,
-	dataset,
-	trayTip,
-	createDock,
-	apocalypse,
-	workspace,
-	registerSticky,
-	executeCommand,
-	registerCommand,
-	getStickyPluginModel,
-	registerContextMenu,
-	getStickyPluginTypes,
 };
 
 export function addPublicApi() {

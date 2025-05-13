@@ -53,8 +53,8 @@ export class Resizable extends ZoomAware {
 		this.initialHeight = this.element.offsetHeight;
 		this.initialLeft = this.element.offsetLeft;
 		this.initialTop = this.element.offsetTop;
-		document.on("pointermove", this.resize.bind(this));
-		document.on("pointerup", this.resizeEnd.bind(this));
+		document.on("pointermove", this.resize.bind(this) as any);
+		document.on("pointerup", this.resizeEnd.bind(this) as any);
 		this.options.onResizeStart?.(e);
 	}
 
@@ -106,8 +106,8 @@ export class Resizable extends ZoomAware {
 		this.isResizing = false;
 		this.element.classList.remove("resizing");
 		this.currentHandle = null;
-		document.off("pointermove", this.resize.bind(this));
-		document.off("pointerup", this.resizeEnd.bind(this));
+		document.off("pointermove", this.resize.bind(this) as any);
+		document.off("pointerup", this.resizeEnd.bind(this) as any);
 
 		this.options.onResizeEnd?.(e);
 	}

@@ -67,9 +67,16 @@ linkInput.on("input", () => {
 		linkInput.reportValidity();
 	}
 });
+
+interface YouTubeFormObject {
+	videoId: string;
+	autoplay: string;
+	link: string;
+}
+
 form.on("submit", (e) => {
 	e.preventDefault();
-	const { videoId, autoplay, link } = formToObject(form);
+	const { videoId, autoplay, link } = formToObject<YouTubeFormObject>(form);
 	let embedUrl = new URL(`https://www.youtube.com/embed/${videoId}`);
 
 	embedUrl.searchParams.set("enablejsapi", "1");
