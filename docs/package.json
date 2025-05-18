@@ -1,0 +1,13 @@
+{
+	"name": "@mencrouche/docs",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"docs:dev": "vitepress dev . --open",
+		"docs:build": "vitepress build .",
+		"docs:preview": "vitepress preview ."
+	},
+	"dependencies": {
+		"vitepress": "^1.6.3"
+	}
+}

@@ -7,7 +7,13 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": ["docs/**/*", "packages/*/src/**/*", "apps/mencrouche/src/**/*"]
+		"includes": [
+			"docs/**/*",
+			"packages/**/*",
+			"apps/**/*",
+			"!**/node_modules/**",
+			"!**/dist/**"
+		]
 	},
 	"formatter": {
 		"enabled": true,

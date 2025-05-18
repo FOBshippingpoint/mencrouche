@@ -4,5 +4,5 @@
   "scripts": {
     "format": "biome format --write"
   },
-  "workspaces": ["apps/*", "packages/*"]
+  "workspaces": ["apps/*", "packages/*", "docs"]
 }

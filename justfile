@@ -2,16 +2,15 @@
 # See https://github.com/casey/just for more information.
 
 default: clean-dev
-alias cd := clean-dev
 
 dev:
-  bun run site:dev
+  bun run --filter=@mencrouche/app site:dev
 
 clean-dev: && dev
-  rm -rf .parcel-cache
+  rm -rf apps/mencrouche/.parcel-cache
 
 doc:
-  bun run docs:dev --open
+  bun run --filter=@mencrouche/docs docs:dev --open
 
 loc:
   @echo Counting line of codes...
