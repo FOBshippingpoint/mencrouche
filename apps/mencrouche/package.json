@@ -3,11 +3,11 @@
 	"version": "0.0.1",
 	"author": "FOBshippingpoint",
 	"dependencies": {
-		"@mencrouche/types": "link:@mencrouche/types",
-		"@mencrouche/apocalypse": "link:@mencrouche/apocalypse",
-		"@mencrouche/dataset": "link:@mencrouche/dataset",
-		"@mencrouche/dollars": "link:@mencrouche/dollars",
-		"@mencrouche/n81i": "link:@mencrouche/n81i"
+		"@mencrouche/types": "workspace:*",
+		"@mencrouche/apocalypse": "workspace:*",
+		"@mencrouche/dataset": "workspace:*",
+		"@mencrouche/dollars": "workspace:*",
+		"@mencrouche/n81i": "workspace:*"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.0.0-beta.1",

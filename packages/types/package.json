@@ -8,6 +8,9 @@
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@mencrouche/n81i": "link:@mencrouche/n81i"
+    "@mencrouche/n81i": "workspace:*",
+    "@mencrouche/dataset": "workspace:*",
+    "@mencrouche/dollars": "workspace:*",
+    "@mencrouche/apocalypse": "workspace:*"
   }
 }

@@ -8,11 +8,11 @@
       "name": "@mencrouche/app",
       "version": "0.0.1",
       "dependencies": {
-        "@mencrouche/apocalypse": "link:@mencrouche/apocalypse",
-        "@mencrouche/dataset": "link:@mencrouche/dataset",
-        "@mencrouche/dollars": "link:@mencrouche/dollars",
-        "@mencrouche/n81i": "link:@mencrouche/n81i",
-        "@mencrouche/types": "link:@mencrouche/types",
+        "@mencrouche/apocalypse": "workspace:*",
+        "@mencrouche/dataset": "workspace:*",
+        "@mencrouche/dollars": "workspace:*",
+        "@mencrouche/n81i": "workspace:*",
+        "@mencrouche/types": "workspace:*",
       },
       "devDependencies": {
         "@biomejs/biome": "^2.0.0-beta.1",
@@ -60,7 +60,10 @@
       "name": "@mencrouche/types",
       "version": "1.0.0",
       "dependencies": {
-        "@mencrouche/n81i": "link:@mencrouche/n81i",
+        "@mencrouche/apocalypse": "workspace:*",
+        "@mencrouche/dataset": "workspace:*",
+        "@mencrouche/dollars": "workspace:*",
+        "@mencrouche/n81i": "workspace:*",
       },
     },
   },
@@ -1512,18 +1515,6 @@
     "@gerrit0/mini-shiki/@shikijs/types": ["@shikijs/types@3.4.2", "", { "dependencies": { "@shikijs/vscode-textmate": "^10.0.2", "@types/hast": "^3.0.4" } }, "sha512-zHC1l7L+eQlDXLnxvM9R91Efh2V4+rN3oMVS2swCBssbj2U/FBwybD1eeLaq8yl/iwT+zih8iUbTBCgGZOYlVg=="],
 
     "@humanwhocodes/config-array/minimatch": ["minimatch@3.1.2", "", { "dependencies": { "brace-expansion": "^1.1.7" } }, "sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw=="],
-
-    "@mencrouche/app/@mencrouche/apocalypse": ["@mencrouche/dataset@link:@mencrouche/apocalypse", {}],
-
-    "@mencrouche/app/@mencrouche/dataset": ["@mencrouche/dataset@link:@mencrouche/dataset", {}],
-
-    "@mencrouche/app/@mencrouche/dollars": ["@mencrouche/dollars@link:@mencrouche/dollars", {}],
-
-    "@mencrouche/app/@mencrouche/n81i": ["@mencrouche/n81i@link:@mencrouche/n81i", {}],
-
-    "@mencrouche/app/@mencrouche/types": ["@mencrouche/types@link:@mencrouche/types", {}],
-
-    "@mencrouche/types/@mencrouche/n81i": ["@mencrouche/n81i@link:@mencrouche/n81i", {}],
 
     "@parcel/watcher/node-addon-api": ["node-addon-api@7.1.1", "", {}, "sha512-5m3bsyrjFWE1xf7nz7YXdN4udnVtXK6/Yfgn5qnahL6bCkf2yKt4k3nuTKAtT4r3IG8JNR2ncsIMdZuAzJjHQQ=="],
 
