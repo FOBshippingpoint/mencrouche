@@ -1,0 +1,9 @@
+{
+  "name": "@mencrouche/apocalypse",
+  "version": "1.0.0",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  }
+}

@@ -1,31 +1,24 @@
 /* Source: https://www.totaltypescript.com/tsconfig-cheat-sheet */
 {
   "compilerOptions": {
-    /* Base Options: */
-    "esModuleInterop": true,
-    "skipLibCheck": true,
     "target": "es2022",
+    "module": "preserve",
+    "lib": ["es2022", "dom", "dom.iterable"],
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
     "allowJs": true,
     "resolveJsonModule": true,
-    "moduleDetection": "force",
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
-
-    /* Strictness */
-    "strict": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
-
-    /* If NOT transpiling with TypeScript: */
-    "module": "preserve",
-
-    /* If your code runs in the DOM: */
-    "lib": ["es2022", "dom", "dom.iterable"],
-
     "declaration": true,
-    "declarationDir": "dist",
-    "emitDeclarationOnly": true
-  },
-  "include": ["src"],
-  "exclude": ["src/**/*.test.ts"]
+    "emitDeclarationOnly": true,
+    "baseUrl": ".",
+    "composite": true,
+    "paths": {
+      "@mencrouche/*": ["packages/*/src"]
+    }
+  }
 }

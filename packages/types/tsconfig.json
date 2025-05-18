@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"],
+  "references": [
+    { "path": "../n81i" },
+    { "path": "../dollars" },
+    { "path": "../dataset" },
+    { "path": "../apocalypse" }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+	"name": "@mencrouche/app",
+	"version": "0.0.1",
+	"author": "FOBshippingpoint",
+	"dependencies": {
+		"@mencrouche/types": "link:@mencrouche/types",
+		"@mencrouche/apocalypse": "link:@mencrouche/apocalypse",
+		"@mencrouche/dataset": "link:@mencrouche/dataset",
+		"@mencrouche/dollars": "link:@mencrouche/dollars",
+		"@mencrouche/n81i": "link:@mencrouche/n81i"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.0.0-beta.1",
+		"@parcel/config-webextension": "^2.13.3",
+		"@parcel/core": "^2.13.3",
+		"@parcel/reporter-bundle-analyzer": "^2.13.3",
+		"@types/chrome": "^0.0.309",
+		"@types/dompurify": "^3.2.0",
+		"@types/firefox-webext-browser": "^120.0.4",
+		"@types/fs-extra": "^11.0.4",
+		"@types/markdown-it": "^14.1.2",
+		"@types/webextension-polyfill": "^0.12.3",
+		"@types/youtube": "^0.1.0",
+		"dompurify": "^3.2.4",
+		"happy-dom": "^17.4.4",
+		"kikey": "^3.1.0",
+		"marked": "^15.0.11",
+		"open-props": "2.0.0-beta.5",
+		"parcel": "^2.13.3",
+		"quill": "^2.0.3",
+		"typedoc": "^0.28.3",
+		"typescript": "^5.8.2",
+		"vitepress": "^1.6.3",
+		"vitest": "^3.0.8",
+		"web-ext": "^8.4.0"
+	},
+	"description": "A highly customizable web extension for new tab. Bring your own content to build your web experience.",
+	"license": "MIT",
+	"scripts": {
+		"test": "vitest",
+		"format": "biome format --write",
+		"start": "parcel watch src/manifest.json --host localhost --config @parcel/config-webextension --no-cache",
+		"site:dev": "parcel --target website --lazy --open",
+		"site:build": "parcel build --target website",
+		"ext:build": "parcel build src/manifest.json --config @parcel/config-webextension",
+		"ext:firefox": "web-ext run --source-dir dist/webext-dev --target=firefox-desktop",
+		"ext:chrome": "web-ext run --source-dir dist/webext-dev --target=chromium",
+		"ext:lint-dev": "web-ext lint --source-dir dist/webext-dev",
+		"ext:lint-prod": "web-ext lint --source-dir dist/webext-prod",
+		"ext:pack-zip": "web-ext build --overwrite-dest --source-dir dist/webext-prod",
+		"docs:dev": "vitepress dev docs",
+		"docs:build": "vitepress build docs",
+		"docs:preview": "vitepress preview docs"
+	},
+	"targets": {
+		"website": {
+			"source": "src/index.html",
+			"publicUrl": "./",
+			"distDir": "dist/site"
+		},
+		"webext-dev": {
+			"sourceMap": {
+				"inline": true,
+				"inlineSources": true
+			}
+		},
+		"webext-prod": {
+			"sourceMap": false
+		}
+	},
+	"type": "module"
+}

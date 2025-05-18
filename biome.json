@@ -7,7 +7,7 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": ["src/**/*", "docs/**/*"]
+		"includes": ["docs/**/*", "packages/*/src/**/*", "apps/mencrouche/src/**/*"]
 	},
 	"formatter": {
 		"enabled": true,
