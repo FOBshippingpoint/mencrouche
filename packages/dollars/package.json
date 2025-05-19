@@ -1,14 +1,20 @@
 {
 	"name": "@mencrouche/dollars",
-	"version": "1.0.0",
+	"description": "A DOM shorthand library for Mencrouche.",
+	"version": "1.0.1",
 	"type": "module",
 	"files": [
 		"dist",
 		"!**/*.tsbuildinfo"
 	],
-	"main": "dist/src/index.js",
-	"types": "dist/src/index.d.ts",
+	"exports": {
+		".": {
+			"import": "./dist/src/index.js",
+			"types": "./dist/src/index.d.js"
+		}
+	},
 	"scripts": {
 		"build": "tsc --project tsconfig.json"
-	}
+	},
+	"license": "MIT"
 }

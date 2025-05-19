@@ -1,14 +1,21 @@
 {
 	"name": "@mencrouche/apocalypse",
-	"version": "1.0.0",
+	"description": "A tiny undo/redo library for Mencrouche.",
+	"version": "1.0.2",
 	"type": "module",
+	"author": "FOBshippingpoint",
 	"files": [
 		"dist",
 		"!**/*.tsbuildinfo"
 	],
-	"main": "dist/src/index.js",
-	"types": "dist/src/index.d.ts",
+	"exports": {
+		".": {
+			"import": "./dist/src/index.js",
+			"types": "./dist/src/index.d.js"
+		}
+	},
 	"scripts": {
 		"build": "tsc --project tsconfig.json"
-	}
+	},
+	"license": "MIT"
 }

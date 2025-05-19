@@ -26,4 +26,5 @@
 
 ## License
 
-[AGPLv3](https://github.com/FOBshippingpoint/mencrouche/blob/main/LICENSE)
+- app: [AGPLv3](https://github.com/FOBshippingpoint/mencrouche/blob/main/LICENSE)
+- packages: MIT, see LICENSE under individual package (e.g., `./packages/apocalypse/LICENSE`).
