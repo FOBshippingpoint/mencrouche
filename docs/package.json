@@ -9,5 +9,6 @@
 	},
 	"dependencies": {
 		"vitepress": "^1.6.3"
-	}
+	},
+  "packageManager": "bun@1.2.13"
 }
