@@ -1,11 +1,11 @@
 {
 	"name": "@mencrouche/types",
 	"description": "Type definition package for Mencrouche.",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"type": "module",
 	"exports": {
 		".": {
-			"types": "./dist/src/index.d.ts"
+			"types": "./dist/index.d.ts"
 		}
 	},
 	"files": [
