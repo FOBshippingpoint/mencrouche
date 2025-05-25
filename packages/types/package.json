@@ -1,7 +1,7 @@
 {
 	"name": "@mencrouche/types",
 	"description": "Type definition package for Mencrouche.",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"type": "module",
 	"exports": {
 		".": {
