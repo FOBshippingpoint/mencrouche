@@ -17,30 +17,25 @@
  * input.addEventListener('input', (e) => debouncedSave(e.target.value));
  * ```
  */
-export function debounce(
-	callback: Function,
+export function debounce<T extends (...args: unknown[]) => unknown>(
+	callback: T,
 	{ isLeadingEdge, waitMs }: { isLeadingEdge?: boolean; waitMs?: number } = {
 		isLeadingEdge: false,
 		waitMs: 3000, // 3 sec delay before saving
 	},
-) {
+): T {
 	let timeoutId: number | undefined;
-
-	return (...args: unknown[]) => {
+	return ((...args: Parameters<T>) => {
 		const isCallNow = isLeadingEdge && !timeoutId;
-
 		clearTimeout(timeoutId);
-
 		timeoutId = window.setTimeout(() => {
 			timeoutId = undefined;
-
 			if (!isLeadingEdge) {
 				callback(...args);
 			}
 		}, waitMs);
-
 		if (isCallNow) {
 			callback(...args);
 		}
-	};
+	}) as T;
 }
