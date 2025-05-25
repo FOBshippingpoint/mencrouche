@@ -4,8 +4,8 @@ layout: home
 
 hero:
   name: Mencrouche
-  text: 不僅僅是個首頁
-  tagline: 書籤、筆記、影音內容——盡在手中。
+  text: 專屬於你個人的首頁
+  tagline: 書籤、筆記、影音——一應俱全
   image:
     src: /icon.svg
     alt: Mencrouche
@@ -30,7 +30,7 @@ features:
     details: 透過主題與背景自訂外觀。對於追求極致的你，調整CSS不在話下。
   - icon: ⌨️
     title: 易於擴充
-    details: 為DIY愛好者提供強大的插件API，打造你真正需要的工具。
+    details: 為DIY愛好者提供強大的插件API，親自打造真正需要的工具。
 ---
 
 <div class="feature-grid">
@@ -44,13 +44,13 @@ features:
     <img class="round" src="/media/index/markdown.webp"></img>
     <div class="feature-description">
         <h3>Markdown也沒問題</h3>
-        <p>快速書寫，專注且無干擾。支援分割畫面，立即預覽格式化後的內容。</p>
+        <p>專注且快速地創作，支援分割畫面，即時預覽輸出內容。</p>
     </div>
     <video class="round hero" autoplay="" muted="" loop="true" playsinline="" src="/media/index/markdown.webm"></video>
 </div>
 
 <div class="gallery">
-    <h2>打造屬於你的首頁<div class="no-bold">只選你需要的，剔除一切干擾。</div></h2>
+    <h2>打造屬於你的首頁<div class="no-bold">自由編排、組合最重要的事物</div></h2>
     <img src="/media/index/student.webp"></img>
     <img src="/media/index/cook.webp"></img>
     <img src="/media/index/tmr.webp"></img>
