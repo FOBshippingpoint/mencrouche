@@ -25,6 +25,31 @@ interface ImagePlugin extends StickyPlugin {
 	};
 }
 
+function constraint(
+	img: HTMLImageElement,
+	maxWidth: number,
+	maxHeight: number,
+) {
+	const naturalWidth = img.naturalWidth;
+	const naturalHeight = img.naturalHeight;
+	const aspectRatio = Math.round(naturalWidth / naturalHeight);
+	let newWidth = naturalWidth;
+	let newHeight = naturalHeight;
+
+	// Apply constraints while maintaining aspect ratio
+	if (newWidth > maxWidth) {
+		newWidth = maxWidth;
+		newHeight = newWidth / aspectRatio;
+	}
+
+	if (newHeight > maxHeight) {
+		newHeight = maxHeight;
+		newWidth = newHeight * aspectRatio;
+	}
+
+	return { width: Math.round(newWidth), height: Math.round(newHeight) };
+}
+
 const imageSticky: StickyPluginModel<"image"> = {
 	type: "image",
 	meta: {
@@ -53,7 +78,7 @@ const imageSticky: StickyPluginModel<"image"> = {
 		imagePicker.on("imageChange", (e) => {
 			const { url, name } = (e as CustomEvent<ImageChangeDetail>).detail;
 			img.src = url;
-			img.alt = name ?? "";
+			img.alt = name ?? "unnamed";
 			sticky.replaceBody(img);
 			downloadBtn.disabled = false;
 			copyBtn.disabled = false;
@@ -72,6 +97,17 @@ const imageSticky: StickyPluginModel<"image"> = {
 				message: n81i.t("imageCopiedMessage"),
 			});
 		});
+
+		img.onload = () => {
+			const { width, height } = constraint(
+				img,
+				window.screen.availWidth * 0.8,
+				window.screen.availHeight * 0.8,
+			);
+			// TODO: I think I din't consider header height 🥵
+			sticky.style.width = `${Math.round(width)}px`;
+			sticky.style.height = `${Math.round(height)}px`;
+		};
 	},
 	onSave(sticky) {
 		const img = sticky.$("img");

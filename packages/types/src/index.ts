@@ -161,13 +161,13 @@ export interface MencroucheFileFormatVersionRegistry
  * @property {string} name - The display name of the menu item, used as a n18i key.
  * @property {string} [icon] - Optional icon name for the menu item (uses iconify format). You can go to https://icon-sets.iconify.design and copy "icon name" you like. (e.g., "ic:baseline-account-circle")
  * @property {Function} [execute] - Optional callback function executed when the menu item is clicked.
- * @property {MenuItem[]} [subItems] - Optional array of sub-menu items for nested menus.
+ * @property {MenuItem[]} [subMenus] - Optional array of sub-menu items for nested menus.
  */
 export interface MenuItemDefinition {
 	name: string;
 	icon?: string;
 	execute?: (eventTarget: EventTarget) => void;
-	subItems?: MenuItem[];
+	subMenus?: MenuItem[];
 }
 
 export type MenuItemBuilder = (
@@ -280,7 +280,7 @@ export declare function createDock(options: DockConfig): Dock<"default">;
  *
  * @param {MenuItem[]} menuItems - Array of menu items to display in the context menu.
  * Menu items can be:
- * - `MenuItemDefinition` objects (with name, icon, execute function, and/or subItems)
+ * - `MenuItemDefinition` objects (with name, icon, execute function, and/or subMenus)
  * - `MenuItemBuilder` functions that return a MenuItemDefinition or null (nothing)
  * - "hr" string to insert a horizontal rule separator
  *

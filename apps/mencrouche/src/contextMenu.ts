@@ -121,7 +121,7 @@ document.body.on("pointerleave", endLongPress);
  *
  * @param {MenuItem[]} menuItems - Array of menu items to display in the context menu.
  * Menu items can be:
- * - `MenuItemDefinition` objects (with name, icon, execute function, and/or subItems)
+ * - `MenuItemDefinition` objects (with name, icon, execute function, and/or subMenus)
  * - `MenuItemBuilder` functions that return a MenuItemDefinition or null (nothing)
  * - "hr" string to insert a horizontal rule separator
  *
@@ -191,15 +191,15 @@ function buildMenuItems(menuItems: MenuItem[], eventTarget: EventTarget) {
 			if (menuItemDef.icon) {
 				setIconProperty(iconL, menuItemDef.icon);
 			}
-			if (menuItemDef.subItems) {
+			if (menuItemDef.subMenus) {
 				setIconProperty(iconR, "lucide-chevron-right");
 			}
 
 			frag.appendChild(btn);
-			if (menuItemDef.subItems) {
+			if (menuItemDef.subMenus) {
 				const subItem = $$$("div");
 				subItem.classList.add("subItem", "contextMenu");
-				subItem.appendChild(buildMenuItems(menuItemDef.subItems, eventTarget));
+				subItem.appendChild(buildMenuItems(menuItemDef.subMenus, eventTarget));
 				btn.insertAdjacentElement("beforeend", subItem);
 				btn.dataset.subItemActive = "off";
 

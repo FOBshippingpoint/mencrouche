@@ -259,14 +259,14 @@ async function main() {
 		(() => {
 			const otherAddStickyMenuItem: MenuItem = {
 				name: "otherAddStickyGroup",
-				subItems: [],
+				subMenus: [],
 			};
 			window.on("registerSticky", (e) => {
 				const modelType: string = (e as CustomEvent).detail.type;
 				if (modelType !== "note") {
 					// skip note since we add it before.
 					const model = getStickyPluginModelByType(modelType)!;
-					otherAddStickyMenuItem.subItems?.push({
+					otherAddStickyMenuItem.subMenus?.push({
 						name: `${modelType}__addSticky`,
 						icon: model.meta?.contextMenuIcon,
 						execute() {

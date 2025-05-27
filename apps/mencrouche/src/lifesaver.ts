@@ -82,8 +82,8 @@ const sourcer = {
 export function isCloudSyncEnabled() {
 	let isCloudSyncEnabled = storage.get("isCloudSyncEnabled");
 	if (isCloudSyncEnabled === null) {
-		setIsCloudSyncEnabled(true);
-		return true;
+		setIsCloudSyncEnabled(false);
+		return false;
 	}
 	return isCloudSyncEnabled === "true";
 }

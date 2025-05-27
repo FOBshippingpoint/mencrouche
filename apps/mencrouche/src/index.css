@@ -48,6 +48,15 @@
 		--_ink-shadow: var(--_ink-shadow-light);
 		--_bg: var(--_bg-light);
 	}
+	#documentStatus.saved div {
+		background-color: rgb(34, 139, 34);
+	}
+	#documentStatus.saving div {
+		background-color: rgb(255, 165, 0);
+	}
+	#documentStatus.unsaved div {
+		background-color: rgb(220, 20, 60);
+	}
 }
 [data-theme="dark"],
 .dark {
@@ -60,8 +69,8 @@
 	--text-1: var(--color-1);
 	--text-2: var(--color-5);
 
-	--link: oklch(90% 80% var(--paletteHue));
-	--link-visited: oklch(90% 80% calc(var(--paletteHue) * 1.2));
+	--link: oklch(90% 80% var(--palette-hue));
+	--link-visited: oklch(90% 80% calc(var(--palette-hue) * 1.2));
 
 	button {
 		--_ink-shadow: var(--_ink-shadow-dark);
