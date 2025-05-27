@@ -11,7 +11,7 @@ export const zh_TW = defineConfig({
 function nav(): DefaultTheme.NavItem[] {
 	return [
 		{ text: "Mencrouche", link: "https://mencrouche.com" },
-		// { text: "I'm User", link: "/user" },
+		{ text: "我是使用者", link: "zh_TW/user" },
 		{ text: "我是開發者", link: "zh_TW/dev" },
 		{ text: "關於", link: "zh_TW/about" },
 	];

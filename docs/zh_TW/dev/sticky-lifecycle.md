@@ -1,119 +1,120 @@
-# Sticky Lifecycle Hooks
+# 便利貼生命週期
 
-To allow plugins to manage their state and behavior within the application, the sticky component provides three core lifecycle functions that your plugin should implement: `onMount`, `onSave`, and `onDelete`. These functions act as hooks, called by the system at specific points in a sticky's existence.
+便利貼提供了三個核心的生命週期函式供插件實作：`onMount`、`onSave`、`onDelete`。這些函式稱為 "Hooks"，由系統在便利貼生命週期的特定時間點呼叫。
 
-This diagram illustrates the sequence and triggers for these lifecycle functions:
+此圖表說明了這些生命週期函式的順序和觸發時機：
 
 ![](/media/sticky-lifecycle/sticky_lifecycle_diagram.webp)
 
+
 ## `onMount(sticky, origin)`
 
-This function is called when a sticky is added to the workspace, either through user action or restoration from saved data. It's the primary place for your plugin to perform initial setup.
+當便利貼被新增到 Workspace 時被呼叫（無論是透過使用者操作或從已儲存的資料還原），是插件執行初始設定的主要位置。
 
-**Arguments:**
+**引數：**
 
-* `sticky`: The sticky HTMLDivElement instance. This object inherits Div element attributres and methods, and potentially a `pluginConfig` property (see below).
-* `origin` (string): Indicates why `onMount` was called:
-    * `"create"`: The sticky was newly created (e.g., user clicked an 'add sticky' button).
-    * `"restore"`: The sticky is being recreated from previously saved data.
+  * `sticky`：便利貼的 HTMLDivElement 實例，繼承了 Div 元素的屬性和方法，並**可能**包含`pluginConfig`屬性（詳見下文）。
+  * `origin`：指出`onMount`被呼叫的原因：
+      * `"create"`：表示便利貼是新建立的（例如，使用者點擊了「新增」按鈕）。
+      * `"restore"`：表示便利貼正從先前儲存的資料中重新建立。
 
-**Purpose:**
+**用途：**
 
-* **Initialization:** Set up the sticky's initial state, appearance, and behavior.
-* **DOM Manipulation:** Populate or replace the content of the sticky's body.
-* **Add Controls:** Add custom buttons or widgets to the sticky's header.
-* **Restore State:** If `origin` is `"restore"`, use the data available in `sticky.pluginConfig` (populated from a previous `onSave` call) to restore the plugin's state.
+  * **初始化：** 設定便利貼的初始狀態、外觀和行為。
+  * **DOM 操作：** 填入或替換便利貼 Body 的內容。
+  * **新增控制項：** 在便利貼 Header 新增自訂元件（如按鈕）。
+  * **還原狀態：** 若`origin`是`"restore"`，則使用`sticky.pluginConfig`（從先前的`onSave`呼叫中填入的資料）中的資料來還原插件的狀態。
 
-**Example Usage:**
+**使用範例：**
 
 ```javascript
-// Example plugin implementation
+// 範例插件實作
 onMount(sticky, origin) {
   if (origin === "create") {
-    // This sticky was just created. Maybe ask the user for initial input.
-    // e.g., sticky.replaceBody = h('<input placeholder="Enter URL" />');
-    // attach event listener to the button...
-    console.log("New sticky created, performing initial setup.");
+    // 便利貼剛被建立，可以在此提示使用者輸入初始內容。
+    // 例如：sticky.replaceBody = h('<input placeholder="輸入網址" />');
+    // 為按鈕附加事件監聽器...
+    console.log("新的便利貼已建立，正在執行初始設定。");
   } else if (origin === "restore") {
-    // This sticky is being restored from saved data.
-    // Use sticky.pluginConfig to set up the state.
-    // e.g., const savedUrl = sticky.pluginConfig.url;
+    // 這個便利貼正在從已儲存的資料中還原。
+    // 使用 sticky.pluginConfig 來設定狀態。
+    // 例如：const savedUrl = sticky.pluginConfig.url;
     // displayContentBasedOnUrl(sticky, savedUrl);
-    console.log("Sticky restored from data:", sticky.pluginConfig);
+    console.log("便利貼已從資料還原：", sticky.pluginConfig);
   }
-  // Common setup for both create and restore can go here.
+  // 建立和還原共通的設定可以放在這裡...
 }
 ```
 
 ## `onSave(sticky)`
 
-This function is called when the application needs to save the sticky's state. This typically happens explicitly when the user saves, or automatically just before a sticky is about to be deleted.
+當 Mencrouche 需要儲存便利貼的狀態時被呼叫。這通常在使用者明確儲存時發生，或在便利貼即將被刪除前自動發生。
 
-**Arguments:**
+**引數：**
 
-* `sticky`: The sticky instance object.
+  * `sticky`：便利貼的實例。
 
-**Purpose:**
+**用途：**
 
-* **Persist State:** Return a JSON-serializable object containing all the necessary data required to restore the plugin's state later using `onMount` (with `origin` as `"restore"`).
+  * **持久化狀態：** 回傳一個可序列化為 JSON 的物件，其中包含稍後使用`onMount`（且`origin == "restore"`）還原插件狀態所需的所有資料。
 
-**Return Value:**
+**回傳值：**
 
-* A JSON-serializable object representing the plugin's state, or `null`/`undefined` if there's nothing specific to save for this plugin. The returned object will be stored and passed back as `sticky.pluginConfig` during a subsequent `onMount` call with `origin` set to `"restore"`.
+  * 一個代表插件狀態的可序列化為 JSON 的物件；如果此插件沒有特定內容需要儲存，則回傳`null`或`undefined`。回傳的物件將被儲存，並在後續呼叫`onMount`且`origin`設定為`"restore"`時，作為`sticky.pluginConfig`傳回。
 
-**Example Usage:**
+**使用範例：**
 
 ```javascript
-// Example plugin implementation
+// 範例插件實作
 onSave(sticky) {
-  // Assume plugin logic stores data in a 'plugin' namespace
+  // 假設插件邏輯將資料儲存在 'plugin' 命名空間中
   if (sticky.plugin) {
     return {
       videoId: sticky.plugin.videoId,
       autoplay: sticky.plugin.shouldAutoplay,
       lastPosition: sticky.plugin.currentProgress,
-      // Any other data needed for restoration
+      // 還原所需的任何其他資料
     };
   }
-  // Or return nothing if this plugin has no state to save
-  // Explicit return statement is not required
+  // 或者，如果此插件沒有狀態需要儲存，則不需要明確 return
 }
 ```
 
 ## `onDelete(sticky)`
 
-This function is called just before a sticky is removed from the workspace. It's the designated place for cleaning up resources used by the plugin.
+在便利貼從工作空間移除前被呼叫。是清理插件所使用資源的好時機。
 
-**Arguments:**
+**引數：**
 
-* `sticky`: The sticky instance object.
+  * `sticky`：便利貼的實例。
 
-**Purpose:**
+**用途：**
+  * **資源清理：** 釋放便利貼消失後不再需要的任何資源。這可以防止記憶體洩漏或不必要的背景處理程序（例如：Object URL）。
+  * **停止處理程序：** 取消任何進行中的操作，例如`setInterval`、`setTimeout`、待處理的網路請求，或與此便利貼實例特別相關的事件監聽器。
 
-* **Resource Cleanup:** Release any resources that are no longer needed once the sticky is gone. This prevents memory leaks or unnecessary background processes. (e.g., Object URLs)
-* **Stop Processes:** Cancel any ongoing operations like timers (`setInterval`), intervals (`setTimeout`), pending network requests, or event listeners associated specifically with this sticky instance.
-
-**Example Usage:**
+**使用範例：**
 
 ```javascript
-// Example plugin implementation
+// 範例插件實作
 onDelete(sticky) {
-  // If the plugin created an object URL
+  // 如果插件建立了物件 URL
   if (sticky.plugin && sticky.plugin.imageUrl) {
     URL.revokeObjectURL(sticky.plugin.imageUrl);
-    console.log("Revoked Object URL for sticky:", sticky.id);
+    console.log("已銷毀 ${sticky.id} 便利貼的 Object URL");
   }
 }
 ```
 
-## Summary
+## 總結
 
 * **`onMount(sticky, origin)`**
-    * **When:** Called upon sticky creation (`origin == "create"`) or restoration (`origin == "restore"`).
-    * **Use:** Initialize the plugin, set up DOM elements, and restore state using `sticky.pluginConfig` if applicable.
+  * **時機：** 在便利貼建立時（`origin == "create"`）或還原時（`origin == "restore"`）呼叫。
+  * **用途：** 初始化插件、設定 DOM 元素，適用時使用`sticky.pluginConfig`還原狀態。
 * **`onSave(sticky)`**
-    * **When:** Called on explicit save actions and automatically before deletion or application shutdown.
-    * **Use:** Return a JSON object containing essential data needed to fully restore the plugin's state later via `onMount`.
+  * **時機：** 在明確的儲存操作以及在刪除或應用程式關閉前自動呼叫。
+  * **用途：** 回傳一個 JSON 物件，其中包含稍後透過`onMount`完全還原插件狀態所需的必要資料。
 * **`onDelete(sticky)`**
-    * **When:** Called just before the sticky is destroyed.
-    * **Use:** Clean up any resources, timers, intervals, or listeners specific to the sticky.
+  * **時機：** 在便利貼被銷毀前呼叫。
+  * **用途：** 清理與該便利貼相關的任何資源。
+
+可以閱讀[sticky plugins 原始碼](https://github.com/FOBshippingpoint/mencrouche/tree/main/apps/mencrouche/src/stickyPlugins)了解更多用途。

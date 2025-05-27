@@ -73,12 +73,14 @@ Get-ChildItem -r -File *.png | Select-Object -ExpandProperty FullName | % { cweb
 - [x] Context menu two-side icon to match browser convention.
 - [x] Redesign dock api.
 - [x] Add setting option for disabling script execution.
-- [ ] Add ability to configure dock appearance (hide/show, placement, grow).
+- [x] Add ability to configure dock appearance (hide/show, placement, grow).
 - [x] Add opengraph metadata.
     - https://developers.facebook.com/tools/debug/?q=https%3A%2F%2Ftweakpane.github.io%2Fdocs%2Fix
     - https://poker.line.naver.jp/
     - https://www.freecodecamp.org/news/what-is-open-graph-and-how-can-i-use-it-for-my-website/
     - https://ogp.me/
+- [ ] Ask filename to save (or unnamed.png?) for image sticky.
+- [ ] Auto adjust aspect ratio for image sticky.
 
 ## BUGS
 

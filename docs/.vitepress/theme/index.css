@@ -78,3 +78,25 @@ kbd {
 	position: relative;
 	top: -1px;
 }
+
+.browser-card {
+	display: flex;
+	flex-direction: row;
+	gap: 0.8em;
+	align-items: center;
+	margin-top: 2.5rem;
+	img {
+		width: 3rem;
+	}
+	h3 {
+		font-size: 1.5rem;
+		font-weight: semi-bold;
+		margin-top: 0;
+		color: var(--vp-c-text-2);
+	}
+}
+
+.screenshot {
+	margin-top: 1rem;
+	border-radius: 0.5rem;
+}

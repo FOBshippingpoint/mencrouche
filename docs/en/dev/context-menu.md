@@ -96,7 +96,7 @@ Adds a visual separator (`<hr>`) between groups of menu items:
 
 ## Submenus
 
-You can create **nested menus** using the `subItems` field:
+You can create **nested menus** using the `subMenus` field:
 
 Example:
 
@@ -105,7 +105,7 @@ registerContextMenu("settingsMenu", [
   {
     name: "settings",
     icon: "lucide-settings",
-    subItems: [
+    subMenus: [
       { name: "generalSettings", execute: openGeneralSettings },
       { name: "privacySettings", execute: openPrivacySettings },
     ],

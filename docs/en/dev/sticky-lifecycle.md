@@ -117,3 +117,5 @@ onDelete(sticky) {
 * **`onDelete(sticky)`**
     * **When:** Called just before the sticky is destroyed.
     * **Use:** Clean up any resources, timers, intervals, or listeners specific to the sticky.
+
+You can read [sticky plugins source code](https://github.com/FOBshippingpoint/mencrouche/tree/main/apps/mencrouche/src/stickyPlugins) to understand practical usage.

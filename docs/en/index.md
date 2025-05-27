@@ -15,6 +15,9 @@ hero:
       text: Try Now
       link: https://mencrouche.com
     - theme: alt
+      text: I'm User
+      link: /user
+    - theme: alt
       text: I'm Developer
       link: /dev
 

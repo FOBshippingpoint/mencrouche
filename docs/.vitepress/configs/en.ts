@@ -11,7 +11,7 @@ export const en = defineConfig({
 function nav(): DefaultTheme.NavItem[] {
 	return [
 		{ text: "Mencrouche", link: "https://mencrouche.com" },
-		// { text: "I'm User", link: "/user" },
+		{ text: "I'm User", link: "/user" },
 		{ text: "I'm Developer", link: "/dev" },
 		{ text: "About", link: "/about" },
 	];
