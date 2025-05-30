@@ -15,11 +15,8 @@ hero:
       text: 立即使用
       link: https://mencrouche.com
     - theme: alt
-      text: 我是使用者
+      text: 這是什麼？
       link: /zh_TW/user
-    - theme: alt
-      text: 我是開發者
-      link: /zh_TW/dev
 
 features:
   - icon: 📝

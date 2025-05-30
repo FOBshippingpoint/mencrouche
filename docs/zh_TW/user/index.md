@@ -1,6 +1,13 @@
-# Getting Started
+# 什麼是 Mencrouche？
 
-你可以把 [Mencrouche](https://mencrouche.com) 視為一般網頁使用。
+Mencrouche 是個根據你自己的需求定義的首頁。
+
+> 還記得你可以把某個網頁設為瀏覽器首頁的時代嗎？（當然不是 hao123）每次打開瀏覽器就可以看到熟悉的頁面，從那裡開始暢遊網路。
+
+Mencrouche 嘗試讓首頁變成「<abbr title="真正意義上的homepage">你的家</abbr>」，利用便利貼組成自己需要入口：建立常用書籤、收藏待閱書單、隨手筆記、YouTube 影片、Spotify 專輯...打造你愛貓的照片牆？沒問題～
+
+
+你可以把 [Mencrouche](https://mencrouche.com) 存為我的最愛。
 
 或者將 Mencrouche 設為瀏覽器預設分頁：
 

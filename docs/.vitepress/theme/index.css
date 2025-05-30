@@ -100,3 +100,11 @@ kbd {
 	margin-top: 1rem;
 	border-radius: 0.5rem;
 }
+
+.VPImage.image-src {
+  transform: translate(-50%, -50%) rotate(0);
+  transition: all 0.1s ease-in;
+}
+.VPImage.image-src:hover {
+  transform: translate(-50%, -50%) rotate(8deg);
+}

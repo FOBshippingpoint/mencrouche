@@ -4,7 +4,7 @@ layout: home
 
 hero:
   name: Mencrouche
-  text: More Than a Startpage
+  text: Homepage, for Real
   tagline: It's your personal dashboard, content hub, and visual workspace – all in one.
   image:
     src: /icon.svg
@@ -12,14 +12,11 @@ hero:
     width: 200rem
   actions:
     - theme: brand
-      text: Try Now
+      text: Build My Homepage
       link: https://mencrouche.com
     - theme: alt
-      text: I'm User
+      text: What's This?
       link: /user
-    - theme: alt
-      text: I'm Developer
-      link: /dev
 
 features:
   - icon: 📝
