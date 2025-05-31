@@ -612,6 +612,15 @@ h6 {
 	border-radius: var(--radius-2);
 }
 
+.ghost .markdown .divider,
+.ghost.markdown .divider {
+	opacity: 0;
+}
+.peakGhost .ghost .markdown .divider,
+.peakGhost .ghost.markdown .divider {
+	opacity: 0.5;
+}
+
 .innerCrate {
 	position: absolute;
 	transform-origin: 0 0;
