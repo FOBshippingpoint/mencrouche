@@ -1,7 +1,13 @@
 import { $$$ } from "../utils/tools";
 import Quill, { Delta } from "quill";
 import { registerSticky } from "../sticky/sticky";
-import type { StickyPlugin, StickyPluginModel } from "@mencrouche/types";
+import { registerContextMenu } from "../contextMenu";
+import {
+	type MenuItem,
+	type Sticky,
+	type StickyPlugin,
+	type StickyPluginModel,
+} from "@mencrouche/types";
 
 declare module "@mencrouche/types" {
 	interface StickyPluginRegistry {
@@ -14,6 +20,7 @@ interface NotePlugin extends StickyPlugin {
 	config: {
 		contents: Delta;
 	};
+	toggleToolbar: () => void;
 }
 
 const toolbarOptions = [
@@ -28,6 +35,7 @@ const noteSticky: StickyPluginModel<"note"> = {
 	onMount(sticky, origin) {
 		const quillDom = $$$("div");
 		sticky.replaceBody(quillDom);
+		sticky.dataset.contextMenu = "note basic";
 		sticky.plugin.quill = new Quill(quillDom, {
 			modules: {
 				toolbar: toolbarOptions,
@@ -54,6 +62,8 @@ const noteSticky: StickyPluginModel<"note"> = {
 		if (sticky.pluginConfig) {
 			sticky.plugin.quill.setContents(sticky.pluginConfig.contents);
 		}
+
+		sticky.plugin.toggleToolbar = () => sticky.classList.toggle("hideToolbar");
 	},
 	onSave(sticky) {
 		return { contents: sticky.plugin.quill.getContents() };
@@ -61,6 +71,22 @@ const noteSticky: StickyPluginModel<"note"> = {
 	onDelete() {},
 };
 
+const noteStickyMenuItems: MenuItem[] = [
+	(sticky: Sticky<"note">) => ({
+		name: sticky.classList.contains("hideToolbar")
+			? "noteStickyHideToolbarOn"
+			: "noteStickyHideToolbarOff",
+		icon: sticky.classList.contains("hideToolbar")
+			? "lucide-eye"
+			: "lucide-eye-closed",
+		execute() {
+			sticky.plugin.toggleToolbar();
+		},
+	}),
+	"hr",
+];
+
 export function initNoteSticky() {
 	registerSticky(noteSticky);
+	registerContextMenu("note", noteStickyMenuItems);
 }

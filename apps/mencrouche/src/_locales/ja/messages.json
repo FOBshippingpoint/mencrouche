@@ -343,6 +343,14 @@
 		"message": "単一列表示",
 		"description": "Context menu label for toggle off markdown sticky split view."
 	},
+	"noteStickyHideToolbarOn": {
+		"message": "ツールバーを非表示",
+		"description": "Context menu label for hiding note sticky toolbar."
+	},
+	"noteStickyHideToolbarOff": {
+		"message": "ツールバーを表示",
+		"description": "Context menu label for unhiding note sticky toolbar."
+	},
 	"maximizeSticky": {
 		"message": "付箋を最大化",
 		"description": "Context menu option to maximize a sticky note."

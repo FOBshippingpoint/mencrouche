@@ -1388,6 +1388,11 @@ dialog {
 	}
 }
 
+.note.hideToolbar {
+	.ql-toolbar {
+		display: none;
+	}
+}
 .note .stickyBody {
 	display: flex;
 	flex-direction: column;

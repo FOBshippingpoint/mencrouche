@@ -343,6 +343,14 @@
 		"message": "Single-Column View",
 		"description": "Context menu label for toggle off markdown sticky split view."
 	},
+	"noteStickyHideToolbarOn": {
+		"message": "Hide Toolbar",
+		"description": "Context menu label for hiding note sticky toolbar."
+	},
+	"noteStickyHideToolbarOff": {
+		"message": "Show Toolbar",
+		"description": "Context menu label for unhiding note sticky toolbar."
+	},
 	"maximizeSticky": {
 		"message": "Maximize Sticky Note",
 		"description": "Context menu option to maximize a sticky note."
