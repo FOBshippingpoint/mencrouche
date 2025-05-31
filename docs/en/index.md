@@ -4,8 +4,8 @@ layout: home
 
 hero:
   name: Mencrouche
-  text: Homepage, for Real
-  tagline: It's your personal dashboard, content hub, and visual workspace – all in one.
+  text: An On-demand Homepage
+  tagline: It's your digital home, content hub, and visual workspace – all in one.
   image:
     src: /icon.svg
     alt: Mencrouche
@@ -40,7 +40,7 @@ features:
     <div class="feature-description"><h3>Media Integration</h3><p>Mencrouche can embed Spotify, YouTube, and even website in stickies. Store your favorites song, taking notes while watching YouTube video.</p></div>
     <video class="round hero" autoplay="" muted="" loop="true" playsinline="" src="/media/index/spotify.webm"></video>
     <img class="round" src="/media/index/markdown.webp"></img>
-    <div class="feature-description"><h3>Beyond WYSIWYG</h3><p>Write fast, focused, and frictionless with Markdown sticky. Use split view to preview the output instantly.</p></div>
+    <div class="feature-description"><h3>Markdown Support</h3><p>Write fast, focused, and frictionless with Markdown sticky. Use split view to preview the output instantly.</p></div>
     <video class="round hero" autoplay="" muted="" loop="true" playsinline="" src="/media/index/markdown.webm"></video>
 </div>
 

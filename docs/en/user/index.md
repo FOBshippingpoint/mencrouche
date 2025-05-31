@@ -1,4 +1,10 @@
-# Getting Started
+# What is Mencrouche?
+
+Mencrouche is an on-demand "homepage."
+
+> Remember when you could set any webpage as your browser's homepage? Mencrouche revives that idea, allowing you to start your internet journey from a page you create.
+
+Mencrouche is like your digital home; you fill it with the elements you need. For example, you can create bookmarks, todo lists, notes, embed YouTube videos, or add Spotify playlists. If you want to fill your homepage with photos of your cat, that's not a problem either!
 
 You can open Mencrouche [here](https://mencrouche.com) as normal website.
 
