@@ -524,7 +524,7 @@
 		"description": "Button title for iframe sticky."
 	},
 	"note__addStickyBtnTitle": {
-		"message": "新增Markdown便利貼",
+		"message": "新增便利貼",
 		"description": "Button title for note sticky."
 	},
 	"note__addSticky": {

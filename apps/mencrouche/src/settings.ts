@@ -702,17 +702,16 @@ function setupDataObservers() {
 	});
 
 	// Theme
-	const defaultTheme =
-		localStorage.getItem("theme") ??
-		dataset.getOrSetItem("theme", queryPrefersColorScheme());
-	document.documentElement.setAttribute("data-theme", defaultTheme);
-
 	dataset.on<"light" | "dark">("theme", (_, theme) => {
 		document.documentElement.setAttribute("data-theme", theme as string);
 		els.themeToggle.checked = theme === "light";
 		localStorage.setItem("theme", theme as string);
 		markDirtyAndSaveDocument();
 	});
+	dataset.getOrSetItem(
+		"theme",
+		localStorage.getItem("theme") ?? queryPrefersColorScheme(),
+	);
 
 	// UI Opacity
 	dataset.on<number>("uiOpacity", (_, uiOpacity) => {
