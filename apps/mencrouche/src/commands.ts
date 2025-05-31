@@ -41,9 +41,14 @@ function updateFilteredCommands() {
 		filteredCommands = commands;
 	} else {
 		const fuzzy = new Fuzzy(
-			commands.map((command) => ({ text: command.name, command })),
+			commands.flatMap((command) => [
+				{ text: command.name, command },
+				{ text: n81i.t(command.name), command },
+			]),
 		);
-		filteredCommands = fuzzy.search(query).map((result) => result.item.command);
+		filteredCommands = [
+			...new Set(fuzzy.search(query).map((result) => result.item.command)),
+		];
 	}
 
 	const frag = document.createDocumentFragment();
