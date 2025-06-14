@@ -51,6 +51,7 @@ features:
 
 <div class="gallery">
     <h2>打造屬於你的首頁<div class="no-bold">自由編排、組合你需要的元素</div></h2>
+    <iframe src="https://www.youtube.com/embed/UGeh9hNmjJs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
     <img src="/media/index/student.webp"></img>
     <img src="/media/index/cook.webp"></img>
     <img src="/media/index/tmr.webp"></img>
