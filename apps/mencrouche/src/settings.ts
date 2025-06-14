@@ -698,6 +698,7 @@ function setupDataObservers() {
 		if (n81i.isInitialized()) {
 			await n81i.changeLanguage(locale);
 			n81i.translatePage();
+			document.documentElement.lang = toBcp47LangTag(locale);
 		}
 	});
 
