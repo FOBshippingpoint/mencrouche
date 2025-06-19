@@ -82,6 +82,9 @@
 	dialog {
 		background-color: var(--surface-2);
 	}
+	pre:has(code) {
+		background: #2d2d2d;
+	}
 }
 
 body::before {
@@ -1582,7 +1585,6 @@ dialog {
 }
 
 pre:has(code) {
-	background: #2d2d2d;
 	border-radius: var(--radius-conditional-2);
 	padding: var(--size-2);
 }
