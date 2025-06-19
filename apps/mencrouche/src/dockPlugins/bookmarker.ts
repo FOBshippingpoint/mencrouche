@@ -148,6 +148,7 @@ const colorInput = form.$<HTMLInputElement>('[name="backgroundColor"]')!;
 const iconInput = form.$<HTMLInputElement>('[name="icon"]')!;
 const labelInput = form.$<HTMLInputElement>('[name="label"]')!;
 const urlLikeInput = form.$<HTMLInputElement>('[name="urlLike"]')!;
+const targetInput = form.$<HTMLInputElement>('[name="target"]')!;
 
 dialog.$('[data-i18n="cancelSubmitBtn"]')!.on("click", () => dialog.close());
 form.on("submit", handleSubmit);
@@ -161,6 +162,9 @@ urlLikeInput.on("input", () => onUrlLikeInputDebounced());
 labelInput.on("input", () => updatePreview({ label: labelInput.value }));
 colorInput.on("input", () =>
 	updatePreview({ backgroundColor: colorInput.value }),
+);
+targetInput.on("input", () =>
+	updatePreview({ target: targetInput.value as BookmarkData["target"] }),
 );
 
 form.$('[data-i18n="getRandomBookmarkColorBtn"]')!.on("click", () => {
