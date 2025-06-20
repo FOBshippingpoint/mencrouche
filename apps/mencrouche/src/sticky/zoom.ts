@@ -48,6 +48,7 @@ export class Zoomable implements ZoomContext {
 			const rect = this.el.getBoundingClientRect();
 			const dx = (e.clientX - rect.x) / this.scale;
 			const dy = (e.clientY - rect.y) / this.scale;
+			console.log(rect);
 			// Calculate new scale
 			const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
 			const newScale = clamp(
@@ -69,12 +70,27 @@ export class Zoomable implements ZoomContext {
 	}
 
 	zoomIn() {
-		this.scale *= 1.1;
-		this.applyTransform();
+		this.zoomFactor(1.1);
 	}
 
 	zoomOut() {
-		this.scale *= 0.9;
+		this.zoomFactor(0.9);
+	}
+
+	zoomFactor(factor: number) {
+		this.zoomTo(this.scale * factor);
+	}
+
+	zoomTo(scale: number) {
+		const { width, height } = this.interactEl.getBoundingClientRect();
+		const { x, y } = this.el.getBoundingClientRect();
+		const dx = (width / 2 - x) / this.scale;
+		const dy = (height / 2 - y) / this.scale;
+		const newX = this.translateX + (width / 2 - x) - dx * scale;
+		const newY = this.translateY + (height / 2 - y) - dy * scale;
+		this.scale = scale;
+		this.translateX = newX;
+		this.translateY = newY;
 		this.applyTransform();
 	}
 
