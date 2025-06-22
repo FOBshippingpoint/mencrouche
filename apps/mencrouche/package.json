@@ -32,7 +32,7 @@
 		"web-ext": "^8.4.0"
 	},
 	"description": "A highly customizable web extension for new tab. Bring your own content to build your web experience.",
-	"license": "MIT",
+	"license": "AGPL-3.0",
 	"scripts": {
 		"test": "vitest",
 		"format": "biome format --write",
