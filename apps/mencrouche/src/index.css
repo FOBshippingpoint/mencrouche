@@ -109,6 +109,7 @@ html,
 body,
 main {
 	height: 100%;
+  font-size: 100%; /* Reset font size for Chrome web extension, see https://stackoverflow.com/a/72050395 */
 }
 
 button:disabled {
