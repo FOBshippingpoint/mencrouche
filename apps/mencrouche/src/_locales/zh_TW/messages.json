@@ -92,7 +92,7 @@
 		"description": "Text for the export document button."
 	},
 	"extensionDescription": {
-		"message": "新分頁",
+		"message": "專屬於你個人的首頁",
 		"description": "Description of the extension."
 	},
 	"imageUrlIsNotValidAlert": {

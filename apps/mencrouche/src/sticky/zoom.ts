@@ -95,8 +95,7 @@ export class Zoomable implements ZoomContext {
 	}
 
 	zoomReset() {
-		this.scale = 1;
-		this.applyTransform();
+		this.zoomTo(1);
 	}
 
 	transformReset() {

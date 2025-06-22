@@ -92,7 +92,7 @@
 		"description": "Text for the export document button."
 	},
 	"extensionDescription": {
-		"message": "New tab",
+		"message": "A on-demand new tab homepage.",
 		"description": "Description of the extension."
 	},
 	"imageUrlIsNotValidAlert": {
