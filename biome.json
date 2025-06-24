@@ -12,7 +12,8 @@
 			"packages/**/*",
 			"apps/**/*",
 			"!**/node_modules/**",
-			"!**/dist/**"
+			"!**/dist/**",
+			"!**/*.min.js"
 		]
 	},
 	"formatter": {

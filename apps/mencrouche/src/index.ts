@@ -235,7 +235,7 @@ n81i.init({
 	fallback: "en",
 	resourceLoader: async (locale: string) => {
 		let url: string;
-		if (window.browser) {
+		if (window.browser || window.chrome?.runtime?.id) {
 			url = `./_locales/${locale}/messages.json`;
 		} else {
 			url = (urls as any)[locale];

@@ -154,8 +154,6 @@ const markdownSticky: StickyPluginModel<"markdown"> = {
 			const fragment = document.createRange().createContextualFragment(html);
 			for (const el of fragment.querySelectorAll("pre code")) {
 				const language = el.className.slice(9);
-				// Prism is load by cdn using script tag in index.html
-				window?.Prism.plugins.autoloader.loadLanguages(language);
 				if (window?.Prism.languages[language]) {
 					el.innerHTML = window.Prism.highlight(
 						(el as HTMLElement).innerText,

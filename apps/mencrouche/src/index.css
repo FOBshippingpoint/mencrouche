@@ -1,9 +1,8 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap");
-@import "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css";
-
 /* 
- * Parcel needs 'npm:' prefix to import css from node_modules.
+ * Parcel use 'npm:' prefix to import css from node_modules.
  */
+@import "npm:quill/dist/quill.snow.css";
+@import "npm:prismjs/themes/prism-tomorrow.min.css";
 @import "npm:open-props/index.css";
 @import "npm:open-props/palette.css";
 @import "npm:open-props/normalize.css";
@@ -109,7 +108,7 @@ html,
 body,
 main {
 	height: 100%;
-  font-size: 100%; /* Reset font size for Chrome web extension, see https://stackoverflow.com/a/72050395 */
+	font-size: 100%; /* Reset font size for Chrome web extension, see https://stackoverflow.com/a/72050395 */
 }
 
 button:disabled {

@@ -15,6 +15,15 @@ clean:
 build:
 	bun run --filter=@mencrouche/app site:build
 
+# Build packages
+build-package:
+	bun run --filter=@mencrouche/dataset \
+				  --filter=@mencrouche/apocalypse \
+				  --filter=@mencrouche/dollars \
+				  --filter=@mencrouche/n81i \
+					build
+	bun run --filter=@mencrouche/types build
+
 format:
 	bun run format
 

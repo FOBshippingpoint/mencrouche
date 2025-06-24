@@ -80,7 +80,7 @@ Get-ChildItem -r -File *.png | Select-Object -ExpandProperty FullName | % { cweb
     - https://www.freecodecamp.org/news/what-is-open-graph-and-how-can-i-use-it-for-my-website/
     - https://ogp.me/
 - [ ] Ask filename to save (or unnamed.png?) for image sticky.
-- [ ] Auto adjust aspect ratio for image sticky.
+- [x] Auto adjust aspect ratio for image sticky.
 
 ## BUGS
 
