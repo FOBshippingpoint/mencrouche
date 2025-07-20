@@ -42,14 +42,21 @@ jobs:
           CLOUD_SYNC_URL: ${{ secrets.CLOUD_SYNC_URL }}
           IS_DEV_MODE: false
           UMAMI_WEBSITE_ID: ${{ secrets.UMAMI_WEBSITE_ID }}
-        run: bun run --filter=@mencrouche/app site:build
+        run: |
+          bun run --filter=@mencrouche/dataset \
+                  --filter=@mencrouche/apocalypse \
+                  --filter=@mencrouche/dollars \
+                  --filter=@mencrouche/n81i \
+                  build
+          bun run --filter=@mencrouche/types build
+          bun run --filter=@mencrouche/app site:build
       - name: Setup pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload dist repository
-          path: './apps/mencrouche/dist/site'
+          path: './apps/mencrouche/dist'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
