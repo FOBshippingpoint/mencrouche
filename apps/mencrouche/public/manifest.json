@@ -9,7 +9,7 @@
 		"newtab": "index.html"
 	},
 	"icons": {
-		"128": "public/icon_128.png"
+		"128": "icon_128.png"
 	},
 	"default_locale": "en",
 	"permissions": ["activeTab", "storage"]

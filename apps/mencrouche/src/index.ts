@@ -20,20 +20,6 @@ import type { MenuItem } from "@mencrouche/types";
 import { shortcutManager } from "./shortcutManager";
 import { loadDocument, saveDocument } from "./lifesaver";
 import { addTodoAfterLoad, dataset } from "./dataWizard";
-// The `url:` prefix is a custom prefix defined in `.parcelrc`.
-// Which aims to get the url of transformed resource, in raw format.
-// see https://github.com/parcel-bundler/parcel/issues/1080#issuecomment-557240449
-// for more information
-// TODO:
-// Currently, this approach increase bundle size in webextension mode, we should
-// find another way to dynamic import the url based on the current parcel
-// command (website or ext).
-// @ts-ignore
-import en from "url:./_locales/en/messages.json";
-// @ts-ignore
-import zh_TW from "url:./_locales/zh_TW/messages.json";
-// @ts-ignore
-import ja from "url:./_locales/ja/messages.json";
 import { executeCommand, registerCommand } from "./commands";
 import type { Command } from "@mencrouche/types";
 import { initNoteSticky } from "./stickyPlugins/note";
@@ -43,8 +29,6 @@ import { initBookmarkDock } from "./dockPlugins/bookmarker";
 import { isSmallScreen } from "./utils/screenSize";
 import { createDock, getDockPluginTypes } from "./dock/dock";
 import { initImageSticky } from "./stickyPlugins/image";
-
-const urls = { en, zh_TW, ja };
 
 const defaultCommands: Command[] = [
 	{
@@ -234,12 +218,7 @@ n81i.init({
 	availableLocales: AVAILABLE_LOCALES,
 	fallback: "en",
 	resourceLoader: async (locale: string) => {
-		let url: string;
-		if (window.browser || window.chrome?.runtime?.id) {
-			url = `./_locales/${locale}/messages.json`;
-		} else {
-			url = (urls as any)[locale];
-		}
+		const url = `/_locales/${locale}/messages.json`;
 		const response = await fetch(url);
 		return await response.json();
 	},
@@ -339,11 +318,14 @@ addPublicApi();
 main();
 
 // Tracking...
-if (process.env.IS_DEV_MODE !== "true" && process.env.UMAMI_WEBSITE_ID) {
+if (
+	import.meta.env.IS_DEV_MODE !== "true" &&
+	import.meta.env.UMAMI_WEBSITE_ID
+) {
 	const tag = document.createElement("script");
 	tag.src = "https://cloud.umami.is/script.js";
 	tag.defer = true;
-	tag.dataset.websiteId = process.env.UMAMI_WEBSITE_ID;
+	tag.dataset.websiteId = import.meta.env.UMAMI_WEBSITE_ID;
 	const firstScriptTag = document.getElementsByTagName("script")[0];
 	firstScriptTag?.parentNode!.insertBefore(tag, firstScriptTag);
 }

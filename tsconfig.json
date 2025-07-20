@@ -1,23 +1,23 @@
 /* Source: https://www.totaltypescript.com/tsconfig-cheat-sheet */
 {
-  "compilerOptions": {
-    "target": "es2022",
-    "module": "preserve",
-    "lib": ["es2022", "dom", "dom.iterable"],
-    "strict": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowJs": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "verbatimModuleSyntax": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
-    "declaration": true,
-    "baseUrl": ".",
-    "composite": true,
-    "paths": {
-      "@mencrouche/*": ["packages/*/src"]
-    }
-  }
+	"compilerOptions": {
+		"target": "es2022",
+		"module": "preserve",
+		"lib": ["es2022", "dom", "dom.iterable"],
+		"strict": true,
+		"skipLibCheck": true,
+		"esModuleInterop": true,
+		"allowJs": true,
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"verbatimModuleSyntax": true,
+		"noUncheckedIndexedAccess": true,
+		"noImplicitOverride": true,
+		"declaration": true,
+		"baseUrl": ".",
+		"composite": true,
+		"paths": {
+			"@mencrouche/*": ["packages/*/src"]
+		}
+	}
 }

@@ -1,5 +1,6 @@
 import { $$$ } from "../utils/tools";
-import Quill, { Delta } from "quill";
+import type Quill from "quill";
+import type { Delta } from "quill";
 import { registerSticky } from "../sticky/sticky";
 import { registerContextMenu } from "../contextMenu";
 import {
@@ -23,6 +24,8 @@ interface NotePlugin extends StickyPlugin {
 	toggleToolbar: () => void;
 }
 
+let QuillModule: typeof Quill;
+
 const toolbarOptions = [
 	[{ header: [1, 2, 3, 4, false] }],
 	["bold", "italic", "underline", "strike", { color: [] }, { background: [] }], // toggled buttons
@@ -36,23 +39,28 @@ const noteSticky: StickyPluginModel<"note"> = {
 		const quillDom = $$$("div");
 		sticky.replaceBody(quillDom);
 		sticky.dataset.contextMenu = "note basic";
-		sticky.plugin.quill = new Quill(quillDom, {
-			modules: {
-				toolbar: toolbarOptions,
-				keyboard: {
-					bindings: {
-						undo: {
-							key: "z",
-							shortKey: true,
-							handler: function () {
-								// If the quill sticky is focused, then let quill's undo pass.
-								return sticky.contains(document.activeElement);
+		setTimeout(async () => {
+			if (!QuillModule) {
+				QuillModule = (await import("quill")).default;
+			}
+			sticky.plugin.quill = new QuillModule(quillDom, {
+				modules: {
+					toolbar: toolbarOptions,
+					keyboard: {
+						bindings: {
+							undo: {
+								key: "z",
+								shortKey: true,
+								handler: function () {
+									// If the quill sticky is focused, then let quill's undo pass.
+									return sticky.contains(document.activeElement);
+								},
 							},
 						},
 					},
 				},
-			},
-			theme: "snow",
+				theme: "snow",
+			});
 		});
 		if (origin === "create") {
 			setTimeout(() => {

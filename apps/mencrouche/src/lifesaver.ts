@@ -29,8 +29,8 @@ const storage = {
 	},
 };
 
-if (process.env.CLOUD_SYNC_URL && storage.get("url") === null) {
-	storage.set("url", process.env.CLOUD_SYNC_URL);
+if (import.meta.env.CLOUD_SYNC_URL && storage.get("url") === null) {
+	storage.set("url", import.meta.env.CLOUD_SYNC_URL);
 }
 
 const sourcer = {

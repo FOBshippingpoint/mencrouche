@@ -1,15 +1,15 @@
 /* 
  * Parcel use 'npm:' prefix to import css from node_modules.
  */
-@import "npm:quill/dist/quill.snow.css";
-@import "npm:prismjs/themes/prism-tomorrow.min.css";
-@import "npm:open-props/index.css";
-@import "npm:open-props/palette.css";
-@import "npm:open-props/normalize.css";
-@import "npm:open-props/buttons.css";
-@import "npm:open-props/forms.css";
-@import "npm:open-props/animations.css";
-@import "npm:open-props/utilities.css";
+@import "quill/dist/quill.snow.css";
+@import "prismjs/themes/prism-tomorrow.min.css";
+@import "open-props/index.css";
+@import "open-props/palette.css";
+@import "open-props/normalize.css";
+@import "open-props/buttons.css";
+@import "open-props/forms.css";
+@import "open-props/animations.css";
+@import "open-props/utilities.css";
 
 :root {
 	--pageBackground: unset;
@@ -1596,7 +1596,8 @@ pre:has(code) {
 	left: 0;
 	width: 100vw;
 	height: 100vh;
-	background-image: linear-gradient(45deg, #ccc 25%, transparent 25%),
+	background-image:
+		linear-gradient(45deg, #ccc 25%, transparent 25%),
 		linear-gradient(-45deg, #ccc 25%, transparent 25%),
 		linear-gradient(45deg, transparent 75%, #ccc 75%),
 		linear-gradient(-45deg, transparent 75%, #ccc 75%);

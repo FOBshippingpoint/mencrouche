@@ -1,8 +1,12 @@
 {
-  "name": "menrouche",
-  "private": true,
-  "scripts": {
-    "format": "biome format --write"
-  },
-  "workspaces": ["apps/*", "packages/*", "docs"]
+	"name": "menrouche",
+	"private": true,
+	"scripts": {
+		"format": "biome format --write"
+	},
+	"workspaces": [
+		"apps/*",
+		"packages/*",
+		"docs"
+	]
 }

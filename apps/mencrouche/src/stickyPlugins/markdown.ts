@@ -1,10 +1,9 @@
-import { marked } from "marked";
 import { registerSticky } from "../sticky/sticky";
 import { registerContextMenu } from "../contextMenu";
 import type { MenuItem } from "@mencrouche/types";
 import { blobToDataUrl } from "../utils/toDataUrl";
 import { getTemplateFragment } from "../utils/getTemplate";
-import DOMPurify from "dompurify";
+import type DOMPurify from "dompurify";
 import { markDirtyAndSaveDocument } from "../lifesaver";
 import { isScriptExecutionAllowed } from "../settings";
 import type { IconToggle } from "../component/iconToggle";
@@ -13,6 +12,7 @@ import type {
 	Sticky,
 	StickyPluginModel,
 } from "@mencrouche/types";
+import type { marked } from "marked";
 
 declare module "@mencrouche/types" {
 	interface StickyPluginRegistry {
@@ -29,6 +29,9 @@ interface MarkdownPlugin extends StickyPlugin {
 		blobUrlDataUrlMap: BlobUrlDataUrl[];
 	};
 }
+
+let markedModule: typeof marked;
+let DOMPurifyModule: typeof DOMPurify;
 
 // TODO: we do not revokeObjectURL when the link is gone
 // This may cause serious memory problem. should improve later.
@@ -138,14 +141,20 @@ const markdownSticky: StickyPluginModel<"markdown"> = {
 			}
 		});
 
-		function updatePreview() {
-			const dirtyHtml = marked.parse(textarea.value) as string;
+		async function updatePreview() {
+			if (!markedModule) {
+				markedModule = (await import("marked")).marked;
+			}
+			const dirtyHtml = markedModule.parse(textarea.value) as string;
 			let html: string;
 			if (isScriptExecutionAllowed()) {
 				html = dirtyHtml;
 			} else {
+				if (!DOMPurifyModule) {
+					DOMPurifyModule = (await import("dompurify")).default;
+				}
 				// Sanitize the HTML content before parse.
-				html = DOMPurify.sanitize(dirtyHtml, {
+				html = DOMPurifyModule.sanitize(dirtyHtml, {
 					// allow showing image
 					ALLOWED_URI_REGEXP:
 						/^(?:(?:https):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
