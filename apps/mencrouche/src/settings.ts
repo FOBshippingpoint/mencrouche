@@ -235,11 +235,17 @@ function createConfirmReloadDialog(customJs: string) {
 			{
 				"data-i18n": "okBtn",
 				onClick() {
-					changesManager.cancel();
-					isFirstJsLoad = false;
 					dataset.setItem("customJs", customJs);
 					dialog.close();
 				},
+			},
+			{
+				"data-i18n": "reloadPageBtn",
+				onClick() {
+					dataset.setItem("customJs", customJs);
+					location.reload();
+				},
+				type: "reset",
 			},
 		],
 		onClose() {
@@ -564,9 +570,7 @@ function setupEventListeners() {
 	els.customJsTextArea.on("input", () => {
 		changesManager.setChange("customJs", () => {
 			const customJs = els.customJsTextArea.value;
-			changesManager.setChange("setCustomJs", () => {
-				createConfirmReloadDialog(customJs).open();
-			});
+			createConfirmReloadDialog(customJs).open();
 		});
 	});
 

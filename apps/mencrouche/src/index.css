@@ -1,6 +1,3 @@
-/* 
- * Parcel use 'npm:' prefix to import css from node_modules.
- */
 @import "quill/dist/quill.snow.css";
 @import "prismjs/themes/prism-tomorrow.min.css";
 @import "open-props/index.css";

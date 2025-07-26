@@ -491,6 +491,10 @@
 		"message": "OK",
 		"description": "Button label for OK."
 	},
+	"reloadPageBtn": {
+		"message": "再読み込み",
+		"description": "Button label for reload page."
+	},
 	"reloadNeeded": {
 		"message": "再読み込みが必要です",
 		"description": "Dialog title notifying the user that a page refresh is needed to apply custom JavaScript."

@@ -14,7 +14,8 @@
 			"apps/**/*",
 			"!**/node_modules/**",
 			"!**/dist/**",
-			"!**/*.min.js"
+			"!**/*.min.js",
+			"!**/*.svg"
 		]
 	},
 	"formatter": {
