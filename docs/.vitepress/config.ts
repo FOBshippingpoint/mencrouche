@@ -53,4 +53,5 @@ export default defineConfig({
 			provider: "local",
 		},
 	},
+  ignoreDeadLinks: "localhostLinks"
 });
