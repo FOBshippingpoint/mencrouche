@@ -69,6 +69,7 @@ const imageSticky: StickyPluginModel<"image"> = {
 		if (pluginConfig) {
 			img.src = pluginConfig.imgSrc;
 			img.alt = pluginConfig.imgAlt;
+			img.title = img.alt;
 			sticky.replaceBody(img);
 		} else {
 			sticky.replaceBody(imagePicker);
@@ -79,6 +80,7 @@ const imageSticky: StickyPluginModel<"image"> = {
 			const { url, name } = (e as CustomEvent<ImageChangeDetail>).detail;
 			img.src = url;
 			img.alt = name ?? "unnamed";
+			img.title = img.alt;
 			sticky.replaceBody(img);
 			downloadBtn.disabled = false;
 			copyBtn.disabled = false;
@@ -104,9 +106,9 @@ const imageSticky: StickyPluginModel<"image"> = {
 				window.screen.availWidth * 0.8,
 				window.screen.availHeight * 0.8,
 			);
-			// TODO: I think I din't consider header height 🥵
+			// TODO: I think I din't consider header height, just hardcoded value 🥵
 			sticky.style.width = `${Math.round(width)}px`;
-			sticky.style.height = `${Math.round(height)}px`;
+			sticky.style.height = `${Math.round(height + 35)}px`;
 		};
 	},
 	onSave(sticky) {
@@ -134,7 +136,10 @@ export function initImageSticky() {
 
 		const url = await handlePasteImage(e as ClipboardEvent);
 		if (url) {
-			workspace.createSticky({ type: "image", pluginConfig: { imgSrc: url } });
+			workspace.createSticky({
+				type: "image",
+				pluginConfig: { imgSrc: url, imgAlt: "unnamed" },
+			});
 		}
 	});
 }
