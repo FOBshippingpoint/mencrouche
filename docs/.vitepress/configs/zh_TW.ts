@@ -43,6 +43,26 @@ function sidebar(): DefaultTheme.Sidebar {
 				],
 			},
 			{
+				text: "貢獻",
+				base: "zh_TW/dev/",
+				items: [
+					{ text: "為 Mencrouche 貢獻", link: "contributing" },
+					{
+						text: "撰寫程式碼",
+						base: "zh_TW/dev/",
+						items: [{ text: "設定開發環境", link: "set-up-environment" }],
+					},
+					{
+						text: "撰寫文件",
+						base: "zh_TW/dev/",
+						items: [
+							{ text: "文件簡介", link: "about-documentation" },
+							{ text: "設定撰寫文件環境", link: "set-up-doc-environment" },
+						],
+					},
+				],
+			},
+			{
 				text: "附錄",
 				base: "zh_TW/dev/",
 				items: [{ text: "詞彙表", link: "glossary" }],
