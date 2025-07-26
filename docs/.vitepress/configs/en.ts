@@ -44,6 +44,27 @@ function sidebar(): DefaultTheme.Sidebar {
 				],
 			},
 			{
+				text: "Contributing",
+				base: "/dev/",
+				items: [
+					{ text: "Contributing to Mencrouche", link: "contributing" },
+					{
+						text: "Code Patches",
+						items: [{ text: "Set Up Environment", link: "set-up-environment" }],
+					},
+					{
+						text: "Writing Documentation",
+						items: [
+							{ text: "About Documentation", link: "about-documentation" },
+							{
+								text: "Set Up Documentation Environment",
+								link: "set-up-doc-environment",
+							},
+						],
+					},
+				],
+			},
+			{
 				text: "Appendix",
 				base: "/dev/",
 				items: [{ text: "Glossary", link: "glossary" }],
