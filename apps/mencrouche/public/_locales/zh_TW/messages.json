@@ -439,14 +439,6 @@
 		"message": "同步密鑰",
 		"description": "Input label for syncing service authorization key."
 	},
-	"discardBtn": {
-		"message": "放棄並載入",
-		"description": "Dialog button label to confirm discard current changes and load selected file."
-	},
-	"syncRemoteAuthKeyInputLabel": {
-		"message": "同步密鑰",
-		"description": "Input label for syncing service authorization key."
-	},
 	"allowScriptExecution": {
 		"message": "啟用程式碼執行",
 		"description": "Dialog title that asking user to grant permission for allowing JavaScript and CSS injection."
