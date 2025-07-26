@@ -61,16 +61,15 @@ const noteSticky: StickyPluginModel<"note"> = {
 				},
 				theme: "snow",
 			});
+			if (origin === "create") {
+				setTimeout(() => {
+					sticky.$<HTMLElement>(".ql-editor")!.focus();
+				});
+			}
+			if (sticky.pluginConfig) {
+				sticky.plugin.quill.setContents(sticky.pluginConfig.contents);
+			}
 		});
-		if (origin === "create") {
-			setTimeout(() => {
-				sticky.$<HTMLElement>(".ql-editor")!.focus();
-			});
-		}
-		if (sticky.pluginConfig) {
-			sticky.plugin.quill.setContents(sticky.pluginConfig.contents);
-		}
-
 		sticky.plugin.toggleToolbar = () => sticky.classList.toggle("hideToolbar");
 	},
 	onSave(sticky) {
