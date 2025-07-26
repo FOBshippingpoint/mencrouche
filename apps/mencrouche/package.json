@@ -35,12 +35,10 @@
 		"format": "biome format --write",
 		"site:dev": "vite --open",
 		"site:build": "vite build",
-		"ext:build": "parcel build src/manifest.json --config @parcel/config-webextension",
-		"ext:firefox": "web-ext run --source-dir dist/webext-dev --target=firefox-desktop",
-		"ext:chrome": "web-ext run --source-dir dist/webext-dev --target=chromium",
-		"ext:lint-dev": "web-ext lint --source-dir dist/webext-dev",
-		"ext:lint-prod": "web-ext lint --source-dir dist/webext-prod",
-		"ext:pack-zip": "web-ext build --overwrite-dest --source-dir dist/webext-prod"
+		"ext:firefox": "web-ext run --source-dir dist --target=firefox-desktop",
+		"ext:chrome": "web-ext run --source-dir dist --target=chromium",
+		"ext:lint": "web-ext lint --source-dir dist",
+		"ext:pack-zip": "web-ext build --overwrite-dest --source-dir dist"
 	},
 	"targets": {
 		"website": {
