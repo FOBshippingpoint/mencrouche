@@ -1,3 +1,8 @@
+This file is a note to write down anything trivial.
+
+I found this is useful for tracking bugs or ideas, and can edit without any build step.
+Hence, this note is inside git repository, would be cool to see how idea/bug changes.
+
 ## Development
 
 Create symbolic link
