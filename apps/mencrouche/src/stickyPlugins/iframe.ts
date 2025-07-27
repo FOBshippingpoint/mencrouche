@@ -91,7 +91,7 @@ const iframeSticky: StickyPluginModel<"iframe"> = {
 		sticky.plugin.updateIFrameUrl = updateIFrameUrl;
 
 		if (origin === "create") {
-			sticky.classList.add("none");
+			sticky.hide();
 			current = sticky;
 			// Remove sticky if user cancel.
 			const controller = new AbortController();
@@ -99,7 +99,7 @@ const iframeSticky: StickyPluginModel<"iframe"> = {
 				"submit",
 				() => {
 					controller.abort();
-					sticky.classList.remove("none");
+					sticky.show();
 				},
 				{ signal: controller.signal },
 			);

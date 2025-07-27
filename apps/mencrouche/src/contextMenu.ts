@@ -43,7 +43,7 @@ function showContextMenu(e: MouseEvent | CustomEvent) {
 	contextMenu.replaceChildren(frag);
 
 	e.preventDefault();
-	contextMenu.classList.remove("none");
+	contextMenu.show();
 
 	let x: number;
 	let y: number;
@@ -64,7 +64,7 @@ function showContextMenu(e: MouseEvent | CustomEvent) {
 
 document.body.on("contextmenu", (e) => {
 	if (e.shiftKey) return;
-	if (!$("#settings")!.classList.contains("none")) return;
+	if (!$("#settings")!.isHidden) return;
 	if ((e.target as Element).matches("input,textarea,[contenteditable='true']"))
 		return;
 	if ((e.target as Element).closest('[data-context-menu="disabled"]')) return;
@@ -80,7 +80,7 @@ if (isIOS()) {
 
 document.on("click", (e) => {
 	if (!(e as any).target.closest(".contextMenu")) {
-		contextMenu.classList.add("none");
+		contextMenu.hide();
 	}
 });
 
@@ -230,7 +230,7 @@ function buildMenuItems(menuItems: MenuItem[], eventTarget: EventTarget) {
 				// btn.on("click", showSubItems);
 			} else if (menuItemDef.execute) {
 				btn.on("click", () => {
-					contextMenu.classList.add("none");
+					contextMenu.hide();
 					menuItemDef.execute!(eventTarget),
 						{
 							once: true,

@@ -66,7 +66,7 @@ const clockModel: DockPluginModel<"clock"> = {
 		hourHand.style.animationDelay = `${hourDelay}s`;
 
 		// If already none, omit check screen size
-		if (!dock.classList.contains("none")) {
+		if (!dock.isHidden) {
 			dock.classList.toggle("none", isSmallScreen());
 		}
 		dock.replaceBody(clock);

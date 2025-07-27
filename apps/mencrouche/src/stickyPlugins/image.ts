@@ -129,7 +129,7 @@ export function initImageSticky() {
 		const isInputting = (e.target as HTMLElement).closest(
 			"input,textarea,[contenteditable='true']",
 		);
-		const isSettingsPageOpened = !$("#settings")!.classList.contains("none");
+		const isSettingsPageOpened = !$("#settings")!.isHidden;
 		if (isInputting || isSettingsPageOpened) {
 			return;
 		}

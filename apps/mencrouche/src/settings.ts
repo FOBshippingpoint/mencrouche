@@ -304,14 +304,14 @@ function openSettingsPage() {
 		dockAppearanceConfigMap,
 	)) {
 		for (const dock of $$(`.dock.${dockType}`)) {
-			const isDockHidden = dock.classList.contains("none");
+			const isDockHidden = dock.isHidden;
 			$$<HTMLInputElement>(`[name="${dockConfigName}"]`).forEach(
 				(input) => (input.checked = isDockHidden),
 			);
 		}
 	}
 
-	els.settings.classList.remove("none");
+	els.settings.show();
 
 	// Backup attributes for possible revert
 	const uiOpacity = dataset.getOrSetItem("uiOpacity", 1);
@@ -329,7 +329,7 @@ function openSettingsPage() {
 }
 
 function closeSettingsPage() {
-	els.settings.classList.add("none");
+	els.settings.hide();
 	els.backgroundImagePicker.$<HTMLDivElement>(
 		".dropzone",
 	)!.style.backgroundImage = "unset";
@@ -337,7 +337,7 @@ function closeSettingsPage() {
 }
 
 export function toggleSettingsPage() {
-	if (els.settings.classList.contains("none")) {
+	if (els.settings.isHidden) {
 		openSettingsPage();
 	} else {
 		changesManager.cancel();
@@ -589,7 +589,7 @@ function setupEventListeners() {
 
 function setupAddStickyDropdown() {
 	els.otherAddStickyBtn.on("click", () => {
-		els.otherStickyDropdown.classList.toggle("none");
+		els.otherStickyDropdown.toggleHidden();
 	});
 
 	els.addStickyDropdownContainer.on("click", (e) => {
@@ -598,7 +598,7 @@ function setupAddStickyDropdown() {
 		)?.dataset?.command;
 		if (command) {
 			executeCommand(command);
-			els.otherStickyDropdown.classList.add("none");
+			els.otherStickyDropdown.hide();
 		}
 	});
 
@@ -607,7 +607,7 @@ function setupAddStickyDropdown() {
 			!(e.target as Element).closest(".dropdownButtons") &&
 			!(e.target as Element).closest(".otherAddStickyBtn")
 		) {
-			els.otherStickyDropdown.classList.add("none");
+			els.otherStickyDropdown.hide();
 		}
 	});
 }

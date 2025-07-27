@@ -88,8 +88,8 @@ class Bookmark {
 
 		const faviconUrl = getFaviconUrl(this.url.host);
 		this.imgEl.src = faviconUrl;
-		this.imgEl.classList.remove("none");
-		this.letterEl.classList.add("none");
+		this.imgEl.show();
+		this.letterEl.hide();
 		this.iconType = "autoFavicon";
 	}
 
@@ -104,8 +104,8 @@ class Bookmark {
 		this.letterEl.textContent = char;
 		this.letterEl.classList.toggle("singleChar", isSingle);
 		this.letterEl.classList.toggle("multiChar", !isSingle);
-		this.letterEl.classList.remove("none");
-		this.imgEl.classList.add("none");
+		this.letterEl.show();
+		this.imgEl.hide();
 		this.iconType = "firstChar";
 	}
 

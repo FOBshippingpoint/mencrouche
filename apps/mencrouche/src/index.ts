@@ -1,3 +1,4 @@
+import "./globalOverride";
 import "./component/iconToggle";
 import "./component/imagePicker";
 import { workspace, getStickyPluginModelByType } from "./sticky/sticky";

@@ -68,7 +68,7 @@ form.on("submit", (e) => {
 	const iframe = current.$("iframe")!;
 	iframe.src = url.toString();
 	iframe.height = height;
-	iframe.classList.remove("none");
+	iframe.show();
 
 	current.dataset.link = link;
 	current.dataset.height = height;
@@ -121,7 +121,7 @@ const spotifySticky: StickyPluginModel<"spotify"> = {
 		ghostBtn.on("click", sticky.toggleGhostMode);
 
 		if (origin === "create") {
-			sticky.classList.add("none");
+			sticky.hide();
 			current = sticky;
 			// Remove sticky if user cancel.
 			const controller = new AbortController();
@@ -129,7 +129,7 @@ const spotifySticky: StickyPluginModel<"spotify"> = {
 				"submit",
 				() => {
 					controller.abort();
-					sticky.classList.remove("none");
+					sticky.show();
 				},
 				{ signal: controller.signal },
 			);

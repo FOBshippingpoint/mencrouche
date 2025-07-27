@@ -30,7 +30,7 @@ export function trayTip(options: TrayTipOptions): () => void {
 
 	const trayTip = getTemplate<HTMLDivElement>("trayTipWidgets");
 	trayTip.classList.add(settings.type || "info");
-	trayTip.$(`.trayTipIcon .${settings.type}`)!.classList.remove("none");
+	trayTip.$(`.trayTipIcon .${settings.type}`)!.show();
 	trayTip.$(".trayTipTitleWrapper span")!.textContent = settings.title ?? "";
 	trayTip.$(".trayTipBody")!.textContent = settings.message ?? "";
 	trayTip

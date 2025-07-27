@@ -20,28 +20,26 @@ searchInput.on("keyup", (e) => {
 	if (
 		e.key === "Backspace" &&
 		searchInput.value === "" &&
-		!commandArg.classList.contains("none")
+		!commandArg.isHidden
 	) {
-		commandArg.classList.add("none");
+		commandArg.hide();
 	}
 });
 
 function openCommandPalette() {
 	updateFilteredCommands();
-	commandPalette.classList.remove("none");
+	commandPalette.show();
 	searchInput.focus();
 }
 
 function closeCommandPalette() {
 	searchInput.value = "";
-	commandArg.classList.add("none");
-	commandPalette.classList.add("none");
+	commandArg.hide();
+	commandPalette.hide();
 }
 
 function toggleCommandPalette() {
-	commandPalette.classList.contains("none")
-		? openCommandPalette()
-		: closeCommandPalette();
+	commandPalette.isHidden ? openCommandPalette() : closeCommandPalette();
 }
 
 function updateFilteredCommands() {
@@ -74,7 +72,7 @@ function updateFilteredCommands() {
 		li.dataset.commandName = name;
 		li.$("span")!.textContent = n81i.t(name);
 		if (shortcutManager.has(name)) {
-			li.$("kbd")!.classList.remove("none");
+			li.$("kbd")!.show();
 			li.$("kbd")!.textContent = shortcutManager.getKeySequence(name);
 		}
 		li.on("click", () => {
@@ -124,9 +122,9 @@ function chooseCommand(commandName: string) {
 	const command = commands.find((command) => command.name === commandName);
 	if (command) {
 		if (isArgCommand(command)) {
-			if (commandArg.classList.contains("none")) {
+			if (commandArg.isHidden) {
 				commandArg.textContent = n81i.t(command.argName);
-				commandArg.classList.remove("none");
+				commandArg.show();
 				searchInput.value = "";
 				commandList.replaceChildren();
 			} else {
@@ -160,7 +158,7 @@ searchKikey.on("enter", () => {
 
 // Initialize event listeners
 searchInput.on("input", () => {
-	if (commandArg.classList.contains("none")) {
+	if (commandArg.isHidden) {
 		updateFilteredCommands();
 	}
 });

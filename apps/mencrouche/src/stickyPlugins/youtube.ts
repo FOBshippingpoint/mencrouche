@@ -172,7 +172,7 @@ const youtubeSticky: StickyPluginModel<"youtube"> = {
 					sticky.plugin.player?.playVideo();
 				}
 			};
-			sticky.classList.add("none");
+			sticky.hide();
 			if (window.matchMedia("(min-width: 1536px)").matches) {
 				sticky.style.width = "864px";
 				sticky.style.height = "528px";
@@ -192,7 +192,7 @@ const youtubeSticky: StickyPluginModel<"youtube"> = {
 				"submit",
 				() => {
 					controller.abort();
-					sticky.classList.remove("none");
+					sticky.show();
 				},
 				{ signal: controller.signal },
 			);

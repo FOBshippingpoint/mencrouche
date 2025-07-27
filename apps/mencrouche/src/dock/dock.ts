@@ -211,7 +211,7 @@ registerContextMenu("dock", [
 			alwaysOnTopChk.checked = currentDock.classList.contains("alwaysOnTop");
 			transparentBackgroundChk.checked =
 				!currentDock.classList.contains("surface");
-			isDockHiddenChk.checked = currentDock.classList.contains("none");
+			isDockHiddenChk.checked = currentDock.isHidden;
 			dockAppearanceDialog.showModal();
 			shouldRestore = true;
 		},
