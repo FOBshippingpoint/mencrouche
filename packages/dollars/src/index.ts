@@ -80,12 +80,6 @@ declare global {
 	interface HTMLElement {
 		on: typeof HTMLElement.prototype.addEventListener;
 		off: typeof HTMLElement.prototype.removeEventListener;
-		setRect: (
-			left: number | null | undefined,
-			top: number | null | undefined,
-			width?: number | null | undefined,
-			height?: number | null | undefined,
-		) => void;
 	}
 	interface Element {
 		$: typeof Element.prototype.querySelector;
@@ -133,18 +127,4 @@ Element.prototype.$$ = function (selector: string) {
 DocumentFragment.prototype.$ = DocumentFragment.prototype.querySelector;
 DocumentFragment.prototype.$$ = function (selector: string) {
 	return [...this.querySelectorAll(selector)];
-};
-HTMLElement.prototype.setRect = function (left, top, width, height) {
-	if (left !== null && left !== undefined) {
-		this.style.left = `${Math.round(left)}px`;
-	}
-	if (top !== null && top !== undefined) {
-		this.style.top = `${Math.round(top)}px`;
-	}
-	if (width !== null && width !== undefined) {
-		this.style.width = `${Math.round(width)}px`;
-	}
-	if (height !== null && height !== undefined) {
-		this.style.height = `${Math.round(height)}px`;
-	}
 };

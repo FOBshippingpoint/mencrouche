@@ -1,7 +1,7 @@
 {
 	"name": "@mencrouche/dollars",
 	"description": "A DOM shorthand library for Mencrouche.",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"type": "module",
 	"files": [
 		"dist",
