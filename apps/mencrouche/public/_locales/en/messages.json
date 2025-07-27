@@ -582,5 +582,9 @@
 	"iframeLinkInput": {
 		"message": "Website Link",
 		"description": "Input label for the iframe sticky link."
+	},
+	"untitled": {
+		"message": "Untitled",
+		"description": "Untitled image filename."
 	}
 }

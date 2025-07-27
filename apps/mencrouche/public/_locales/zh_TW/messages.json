@@ -582,5 +582,9 @@
 	"iframeLinkInput": {
 		"message": "網站連結",
 		"description": "Input label for the iframe sticky link."
+	},
+	"untitled": {
+		"message": "未命名",
+		"description": "Untitled image filename."
 	}
 }

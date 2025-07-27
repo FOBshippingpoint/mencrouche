@@ -79,7 +79,7 @@ const imageSticky: StickyPluginModel<"image"> = {
 		imagePicker.on("imageChange", (e) => {
 			const { url, name } = (e as CustomEvent<ImageChangeDetail>).detail;
 			img.src = url;
-			img.alt = name ?? "unnamed";
+			img.alt = name ?? n81i.t("untitled");
 			img.title = img.alt;
 			sticky.replaceBody(img);
 			downloadBtn.disabled = false;
@@ -138,7 +138,7 @@ export function initImageSticky() {
 		if (url) {
 			workspace.createSticky({
 				type: "image",
-				pluginConfig: { imgSrc: url, imgAlt: "unnamed" },
+				pluginConfig: { imgSrc: url, imgAlt: n81i.t("untitled") },
 			});
 		}
 	});
