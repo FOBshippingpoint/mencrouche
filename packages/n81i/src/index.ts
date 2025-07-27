@@ -1,6 +1,6 @@
 export interface Message {
 	message: string;
-	description: string;
+	description?: string;
 }
 
 export interface MessagesJson {
