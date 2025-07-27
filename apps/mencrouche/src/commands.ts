@@ -3,11 +3,12 @@ import { $, n81i, apocalypse } from "./utils/tools";
 import { shortcutManager } from "./shortcutManager";
 import { getTemplate } from "./utils/getTemplate";
 import { Fuzzy } from "./utils/fuzzy";
-import type { Command } from "@mencrouche/types";
+import type { Command, ArgCommand } from "@mencrouche/types";
 
 const commandPalette = $<HTMLDivElement>("#commandPalette")!;
 const searchInput = $<HTMLInputElement>("#searchInput")!;
 const commandList = $<HTMLUListElement>("#commandList")!;
+const commandArg = $<HTMLDivElement>("#commandArg")!;
 
 const commands: Command[] = [];
 
@@ -15,19 +16,32 @@ let keyboardSelectedCommandName: string | null = null;
 
 const searchKikey = createKikey(searchInput);
 
+searchInput.on("keyup", (e) => {
+	if (
+		e.key === "Backspace" &&
+		searchInput.value === "" &&
+		!commandArg.classList.contains("none")
+	) {
+		commandArg.classList.add("none");
+	}
+});
+
 function openCommandPalette() {
 	updateFilteredCommands();
-	commandPalette.hidden = false;
+	commandPalette.classList.remove("none");
 	searchInput.focus();
 }
 
 function closeCommandPalette() {
 	searchInput.value = "";
-	commandPalette.hidden = true;
+	commandArg.classList.add("none");
+	commandPalette.classList.add("none");
 }
 
 function toggleCommandPalette() {
-	commandPalette.hidden ? openCommandPalette() : closeCommandPalette();
+	commandPalette.classList.contains("none")
+		? openCommandPalette()
+		: closeCommandPalette();
 }
 
 function updateFilteredCommands() {
@@ -40,8 +54,11 @@ function updateFilteredCommands() {
 	if (query === "") {
 		filteredCommands = commands;
 	} else {
+		filteredCommands = commands.filter((command) =>
+			command.show ? command.show() : true,
+		);
 		const fuzzy = new Fuzzy(
-			commands.flatMap((command) => [
+			filteredCommands.flatMap((command) => [
 				{ text: command.name, command },
 				{ text: n81i.t(command.name), command },
 			]),
@@ -57,9 +74,8 @@ function updateFilteredCommands() {
 		li.dataset.commandName = name;
 		li.$("span")!.textContent = n81i.t(name);
 		if (shortcutManager.has(name)) {
+			li.$("kbd")!.classList.remove("none");
 			li.$("kbd")!.textContent = shortcutManager.getKeySequence(name);
-		} else {
-			li.$("kbd")!.remove();
 		}
 		li.on("click", () => {
 			closeCommandPalette();
@@ -100,9 +116,29 @@ function selectCommand(direction: "up" | "down") {
 	keyboardSelectedCommandName = selectedItem.dataset.commandName!;
 }
 
-function executeKeyboardSelectedCommand() {
-	if (keyboardSelectedCommandName) {
-		executeCommand(keyboardSelectedCommandName);
+function isArgCommand(command: Command): command is ArgCommand {
+	return "argName" in command;
+}
+
+function chooseCommand(commandName: string) {
+	const command = commands.find((command) => command.name === commandName);
+	if (command) {
+		if (isArgCommand(command)) {
+			if (commandArg.classList.contains("none")) {
+				commandArg.textContent = n81i.t(command.argName);
+				commandArg.classList.remove("none");
+				searchInput.value = "";
+				commandList.replaceChildren();
+			} else {
+				executeCommand(commandName, searchInput.value);
+				closeCommandPalette();
+			}
+		} else {
+			closeCommandPalette();
+			executeCommand(commandName);
+		}
+	} else {
+		throw Error(`command [ ${commandName} ] not found`);
 	}
 }
 
@@ -117,12 +153,17 @@ searchKikey.on("arrowdown", (e) => {
 	selectCommand("down");
 });
 searchKikey.on("enter", () => {
-	closeCommandPalette();
-	executeKeyboardSelectedCommand();
+	if (keyboardSelectedCommandName) {
+		chooseCommand(keyboardSelectedCommandName);
+	}
 });
 
 // Initialize event listeners
-searchInput.on("input", updateFilteredCommands);
+searchInput.on("input", () => {
+	if (commandArg.classList.contains("none")) {
+		updateFilteredCommands();
+	}
+});
 
 shortcutManager.on(
 	"undo",
@@ -151,14 +192,21 @@ shortcutManager.on(
 	},
 );
 
-export function executeCommand(commandName: string) {
+export function executeCommand(
+	commandName: string,
+	argument: string | null = null,
+) {
 	const command = commands.find(({ name }) => name === commandName);
 	if (!command) {
 		throw Error(
 			`Command [ ${commandName} ] not found. Please call 'registerCommand' first.`,
 		);
 	}
-	command.execute();
+	if (isArgCommand(command)) {
+		command.execute(argument ?? "");
+	} else {
+		command.execute();
+	}
 }
 
 export function registerCommand(command: Command) {

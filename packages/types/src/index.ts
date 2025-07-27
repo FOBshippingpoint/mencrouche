@@ -127,11 +127,19 @@ export interface Transform {
 	scale: number;
 }
 
-export interface Command {
+interface BaseCommand {
 	name: string;
-	execute: () => void;
 	defaultShortcut?: string;
+	show?: () => boolean;
 }
+export interface NoArgCommand extends BaseCommand {
+	execute: () => void;
+}
+export interface ArgCommand extends BaseCommand {
+	execute: (argument: string) => void;
+	argName: string;
+}
+export type Command = NoArgCommand | ArgCommand;
 
 export interface MencroucheFileFormat extends Record<string, unknown> {
 	mencroucheFileFormatVersion: number;

@@ -539,18 +539,21 @@
 						</div>
 					</div>
 				</template>
-				<div id="commandPalette" hidden="">
-					<input
-						type="search"
-						id="searchInput"
-						data-i18n="commandPaletteSearchPlaceholder"
-						data-i18n-for="placeholder"
-					>
+				<div id="commandPalette" class="none">
+					<div id="searchBar">
+						<div id="commandArg" class="none"></div>
+						<input
+							type="search"
+							id="searchInput"
+							data-i18n="commandPaletteSearchPlaceholder"
+							data-i18n-for="placeholder"
+						>
+					</div>
 					<ul id="commandList"></ul>
 					<template id="commandListItem">
 						<li>
 							<span></span>
-							<kbd></kbd>
+							<kbd class="none"></kbd>
 						</li>
 					</template>
 				</div>
