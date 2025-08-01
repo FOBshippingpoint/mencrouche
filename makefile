@@ -11,6 +11,11 @@ dev:
 build:
 	bun run --bun --filter=@mencrouche/app site:build
 
+# Build static website for the app.
+build-web-ext:
+	bun run --bun --filter=@mencrouche/app site:build
+	bun run --bun --filter=@mencrouche/app ext:pack
+
 # Build packages
 build-package:
 	bun run --filter=@mencrouche/dataset \

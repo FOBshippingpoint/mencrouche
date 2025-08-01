@@ -21,8 +21,7 @@
 		"default_icon": {
 			"128": "icon_128.png"
 		},
-		"default_title": "",
 		"default_popup": "popup.html"
 	},
-	"permissions": ["activeTab", "storage"]
+	"permissions": ["storage"]
 }

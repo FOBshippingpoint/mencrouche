@@ -38,7 +38,7 @@
 		"ext:firefox": "web-ext run --source-dir dist --target=firefox-desktop",
 		"ext:chrome": "web-ext run --source-dir dist --target=chromium",
 		"ext:lint": "web-ext lint --source-dir dist",
-		"ext:pack-zip": "web-ext build --overwrite-dest --source-dir dist"
+		"ext:pack": "web-ext build --overwrite-dest --source-dir dist"
 	},
 	"type": "module"
 }

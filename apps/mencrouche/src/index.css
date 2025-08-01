@@ -676,14 +676,14 @@ h6 {
 }
 #commandArg {
 	place-content: center;
-	padding-block-end: 0.15lh;
+	flex: 1;
+	text-wrap: nowrap;
 	padding-inline: var(--size-2);
 	border: var(--border-size-2) solid var(--surface-2);
 	border-radius: var(--radius-conditional-2);
 }
 #searchInput {
 	width: 100%;
-	flex-grow: 1fr;
 	padding: var(--size-1) var(--size-1) var(--size-1) var(--size-8);
 	border: none;
 	border-radius: var(--radius-conditional-2);
