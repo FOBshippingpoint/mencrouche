@@ -40,21 +40,5 @@
 		"ext:lint": "web-ext lint --source-dir dist",
 		"ext:pack-zip": "web-ext build --overwrite-dest --source-dir dist"
 	},
-	"targets": {
-		"website": {
-			"source": "src/index.html",
-			"publicUrl": "./",
-			"distDir": "dist/site"
-		},
-		"webext-dev": {
-			"sourceMap": {
-				"inline": true,
-				"inlineSources": true
-			}
-		},
-		"webext-prod": {
-			"sourceMap": false
-		}
-	},
 	"type": "module"
 }
