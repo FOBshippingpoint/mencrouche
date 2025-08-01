@@ -586,5 +586,9 @@
 	"untitled": {
 		"message": "無題",
 		"description": "Untitled image filename."
+	},
+	"isOverrideNewTabUrlLabel": {
+		"message": "mencrouche.com を新しいタブページとして設定します",
+		"description": "Checkbox label for overriding new tab URL."
 	}
 }

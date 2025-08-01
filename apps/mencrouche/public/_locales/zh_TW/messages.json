@@ -586,5 +586,13 @@
 	"untitled": {
 		"message": "未命名",
 		"description": "Untitled image filename."
+	},
+	"isOverrideNewTabUrlLabel": {
+		"message": "將mencrouche.com設為新分頁",
+		"description": "Checkbox label for overriding new tab URL."
+	},
+	"isOverrideNewTabUrlHelp": {
+		"message": "啟用此選項以執行自訂JavaScript，這將會需要網路連線才能使用。",
+		"description": "Help message for overriding new tab URL."
 	}
 }

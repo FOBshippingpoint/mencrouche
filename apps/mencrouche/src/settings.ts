@@ -699,6 +699,9 @@ function setupDataObservers() {
 
 	dataset.on<string>("locale", async (_, locale) => {
 		if (!locale) return;
+		(
+			els.langDropdown.$(`option[value="${locale}"]`) as HTMLOptionElement
+		).selected = true;
 		if (n81i.isInitialized()) {
 			await n81i.changeLanguage(locale);
 			n81i.translatePage();
@@ -764,9 +767,6 @@ function setupLanguageDropdown(locales: string[]) {
 
 	for (const locale of locales) {
 		const option = $$$("option");
-		if (dataset.getItem("locale") === locale) {
-			option.selected = true;
-		}
 		option.value = locale;
 
 		const bcp47 = toBcp47LangTag(locale);

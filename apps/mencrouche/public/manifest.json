@@ -5,12 +5,24 @@
 	"author": "FOBshippingpoint",
 	"description": "__MSG_extensionDescription__",
 	"homepage_url": "https://github.com/FOBshippingpoint/mencrouche",
+	"default_locale": "en",
 	"chrome_url_overrides": {
 		"newtab": "index.html"
 	},
 	"icons": {
 		"128": "icon_128.png"
 	},
-	"default_locale": "en",
+	"browser_specific_settings": {
+		"gecko": {
+			"id": "addon@mencrouche.com"
+		}
+	},
+	"action": {
+		"default_icon": {
+			"128": "icon_128.png"
+		},
+		"default_title": "",
+		"default_popup": "popup.html"
+	},
 	"permissions": ["activeTab", "storage"]
 }
