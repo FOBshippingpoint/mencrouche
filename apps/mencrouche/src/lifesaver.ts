@@ -131,11 +131,11 @@ export async function saveDocument() {
 
 const debouncedSaveDocument = debounce(saveDocument);
 
-export const markDirtyAndSaveDocument = () => {
+export function markDirtyAndSaveDocument() {
 	if (dataset.getOrSetItem("isAutoSaveEnabled", true)) {
 		switchDocumentStatus("saving");
 		debouncedSaveDocument();
 	} else {
 		switchDocumentStatus("unsaved");
 	}
-};
+}

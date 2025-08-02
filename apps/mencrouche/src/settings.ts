@@ -18,6 +18,7 @@ import {
 import {
 	isCloudSyncEnabled,
 	markDirtyAndSaveDocument,
+	saveDocument,
 	setIsCloudSyncEnabled,
 } from "./lifesaver";
 import type { ImageChangeDetail, ImagePicker } from "./component/imagePicker";
@@ -126,7 +127,7 @@ function createChangesManager() {
 			for (const todo of todos.values()) {
 				todo();
 			}
-			markDirtyAndSaveDocument();
+			saveDocument();
 			isDirty = false;
 		},
 		cancel() {
@@ -227,7 +228,7 @@ function createDiscardCurrentChangesDialog(file: File | undefined) {
 	return dialog;
 }
 
-function createConfirmReloadDialog(customJs: string) {
+function createConfirmReloadDialog() {
 	const dialog = createDialog({
 		title: "reloadNeeded",
 		message: "reloadNeededMessage",
@@ -235,17 +236,8 @@ function createConfirmReloadDialog(customJs: string) {
 			{
 				"data-i18n": "okBtn",
 				onClick() {
-					dataset.setItem("customJs", customJs);
 					dialog.close();
 				},
-			},
-			{
-				"data-i18n": "reloadPageBtn",
-				onClick() {
-					dataset.setItem("customJs", customJs);
-					location.reload();
-				},
-				type: "reset",
 			},
 		],
 		onClose() {
@@ -348,8 +340,6 @@ export function toggleSettingsPage() {
 // -----------------------------------------------------------------------------
 // Feature: Script Execution Management
 // -----------------------------------------------------------------------------
-
-let isFirstJsLoad = true;
 
 export function isScriptExecutionAllowed(): boolean {
 	return localStorage.getItem("isScriptExecutionAllowed") === "true";
@@ -569,8 +559,8 @@ function setupEventListeners() {
 
 	els.customJsTextArea.on("input", () => {
 		changesManager.setChange("customJs", () => {
-			const customJs = els.customJsTextArea.value;
-			createConfirmReloadDialog(customJs).open();
+			dataset.setItem("customJs", els.customJsTextArea.value);
+			createConfirmReloadDialog().open();
 		});
 	});
 
@@ -748,16 +738,13 @@ function setupDataObservers() {
 	});
 
 	// Custom JS
-	dataset.on<string>("customJs", (_, js) => {
+	dataset.once<string>("customJs", (_, js) => {
 		// Inject JavaScript
-		if (isFirstJsLoad && isScriptExecutionAllowed()) {
-			isFirstJsLoad = false;
-			if (js) {
-				const frag = document
-					.createRange()
-					.createContextualFragment(`<script>${js}</script>`);
-				els.customJsSlot.replaceChildren(frag);
-			}
+		if (isScriptExecutionAllowed() && js) {
+			const frag = document
+				.createRange()
+				.createContextualFragment(`<script>${js}</script>`);
+			els.customJsSlot.replaceChildren(frag);
 		}
 	});
 }

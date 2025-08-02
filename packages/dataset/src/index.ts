@@ -15,6 +15,10 @@ export interface Dataset {
 		key: string,
 		callback: (oldValue: T | undefined, newValue: T | undefined) => void,
 	): () => void;
+	once<T = unknown>(
+		key: string,
+		callback: (oldValue: T | undefined, newValue: T | undefined) => void,
+	): () => void;
 	off<T = unknown>(
 		key: string,
 		callback: (oldValue: T | undefined, newValue: T | undefined) => void,
@@ -91,6 +95,22 @@ export function createDataset(): Dataset {
 			};
 			listenerMap.set(callback, listener);
 			eventTarget.addEventListener(`dataset:${key}`, listener);
+			return () => {
+				this.off(key, callback);
+			};
+		},
+
+		once<T>(
+			key: string,
+			callback: (oldValue: T | undefined, newValue: T | undefined) => void,
+		): () => void {
+			const listener = (e: Event) => {
+				const de = e as DatasetChangeEvent<T>;
+				callback(de.oldValue, de.newValue);
+				listenerMap.delete(callback);
+			};
+			listenerMap.set(callback, listener);
+			eventTarget.addEventListener(`dataset:${key}`, listener, { once: true });
 			return () => {
 				this.off(key, callback);
 			};
