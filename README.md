@@ -13,6 +13,13 @@
 
 ✨ [Try Now](https://mencrouche.com)&nbsp;&nbsp;•&nbsp;&nbsp;📘 [Documentation](https://docs.mencrouche.com)
 
+### Install as Browser Extension
+
+<!-- [<img src="./img/firefox_badge.png" height="50px" alt="firefox addons">](https://addons.mozilla.org/firefox/addon/mencrouche/) -->
+
+[<img src="./img/chrome_badge.png" height="50px" alt="chrome web store">](https://chromewebstore.google.com/detail/mencrouche/pmgcomlmdgoobpokhmklpcokmfjpijnd)
+
+
 ## Extensible API Examples
 
 Here are some examples of how you can extend Mencrouche. Visit [Mencrouche](https://mencrouche.com), open the developer tools, and paste the snippet to see the effect.
