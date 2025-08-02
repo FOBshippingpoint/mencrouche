@@ -3,7 +3,7 @@ import { registerContextMenu } from "../contextMenu";
 import { dataset, addTodoAfterLoad, addTodoBeforeSave } from "../dataWizard";
 import { getTemplate } from "../utils/getTemplate";
 import { pack } from "../utils/packer";
-import { markDirtyAndSaveDocument } from "../lifesaver";
+import { markDirtyAndSaveDocument, runButDontSaveDocument } from "../lifesaver";
 import { Zoomable, type Transform } from "./zoom";
 import { Resizable } from "./resize";
 import { Draggable } from "./drag";
@@ -910,8 +910,10 @@ addTodoAfterLoad(() => {
 		// But need to aware of element offset incorrect problem
 		// when workspace is yet not connected to the document.
 		$("#workspaceSlot")!.appendChild(workspace.outerCrate);
-		workspace.zoomable.setTransform(config.transform);
-		workspace.draggable.setOffset(config.offset);
-		workspace.restoreAndReplaceAll(config.stickies);
+		runButDontSaveDocument(() => {
+			workspace.zoomable.setTransform(config.transform);
+			workspace.draggable.setOffset(config.offset);
+			workspace.restoreAndReplaceAll(config.stickies);
+		});
 	}
 });

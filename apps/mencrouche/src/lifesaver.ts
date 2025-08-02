@@ -123,10 +123,16 @@ async function getDefaultSources() {
 	})();
 }
 
+let isAllowedSave = true;
+
 export async function saveDocument() {
-	const sources = await getDefaultSources();
-	await saveToSources(...sources);
-	switchDocumentStatus("saved");
+	if (isAllowedSave) {
+		const sources = await getDefaultSources();
+		await saveToSources(...sources);
+		switchDocumentStatus("saved");
+	} else {
+		console.debug("Didn't save because `isAllowedSave` is `false`");
+	}
 }
 
 const debouncedSaveDocument = debounce(saveDocument);
@@ -138,4 +144,10 @@ export function markDirtyAndSaveDocument() {
 	} else {
 		switchDocumentStatus("unsaved");
 	}
+}
+
+export async function runButDontSaveDocument(todo: () => Promise<void> | void) {
+	isAllowedSave = false;
+	await todo();
+	isAllowedSave = true;
 }

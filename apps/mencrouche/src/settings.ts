@@ -701,13 +701,17 @@ function setupDataObservers() {
 	});
 
 	// Theme
-	dataset.on<"light" | "dark">("theme", (_, theme) => {
+	dataset.on<"light" | "dark">("theme", (prevTheme, theme) => {
 		document.documentElement.setAttribute("data-theme", theme as string);
 		els.themeToggle.checked = theme === "light";
 		localStorage.setItem("theme", theme as string);
-		markDirtyAndSaveDocument();
+		if (
+			prevTheme /* Not load from source (i.e. not first load; is user interaction) */
+		) {
+			markDirtyAndSaveDocument();
+		}
 	});
-	dataset.getOrSetItem(
+	dataset.getItem(
 		"theme",
 		localStorage.getItem("theme") ?? queryPrefersColorScheme(),
 	);
