@@ -46,7 +46,9 @@ Hence, this note is inside git repository, would be cool to see how idea/bug cha
 - [x] iframe sticky
 - [ ] declarativeNetRequest -> unblock iframe
 - [ ] Blockly
-- [ ] Web extension version.
+- [x] Web extension version.
+- [ ] Expose traytip API and write doc
+- [ ] Add global "paste" event register (for example, pasting youtube link should create a youtube sticky etc.)
 - [x] Workspace
     - Should looks like Arc's Space, switching between *work*, *school* etc. :: we have the workspace class now, but currently just one instance at time, but it provide the possiblity to implement this feature.
 - [ ] Layout Managing

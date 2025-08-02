@@ -6,41 +6,28 @@ Mencrouche is an on-demand "homepage."
 
 Mencrouche is like your digital home; you fill it with the elements you need. For example, you can create bookmarks, todo lists, notes, embed YouTube videos, or add Spotify playlists. If you want to fill your homepage with photos of your cat, that's not a problem either!
 
+## Use It Online
+
 You can open Mencrouche [here](https://mencrouche.com) as normal website.
 
-Or you can set Mencrouche as default new tab in the web browser:
+## Use It as Browser New Tab
 
-## As Browser Default Page
+You can install browser extension to replace your browser's new tab with Mencrouche.
+That is, when you open a new tab, you will see Mencrouche page instead of browser's default new tab.
 
-> [!INFO]
-> Currently, Mencrouche only available on [https://mencrouche.com](https://mencrouche.com).
->
-> But we are actively working on the browser extension.
+We supports following browsers:
 
-<div class="browser-card">
+<a class="browser-card" target="_blank" href="https://chromewebstore.google.com/detail/mencrouche/pmgcomlmdgoobpokhmklpcokmfjpijnd">
     <img src="/media/user/index/chrome.svg"/>
-    <h3>Google Chrome</h3>
-</div>
+    <h3>Google Chrome ⭧</h3>
+</a>
 
-1. Install [New Tab Redirect](https://chromewebstore.google.com/detail/new-tab-redirect/icpgjfneehieebagbmdbhnlpiopdcmna)
-2. Enter <span style="user-select: all;">`https://mencrouche.com`</span> and click "Save".
-<img class="screenshot" src="/media/user/index/chrome_set_mencrouche_as_new_tab.webp"/>
-
-
-<div class="browser-card">
+<a class="info browser-card" target="_blank" href="https://chromewebstore.google.com/detail/mencrouche/pmgcomlmdgoobpokhmklpcokmfjpijnd">
     <img src="/media/user/index/edge.svg"/>
-    <h3>Edge</h3>
-</div>
+    <h3>Microsoft Edge ⭧</h3>
+</a>
 
-1. Install [New Tab Redirect](https://chromewebstore.google.com/detail/new-tab-redirect/icpgjfneehieebagbmdbhnlpiopdcmna)
-2. Enter <span style="user-select: all;">`https://mencrouche.com`</span> and click "Save".
-<img class="screenshot" src="/media/user/index/edge_set_mencrouche_as_new_tab.webp"/>
-
-<div class="browser-card">
-    <img src="/media/user/index/firefox.svg"/>
-    <h3>Firefox</h3>
-</div>
-
-1. Install [New Tab Override](https://addons.mozilla.org/firefox/addon/new-tab-override/)
-2. Enter <span style="user-select: all;">`https://mencrouche.com`</span>.
-<img class="screenshot" src="/media/user/index/firefox_set_mencrouche_as_new_tab.webp"/>
+<!-- <a class="browser-card" target="_blank" href="https://chromewebstore.google.com/detail/mencrouche/pmgcomlmdgoobpokhmklpcokmfjpijnd"> -->
+<!--     <img src="/media/user/index/firefox.svg"/> -->
+<!--     <h3>Mozilla Firefox ⭧</h3> -->
+<!-- </a> -->

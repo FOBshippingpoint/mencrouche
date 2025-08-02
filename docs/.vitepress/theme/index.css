@@ -85,12 +85,13 @@ kbd {
 	top: -1px;
 }
 
-.browser-card {
+a.browser-card {
 	display: flex;
 	flex-direction: row;
 	gap: 0.8em;
 	align-items: center;
-	margin-top: 2.5rem;
+	margin-top: 1.5rem;
+	text-decoration: none;
 	img {
 		width: 3rem;
 	}
