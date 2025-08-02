@@ -16,5 +16,8 @@
 	"scripts": {
 		"build": "tsc --project tsconfig.json"
 	},
-	"license": "MIT"
+	"license": "MIT",
+	"devDependencies": {
+		"typescript": "^5.9.2"
+	}
 }

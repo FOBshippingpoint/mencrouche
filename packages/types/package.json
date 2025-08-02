@@ -22,5 +22,8 @@
 		"@mencrouche/dollars": "workspace:*",
 		"@mencrouche/apocalypse": "workspace:*"
 	},
-	"license": "MIT"
+	"license": "MIT",
+	"devDependencies": {
+		"typescript": "^5.9.2"
+	}
 }
