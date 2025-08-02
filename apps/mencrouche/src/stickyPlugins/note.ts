@@ -81,8 +81,8 @@ const noteSticky: StickyPluginModel<"note"> = {
 const noteStickyMenuItems: MenuItem[] = [
 	(sticky: Sticky<"note">) => ({
 		name: sticky.classList.contains("hideToolbar")
-			? "noteStickyHideToolbarOn"
-			: "noteStickyHideToolbarOff",
+			? "noteStickyHideToolbarOff"
+			: "noteStickyHideToolbarOn",
 		icon: sticky.classList.contains("hideToolbar")
 			? "lucide-eye"
 			: "lucide-eye-closed",

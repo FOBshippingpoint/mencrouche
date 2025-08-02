@@ -1,6 +1,6 @@
 {
 	"name": "@mencrouche/app",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"author": "FOBshippingpoint",
 	"dependencies": {
 		"@mencrouche/types": "workspace:*",

@@ -340,11 +340,11 @@
 		"description": "Context menu label for toggle off markdown sticky split view."
 	},
 	"noteStickyHideToolbarOn": {
-		"message": "顯示工具列",
+		"message": "隱藏工具列",
 		"description": "Context menu label for hiding note sticky toolbar."
 	},
 	"noteStickyHideToolbarOff": {
-		"message": "隱藏工具列",
+		"message": "顯示工具列",
 		"description": "Context menu label for unhiding note sticky toolbar."
 	},
 	"maximizeSticky": {
