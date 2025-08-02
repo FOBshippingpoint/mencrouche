@@ -5,27 +5,14 @@ Hence, this note is inside git repository, would be cool to see how idea/bug cha
 
 ## Development
 
-Create symbolic link
+### Design Decision Q&A
 
-```powershell
-new-item -Path .\docs\public\icon.svg -itemtype SymbolicLink -Target ..\..\src\public\icon.svg
-``````
-
-
-```sh
-# Use `just` tool to start dev server and open webpage in browser.
-just
-```
-
-- .htmlnanorc setting will prevent parcel to strip svg viewBox attribute.
-
-Convert png to webp
-
-Please install cwebp first.
-
-```powershell
-Get-ChildItem -r -File *.png | Select-Object -ExpandProperty FullName | % { cwebp $_ -o $_.replace("png", "webp") }
-```
+- Q: Why use camelCase instead of kebab-case for HTML/CSS class/id/variables and Typescript file name?
+- A: Actually Mencrouche starts with kebab-case, but I found that is hard to select via double-click, and kebab-case is not a valid JavaScript variable name, so for example an element with HTML `id=custom-js-textarea`, I need to create another variable `customJsTextArea`, it is too annoying for me, and hard to search and replace, you will likely to miss occurrences.
+- Q: Why not using default export?
+- A: Because named export gives you great LSP auto-import, and I don't want to name things twice.
+- Q: Why name things like `Apocalypse` instead of `UndoRedoHistory` or something?
+- A: Because I like to name something unique, unlikely to conflict with other libraries or standard Web API. Also, `apocalypse` sounds cooler than `history`, and `lifesafer` is funnier compared to `saveUtil`.
 
 ## TODOs
 
