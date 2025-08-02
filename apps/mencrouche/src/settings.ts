@@ -25,6 +25,7 @@ import type { ImageChangeDetail, ImagePicker } from "./component/imagePicker";
 import type { IconToggle } from "./component/iconToggle";
 import { type DockPluginRegistry } from "@mencrouche/types";
 import { toBcp47LangTag } from "./utils/toBcp47LangTag";
+import { bowser } from "./utils/bowser";
 
 export const AVAILABLE_LOCALES = ["en", "zh_TW", "ja"];
 
@@ -787,6 +788,12 @@ function initializeSettings() {
 	setupLanguageDropdown(AVAILABLE_LOCALES);
 	setupEventListeners();
 	setupDataObservers();
+
+	if (bowser) {
+		for (const el of $$('[data-website-only="true"]')) {
+			el.hide();
+		}
+	}
 
 	// Set up data lifecycle hooks
 	addTodoBeforeSave(async () => {

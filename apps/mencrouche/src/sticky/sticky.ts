@@ -210,17 +210,11 @@ class _Workspace {
 			this.restoreSticky(sticky);
 		}
 		this.refreshHighestZIndex();
-		this.outerCrate.on(
-			"workspaceConnected",
-			() => {
-				for (const sticky of this.stickies) {
-					if (sticky.classList.contains("maximized")) {
-						this.maximize(sticky);
-					}
-				}
-			},
-			{ once: true },
-		);
+		for (const sticky of this.stickies) {
+			if (sticky.classList.contains("maximized")) {
+				this.maximize(sticky);
+			}
+		}
 	}
 
 	delete(sticky: Sticky) {
@@ -911,6 +905,11 @@ addTodoBeforeSave(() => {
 addTodoAfterLoad(() => {
 	const config = dataset.getItem<WorkspaceConfig>("workspace");
 	if (config) {
+		// TODO: Not a good idea for workspace initializing itself.
+		// Should move to the index.ts or something
+		// But need to aware of element offset incorrect problem
+		// when workspace is yet not connected to the document.
+		$("#workspaceSlot")!.appendChild(workspace.outerCrate);
 		workspace.zoomable.setTransform(config.transform);
 		workspace.draggable.setOffset(config.offset);
 		workspace.restoreAndReplaceAll(config.stickies);

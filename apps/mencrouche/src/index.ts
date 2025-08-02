@@ -285,11 +285,6 @@ async function main() {
 	} catch (error) {
 		console.log(error);
 	}
-	$("#workspaceSlot")!.appendChild(workspace.outerCrate);
-	workspace.outerCrate.dispatchEvent(
-		new CustomEvent("workspaceConnected", { bubbles: true }),
-	);
-
 	// Register default commands.
 	for (const command of defaultCommands) {
 		registerCommand(command);
