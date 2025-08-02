@@ -578,8 +578,8 @@ h6 {
 		outline: unset;
 	}
 }
-.dragging.iframe,
-.resizing.iframe {
+.dragging iframe,
+.resizing iframe {
 	/* prevent dragging, resizing interrupted when cursor accidentally captured by iframe */
 	pointer-events: none;
 }
