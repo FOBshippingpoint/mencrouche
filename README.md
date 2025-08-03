@@ -13,11 +13,25 @@
 
 ✨ [Try Now](https://mencrouche.com)&nbsp;&nbsp;•&nbsp;&nbsp;📘 [Documentation](https://docs.mencrouche.com)
 
-### Install as Browser Extension
+## Installation
+
+### Use Online
+
+Go to https://mencrouche.com and you are ready to go!!
+
+### Browser Extension
+
+Use this option if you want to set Mencrouche as browser's new tab page (i.e., whenever you open a new tab, you see Mencrouche).
+
+Limitations: browser extension does not support custom JavaScript execution.
 
 <!-- [<img src="./img/firefox_badge.png" height="50px" alt="firefox addons">](https://addons.mozilla.org/firefox/addon/mencrouche/) -->
 
 [<img src="./img/chrome_badge.png" height="50px" alt="chrome web store">](https://chromewebstore.google.com/detail/mencrouche/pmgcomlmdgoobpokhmklpcokmfjpijnd)
+
+### Build from Source
+
+Mencrouche is a static site without backend, visit [Mencrouche Docs Site](https://docs.mencrouche.com/dev/set-up-environment) for more information.
 
 
 ## Extensible API Examples
