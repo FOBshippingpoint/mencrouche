@@ -25,7 +25,7 @@ import type { ImageChangeDetail, ImagePicker } from "./component/imagePicker";
 import type { IconToggle } from "./component/iconToggle";
 import { type DockPluginRegistry } from "@mencrouche/types";
 import { toBcp47LangTag } from "./utils/toBcp47LangTag";
-import { bowser } from "./utils/bowser";
+import { bowser, isInExtensionContext } from "./utils/bowser";
 
 export const AVAILABLE_LOCALES = ["en", "zh_TW", "ja"];
 
@@ -622,21 +622,16 @@ function adjustPaletteHue(e: MouseEvent) {
 async function handleDeleteDocument() {
 	if (confirm(n81i.t("confirmDeleteDocument"))) {
 		localStorage.clear();
-		try {
-			// TODO: should use constant to avoid duplicates string.
-			// PS same in `/src/dataWizard.ts`
-			const request = indexedDB.open("mencrouche");
-			request.onupgradeneeded = (e) => {
-				const db = (e.target as IDBOpenDBRequest).result;
-				if (!db.objectStoreNames.contains("data")) {
-					db.deleteObjectStore("data");
-				}
-			};
-			alert("Deleted! Please refresh the page.");
-		} catch (error) {
-			console.log("An error occurred when deleting IndexedDB", error);
+		// TODO: should use constant to avoid duplicates string.
+		// PS same in `/src/dataWizard.ts`
+		const request = indexedDB.deleteDatabase("mencrouche");
+		request.onerror = () => {
+			console.error(request.error);
 			alert("Failed to delete data");
-		}
+		};
+		request.onsuccess = () => {
+			alert("Deleted! Please refresh the page.");
+		};
 	}
 }
 
@@ -793,7 +788,7 @@ function initializeSettings() {
 	setupEventListeners();
 	setupDataObservers();
 
-	if (bowser) {
+	if (isInExtensionContext()) {
 		for (const el of $$('[data-website-only="true"]')) {
 			el.hide();
 		}

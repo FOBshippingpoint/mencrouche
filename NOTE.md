@@ -80,6 +80,7 @@ Hence, this note is inside git repository, would be cool to see how idea/bug cha
 
 - [ ] Hint is causing overflow in dialog.
 - [ ] Popout will be hidden by sticky (e.g., quill link editing).
+- [ ] Shortcut changes didn't reflect in command palette
 - [x] (::move dock slot into workspace) Can not right-click on dock when alwaysOnTop is disabled.
 - [x] Languages dropdown showing nothing.
 - [x] Using navbar add sticky, the sticky position should at center instead of top-right.

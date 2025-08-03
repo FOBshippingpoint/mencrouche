@@ -1,4 +1,4 @@
-(globalThis.chrome ?? globalThis.browser)?.storage.sync
+(globalThis.chrome ?? globalThis.browser)?.storage?.sync
 	.get("isOverrideNewTabUrl")
 	.then(
 		(res) =>

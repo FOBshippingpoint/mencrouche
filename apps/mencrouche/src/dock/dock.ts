@@ -228,23 +228,26 @@ addTodoAfterLoad(() => {
 	// TODO:
 	// I'm not happy with this approach
 	// Might integrate dock into workspace in future.
-	window.on("workspaceConnected", () => {
-		// Clear all docks
-		getDockSlot().replaceChildren();
-		// Restore docks
-		const dockConfigs = dataset.getItem<DockConfig[]>("docks");
-		if (dockConfigs) {
-			for (const dockConfig of dockConfigs) {
-				const dock = createDock(dockConfig);
-				const model = pluginDockPool.get(dockConfig.type ?? "");
-				if (model) {
-					model.onMount(dock, "restore");
-				} else {
-					throw Error(
-						`Failed to restore dock type [ ${dockConfig.type} ]. Please register dock type first via 'registerDock'.`,
-					);
+	const interval = setInterval(() => {
+		try {
+			// Clear all docks
+			getDockSlot().replaceChildren();
+			// Restore docks
+			const dockConfigs = dataset.getItem<DockConfig[]>("docks");
+			if (dockConfigs) {
+				for (const dockConfig of dockConfigs) {
+					const dock = createDock(dockConfig);
+					const model = pluginDockPool.get(dockConfig.type ?? "");
+					if (model) {
+						model.onMount(dock, "restore");
+					} else {
+						throw Error(
+							`Failed to restore dock type [ ${dockConfig.type} ]. Please register dock type first via 'registerDock'.`,
+						);
+					}
 				}
 			}
-		}
-	});
+			clearInterval(interval);
+		} catch (error) {}
+	}, 10);
 });

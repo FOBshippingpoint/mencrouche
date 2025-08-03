@@ -904,12 +904,12 @@ addTodoBeforeSave(() => {
 });
 addTodoAfterLoad(() => {
 	const config = dataset.getItem<WorkspaceConfig>("workspace");
+	$("#workspaceSlot")!.appendChild(workspace.outerCrate);
 	if (config) {
 		// TODO: Not a good idea for workspace initializing itself.
 		// Should move to the index.ts or something
 		// But need to aware of element offset incorrect problem
 		// when workspace is yet not connected to the document.
-		$("#workspaceSlot")!.appendChild(workspace.outerCrate);
 		runButDontSaveDocument(() => {
 			workspace.zoomable.setTransform(config.transform);
 			workspace.draggable.setOffset(config.offset);

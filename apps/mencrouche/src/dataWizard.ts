@@ -14,6 +14,11 @@ const DEFAULT_STORE_NAME = "data";
 const DEFAULT_KEY = "mc";
 const FILE_FORMAT_VERSION = 1;
 
+const DEFAULT_FILE: MencroucheFileFormat = {
+	mencroucheFileFormatVersion: 1,
+	timestamp: new Date().toISOString(),
+};
+
 export type Todo = () => Promise<void> | void;
 export interface Source {
 	read(): Promise<MencroucheFileFormat>;
@@ -124,8 +129,7 @@ export async function loadFromSources(
 		}
 	}
 
-	// Check if we have any valid data
-	if (mcObjList.length === 0) {
+	if (errors.length) {
 		throw new Error(
 			`Could not load data from any source: ${errors.map((e) => e.message).join("; ")}`,
 		);
@@ -209,7 +213,7 @@ export class IndexedDbSource implements Source {
 
 			request.onsuccess = () => {
 				if (!request.result) {
-					reject(new Error(`No data found for key: ${this.key}`));
+					resolve(DEFAULT_FILE);
 					return;
 				}
 				resolve(request.result);
