@@ -17,11 +17,11 @@
  * ```
  * Get a template with a single child directly as that Element
  * ```typescript
- * const singleElement = getTemplateSingleElement<HTMLDivElement>('singleFruit');
+ * const singleElement = forkTemplateSingleElement<HTMLDivElement>('singleFruit');
  * singleElement.textContent; // "orange"
  * ```
  */
-export function getTemplate<E extends Element>(templateId: string): E {
+export function forkTemplate<E extends Element>(templateId: string): E {
 	const template = document.querySelector(
 		`template#${templateId}`,
 	) as HTMLTemplateElement;
@@ -56,11 +56,11 @@ export function getTemplate<E extends Element>(templateId: string): E {
  * ```
  * Get a template with multiple children as a DocumentFragment
  * ```typescript
- * const fragment = getTemplateFragment('fruitList');
+ * const fragment = forkTemplateFragment('fruitList');
  * fragment.querySelector(".apple"); // apple div
  * ```
  */
-export function getTemplateFragment(templateId: string): DocumentFragment {
+export function forkTemplateFragment(templateId: string): DocumentFragment {
 	const template = document.querySelector(
 		`template#${templateId}`,
 	) as HTMLTemplateElement;

@@ -2,7 +2,7 @@ import { registerDock } from "../dock/dock";
 import type { Dock, DockPlugin, DockPluginModel } from "@mencrouche/types";
 import { DragAndDropSorter } from "../dock/dragAndDropSorter";
 import { markDirtyAndSaveDocument } from "../lifesaver";
-import { getTemplate } from "../utils/getTemplate";
+import { forkTemplate } from "../utils/forkTemplate";
 import { debounce } from "../utils/debounce";
 import { $, $$$, apocalypse } from "../utils/tools";
 import { dataset } from "../dataWizard";
@@ -43,7 +43,7 @@ class Bookmark {
 		this.label = options.label;
 		this.url = parseUrl(this.urlLike);
 
-		this.anchorEl = getTemplate<HTMLAnchorElement>("bookmarkWidgets");
+		this.anchorEl = forkTemplate<HTMLAnchorElement>("bookmarkWidgets");
 		this.element = this.anchorEl;
 		this.imgEl = this.anchorEl.$("img")!;
 		this.letterEl = this.anchorEl.$("span")!;
@@ -296,7 +296,7 @@ interface BookmarkerPlugin extends DockPlugin {
 const bookmarkDock: DockPluginModel<"bookmarker"> = {
 	type: "bookmarker",
 	onMount(dock) {
-		const widgets = getTemplate("bookmarkDockWidgets");
+		const widgets = forkTemplate("bookmarkDockWidgets");
 		const addBookmarkBtn = widgets.$("button")!;
 		const mom = widgets.$("div")!;
 		new DragAndDropSorter(mom, (src, target) => {

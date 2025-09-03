@@ -2,7 +2,7 @@ import { registerSticky } from "../sticky/sticky";
 import { registerContextMenu } from "../contextMenu";
 import type { MenuItem } from "@mencrouche/types";
 import { blobToDataUrl } from "../utils/toDataUrl";
-import { getTemplateFragment } from "../utils/getTemplate";
+import { forkTemplateFragment } from "../utils/forkTemplate";
 import type DOMPurify from "dompurify";
 import { markDirtyAndSaveDocument } from "../lifesaver";
 import { isScriptExecutionAllowed } from "../settings";
@@ -107,7 +107,7 @@ const markdownSticky: StickyPluginModel<"markdown"> = {
 		contextMenuIcon: "ri:markdown-fill",
 	},
 	onMount(sticky, origin) {
-		const widgets = getTemplateFragment("markdownStickyWidgets");
+		const widgets = forkTemplateFragment("markdownStickyWidgets");
 		const editModeToggle = widgets.$<IconToggle>(".editModeToggle")!;
 		const splitViewToggle = widgets.$<IconToggle>(".splitViewToggle")!;
 		const textarea = widgets.$("textarea")!;

@@ -1,6 +1,6 @@
 import type { ImageChangeDetail } from "../component/imagePicker";
 import { registerSticky, workspace } from "../sticky/sticky";
-import { getTemplateFragment } from "../utils/getTemplate";
+import { forkTemplateFragment } from "../utils/forkTemplate";
 import { handlePasteImage } from "../utils/pasteImage";
 import {
 	copyBlobToClipboard,
@@ -56,7 +56,7 @@ const imageSticky: StickyPluginModel<"image"> = {
 		contextMenuIcon: "lucide:image",
 	},
 	onMount(sticky) {
-		const widgets = getTemplateFragment("imageStickyWidgets");
+		const widgets = forkTemplateFragment("imageStickyWidgets");
 		const downloadBtn = widgets.$<HTMLButtonElement>(".downloadBtn")!;
 		const copyBtn = widgets.$<HTMLButtonElement>(".copyBtn")!;
 		const imagePicker = widgets.$<HTMLButtonElement>("image-picker")!;

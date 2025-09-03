@@ -1,5 +1,5 @@
 import { $ } from "../utils/tools";
-import { getTemplate } from "./getTemplate";
+import { forkTemplate } from "./forkTemplate";
 
 export interface TrayTipOptions {
 	title?: string;
@@ -28,7 +28,7 @@ export function trayTip(options: TrayTipOptions): () => void {
 		...options,
 	};
 
-	const trayTip = getTemplate<HTMLDivElement>("trayTipWidgets");
+	const trayTip = forkTemplate<HTMLDivElement>("trayTipWidgets");
 	trayTip.classList.add(settings.type || "info");
 	trayTip.$(`.trayTipIcon .${settings.type}`)!.show();
 	trayTip.$(".trayTipTitleWrapper span")!.textContent = settings.title ?? "";

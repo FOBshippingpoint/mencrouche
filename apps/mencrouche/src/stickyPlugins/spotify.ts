@@ -1,7 +1,7 @@
 import { registerSticky } from "../sticky/sticky";
 import { $, n81i } from "../utils/tools";
 import { formToObject } from "../utils/formToObject";
-import { getTemplateFragment } from "../utils/getTemplate";
+import { forkTemplateFragment } from "../utils/forkTemplate";
 import type {
 	StickyPlugin,
 	Sticky,
@@ -96,7 +96,7 @@ const spotifySticky: StickyPluginModel<"spotify"> = {
 		contextMenuIcon: "mdi:spotify",
 	},
 	onMount(sticky, origin) {
-		const widgets = getTemplateFragment("spotifyStickyWidgets");
+		const widgets = forkTemplateFragment("spotifyStickyWidgets");
 		const editLinkBtn = widgets.$<HTMLButtonElement>(".editLinkBtn")!;
 		const ghostBtn = widgets.$<HTMLButtonElement>(".ghostBtn")!;
 		const iframe = widgets.$("iframe")!;

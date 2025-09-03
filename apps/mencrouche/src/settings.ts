@@ -5,7 +5,7 @@ import { createKikey } from "kikey";
 import { $, $$, $$$, n81i } from "./utils/tools";
 import { anyUrlToDataUrl } from "./utils/toDataUrl";
 import { keySequenceToString, shortcutManager } from "./shortcutManager";
-import { getTemplate } from "./utils/getTemplate";
+import { forkTemplate } from "./utils/forkTemplate";
 import { executeCommand } from "./commands";
 import {
 	addTodoAfterLoad,
@@ -365,7 +365,7 @@ export function allowScriptExecutionIfNotYetSet() {
 // -----------------------------------------------------------------------------
 
 export function createDockAppearanceItem(type: keyof DockPluginRegistry) {
-	const li = getTemplate<HTMLLIElement>("dockAppearanceItem");
+	const li = forkTemplate<HTMLLIElement>("dockAppearanceItem");
 	const input = li.$("input")!;
 	const span = li.$("span")!;
 	const inputName = dockAppearanceConfigMap[type]!;
@@ -396,7 +396,7 @@ export function createShortcutItem({
 	actionName: string;
 	keySequence: string;
 }) {
-	const label = getTemplate<HTMLLabelElement>("shortcutListItem");
+	const label = forkTemplate<HTMLLabelElement>("shortcutListItem");
 	const input = label.$("input")!;
 	const span = label.$("span")!;
 	const recordBtn = label.$<HTMLButtonElement>(".recordBtn")!;

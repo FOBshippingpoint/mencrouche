@@ -1,7 +1,7 @@
 import type { Apocalypse, Overwrite } from "@mencrouche/apocalypse";
 import { registerContextMenu } from "../contextMenu";
 import { dataset, addTodoAfterLoad, addTodoBeforeSave } from "../dataWizard";
-import { getTemplate } from "../utils/getTemplate";
+import { forkTemplate } from "../utils/forkTemplate";
 import { pack } from "../utils/packer";
 import { markDirtyAndSaveDocument, runButDontSaveDocument } from "../lifesaver";
 import { Zoomable, type Transform } from "./zoom";
@@ -131,7 +131,7 @@ class _Workspace {
 	constructor(apocalypse: Apocalypse) {
 		this.apocalypse = apocalypse;
 
-		this.outerCrate = getTemplate<HTMLDivElement>("workspaceWidgets");
+		this.outerCrate = forkTemplate<HTMLDivElement>("workspaceWidgets");
 		this.innerCrate = this.outerCrate.$<HTMLDivElement>(".innerCrate")!;
 
 		this.zoomable = new Zoomable(this.innerCrate, {
@@ -577,7 +577,7 @@ function buildBuildSticky(workspace: _Workspace) {
 			pluginConfig,
 		}: StickyConfig = {},
 	) {
-		const sticky = getTemplate<HTMLDivElement>("sticky");
+		const sticky = forkTemplate<HTMLDivElement>("sticky");
 		sticky.id = id ?? crypto.randomUUID();
 
 		// x, y will be overwrite by rect (if defined)

@@ -1,5 +1,5 @@
 import { $, $$$, n81i } from "./utils/tools";
-import { getTemplate } from "./utils/getTemplate";
+import { forkTemplate } from "./utils/forkTemplate";
 import type { MenuItem, MenuItemDefinition } from "@mencrouche/types";
 
 const contextMenu = $<HTMLDivElement>("#contextMenu")!;
@@ -175,7 +175,7 @@ function buildMenuItems(menuItems: MenuItem[], eventTarget: EventTarget) {
 			frag.appendChild($$$("hr"));
 		} else {
 			const menuItemDef = menuItem as MenuItemDefinition;
-			const btn = getTemplate<HTMLButtonElement>("menuItem");
+			const btn = forkTemplate<HTMLButtonElement>("menuItem");
 			const iconL = btn.$<HTMLElement>(".icon.left")!;
 			const span = btn.$("span")!;
 			const iconR = btn.$<HTMLElement>(".icon.right")!;

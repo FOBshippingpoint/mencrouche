@@ -1,7 +1,7 @@
 import { registerSticky } from "../sticky/sticky";
 import { $, n81i } from "../utils/tools";
 import { formToObject } from "../utils/formToObject";
-import { getTemplateFragment } from "../utils/getTemplate";
+import { forkTemplateFragment } from "../utils/forkTemplate";
 import { parseUrl } from "../utils/parseUrl";
 import type {
 	StickyPlugin,
@@ -43,7 +43,7 @@ const iframeSticky: StickyPluginModel<"iframe"> = {
 		contextMenuIcon: "lucide:globe",
 	},
 	onMount(sticky, origin) {
-		const widgets = getTemplateFragment("iframeStickyWidgets");
+		const widgets = forkTemplateFragment("iframeStickyWidgets");
 		const ghostBtn = widgets.$<HTMLButtonElement>(".ghostBtn")!;
 		const iframe = widgets.$<HTMLIFrameElement>("iframe")!;
 		const addressBar = widgets.$("input")!;

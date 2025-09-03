@@ -1,7 +1,7 @@
 import { dataset } from "../dataWizard";
 import { registerDock } from "../dock/dock";
 import type { DockPlugin, DockPluginModel } from "@mencrouche/types";
-import { getTemplate } from "../utils/getTemplate";
+import { forkTemplate } from "../utils/forkTemplate";
 import { isSmallScreen } from "../utils/screenSize";
 import { toBcp47LangTag } from "../utils/toBcp47LangTag";
 
@@ -16,7 +16,7 @@ interface ClockPlugin extends DockPlugin {}
 const clockModel: DockPluginModel<"clock"> = {
 	type: "clock",
 	onMount(dock) {
-		const clock = getTemplate("clockWidgets");
+		const clock = forkTemplate("clockWidgets");
 		const timeEl = clock.$(".time")!;
 		const dateEl = clock.$(".date")!;
 		const secondHand = clock.$<HTMLElement>(".second")!;

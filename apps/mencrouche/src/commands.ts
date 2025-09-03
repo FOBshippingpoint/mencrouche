@@ -1,7 +1,7 @@
 import { createKikey } from "kikey";
 import { $, n81i, apocalypse } from "./utils/tools";
 import { shortcutManager } from "./shortcutManager";
-import { getTemplate } from "./utils/getTemplate";
+import { forkTemplate } from "./utils/forkTemplate";
 import { Fuzzy } from "./utils/fuzzy";
 import type { Command, ArgCommand } from "@mencrouche/types";
 
@@ -68,7 +68,7 @@ function updateFilteredCommands() {
 
 	const frag = document.createDocumentFragment();
 	for (const { name } of filteredCommands) {
-		const li = getTemplate<HTMLLIElement>("commandListItem")!;
+		const li = forkTemplate<HTMLLIElement>("commandListItem")!;
 		li.dataset.commandName = name;
 		li.$("span")!.textContent = n81i.t(name);
 		if (shortcutManager.has(name)) {

@@ -1,4 +1,4 @@
-import { getTemplate } from "../utils/getTemplate";
+import { forkTemplate } from "../utils/forkTemplate";
 import { dataset, addTodoAfterLoad, addTodoBeforeSave } from "../dataWizard";
 import { $, addCss } from "../utils/tools";
 import { registerContextMenu } from "../contextMenu";
@@ -123,7 +123,7 @@ export function createDock(options: DockConfig) {
 		);
 	}
 	const model = pluginDockPool.get(options.type ?? "")!;
-	const dock = getTemplate<HTMLDivElement>("dockWidgets");
+	const dock = forkTemplate<HTMLDivElement>("dockWidgets");
 	const _dock = dock as Dock;
 	dock.id = options.id ?? crypto.randomUUID();
 	dock.className = options.className ?? `${dock.className} ${options.type}`;
