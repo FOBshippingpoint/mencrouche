@@ -3,11 +3,11 @@
 	"version": "1.0.1",
 	"author": "FOBshippingpoint",
 	"dependencies": {
-		"@mencrouche/types": "workspace:*",
-		"@mencrouche/apocalypse": "workspace:*",
-		"@mencrouche/dataset": "workspace:*",
-		"@mencrouche/dollars": "workspace:*",
-		"@mencrouche/n81i": "workspace:*"
+		"@mencrouche/types": "*",
+		"@mencrouche/apocalypse": "*",
+		"@mencrouche/dataset": "*",
+		"@mencrouche/dollars": "*",
+		"@mencrouche/n81i": "*"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.1.3",

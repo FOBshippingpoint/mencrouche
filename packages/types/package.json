@@ -17,10 +17,10 @@
 		"build": "tsc --project tsconfig.json"
 	},
 	"dependencies": {
-		"@mencrouche/n81i": "workspace:*",
-		"@mencrouche/dataset": "workspace:*",
-		"@mencrouche/dollars": "workspace:*",
-		"@mencrouche/apocalypse": "workspace:*"
+		"@mencrouche/n81i": "*",
+		"@mencrouche/dataset": "*",
+		"@mencrouche/dollars": "*",
+		"@mencrouche/apocalypse": "*"
 	},
 	"license": "MIT",
 	"devDependencies": {
