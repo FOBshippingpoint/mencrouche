@@ -8,8 +8,6 @@ import { keySequenceToString, shortcutManager } from "./shortcutManager";
 import { forkTemplate } from "./utils/forkTemplate";
 import { executeCommand } from "./commands";
 import {
-	addTodoAfterLoad,
-	addTodoBeforeSave,
 	dataset,
 	JsonFileSource,
 	loadFromSources,
@@ -26,6 +24,7 @@ import type { IconToggle } from "./component/iconToggle";
 import { type DockPluginRegistry } from "@mencrouche/types";
 import { toBcp47LangTag } from "./utils/toBcp47LangTag";
 import { bowser, isInExtensionContext } from "./utils/bowser";
+import { bus } from "./utils/bus";
 
 export const AVAILABLE_LOCALES = ["en", "zh_TW", "ja"];
 
@@ -794,19 +793,22 @@ function initializeSettings() {
 		}
 	}
 
-	// Set up data lifecycle hooks
-	addTodoBeforeSave(async () => {
-		const url = dataset.getItem<string>("backgroundImageUrl");
-		if (url?.startsWith("blob")) {
-			const dataUrl = await anyUrlToDataUrl(url);
-			dataset.setItem("backgroundImageUrl", dataUrl);
-		}
-	});
+	bus("save")
+		.when("saveStarted")
+		.do(async function saveBackground() {
+			const url = dataset.getItem<string>("backgroundImageUrl");
+			if (url?.startsWith("blob")) {
+				const dataUrl = await anyUrlToDataUrl(url);
+				dataset.setItem("backgroundImageUrl", dataUrl);
+			}
+		});
 
-	addTodoAfterLoad(() => {
-		els.customCssTextArea.value = dataset.getItem("customCss") ?? "";
-		els.customJsTextArea.value = dataset.getItem("customJs") ?? "";
-	});
+	bus("load")
+		.when("loaded")
+		.do(function initCustomStyleAndScript() {
+			els.customCssTextArea.value = dataset.getItem("customCss") ?? "";
+			els.customJsTextArea.value = dataset.getItem("customJs") ?? "";
+		});
 }
 
 // Initialize when module is loaded

@@ -1,6 +1,6 @@
 import type { Apocalypse, Overwrite } from "@mencrouche/apocalypse";
 import { registerContextMenu } from "../contextMenu";
-import { dataset, addTodoAfterLoad, addTodoBeforeSave } from "../dataWizard";
+import { dataset } from "../dataWizard";
 import { forkTemplate } from "../utils/forkTemplate";
 import { pack } from "../utils/packer";
 import { markDirtyAndSaveDocument, runButDontSaveDocument } from "../lifesaver";
@@ -17,6 +17,7 @@ import type {
 	Offset,
 	CursorPoint,
 } from "@mencrouche/types";
+import { bus } from "../utils/bus";
 
 function onEventOrTimeout<K extends keyof HTMLElementEventMap>(
 	el: HTMLElement,
@@ -899,21 +900,23 @@ export function getStickyPluginModelByType<K extends StickyPluginKey>(type: K) {
 	}
 }
 
-addTodoBeforeSave(() => {
-	dataset.setItem("workspace", workspace.saveWork());
-});
-addTodoAfterLoad(() => {
-	const config = dataset.getItem<WorkspaceConfig>("workspace");
-	$("#workspaceSlot")!.appendChild(workspace.outerCrate);
-	if (config) {
-		// TODO: Not a good idea for workspace initializing itself.
-		// Should move to the index.ts or something
-		// But need to aware of element offset incorrect problem
-		// when workspace is yet not connected to the document.
-		runButDontSaveDocument(() => {
-			workspace.zoomable.setTransform(config.transform);
-			workspace.draggable.setOffset(config.offset);
-			workspace.restoreAndReplaceAll(config.stickies);
-		});
-	}
-});
+bus("save")
+	.when("saveStarted")
+	.do(function saveWorkspace() {
+		dataset.setItem("workspace", workspace.saveWork());
+	});
+
+bus("load")
+	.when("loaded")
+	.do(async function initWorkspace() {
+		const config = dataset.getItem<WorkspaceConfig>("workspace");
+		$("#workspaceSlot")!.appendChild(workspace.outerCrate);
+		if (config) {
+			runButDontSaveDocument(() => {
+				workspace.zoomable.setTransform(config.transform);
+				workspace.draggable.setOffset(config.offset);
+				workspace.restoreAndReplaceAll(config.stickies);
+			});
+		}
+		return { triggerEvent: "workspaceConnected" };
+	});

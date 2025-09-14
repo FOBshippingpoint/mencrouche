@@ -8,6 +8,7 @@ import { createDataset } from "@mencrouche/dataset";
 import { upgradeFileToLatest } from "./upgradeFile";
 import { downloadBlobAsFile } from "./utils/toDataUrl";
 import type { MencroucheFileFormat } from "@mencrouche/types";
+import { bus } from "./utils/bus";
 
 const DEFAULT_DB_NAME = "mencrouche";
 const DEFAULT_STORE_NAME = "data";
@@ -19,7 +20,6 @@ const DEFAULT_FILE: MencroucheFileFormat = {
 	timestamp: new Date().toISOString(),
 };
 
-export type Todo = () => Promise<void> | void;
 export interface Source {
 	read(): Promise<MencroucheFileFormat>;
 	write(data: MencroucheFileFormat): Promise<void>;
@@ -35,35 +35,12 @@ const _dataset = createDataset();
 // Avoid exposing import/export methods of original dataset object
 const { toJson, toObject, fromObject, fromJson, ...dataset } = _dataset;
 
-const beforeSaveTodos: Todo[] = [];
-const afterLoadTodos: Todo[] = [];
-
-export function addTodoBeforeSave(todo: Todo) {
-	beforeSaveTodos.push(todo);
-}
-
-export function addTodoAfterLoad(todo: Todo) {
-	afterLoadTodos.push(todo);
-}
-
-/**
- * Prepares data before saving by running all registered before-save tasks
- * and setting metadata properties.
- */
-async function prepareSave(): Promise<void> {
-	const promises = beforeSaveTodos.map((t) => t());
-	await Promise.all(promises);
-	dataset.setItem("mencroucheFileFormatVersion", FILE_FORMAT_VERSION);
-	dataset.setItem("timestamp", new Date().toISOString());
-}
-
-/**
- * Finalizes data loading by running all registered after-load tasks.
- */
-async function finishLoad(): Promise<void> {
-	const promises = afterLoadTodos.map((t) => t());
-	await Promise.all(promises);
-}
+bus("save")
+	.when("saveStarted")
+	.do(function setMetadata() {
+		dataset.setItem("mencroucheFileFormatVersion", FILE_FORMAT_VERSION);
+		dataset.setItem("timestamp", new Date().toISOString());
+	});
 
 /**
  * Saves data to one or more storage sources.
@@ -75,7 +52,7 @@ export async function saveToSources(...sources: Source[]): Promise<void> {
 		throw new Error("No sources provided for saving");
 	}
 
-	await prepareSave();
+	await bus("save").trigger("saveStarted");
 	const mcObj = toObject.call(_dataset) as MencroucheFileFormat;
 
 	const errors: Error[] = [];
@@ -146,7 +123,7 @@ export async function loadFromSources(
 	const upgraded = upgradeFileToLatest(mcObjToImport);
 	// Apply the data and run post-load tasks
 	fromObject.call(_dataset, upgraded);
-	await finishLoad();
+	await bus("load").trigger("loaded");
 }
 
 /**

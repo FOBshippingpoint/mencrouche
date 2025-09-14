@@ -58,6 +58,81 @@ function h<E extends Element = Element>(html: string): E | DocumentFragment {
 }
 
 /**
+ * Copy from https://github.com/violentmonkey/vm-dom/blob/master/src/index.ts
+ * Under MIT License
+ *
+ * Observe an existing `node` until `callback` returns `true`.
+ * The returned function can be called explicitly to disconnect the observer.
+ *
+ * @example
+ * ```typescript
+ * observe(document.body, () => {
+ *   const node = document.querySelector('.profile');
+ *   if (node) {
+ *     console.log('It\'s there!');
+ *     return true;
+ *   }
+ * });
+ * ```
+ */
+function observe(
+	node: Node,
+	callback: (
+		mutations: MutationRecord[],
+		observer: MutationObserver,
+	) => boolean | void,
+	options?: MutationObserverInit,
+): () => void {
+	const observer = new MutationObserver((mutations, ob) => {
+		const result = callback(mutations, ob);
+		if (result) disconnect();
+	});
+	observer.observe(
+		node,
+		Object.assign(
+			{
+				childList: true,
+				subtree: true,
+			},
+			options,
+		),
+	);
+	const disconnect = () => observer.disconnect();
+	return disconnect;
+}
+
+/**
+ * Wait until selectors found.
+ *
+ * @example
+ * ```typescript
+ * until("#username", (input) => {
+ *   input.value = "admin";
+ * });
+ * ```
+ */
+function until(
+	selectors: string,
+	callback: (
+		target?: Element | null,
+		mutations?: MutationRecord[],
+	) => boolean | null,
+) {
+	const target = $(selectors);
+	if (target) {
+		callback(target, []);
+	} else {
+		observe(document, (mutations) => {
+			const target = $(selectors);
+			if (target) {
+				callback(target, mutations);
+				return true;
+			}
+		});
+	}
+}
+
+/**
  * Add CSS stylesheet to current document.
  *
  * @param {string} css - CSS stylesheet to adopt.
@@ -70,7 +145,7 @@ function addCss(css: string): CSSStyleSheet {
 	return extraSheet;
 }
 
-export { $, $$, $$$, h, addCss };
+export { $, $$, $$$, h, addCss, observe, until };
 
 declare global {
 	interface EventTarget {

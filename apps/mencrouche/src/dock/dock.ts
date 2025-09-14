@@ -1,5 +1,5 @@
 import { forkTemplate } from "../utils/forkTemplate";
-import { dataset, addTodoAfterLoad, addTodoBeforeSave } from "../dataWizard";
+import { dataset } from "../dataWizard";
 import { $, addCss } from "../utils/tools";
 import { registerContextMenu } from "../contextMenu";
 import { bakeBean, soakBean } from "../utils/bean";
@@ -11,6 +11,7 @@ import type {
 	DockPluginKey,
 	Placement,
 } from "@mencrouche/types";
+import { bus } from "../utils/bus";
 
 function getDockSlot(): HTMLSlotElement {
 	const dockSlot = $<HTMLSlotElement>(".dockSlot");
@@ -218,36 +219,31 @@ registerContextMenu("dock", [
 	},
 ]);
 
-addTodoBeforeSave(() => {
-	dataset.setItem(
-		"docks",
-		docks.map((dock) => dock.save()),
-	);
-});
-addTodoAfterLoad(() => {
-	// TODO:
-	// I'm not happy with this approach
-	// Might integrate dock into workspace in future.
-	const interval = setInterval(() => {
-		try {
-			// Clear all docks
-			getDockSlot().replaceChildren();
-			// Restore docks
-			const dockConfigs = dataset.getItem<DockConfig[]>("docks");
-			if (dockConfigs) {
-				for (const dockConfig of dockConfigs) {
-					const dock = createDock(dockConfig);
-					const model = pluginDockPool.get(dockConfig.type ?? "");
-					if (model) {
-						model.onMount(dock, "restore");
-					} else {
-						throw Error(
-							`Failed to restore dock type [ ${dockConfig.type} ]. Please register dock type first via 'registerDock'.`,
-						);
-					}
+bus("save")
+	.when("saveStarted")
+	.do(function saveDocks() {
+		const docksData = docks.map((dock) => dock.save());
+		dataset.setItem("docks", docksData);
+	});
+
+bus("load")
+	.when("workspaceConnected")
+	.do(function () {
+		// Clear all docks
+		getDockSlot().replaceChildren();
+		// Restore docks
+		const dockConfigs = dataset.getItem<DockConfig[]>("docks");
+		if (dockConfigs) {
+			for (const dockConfig of dockConfigs) {
+				const dock = createDock(dockConfig);
+				const model = pluginDockPool.get(dockConfig.type ?? "");
+				if (model) {
+					model.onMount(dock, "restore");
+				} else {
+					throw Error(
+						`Failed to restore dock type [ ${dockConfig.type} ]. Please register dock type first via 'registerDock'.`,
+					);
 				}
 			}
-			clearInterval(interval);
-		} catch (error) {}
-	}, 10);
-});
+		}
+	});

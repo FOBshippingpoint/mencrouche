@@ -263,7 +263,10 @@ h6 {
 			white-space: nowrap;
 			padding-inline: var(--size-2);
 			padding-block-start: var(--size-1);
-			padding-block-end: calc(var(--size-1) + 0.052em); /* 0.052em is the myth value from https://tonsky.me/blog/centering/ */
+			padding-block-end: calc(
+				var(--size-1) +
+				0.052em
+			); /* 0.052em is the myth value from https://tonsky.me/blog/centering/ */
 		}
 		button:hover {
 			background-color: var(--surface-3);
@@ -993,7 +996,10 @@ h6 {
 		white-space: nowrap;
 		padding-inline: var(--size-2);
 		padding-block-start: var(--size-1);
-		padding-block-end: calc(var(--size-1) + 0.052em); /* 0.052em is the myth value from https://tonsky.me/blog/centering/ */
+		padding-block-end: calc(
+			var(--size-1) +
+			0.052em
+		); /* 0.052em is the myth value from https://tonsky.me/blog/centering/ */
 
 		.icon.right:not(.used) {
 			min-block-size: unset;

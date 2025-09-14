@@ -148,8 +148,8 @@ export function markDirtyAndSaveDocument() {
 	}
 }
 
-export async function runButDontSaveDocument(todo: () => Promise<void> | void) {
+export function runButDontSaveDocument(todo: () => void) {
 	isAllowedSave = false;
-	await todo();
+	todo();
 	isAllowedSave = true;
 }

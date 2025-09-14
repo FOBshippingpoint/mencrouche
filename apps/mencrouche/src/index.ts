@@ -20,7 +20,7 @@ import { registerContextMenu } from "./contextMenu";
 import type { MenuItem } from "@mencrouche/types";
 import { shortcutManager } from "./shortcutManager";
 import { loadDocument, saveDocument } from "./lifesaver";
-import { addTodoAfterLoad, dataset } from "./dataWizard";
+import { dataset } from "./dataWizard";
 import { executeCommand, registerCommand } from "./commands";
 import type { Command } from "@mencrouche/types";
 import { initNoteSticky } from "./stickyPlugins/note";
@@ -30,6 +30,8 @@ import { initBookmarkDock } from "./dockPlugins/bookmarker";
 import { isSmallScreen } from "./utils/screenSize";
 import { createDock, getDockPluginTypes } from "./dock/dock";
 import { initImageSticky } from "./stickyPlugins/image";
+import { until } from "@mencrouche/dollars";
+import { bus } from "./utils/bus";
 
 const defaultCommands: Command[] = [
 	{
@@ -275,6 +277,21 @@ async function main() {
 	initBookmarkDock();
 	initImageSticky();
 
+	bus("main")
+		.when("workspaceReady")
+		.do(() => {
+			if (!$(".dock.bookmarker")) {
+				if (isSmallScreen()) {
+					createDock({ type: "bookmarker", placement: "bottom", grow: true });
+				} else {
+					createDock({ type: "bookmarker", placement: "right" });
+				}
+			}
+			if (!$(".dock.clock")) {
+				createDock({ type: "clock", placement: "bottomLeft" });
+			}
+		});
+
 	try {
 		await loadDocument();
 		allowScriptExecutionIfNotYetSet();
@@ -296,17 +313,6 @@ async function main() {
 	// Create dock appearance DOM
 	for (const dockType of getDockPluginTypes()) {
 		createDockAppearanceItem(dockType);
-	}
-
-	if (!$(".dock.bookmarker")) {
-		if (isSmallScreen()) {
-			createDock({ type: "bookmarker", placement: "bottom", grow: true });
-		} else {
-			createDock({ type: "bookmarker", placement: "right" });
-		}
-	}
-	if (!$(".dock.clock")) {
-		createDock({ type: "clock", placement: "bottomLeft" });
 	}
 }
 
